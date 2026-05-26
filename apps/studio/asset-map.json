@@ -1,0 +1,22 @@
+{
+  "ship-player": "model:ships/ship_classic",
+  "ship-enemy": "model:ships/ship_classic",
+  "animal-sloth": "model:animals/sloth",
+  "animal-bunny": "model:animals/bunny",
+  "animal-fox": "model:animals/fox",
+  "animal-cheetah": "model:animals/cheetah",
+  "env-trees": "model:environment/tree_fur",
+  "env-tree-2": "model:environment/tree_stylized",
+  "env-grass": "model:environment/bush",
+  "env-bushes": "model:environment/bush",
+  "env-rocks": "model:environment/rocks_small",
+  "terrain-a": "model:terrain/hill_chapel_ruin",
+  "terrain-b": "model:terrain/hill_recycle_park",
+  "terrain-c": "model:terrain/hill_wood_folly",
+  "prop-cage": "model:props/cage",
+  "prop-box": "model:props/box_crate",
+  "prop-fruit": "model:props/fruit_dragon",
+  "prop-fruit-2": "model:props/fruit_orange",
+  "prop-fruit-3": "model:props/fruit_pomegranate",
+  "prop-berries": "model:props/berries_cherry"
+}

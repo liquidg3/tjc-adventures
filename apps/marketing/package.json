@@ -1,0 +1,7 @@
+{
+  "name": "@tjc/marketing",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Marketing site (landing, trailer, asset showcase). Stub for M0 — to be built with Astro + React islands, consuming @tjc/ui and @tjc/assets."
+}

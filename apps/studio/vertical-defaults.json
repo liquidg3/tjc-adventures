@@ -1,0 +1,26 @@
+{
+  "cameraMode": "camera-z",
+  "altitude": 100,
+  "shipSize": 4.8,
+  "ground": "painterly",
+  "pixelLevel": 1,
+  "lighting": "dramatic",
+  "sunI": 2.8,
+  "skyI": 0.2,
+  "azimuth": 110,
+  "elevation": 84,
+  "shipLight": {
+    "directIntensity": 2.2,
+    "environmentIntensity": 0.08,
+    "roughness": 0.45,
+    "specularIntensity": 1,
+    "exposure": 1.2,
+    "contrast": 1.05,
+    "albedoBoost": 1,
+    "ambientStrength": 0.16
+  },
+  "shipSizeByModel": {
+    "/models/ships/ship_helicopter.glb": 4.8,
+    "/models/ships/ship_classic.glb": 2.7
+  }
+}

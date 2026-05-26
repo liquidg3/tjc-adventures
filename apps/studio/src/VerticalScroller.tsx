@@ -1,0 +1,423 @@
+import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
+import {
+  createShipScene,
+  type SceneHandle,
+} from "@tjc/scenes";
+import {
+  CAMERA_ROTATIONS,
+  GROUND_STYLES,
+  LIGHTING_PRESETS,
+  PIXEL_LEVELS,
+  buildDefaultsFromState,
+  createInitialState,
+  mergeDefaults,
+  readHashParams,
+  serializeVerticalHash,
+  verticalScrollerReducer,
+  type VerticalDefaults,
+} from "./vertical-scroller-state";
+
+const VERTICAL_DEFAULTS_URL = "/__vertical-defaults";
+
+const ASSET_MAP_URL = "/__asset-map";
+
+function assetValueToPublicModelUrl(value: string | undefined): string | null {
+  if (!value?.startsWith("model:")) return null;
+  const rel = value.slice("model:".length);
+  return `/models/${rel}.glb`;
+}
+
+/** Collapsible control panel — click the header to fold it away and fit more. */
+function Panel({
+  id,
+  title,
+  className,
+  children,
+  open,
+  onToggle,
+}: {
+  id: string;
+  title: string;
+  className?: string;
+  children: ReactNode;
+  open: boolean;
+  onToggle: (id: string) => void;
+}) {
+  return (
+    <aside className={`control-panel ${className ?? ""}${open ? "" : " collapsed"}`}>
+      <button className="panel-head" onClick={() => onToggle(id)}>
+        <span>{title}</span>
+        <span className="panel-caret">{open ? "▾" : "▸"}</span>
+      </button>
+      {open && <div className="panel-body">{children}</div>}
+    </aside>
+  );
+}
+
+/** Compact labelled horizontal slider for the lighting controls. */
+function LightSlider({
+  label,
+  title,
+  value,
+  min,
+  max,
+  step,
+  digits = 2,
+  suffix = "",
+  onChange,
+}: {
+  label: string;
+  title?: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  digits?: number;
+  suffix?: string;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <label className="light-row" title={title}>
+      <span className="light-label">{label}</span>
+      <input
+        type="range"
+        className="h-slider"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+      />
+      <span className="light-val">
+        {value.toFixed(digits)}
+        {suffix}
+      </span>
+    </label>
+  );
+}
+
+/** Vertical Scroller settings: the live scene + collapsible tuning panels. */
+export function VerticalScroller() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<SceneHandle | null>(null);
+  const initialHashParamsRef = useRef<URLSearchParams>(readHashParams());
+  const [state, dispatch] = useReducer(
+    verticalScrollerReducer,
+    initialHashParamsRef.current,
+    createInitialState
+  );
+  const [pos, setPos] = useState<{ x: number; y: number; z: number } | null>(null);
+
+  useEffect(() => {
+    fetch(VERTICAL_DEFAULTS_URL)
+      .then((r) => r.json())
+      .then((data: Partial<VerticalDefaults>) => {
+        dispatch({
+          type: "hydrate-defaults",
+          defaults: mergeDefaults(data),
+          hashParams: initialHashParamsRef.current,
+        });
+      })
+      .catch(() => {
+        dispatch({
+          type: "hydrate-defaults",
+          defaults: mergeDefaults(null),
+          hashParams: initialHashParamsRef.current,
+        });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const handle = createShipScene(canvasRef.current);
+    fetch(ASSET_MAP_URL)
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        const playerShip = assetValueToPublicModelUrl(data?.["ship-player"]);
+        if (playerShip) {
+          dispatch({
+            type: "set-player-ship-url",
+            url: playerShip,
+            respectHashShipSize: initialHashParamsRef.current.has("shipSize"),
+          });
+          handle.setPlayerShipModel(playerShip);
+        }
+      })
+      .catch(() => {
+        /* keep the default runtime ship if the asset map can't be read */
+      });
+    sceneRef.current = handle;
+    return () => handle.dispose();
+  }, []);
+
+  useEffect(() => {
+    const handle = sceneRef.current;
+    if (!handle) return;
+    handle.setCameraRotationMode(state.values.cameraMode);
+    handle.setShipHeight(state.values.altitude);
+    handle.setShipSize(state.values.shipSize);
+    handle.setGroundStyle(state.values.ground);
+    handle.setPixelScale(state.values.pixelLevel);
+    handle.setSunIntensity(state.values.sunI);
+    handle.setSkyIntensity(state.values.skyI);
+    handle.setSunAzimuth(state.values.azimuth);
+    handle.setSunElevation(state.values.elevation);
+    handle.setShipLightDirectIntensity(state.values.shipLight.directIntensity);
+    handle.setShipLightEnvironmentIntensity(state.values.shipLight.environmentIntensity);
+    handle.setShipLightRoughness(state.values.shipLight.roughness);
+    handle.setShipLightSpecularIntensity(state.values.shipLight.specularIntensity);
+    handle.setShipLightExposure(state.values.shipLight.exposure);
+    handle.setShipLightContrast(state.values.shipLight.contrast);
+    handle.setShipLightAlbedoBoost(state.values.shipLight.albedoBoost);
+    handle.setShipLightAmbientStrength(state.values.shipLight.ambientStrength);
+  }, [state.values]);
+
+  // Selecting a preset applies it, then syncs the sliders to the result so
+  // fine-tuning starts from the preset instead of jumping.
+  useEffect(() => {
+    const h = sceneRef.current;
+    if (!h) return;
+    h.setLightingPreset(state.values.lighting);
+    const s = h.getLightingState();
+    dispatch({
+      type: "sync-lighting-from-scene",
+      sunI: s.sunIntensity,
+      skyI: s.skyIntensity,
+      azimuth: Math.round(s.azimuth),
+      elevation: Math.round(s.elevation),
+    });
+  }, [state.values.lighting]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
+    const nextHash = serializeVerticalHash(state.values);
+    if (location.hash !== nextHash) {
+      history.replaceState(null, "", `${location.pathname}${location.search}${nextHash}`);
+    }
+  }, [state.hydrated, state.values]);
+
+  // live ship coordinates — fly to a spot you like and read off x/y/z
+  useEffect(() => {
+    const id = setInterval(() => setPos(sceneRef.current?.getShipPosition() ?? null), 150);
+    return () => clearInterval(id);
+  }, []);
+
+  const resetToDefaults = () => {
+    dispatch({ type: "reset-to-defaults" });
+    sceneRef.current?.resetShip();
+  };
+
+  function saveDefaults(update: (prev: VerticalDefaults) => VerticalDefaults) {
+    const next = update(buildDefaultsFromState(state));
+    dispatch({ type: "save-defaults-locally", defaults: next });
+    dispatch({ type: "set-save-stamp", stamp: "saving" });
+    fetch(VERTICAL_DEFAULTS_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(next, null, 2),
+    })
+      .then(() => dispatch({ type: "set-save-stamp", stamp: "saved" }))
+      .catch(() => dispatch({ type: "set-save-stamp", stamp: "error" }));
+  }
+
+  const toggleLeft = (id: string) => dispatch({ type: "toggle-left", id });
+  const toggleRight = (id: string) => dispatch({ type: "toggle-right", id });
+
+  return (
+    <>
+      <canvas ref={canvasRef} className="game-canvas" />
+      <div className="hud-hint">Arrows / WASD to fly · Shift = boost · P = pixel mode</div>
+
+      {/* left-side controls */}
+      <div className="control-stack-left">
+        <button className="control-reset" onClick={resetToDefaults}>
+          Reset to Defaults
+        </button>
+        {state.saveStamp && <div className={`save-stamp ${state.saveStamp}`}>{state.saveStamp === "saved" ? "Defaults saved" : state.saveStamp === "saving" ? "Saving…" : "Save failed"}</div>}
+
+        <Panel id="camera-rotation" title="Camera Rotation" className="camera-test-panel" open={state.openLeft === "camera-rotation"} onToggle={toggleLeft}>
+          <p>Switch rotation modes while steering left and right.</p>
+          <div className="camera-test-buttons">
+            {CAMERA_ROTATIONS.map((t) => (
+              <button
+                key={t.mode}
+                type="button"
+                className={t.mode === state.values.cameraMode ? "active" : ""}
+                onClick={() => dispatch({ type: "set-camera-mode", mode: t.mode })}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, cameraMode: state.values.cameraMode }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="ship-size" title="Ship Size" className="ship-size-panel" open={state.openLeft === "ship-size"} onToggle={toggleLeft}>
+          <div className="slider-readout">{state.values.shipSize.toFixed(1)}</div>
+          <input
+            type="range"
+            className="v-slider"
+            min={0.5}
+            max={12}
+            step={0.1}
+            value={state.values.shipSize}
+            onChange={(e) => dispatch({ type: "set-ship-size", shipSize: parseFloat(e.target.value) })}
+            aria-label="Ship size"
+          />
+          <button
+            className="panel-save"
+            onClick={() =>
+              saveDefaults((prev) => ({
+                ...prev,
+                shipSize: state.values.shipSize,
+                shipSizeByModel: state.shipSizeByModel,
+              }))
+            }
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="ship-altitude" title="Ship Altitude" className="ship-altitude-panel" open={state.openLeft === "ship-altitude"} onToggle={toggleLeft}>
+          <div className="slider-readout">{state.values.altitude.toFixed(1)}</div>
+          <input
+            type="range"
+            className="v-slider"
+            min={1}
+            max={100}
+            step={0.5}
+            value={state.values.altitude}
+            onChange={(e) => dispatch({ type: "set-altitude", altitude: parseFloat(e.target.value) })}
+            aria-label="Ship altitude"
+          />
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, altitude: state.values.altitude }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="ship-lighting" title="Ship Lighting" className="lighting-panel" open={state.openLeft === "ship-lighting"} onToggle={toggleLeft}>
+          <div className="light-sliders">
+            <LightSlider label="Direct" title="How strongly the sun hits the ship" value={state.values.shipLight.directIntensity} min={0} max={6} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { directIntensity: v } })} />
+            <LightSlider label="Env" title="Environment / ambient contribution on the ship" value={state.values.shipLight.environmentIntensity} min={0} max={1} step={0.01} onChange={(v) => dispatch({ type: "set-ship-light", patch: { environmentIntensity: v } })} />
+            <LightSlider label="Rough" title="Surface roughness; lower = sharper light read" value={state.values.shipLight.roughness} min={0} max={1} step={0.01} onChange={(v) => dispatch({ type: "set-ship-light", patch: { roughness: v } })} />
+            <LightSlider label="Spec" title="Specular response on the ship" value={state.values.shipLight.specularIntensity} min={0} max={3} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { specularIntensity: v } })} />
+            <LightSlider label="Expose" title="Material exposure on the ship" value={state.values.shipLight.exposure} min={0.2} max={3} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { exposure: v } })} />
+            <LightSlider label="Contrast" title="Material contrast on the ship" value={state.values.shipLight.contrast} min={0.5} max={2} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { contrast: v } })} />
+            <LightSlider label="Albedo" title="Base ship brightness / texture boost" value={state.values.shipLight.albedoBoost} min={0.2} max={2} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { albedoBoost: v } })} />
+            <LightSlider label="Ambient" title="Extra fill on the ship materials" value={state.values.shipLight.ambientStrength} min={0} max={1} step={0.01} onChange={(v) => dispatch({ type: "set-ship-light", patch: { ambientStrength: v } })} />
+          </div>
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, shipLight: { ...state.values.shipLight } }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="ship-position" title="Ship Position" className="ship-pos-panel" open={state.openLeft === "ship-position"} onToggle={toggleLeft}>
+          <div className="pos-grid">
+            <span>x</span>
+            <b>{pos ? pos.x.toFixed(2) : "—"}</b>
+            <span>y</span>
+            <b>{pos ? pos.y.toFixed(2) : "—"}</b>
+            <span>z</span>
+            <b>{pos ? pos.z.toFixed(2) : "—"}</b>
+          </div>
+          <button className="pos-reset" onClick={() => sceneRef.current?.resetShip()}>
+            Reset to start
+          </button>
+          <p className="pos-hint">Fly to a spot, then report these.</p>
+        </Panel>
+      </div>
+
+      {/* right-side controls */}
+      <div className="control-stack">
+        <Panel id="ground" title="Ground" className="ground-panel" open={state.openRight === "ground"} onToggle={toggleRight}>
+          <div className="camera-test-buttons">
+            {GROUND_STYLES.map((g) => (
+              <button
+                key={g.id}
+                type="button"
+                className={g.id === state.values.ground ? "active" : ""}
+                onClick={() => dispatch({ type: "set-ground", ground: g.id })}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, ground: state.values.ground }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="lighting" title="Lighting" className="lighting-panel" open={state.openRight === "lighting"} onToggle={toggleRight}>
+          <div className="camera-test-buttons">
+            {LIGHTING_PRESETS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className={l.id === state.values.lighting ? "active" : ""}
+                onClick={() => dispatch({ type: "set-lighting-preset", lighting: l.id })}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+          <div className="light-sliders">
+            <LightSlider label="Sun" title="Sun (key light) intensity" value={state.values.sunI} min={0} max={3} step={0.05} onChange={(v) => dispatch({ type: "sync-lighting-from-scene", sunI: v, skyI: state.values.skyI, azimuth: state.values.azimuth, elevation: state.values.elevation })} />
+            <LightSlider label="Sky" title="Sky / ambient fill intensity" value={state.values.skyI} min={0} max={2} step={0.05} onChange={(v) => dispatch({ type: "sync-lighting-from-scene", sunI: state.values.sunI, skyI: v, azimuth: state.values.azimuth, elevation: state.values.elevation })} />
+            <LightSlider label="Angle" title="Sun compass direction" value={state.values.azimuth} min={0} max={360} step={1} digits={0} suffix="°" onChange={(v) => dispatch({ type: "sync-lighting-from-scene", sunI: state.values.sunI, skyI: state.values.skyI, azimuth: v, elevation: state.values.elevation })} />
+            <LightSlider label="Height" title="Sun height above the horizon" value={state.values.elevation} min={5} max={90} step={1} digits={0} suffix="°" onChange={(v) => dispatch({ type: "sync-lighting-from-scene", sunI: state.values.sunI, skyI: state.values.skyI, azimuth: state.values.azimuth, elevation: v })} />
+          </div>
+          <button
+            className="panel-save"
+            onClick={() =>
+              saveDefaults((prev) => ({
+                ...prev,
+                lighting: state.values.lighting,
+                sunI: state.values.sunI,
+                skyI: state.values.skyI,
+                azimuth: state.values.azimuth,
+                elevation: state.values.elevation,
+              }))
+            }
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="pixelate" title="Pixelate" open={state.openRight === "pixelate"} onToggle={toggleRight}>
+          <div className="camera-test-buttons">
+            {PIXEL_LEVELS.map((p) => (
+              <button
+                key={p.level}
+                type="button"
+                className={p.level === state.values.pixelLevel ? "active" : ""}
+                onClick={() => dispatch({ type: "set-pixel-level", pixelLevel: p.level })}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, pixelLevel: state.values.pixelLevel }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+      </div>
+    </>
+  );
+}

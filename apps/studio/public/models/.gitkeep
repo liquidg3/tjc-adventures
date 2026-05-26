@@ -1,0 +1,2 @@
+# Drop .glb / .gltf model files here, then add an entry to src/models.ts to
+# preview them in the Design Studio. Files here are served at /models/<file>.

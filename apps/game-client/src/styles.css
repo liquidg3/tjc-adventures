@@ -1,0 +1,185 @@
+:root {
+  color-scheme: dark;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: #0b1020;
+  color: #e6ecff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.screen {
+  width: 100%;
+  max-width: 560px;
+  padding: 24px;
+  text-align: center;
+}
+h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
+.subtitle { color: #c8d4ff; }
+.qr {
+  background: #fff;
+  display: inline-block;
+  padding: 14px;
+  border-radius: 12px;
+  margin: 8px 0;
+}
+.code { font-size: 1.3rem; letter-spacing: 2px; }
+.code b { color: #ffd76a; }
+.hint { font-size: 0.8rem; color: #6b78a8; word-break: break-all; }
+.dim { color: #6b78a8; }
+.ok { color: #6affb0; font-weight: bold; }
+.error { color: #ff8a8a; }
+.players { margin-top: 18px; text-align: left; display: inline-block; }
+.players ul { list-style: none; padding: 0; }
+.players li { padding: 4px 0; }
+
+/* Controller: a big, kid-friendly touch target. */
+.controller .bigtap {
+  width: 70vw;
+  max-width: 320px;
+  height: 70vw;
+  max-height: 320px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #08121f;
+  background: radial-gradient(circle at 50% 40%, #ffe08a, #ff9f43);
+  box-shadow: 0 10px 30px rgba(255, 159, 67, 0.4);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  margin: 24px 0;
+}
+.controller .bigtap:active { transform: scale(0.96); }
+
+/* Graphics sandbox: fullscreen canvas + a small control hint. */
+.game-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  outline: none;
+  touch-action: none;
+  image-rendering: pixelated;
+}
+.hud-hint {
+  position: fixed;
+  left: 12px;
+  bottom: 10px;
+  font-size: 0.8rem;
+  color: #aeb8e6;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.camera-test-panel {
+  width: 170px;
+  padding: 12px;
+  background: rgba(8, 14, 24, 0.82);
+  border: 1px solid rgba(154, 208, 255, 0.25);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+.camera-test-panel h2 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: #d7e9ff;
+}
+.camera-test-panel p {
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #9fb5d3;
+}
+.camera-test-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.camera-test-buttons button {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid rgba(173, 198, 228, 0.2);
+  border-radius: 8px;
+  background: rgba(17, 26, 42, 0.92);
+  color: #dfe9ff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.camera-test-buttons button:hover {
+  background: rgba(28, 42, 66, 0.96);
+}
+.camera-test-buttons button.active {
+  background: linear-gradient(180deg, rgba(61, 112, 179, 0.95), rgba(33, 71, 126, 0.95));
+  border-color: rgba(154, 208, 255, 0.58);
+  color: #fff;
+}
+
+/* dev control panels (stacked in the top corners) */
+.control-stack,
+.control-stack-left {
+  position: fixed;
+  top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+}
+.control-stack {
+  right: 12px;
+  align-items: flex-end;
+}
+.control-stack-left {
+  left: 12px;
+  align-items: flex-start;
+}
+.control-panel {
+  width: 170px;
+  padding: 12px;
+  background: rgba(8, 14, 24, 0.82);
+  border: 1px solid rgba(154, 208, 255, 0.25);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+/* vertical-slider panels (altitude, size) */
+.ship-altitude-panel,
+.ship-size-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ship-altitude-panel h2,
+.ship-size-panel h2 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: #d7e9ff;
+  align-self: flex-start;
+}
+.slider-readout {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #9ad0ff;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.v-slider {
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 14px;
+  height: 200px;
+  accent-color: #3d70b3;
+  cursor: pointer;
+}

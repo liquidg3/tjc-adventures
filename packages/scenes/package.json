@@ -1,0 +1,21 @@
+{
+  "name": "@tjc/scenes",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^7.34.0",
+    "@babylonjs/loaders": "^7.54.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

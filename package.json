@@ -1,0 +1,35 @@
+{
+  "name": "tjc-family-adventures",
+  "private": true,
+  "version": "0.0.0",
+  "description": "TJC: Family Adventures — a family co-op game. One vessel, many hands.",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "predev": "node scripts/free-ports.mjs 2567 5173",
+    "dev": "concurrently -k -n server,client -c green,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm run dev -w @tjc/game-server",
+    "dev:client": "npm run dev -w @tjc/game-client",
+    "predev:studio": "node scripts/free-ports.mjs 5174",
+    "dev:studio": "npm run dev -w @tjc/studio",
+    "build": "npm run typecheck && npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "doctor": "node scripts/doctor.mjs",
+    "free-ports": "node scripts/free-ports.mjs 2567 5173",
+    "clean": "node scripts/clean.mjs",
+    "reset": "node scripts/clean.mjs --modules && npm install",
+    "verify:spine": "node scripts/verify-spine.mjs",
+    "convert-models": "node scripts/convert-models.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "gltf-pipeline": "^4.3.1",
+    "lerna": "^8.1.9",
+    "typescript": "^5.5.4"
+  }
+}
