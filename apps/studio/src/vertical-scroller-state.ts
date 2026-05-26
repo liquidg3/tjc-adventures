@@ -7,6 +7,7 @@ import {
   type LevelPlan,
   type LightingPreset,
   type PipelineMode,
+  type SceneryDensities,
   type ShipLightingState,
   type TileSampling,
 } from "@tjc/scenes";
@@ -47,13 +48,23 @@ export interface ZoneLook {
   skyI: number;
   azimuth: number;
   elevation: number;
+  shipLight: ShipLightingState;
+  scenery: string; // SceneryPreset id
   lengthSec: number;
 }
 
 /** The look fields a zone owns (shared between a zone and the live `values`). */
 export type ZoneLookFields = Pick<
   VerticalValues,
-  "ground" | "groundTile" | "tileRepeat" | "lighting" | "sunI" | "skyI" | "azimuth" | "elevation"
+  | "ground"
+  | "groundTile"
+  | "tileRepeat"
+  | "lighting"
+  | "sunI"
+  | "skyI"
+  | "azimuth"
+  | "elevation"
+  | "shipLight"
 >;
 
 export interface VerticalDefaults extends VerticalValues {
@@ -98,6 +109,7 @@ function makeZone(
   name: string,
   ground: GroundStyle,
   lighting: LightingPreset,
+  scenery: string,
   lengthSec: number,
 ): ZoneLook {
   const s = presetSunDefaults(lighting);
@@ -112,15 +124,17 @@ function makeZone(
     skyI: s.skyI,
     azimuth: s.azimuth,
     elevation: s.elevation,
+    shipLight: { ...DEFAULT_SHIP_LIGHTING },
+    scenery,
     lengthSec,
   };
 }
 
 export const DEFAULT_ZONES: ZoneLook[] = [
-  makeZone("zone-meadow", "Meadow", "painterly", "golden", 60),
-  makeZone("zone-woodland", "Woodland", "painterly", "overcast", 75),
-  makeZone("zone-canyon", "Canyon", "stripes", "dramatic", 75),
-  makeZone("zone-approach", "Approach", "checker", "moonlit", 60),
+  makeZone("zone-meadow", "Meadow", "painterly", "golden", "meadow", 60),
+  makeZone("zone-woodland", "Woodland", "painterly", "overcast", "woodland", 75),
+  makeZone("zone-canyon", "Canyon", "stripes", "dramatic", "canyon", 75),
+  makeZone("zone-approach", "Approach", "checker", "moonlit", "barren", 60),
 ];
 
 export const DEFAULT_BLEND_SEC = 4;
@@ -227,6 +241,25 @@ export const LIGHTING_PRESETS: Array<{ id: LightingPreset; label: string }> = [
   { id: "moonlit", label: "Moonlit" },
 ];
 
+/** Named scenery mixes (per-model density 0..1) a climate can use. */
+export interface SceneryPreset {
+  id: string;
+  label: string;
+  densities: SceneryDensities;
+}
+
+export const SCENERY_PRESETS: SceneryPreset[] = [
+  { id: "meadow", label: "Meadow (bushes)", densities: { bush: 0.6, rock: 0.3, tree_fur: 0.2 } },
+  { id: "woodland", label: "Woodland (trees)", densities: { tree_fur: 0.9, tree_stylized: 0.9, bush: 0.4 } },
+  { id: "canyon", label: "Canyon (rocks)", densities: { rock: 0.9, tree_stylized: 0.15 } },
+  { id: "sparse", label: "Sparse", densities: { rock: 0.35, bush: 0.2 } },
+  { id: "barren", label: "Barren", densities: {} },
+];
+
+export function findScenery(id: string): SceneryPreset {
+  return SCENERY_PRESETS.find((p) => p.id === id) ?? SCENERY_PRESETS[0];
+}
+
 export function readHashParams() {
   const raw = location.hash.replace(/^#/, "");
   const [, qs = ""] = raw.split("?");
@@ -261,6 +294,8 @@ function normalizeZone(z: Partial<ZoneLook>, i: number): ZoneLook {
     skyI: num(z.skyI, base.skyI),
     azimuth: num(z.azimuth, base.azimuth),
     elevation: num(z.elevation, base.elevation),
+    shipLight: { ...DEFAULT_SHIP_LIGHTING, ...(z.shipLight ?? {}) },
+    scenery: z.scenery ?? base.scenery,
     lengthSec: num(z.lengthSec, base.lengthSec),
   };
 }
@@ -278,6 +313,7 @@ function seedZonesFromLook(data: Partial<VerticalDefaults> | null | undefined): 
     skyI: num(data?.skyI, DEFAULT_ZONES[0].skyI),
     azimuth: num(data?.azimuth, DEFAULT_ZONES[0].azimuth),
     elevation: num(data?.elevation, DEFAULT_ZONES[0].elevation),
+    shipLight: { ...DEFAULT_SHIP_LIGHTING, ...(data?.shipLight ?? {}) },
   };
   return [first, ...DEFAULT_ZONES.slice(1)];
 }
@@ -310,6 +346,7 @@ function lookFields(v: VerticalValues): ZoneLookFields {
     skyI: v.skyI,
     azimuth: v.azimuth,
     elevation: v.elevation,
+    shipLight: v.shipLight,
   };
 }
 
@@ -324,6 +361,7 @@ function zoneToLook(z: ZoneLook): ZoneLookFields {
     skyI: z.skyI,
     azimuth: z.azimuth,
     elevation: z.elevation,
+    shipLight: z.shipLight,
   };
 }
 
@@ -360,6 +398,8 @@ export function toLevelPlan(zones: ZoneLook[], blendSec: number): LevelPlan {
       skyI: z.skyI,
       azimuth: z.azimuth,
       elevation: z.elevation,
+      shipLight: z.shipLight,
+      scenery: findScenery(z.scenery).densities,
       lengthSec: z.lengthSec,
     })),
   };
@@ -478,6 +518,7 @@ export type VerticalAction =
   | { type: "add-zone" }
   | { type: "remove-zone"; index: number }
   | { type: "rename-zone"; index: number; name: string }
+  | { type: "set-scenery"; scenery: string }
   | { type: "set-zone-length"; index: number; lengthSec: number }
   | { type: "set-blend"; blendSec: number }
   | { type: "set-playing"; playing: boolean }
@@ -591,13 +632,10 @@ export function verticalScrollerReducer(
       };
     }
     case "set-ship-light":
-      return {
-        ...state,
-        values: {
-          ...state.values,
-          shipLight: { ...state.values.shipLight, ...action.patch },
-        },
-      };
+      // ship lighting is zone-owned now — write through to the selected zone
+      return patchLook(state, {
+        shipLight: { ...state.values.shipLight, ...action.patch },
+      });
     case "select-zone": {
       const z = state.zones[action.index];
       if (!z) return state;
@@ -633,6 +671,14 @@ export function verticalScrollerReducer(
         ...state,
         zones: state.zones.map((z, i) => (i === action.index ? { ...z, name: action.name } : z)),
       };
+    case "set-scenery":
+      // scenery edits the selected zone (like Ground/Lighting)
+      return {
+        ...state,
+        zones: state.zones.map((z, i) =>
+          i === state.selectedZone ? { ...z, scenery: action.scenery } : z,
+        ),
+      };
     case "set-zone-length":
       return {
         ...state,
@@ -660,8 +706,7 @@ export function verticalScrollerReducer(
           pixelLevel: state.savedDefaults.pixelLevel,
           pipelineMode: state.savedDefaults.pipelineMode,
           rtHeight: state.savedDefaults.rtHeight,
-          shipLight: { ...state.savedDefaults.shipLight },
-          // ground + lighting look comes from the (restored) first zone
+          // ground + lighting + ship-light look comes from the (restored) first zone
           ...zoneToLook(zones[0]),
         },
       };

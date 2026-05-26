@@ -1,5 +1,5 @@
 import type { ResolvedLighting } from "./lighting-controller";
-import type { LevelPlan, ZonePlanEntry } from "./scene-config";
+import type { LevelPlan, ShipLightingState, ZonePlanEntry } from "./scene-config";
 
 /**
  * Drives an auto-scrolling level as a continuous track. The ship advances along
@@ -27,12 +27,15 @@ export interface ZoneSequencerDeps {
   transitionGround: (near: ZonePlanEntry, far: ZonePlanEntry, seamZ: number) => void;
   resolveLighting: (entry: ZonePlanEntry) => ResolvedLighting;
   applyLighting: (r: ResolvedLighting) => void;
+  applyShipLighting: (s: ShipLightingState) => void;
 }
 
 export interface ZoneSequencer {
   setPlan: (plan: LevelPlan | null) => void;
   update: (dt: number) => void;
   getStatus: () => { index: number; name: string; progress: number } | null;
+  /** Which zone occupies a given world-Z right now (for per-climate scenery). */
+  zoneIndexAtWorldZ: (z: number) => number | null;
 }
 
 export function createZoneSequencer(
@@ -70,6 +73,7 @@ export function createZoneSequencer(
     total = acc;
     deps.showGround(plan.zones[0]); // show zone 0 immediately
     deps.applyLighting(resolved[0]);
+    deps.applyShipLighting(plan.zones[0].shipLight);
     status = { index: 0, name: plan.zones[0].name, progress: 0 };
   }
 
@@ -107,15 +111,28 @@ export function createZoneSequencer(
       // it exits past the camera — so the sky finishes shifting as the ground does
       const f = clamp((seamFar - seamZ) / (seamFar - seamNear), 0, 1);
       deps.applyLighting(lerpResolved(resolved[nearIdx], resolved[farIdx], f));
+      deps.applyShipLighting(lerpShip(zones[nearIdx].shipLight, zones[farIdx].shipLight, f));
       deps.transitionGround(zones[nearIdx], zones[farIdx], seamZ);
     } else {
       deps.applyLighting(resolved[j]);
+      deps.applyShipLighting(zones[j].shipLight);
       deps.showGround(zones[j]);
     }
     status = { index: j, name: zones[j].name, progress: localDist / zoneDist[j] };
   }
 
-  return { setPlan, update, getStatus: () => status };
+  function zoneIndexAtWorldZ(z: number): number | null {
+    if (!plan) return null;
+    const n = plan.zones.length;
+    // world-Z ahead of the ship maps to a larger track distance
+    let t = (dist + (z - shipZ)) % total;
+    if (t < 0) t += total;
+    let j = 0;
+    while (j < n - 1 && t >= cum[j + 1]) j++;
+    return j;
+  }
+
+  return { setPlan, update, getStatus: () => status, zoneIndexAtWorldZ };
 }
 
 function clamp(v: number, lo: number, hi: number) {
@@ -125,6 +142,20 @@ function clamp(v: number, lo: number, hi: number) {
 function lerpAngle(a: number, b: number, t: number) {
   const d = ((b - a + 540) % 360) - 180; // shortest path around the compass
   return a + d * t;
+}
+
+function lerpShip(a: ShipLightingState, b: ShipLightingState, t: number): ShipLightingState {
+  const L = (x: number, y: number) => x + (y - x) * t;
+  return {
+    directIntensity: L(a.directIntensity, b.directIntensity),
+    environmentIntensity: L(a.environmentIntensity, b.environmentIntensity),
+    roughness: L(a.roughness, b.roughness),
+    specularIntensity: L(a.specularIntensity, b.specularIntensity),
+    exposure: L(a.exposure, b.exposure),
+    contrast: L(a.contrast, b.contrast),
+    albedoBoost: L(a.albedoBoost, b.albedoBoost),
+    ambientStrength: L(a.ambientStrength, b.ambientStrength),
+  };
 }
 
 function lerpResolved(a: ResolvedLighting, b: ResolvedLighting, t: number): ResolvedLighting {

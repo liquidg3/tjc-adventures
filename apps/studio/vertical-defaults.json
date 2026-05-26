@@ -2,9 +2,9 @@
   "cameraMode": "camera-z",
   "altitude": 100,
   "shipSize": 4.8,
-  "ground": "checker",
-  "groundTile": "/textures/ground/grass-path.jpg",
-  "tileRepeat": 9,
+  "ground": "stripes",
+  "groundTile": "/textures/ground/aerial-grass-rock.jpg",
+  "tileRepeat": 6,
   "pixelLevel": 1,
   "pipelineMode": "direct",
   "rtHeight": 270,
@@ -14,17 +14,72 @@
   "azimuth": 110,
   "elevation": 84,
   "shipLight": {
-    "directIntensity": 2.2,
-    "environmentIntensity": 0.08,
-    "roughness": 0.45,
+    "directIntensity": 1.35,
+    "environmentIntensity": 0.39,
+    "roughness": 0.38,
     "specularIntensity": 1,
     "exposure": 1.2,
-    "contrast": 1.05,
-    "albedoBoost": 1,
-    "ambientStrength": 0.16
+    "contrast": 0.85,
+    "albedoBoost": 0.95,
+    "ambientStrength": 0.44
   },
   "shipSizeByModel": {
     "/models/ships/ship_helicopter.glb": 4.8,
     "/models/ships/ship_classic.glb": 2.7
-  }
+  },
+  "zones": [
+    {
+      "id": "zone-meadow",
+      "name": "Meadow",
+      "ground": "checker",
+      "groundTile": "/textures/ground/grass-path.jpg",
+      "tileRepeat": 9,
+      "lighting": "dramatic",
+      "sunI": 2.8,
+      "skyI": 0.2,
+      "azimuth": 110,
+      "elevation": 84,
+      "lengthSec": 60
+    },
+    {
+      "id": "zone-woodland",
+      "name": "Woodland",
+      "ground": "painterly",
+      "groundTile": "/textures/ground/seamless-grass.jpg",
+      "tileRepeat": 15,
+      "lighting": "overcast",
+      "sunI": 0.7,
+      "skyI": 1.7,
+      "azimuth": 135,
+      "elevation": 82,
+      "lengthSec": 75
+    },
+    {
+      "id": "zone-canyon",
+      "name": "Canyon",
+      "ground": "stripes",
+      "groundTile": "/textures/ground/aerial-grass-rock.jpg",
+      "tileRepeat": 6,
+      "lighting": "dramatic",
+      "sunI": 2.8,
+      "skyI": 0.2,
+      "azimuth": 110,
+      "elevation": 84,
+      "lengthSec": 75
+    },
+    {
+      "id": "zone-approach",
+      "name": "Approach",
+      "ground": "checker",
+      "groundTile": null,
+      "tileRepeat": 32,
+      "lighting": "moonlit",
+      "sunI": 0.8,
+      "skyI": 0.5,
+      "azimuth": 132,
+      "elevation": 73,
+      "lengthSec": 60
+    }
+  ],
+  "blendSec": 4
 }

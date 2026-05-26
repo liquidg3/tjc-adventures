@@ -11,6 +11,8 @@ import {
   CAMERA_ROT_LERP,
   CAMERA_TEST_ROT,
   CAMERA_Z_ROT,
+  DODGE_DASH,
+  DODGE_DURATION,
   SHIP_ACCEL,
   SHIP_BANK_MAX,
   SHIP_SPEED,
@@ -27,7 +29,7 @@ export interface FlightStepInput {
   ship: AbstractMesh;
   shipPivot: TransformNode | null;
   shipHeight: number;
-  input: { vx: number; vz: number; boosting: boolean };
+  input: { vx: number; vz: number; boosting: boolean; dodge: number };
   pointOnFlightPlane: (screenX: number, screenY: number) => Vector3;
 }
 
@@ -46,6 +48,8 @@ export function createFlightController(
   let roll = 0;
   let velX = 0; // smoothed velocity (world units/s) — gives the ship momentum
   let velZ = 0;
+  let dodgeTimer = 0; // >0 while a barrel-roll dodge is in progress
+  let dodgeDir = 0; // -1 left / +1 right
   const cameraRot = cameraBaseRot.clone();
   const cameraRotTarget = cameraBaseRot.clone();
   const rigRot = cameraRigBaseRot.clone();
@@ -69,6 +73,14 @@ export function createFlightController(
       const accel = Math.min(1, dt * SHIP_ACCEL);
       velX += (input.vx * speed - velX) * accel;
       velZ += (input.vz * speed - velZ) * accel;
+
+      // double-tap barrel roll: a one-shot full roll + a quick lateral burst to
+      // juke incoming fire (ignored if already mid-roll)
+      if (input.dodge !== 0 && dodgeTimer <= 0) {
+        dodgeDir = input.dodge;
+        dodgeTimer = DODGE_DURATION;
+        velX += dodgeDir * SHIP_SPEED * DODGE_DASH;
+      }
 
       const nearEdge = pointOnFlightPlane(col, h).z;
       const farEdge = pointOnFlightPlane(col, 0).z;
@@ -95,7 +107,14 @@ export function createFlightController(
       const latFrac = clamp(velX / speed, -1, 1);
       const targetRoll = -latFrac * SHIP_BANK_MAX;
       roll += (targetRoll - roll) * Math.min(1, dt * 10);
-      if (shipPivot) shipPivot.rotation = new Vector3(0, SHIP_YAW, roll);
+      let shipRoll = roll;
+      if (dodgeTimer > 0) {
+        dodgeTimer = Math.max(0, dodgeTimer - dt);
+        const p = 1 - dodgeTimer / DODGE_DURATION; // 0 → 1 over the roll
+        const eased = p * p * (3 - 2 * p); // smoothstep for a snappier spin
+        shipRoll = roll + dodgeDir * Math.PI * 2 * eased; // one full revolution
+      }
+      if (shipPivot) shipPivot.rotation = new Vector3(0, SHIP_YAW, shipRoll);
 
       const testRot = -latFrac * CAMERA_TEST_ROT;
       cameraRotTarget.copyFrom(cameraBaseRot);

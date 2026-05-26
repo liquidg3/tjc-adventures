@@ -114,7 +114,7 @@ A tilted 2.5D vertical scroller (Raiden-style). `createShipScene(canvas)` return
 dispose, setCameraRotationMode, setShipHeight, setShipSize, getShipPosition,
 resetShip, setGroundStyle, setPixelScale, setLightingPreset,
 setSunIntensity, setSkyIntensity, setSunAzimuth, setSunElevation, getLightingState,
-setLevelPlan, getZoneStatus  (+ setGroundTile, setPipelineMode, setRtHeight, ship-light setters)
+setLevelPlan, getZoneStatus, setScenery  (+ setGroundTile, setPipelineMode, setRtHeight, ship-light setters)
 ```
 
 **Structure after the refactor:**
@@ -138,7 +138,9 @@ drawn by clipping a second `ground-layer` to the far side of the seam. Lighting
 cross-fades as the seam crosses the field. `getZoneStatus()` reports the current
 zone; pass `null` to return to manual control. In the Studio, the **Zone Plan**
 panel owns the zone list, and the **selected zone is mirrored into the live look**
-so the existing **Ground** + **Lighting** panels edit it (no duplicate controls).
+so the existing **Ground**, **Lighting**, **Ship Lighting**, and **Scenery**
+panels edit it (no duplicate controls) — ground, sun lighting, ship (PBR) lighting,
+and scenery are all per-zone and cross-fade as the climate seam crosses the field.
 Zones persist in `vertical-defaults.json` (`blendSec` is vestigial — the
 transition speed is the scroll speed). Default plan = Meadow → Woodland → Canyon →
 Approach (see `docs/prototype-meadow-run.md`). While a plan plays the sequencer
@@ -169,11 +171,19 @@ owns ground + lighting; the manual panels drive the scene only when stopped.
   (closest-feeling bank), with a *small* tilt. Smoothed via `CAMERA_ROT_LERP`.
 - **Ship:** `/models/ships/ship_classic.glb`, fit to `SHIP_SIZE`, starts at
   `(0, SHIP_HEIGHT, SHIP_START_Z)`, banks on turns.
-- **Movement / bounds:** Arrows/WASD, Shift boost, `P` pixel toggle. **X and Z are
-  clamped to the actual visible viewport** by projecting the ship to screen space
-  and raycasting into its flight plane. **This math runs in CSS-pixel space
-  (`canvas.clientWidth/Height`), NOT `getRenderWidth()`** — see the pixelation
-  gotcha below.
+- **Movement / bounds:** Arrows/WASD, Shift boost, `P` pixel toggle. **Momentum**:
+  velocity eases toward input (`SHIP_ACCEL`), so steering builds speed and
+  releasing coasts; bank + camera-lean follow the smoothed velocity.
+  **Double-tap left/right = barrel-roll dodge** (`DODGE_DURATION`/`DODGE_DASH`,
+  detected in `input-controller.ts`; rolls `rotation.z` + a lateral burst — hook
+  for i-frames once projectiles exist). **X and Z are clamped to the visible
+  viewport** by projecting the ship to screen space and raycasting into its flight
+  plane. **This math runs in CSS-pixel space (`canvas.clientWidth/Height`), NOT
+  `getRenderWidth()`** — see the pixelation gotcha below.
+- **Scenery (per climate):** `prop-field.ts` runs one instance pool per model
+  (bush/rock/tree_fur/tree_stylized); each climate sets a per-model density and
+  the pool shows props whose fixed random rank is under it, re-evaluated only at
+  the far edge so scenery streams in with the ground seam (no mid-field pop).
 - **Ground:** `CreateGround 1200×1000` at `z=400` (wide enough that fullscreen
   doesn't show the left/right edges). Procedural meadow `DynamicTexture` 512px
   (trilinear + mips). 4 `GroundStyle`s: `painterly`, `flat`, `stripes`, `checker`.

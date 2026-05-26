@@ -8,6 +8,9 @@ export const SHIP_SIZE = 2.3;
 export const SHIP_START_Z = 50;
 export const SHIP_BANK_MAX = 0.4;
 export const SHIP_ACCEL = 7; // momentum ease rate (per sec): higher = snappier, lower = draggier
+export const DODGE_DURATION = 0.45; // barrel-roll dodge length (sec)
+export const DODGE_DASH = 0.8; // lateral burst on a dodge (fraction of SHIP_SPEED)
+export const DOUBLE_TAP_MS = 280; // max gap between taps to count as a double-tap
 export const CAMERA_BASE_LOCAL_X = -0.3;
 export const CAMERA_TEST_ROT = 0.35;
 export const CAMERA_Z_ROT = 0.02;
@@ -39,6 +42,8 @@ export interface SceneHandle {
     repeatPerSide: number,
     sampling?: TileSampling,
   ) => void;
+  /** Manual-mode scenery densities (used when no level plan is playing). */
+  setScenery: (densities: SceneryDensities) => void;
   setPixelScale: (level: number) => void;
   setPipelineMode: (mode: PipelineMode) => void;
   setRtHeight: (h: number) => void;
@@ -86,6 +91,8 @@ export interface ZonePlanEntry {
   skyI: number;
   azimuth: number;
   elevation: number;
+  shipLight: ShipLightingState;
+  scenery: SceneryDensities;
   lengthSec: number;
 }
 
@@ -124,6 +131,24 @@ export type TileSampling = "nearest" | "trilinear";
 export type PipelineMode = "direct" | "low-res-nearest" | "low-res-bilinear";
 
 export type LightingPreset = "noon" | "golden" | "overcast" | "dramatic" | "moonlit";
+
+/** Scenery models a climate can scatter. */
+export type SceneryKey = "bush" | "rock" | "tree_fur" | "tree_stylized";
+
+export interface SceneryModelSpec {
+  url: string;
+  targetH: number; // fit height in world units
+}
+
+export const SCENERY_MODELS: Record<SceneryKey, SceneryModelSpec> = {
+  bush: { url: "/models/environment/bush.glb", targetH: 5 },
+  rock: { url: "/models/environment/rocks_small.glb", targetH: 3 },
+  tree_fur: { url: "/models/environment/tree_fur.glb", targetH: 24 },
+  tree_stylized: { url: "/models/environment/tree_stylized.glb", targetH: 24 },
+};
+
+/** Per-model density (0..1) for a climate — fraction of each model's pool shown. */
+export type SceneryDensities = Partial<Record<SceneryKey, number>>;
 
 export interface LightingDef {
   sun: [number, number, number];

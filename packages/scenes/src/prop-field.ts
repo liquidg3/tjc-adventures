@@ -1,58 +1,97 @@
 import { Vector3, type Scene, type TransformNode } from "@babylonjs/core";
-import { FIELD_DEPTH, SCROLL } from "./scene-config";
+import {
+  FIELD_DEPTH,
+  SCENERY_MODELS,
+  SCROLL,
+  type SceneryDensities,
+  type SceneryKey,
+} from "./scene-config";
 import { dbg, dbgError } from "./debug";
 import { fitScale, loadModel } from "./ship-materials";
 
-export interface PropInstance {
+/**
+ * Streams scenery toward the camera. One instance pool per model; each instance
+ * has a fixed random `rank` (0..1) and is shown only where its model's climate
+ * density exceeds that rank. The density is read from the live climate at the
+ * instance's world-Z — but only re-evaluated when the instance recycles at the
+ * far edge, so scenery fades in/out at the horizon (in step with the ground
+ * climate seam) and never pops in mid-field.
+ */
+interface Prop {
   node: TransformNode;
-  speedMul: number;
+  key: SceneryKey;
+  rank: number;
+  enabled: boolean;
 }
 
 export interface PropFieldController {
-  props: PropInstance[];
-  scatter: (url: string, count: number, targetH: number) => Promise<void>;
+  loadScenery: (perModel: number) => Promise<void>;
+  setDensityProvider: (fn: (z: number) => SceneryDensities) => void;
   update: (dt: number) => void;
 }
 
 export function createPropFieldController(scene: Scene): PropFieldController {
-  const props: PropInstance[] = [];
+  const props: Prop[] = [];
+  let densityAt: (z: number) => SceneryDensities = () => ({});
 
-  async function scatter(url: string, count: number, targetH: number) {
-    const template = await loadModel(url, scene);
-    if (!template) {
-      dbgError("prop failed", url);
-      return;
+  function place(node: TransformNode) {
+    node.position.set((Math.random() * 2 - 1) * 70, 0, Math.random() * FIELD_DEPTH);
+    node.rotation = new Vector3(0, Math.random() * Math.PI * 2, 0);
+  }
+
+  function evaluate(p: Prop) {
+    const d = densityAt(p.node.position.z)[p.key] ?? 0;
+    const on = p.rank < d;
+    if (on !== p.enabled) {
+      p.node.setEnabled(on);
+      p.enabled = on;
     }
-    const s = fitScale(template, targetH);
-    const nodes: TransformNode[] = [template];
-    for (let i = 1; i < count; i++) {
-      const inst = template.instantiateHierarchy(null);
-      if (inst) nodes.push(inst as TransformNode);
+  }
+
+  async function loadScenery(perModel: number) {
+    for (const key of Object.keys(SCENERY_MODELS) as SceneryKey[]) {
+      const spec = SCENERY_MODELS[key];
+      const template = await loadModel(spec.url, scene);
+      if (!template) {
+        dbgError("scenery failed", spec.url);
+        continue;
+      }
+      const s = fitScale(template, spec.targetH);
+      const nodes: TransformNode[] = [template];
+      for (let i = 1; i < perModel; i++) {
+        const inst = template.instantiateHierarchy(null);
+        if (inst) nodes.push(inst as TransformNode);
+      }
+      for (const node of nodes) {
+        node.scaling.setAll(s);
+        place(node);
+        for (const m of node.getChildMeshes()) m.receiveShadows = true; // catch the ship's shadow
+        const p: Prop = { node, key, rank: Math.random(), enabled: true };
+        node.setEnabled(false);
+        p.enabled = false;
+        evaluate(p);
+        props.push(p);
+      }
     }
-    for (const node of nodes) {
-      node.scaling.setAll(s);
-      placeProp(node);
-      // props catch the ship's shadow (otherwise it slides under the rocks)
-      for (const mesh of node.getChildMeshes()) mesh.receiveShadows = true;
-      props.push({ node, speedMul: 0.9 + Math.random() * 0.2 });
-    }
-    dbg("prop scattered", { url, count: nodes.length, scale: s });
+    dbg("scenery loaded", { models: Object.keys(SCENERY_MODELS).length, perModel });
+  }
+
+  function setDensityProvider(fn: (z: number) => SceneryDensities) {
+    densityAt = fn;
   }
 
   function update(dt: number) {
-    for (const prop of props) {
-      prop.node.position.z -= SCROLL * dt;
-      if (prop.node.position.z < -40) {
-        prop.node.position.z += FIELD_DEPTH;
-        prop.node.position.x = (Math.random() * 2 - 1) * 70;
+    const move = SCROLL * dt;
+    for (const p of props) {
+      p.node.position.z -= move;
+      if (p.node.position.z < -40) {
+        p.node.position.z += FIELD_DEPTH;
+        p.node.position.x = (Math.random() * 2 - 1) * 70;
+        p.node.rotation.y = Math.random() * Math.PI * 2;
+        evaluate(p); // re-fit to the climate only at the (off-screen) far edge
       }
     }
   }
 
-  return { props, scatter, update };
-}
-
-function placeProp(node: TransformNode) {
-  node.position.set((Math.random() * 2 - 1) * 70, 0, Math.random() * FIELD_DEPTH);
-  node.rotation = new Vector3(0, Math.random() * Math.PI * 2, 0);
+  return { loadScenery, setDensityProvider, update };
 }

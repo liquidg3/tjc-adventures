@@ -23,9 +23,11 @@ import {
   SHIP_START_Z,
   type CameraRotationMode,
   type GroundStyle,
+  type LevelPlan,
   type LightingPreset,
   type PipelineMode,
   type SceneHandle,
+  type SceneryDensities,
   type ShipLightingState,
   type TileSampling,
   type ZonePlanEntry,
@@ -43,6 +45,8 @@ export {
   type LightingPreset,
   type PipelineMode,
   type SceneHandle,
+  type SceneryDensities,
+  type SceneryKey,
   type ShipLightingState,
   type TileSampling,
   type ZonePlanEntry,
@@ -181,6 +185,9 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       applyLighting(r) {
         lighting.applyResolved(r);
       },
+      applyShipLighting(s) {
+        shipController.setShipLighting((state) => Object.assign(state, s));
+      },
     },
     { scrollSpeed: SCROLL, shipZ: SHIP_START_Z, seamFar: SEAM_FAR, seamNear: SEAM_NEAR },
   );
@@ -195,11 +202,20 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     },
   });
   const propField = createPropFieldController(scene);
+  // when a plan plays, scenery density is read per-region from the climate at
+  // each prop's world-Z; otherwise it's the manual set (the selected zone's)
+  let currentPlan: LevelPlan | null = null;
+  let manualScenery: SceneryDensities = { bush: 0.45, rock: 0.4, tree_fur: 0.3, tree_stylized: 0.3 };
+  propField.setDensityProvider((z) => {
+    if (currentPlan) {
+      const idx = sequencer.zoneIndexAtWorldZ(z);
+      if (idx != null) return currentPlan.zones[idx].scenery;
+    }
+    return manualScenery;
+  });
 
   shipController.loadInitialShip();
-  void propField.scatter("/models/environment/tree_fur.glb", 12, 24);
-  void propField.scatter("/models/environment/tree_stylized.glb", 12, 24);
-  void propField.scatter("/models/environment/rocks_small.glb", 30, 3);
+  void propField.loadScenery(24);
 
   // ── render pipeline (pixel-art spike) ────────────────────────────────────
   // Two knobs decide the look:
@@ -310,6 +326,9 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       groundA.setTile(url, repeatPerSide, sampling);
       aKey = "";
     },
+    setScenery(densities) {
+      manualScenery = densities;
+    },
     setPixelScale(level) {
       applyPixelScale(level);
     },
@@ -383,6 +402,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       return lighting.getLightingState();
     },
     setLevelPlan(plan) {
+      currentPlan = plan;
       sequencer.setPlan(plan);
       if (!plan) hideTransition(); // back to manual: drop the incoming layer
     },

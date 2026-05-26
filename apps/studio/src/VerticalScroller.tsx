@@ -11,8 +11,10 @@ import {
   PIPELINE_MODES,
   PIXEL_LEVELS,
   RT_HEIGHTS,
+  SCENERY_PRESETS,
   buildDefaultsFromState,
   createInitialState,
+  findScenery,
   findTile,
   mergeDefaults,
   readHashParams,
@@ -166,16 +168,8 @@ export function VerticalScroller() {
     handle.setPixelScale(state.values.pixelLevel);
     handle.setRtHeight(state.values.rtHeight);
     handle.setPipelineMode(state.values.pipelineMode);
-    handle.setShipLightDirectIntensity(state.values.shipLight.directIntensity);
-    handle.setShipLightEnvironmentIntensity(state.values.shipLight.environmentIntensity);
-    handle.setShipLightRoughness(state.values.shipLight.roughness);
-    handle.setShipLightSpecularIntensity(state.values.shipLight.specularIntensity);
-    handle.setShipLightExposure(state.values.shipLight.exposure);
-    handle.setShipLightContrast(state.values.shipLight.contrast);
-    handle.setShipLightAlbedoBoost(state.values.shipLight.albedoBoost);
-    handle.setShipLightAmbientStrength(state.values.shipLight.ambientStrength);
-    // While a level is playing, the zone sequencer owns ground + lighting; the
-    // manual look only drives the scene when stopped (showing the selected zone).
+    // While a level is playing, the zone sequencer owns ground + lighting (sun
+    // and ship); the manual look only drives the scene when stopped.
     if (!state.playing) {
       if (state.values.groundTile == null) {
         handle.setGroundStyle(state.values.ground);
@@ -194,6 +188,14 @@ export function VerticalScroller() {
       handle.setSkyIntensity(state.values.skyI);
       handle.setSunAzimuth(state.values.azimuth);
       handle.setSunElevation(state.values.elevation);
+      handle.setShipLightDirectIntensity(state.values.shipLight.directIntensity);
+      handle.setShipLightEnvironmentIntensity(state.values.shipLight.environmentIntensity);
+      handle.setShipLightRoughness(state.values.shipLight.roughness);
+      handle.setShipLightSpecularIntensity(state.values.shipLight.specularIntensity);
+      handle.setShipLightExposure(state.values.shipLight.exposure);
+      handle.setShipLightContrast(state.values.shipLight.contrast);
+      handle.setShipLightAlbedoBoost(state.values.shipLight.albedoBoost);
+      handle.setShipLightAmbientStrength(state.values.shipLight.ambientStrength);
     }
   }, [state.values, state.playing]);
 
@@ -203,6 +205,12 @@ export function VerticalScroller() {
     if (!h) return;
     h.setLevelPlan(state.playing ? toLevelPlan(state.zones, state.blendSec) : null);
   }, [state.playing, state.zones, state.blendSec]);
+
+  // manual scenery (when not playing) follows the selected zone
+  useEffect(() => {
+    if (state.playing) return;
+    sceneRef.current?.setScenery(findScenery(state.zones[state.selectedZone]?.scenery ?? "").densities);
+  }, [state.playing, state.zones, state.selectedZone]);
 
   useEffect(() => {
     if (!state.hydrated) return;
@@ -326,6 +334,9 @@ export function VerticalScroller() {
         </Panel>
 
         <Panel id="ship-lighting" title="Ship Lighting" className="lighting-panel" open={state.openLeft === "ship-lighting"} onToggle={toggleLeft}>
+          <p className="zone-editing">
+            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
+          </p>
           <div className="light-sliders">
             <LightSlider label="Direct" title="How strongly the sun hits the ship" value={state.values.shipLight.directIntensity} min={0} max={6} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { directIntensity: v } })} />
             <LightSlider label="Env" title="Environment / ambient contribution on the ship" value={state.values.shipLight.environmentIntensity} min={0} max={1} step={0.01} onChange={(v) => dispatch({ type: "set-ship-light", patch: { environmentIntensity: v } })} />
@@ -538,6 +549,30 @@ export function VerticalScroller() {
                 elevation: state.values.elevation,
               }))
             }
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel id="scenery" title="Scenery" className="ground-panel" open={state.openRight === "scenery"} onToggle={toggleRight}>
+          <p className="zone-editing">
+            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
+          </p>
+          <div className="camera-test-buttons">
+            {SCENERY_PRESETS.map((sc) => (
+              <button
+                key={sc.id}
+                type="button"
+                className={sc.id === state.zones[state.selectedZone]?.scenery ? "active" : ""}
+                onClick={() => dispatch({ type: "set-scenery", scenery: sc.id })}
+              >
+                {sc.label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, zones: state.zones }))}
           >
             Save Defaults
           </button>
