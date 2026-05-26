@@ -4,7 +4,9 @@ import {
   type CameraRotationMode,
   type GroundStyle,
   type LightingPreset,
+  type PipelineMode,
   type ShipLightingState,
+  type TileSampling,
 } from "@tjc/scenes";
 
 export interface VerticalValues {
@@ -12,7 +14,13 @@ export interface VerticalValues {
   altitude: number;
   shipSize: number;
   ground: GroundStyle;
+  /** null = procedural ground per `ground`; non-null = path to a pixel-art PNG tile. */
+  groundTile: string | null;
+  /** How many times the pixel-tile repeats across the ground plane each side. */
+  tileRepeat: number;
   pixelLevel: number;
+  pipelineMode: PipelineMode;
+  rtHeight: number;
   lighting: LightingPreset;
   sunI: number;
   skyI: number;
@@ -52,7 +60,11 @@ export const DEFAULT_VERTICAL_DEFAULTS: VerticalDefaults = {
   altitude: SHIP_HEIGHT,
   shipSize: SHIP_SIZE,
   ground: "painterly",
+  groundTile: null,
+  tileRepeat: 32,
   pixelLevel: 1,
+  pipelineMode: "direct",
+  rtHeight: 270,
   lighting: "dramatic",
   sunI: 2.8,
   skyI: 0.2,
@@ -85,6 +97,55 @@ export const PIXEL_LEVELS: Array<{ level: number; label: string }> = [
   { level: 3, label: "3×" },
   { level: 4, label: "4×" },
 ];
+
+export const PIPELINE_MODES: Array<{ id: PipelineMode; label: string }> = [
+  { id: "direct", label: "Direct" },
+  { id: "low-res-nearest", label: "Low-res · Nearest" },
+  { id: "low-res-bilinear", label: "Low-res · Bilinear" },
+];
+
+export const RT_HEIGHTS: Array<{ h: number; label: string }> = [
+  { h: 180, label: "320×180" },
+  { h: 270, label: "480×270" },
+  { h: 360, label: "640×360" },
+  { h: 540, label: "960×540" },
+];
+
+/**
+ * Ground tile catalog. `sampling` decides the filter mode the scene loads with:
+ * "nearest" preserves every texel as a square (pixel-art tiles); "trilinear"
+ * smooths the texture with mips (photoreal / painterly textures).
+ * `defaultRepeat` is just the suggested starting point on the Repeat slider —
+ * the slider then lets you push it either direction.
+ * Once a tile is chosen as canon, copy it under apps/game-client/public/textures/
+ * so the game-client app can load it too.
+ */
+export interface GroundTile {
+  id: string;
+  label: string;
+  url: string;
+  sampling: TileSampling;
+  defaultRepeat: number;
+  attribution: string;
+}
+
+export const GROUND_TILES: GroundTile[] = [
+  // Pixel-art (procedurally generated earlier in this session — kept for spike comparison)
+  { id: "meadow-classic", label: "Meadow · Classic", url: "/textures/grass/meadow-classic.png", sampling: "nearest", defaultRepeat: 32, attribution: "Generated" },
+  { id: "meadow-tufted", label: "Meadow · Tufted", url: "/textures/grass/meadow-tufted.png", sampling: "nearest", defaultRepeat: 32, attribution: "Generated" },
+  { id: "meadow-sparse", label: "Meadow · Sparse", url: "/textures/grass/meadow-sparse.png", sampling: "nearest", defaultRepeat: 32, attribution: "Generated" },
+  // Real CC0 textures — photoreal (Poly Haven) + hand-painted (OpenGameArt)
+  { id: "aerial-grass-rock", label: "Aerial Grass Rock", url: "/textures/ground/aerial-grass-rock.jpg", sampling: "trilinear", defaultRepeat: 6, attribution: "Poly Haven · CC0" },
+  { id: "sparse-grass", label: "Sparse Grass", url: "/textures/ground/sparse-grass.jpg", sampling: "trilinear", defaultRepeat: 6, attribution: "Poly Haven · CC0" },
+  { id: "grass-path", label: "Grass Path", url: "/textures/ground/grass-path.jpg", sampling: "trilinear", defaultRepeat: 6, attribution: "Poly Haven · CC0" },
+  { id: "painted-grass", label: "Painted Grass", url: "/textures/ground/painted-grass.png", sampling: "trilinear", defaultRepeat: 8, attribution: "OpenGameArt · CC0" },
+  { id: "seamless-grass", label: "Seamless Grass", url: "/textures/ground/seamless-grass.jpg", sampling: "trilinear", defaultRepeat: 6, attribution: "OpenGameArt · CC0" },
+];
+
+export function findTile(url: string | null): GroundTile | undefined {
+  if (url == null) return undefined;
+  return GROUND_TILES.find((t) => t.url === url);
+}
 
 export const LIGHTING_PRESETS: Array<{ id: LightingPreset; label: string }> = [
   { id: "noon", label: "Noon" },
@@ -133,7 +194,11 @@ function readValuesFromHash(params: URLSearchParams): VerticalValues {
     altitude: readNumber(params, "altitude", DEFAULT_VERTICAL_DEFAULTS.altitude),
     shipSize: readNumber(params, "shipSize", DEFAULT_VERTICAL_DEFAULTS.shipSize),
     ground: readEnum(params, "ground", GROUND_STYLES.map((v) => v.id), DEFAULT_VERTICAL_DEFAULTS.ground),
+    groundTile: params.get("tile") ?? DEFAULT_VERTICAL_DEFAULTS.groundTile,
+    tileRepeat: readNumber(params, "tileRepeat", DEFAULT_VERTICAL_DEFAULTS.tileRepeat),
     pixelLevel: readNumber(params, "pixel", DEFAULT_VERTICAL_DEFAULTS.pixelLevel),
+    pipelineMode: readEnum(params, "pipe", PIPELINE_MODES.map((v) => v.id), DEFAULT_VERTICAL_DEFAULTS.pipelineMode),
+    rtHeight: readNumber(params, "rth", DEFAULT_VERTICAL_DEFAULTS.rtHeight),
     lighting: readEnum(params, "lighting", LIGHTING_PRESETS.map((v) => v.id), DEFAULT_VERTICAL_DEFAULTS.lighting),
     sunI: readNumber(params, "sun", DEFAULT_VERTICAL_DEFAULTS.sunI),
     skyI: readNumber(params, "sky", DEFAULT_VERTICAL_DEFAULTS.skyI),
@@ -184,7 +249,11 @@ function patchValuesFromDefaults(values: VerticalValues, defaults: VerticalDefau
     altitude: params.has("altitude") ? values.altitude : defaults.altitude,
     shipSize: params.has("shipSize") ? values.shipSize : defaults.shipSize,
     ground: params.has("ground") ? values.ground : defaults.ground,
+    groundTile: params.has("tile") ? values.groundTile : defaults.groundTile,
+    tileRepeat: params.has("tileRepeat") ? values.tileRepeat : defaults.tileRepeat,
     pixelLevel: params.has("pixel") ? values.pixelLevel : defaults.pixelLevel,
+    pipelineMode: params.has("pipe") ? values.pipelineMode : defaults.pipelineMode,
+    rtHeight: params.has("rth") ? values.rtHeight : defaults.rtHeight,
     lighting: params.has("lighting") ? values.lighting : defaults.lighting,
     sunI: params.has("sun") ? values.sunI : defaults.sunI,
     skyI: params.has("sky") ? values.skyI : defaults.skyI,
@@ -215,7 +284,11 @@ export type VerticalAction =
   | { type: "set-camera-mode"; mode: CameraRotationMode }
   | { type: "set-altitude"; altitude: number }
   | { type: "set-ground"; ground: GroundStyle }
+  | { type: "set-ground-tile"; tile: string | null }
+  | { type: "set-tile-repeat"; repeat: number }
   | { type: "set-pixel-level"; pixelLevel: number }
+  | { type: "set-pipeline-mode"; mode: PipelineMode }
+  | { type: "set-rt-height"; h: number }
   | { type: "set-lighting-preset"; lighting: LightingPreset }
   | { type: "sync-lighting-from-scene"; sunI: number; skyI: number; azimuth: number; elevation: number }
   | { type: "set-ship-size"; shipSize: number }
@@ -270,9 +343,34 @@ export function verticalScrollerReducer(
     case "set-altitude":
       return { ...state, values: { ...state.values, altitude: action.altitude } };
     case "set-ground":
-      return { ...state, values: { ...state.values, ground: action.ground } };
+      // Picking a procedural style implicitly drops out of pixel-tile mode so
+      // the procedural style is actually visible (the scene reverts too).
+      return {
+        ...state,
+        values: { ...state.values, ground: action.ground, groundTile: null },
+      };
+    case "set-ground-tile": {
+      // Switching tiles also resets the Repeat slider to the new tile's
+      // recommended starting point (pixel tiles want ~32 repeats across the
+      // ground, photoreal tiles want ~6). User can still drag from there.
+      const tile = findTile(action.tile);
+      return {
+        ...state,
+        values: {
+          ...state.values,
+          groundTile: action.tile,
+          tileRepeat: tile ? tile.defaultRepeat : state.values.tileRepeat,
+        },
+      };
+    }
+    case "set-tile-repeat":
+      return { ...state, values: { ...state.values, tileRepeat: action.repeat } };
     case "set-pixel-level":
       return { ...state, values: { ...state.values, pixelLevel: action.pixelLevel } };
+    case "set-pipeline-mode":
+      return { ...state, values: { ...state.values, pipelineMode: action.mode } };
+    case "set-rt-height":
+      return { ...state, values: { ...state.values, rtHeight: action.h } };
     case "set-lighting-preset":
       return { ...state, values: { ...state.values, lighting: action.lighting } };
     case "sync-lighting-from-scene":
@@ -316,7 +414,11 @@ export function verticalScrollerReducer(
           altitude: state.savedDefaults.altitude,
           shipSize: getDefaultShipSize(state.playerShipUrl, state.savedDefaults.shipSizeByModel, state.savedDefaults),
           ground: state.savedDefaults.ground,
+          groundTile: state.savedDefaults.groundTile,
+          tileRepeat: state.savedDefaults.tileRepeat,
           pixelLevel: state.savedDefaults.pixelLevel,
+          pipelineMode: state.savedDefaults.pipelineMode,
+          rtHeight: state.savedDefaults.rtHeight,
           lighting: state.savedDefaults.lighting,
           sunI: state.savedDefaults.sunI,
           skyI: state.savedDefaults.skyI,
@@ -341,7 +443,11 @@ export function serializeVerticalHash(values: VerticalValues) {
   params.set("altitude", values.altitude.toFixed(2));
   params.set("shipSize", values.shipSize.toFixed(2));
   params.set("ground", values.ground);
+  if (values.groundTile != null) params.set("tile", values.groundTile);
+  params.set("tileRepeat", String(values.tileRepeat));
   params.set("pixel", String(values.pixelLevel));
+  params.set("pipe", values.pipelineMode);
+  params.set("rth", String(values.rtHeight));
   params.set("lighting", values.lighting);
   params.set("sun", values.sunI.toFixed(2));
   params.set("sky", values.skyI.toFixed(2));

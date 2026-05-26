@@ -26,8 +26,10 @@ import {
   type CameraRotationMode,
   type GroundStyle,
   type LightingPreset,
+  type PipelineMode,
   type SceneHandle,
   type ShipLightingState,
+  type TileSampling,
 } from "./scene-config";
 import { createShipController } from "./ship-controller";
 
@@ -37,8 +39,10 @@ export {
   type CameraRotationMode,
   type GroundStyle,
   type LightingPreset,
+  type PipelineMode,
   type SceneHandle,
   type ShipLightingState,
+  type TileSampling,
 } from "./scene-config";
 
 /**
@@ -104,6 +108,53 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   ground.material = groundMat;
   ground.receiveShadows = true;
 
+  // Image-backed ground texture that overrides the procedural DynamicTexture
+  // when set. Two sampling regimes:
+  //   nearest   — pixel-art tiles; mipmaps disabled so every texel stays a square
+  //   trilinear — photoreal/painterly; mipmaps on, bilinear-filtered (avoids
+  //               aliasing as the camera tilts toward the horizon)
+  // Idempotent: same URL + same sampling → only the repeat scale updates,
+  // so dragging the Repeat slider doesn't reload the PNG every tick.
+  let tileTex: Texture | null = null;
+  let tileUrl: string | null = null;
+  let tileSampling: TileSampling | null = null;
+  function applyTile(
+    url: string | null,
+    repeatPerSide: number,
+    sampling: TileSampling = "nearest",
+  ) {
+    if (!url) {
+      if (tileTex) {
+        tileTex.dispose();
+        tileTex = null;
+        tileUrl = null;
+        tileSampling = null;
+      }
+      groundMat.diffuseTexture = groundTex;
+      return;
+    }
+    if (url === tileUrl && sampling === tileSampling && tileTex) {
+      tileTex.uScale = repeatPerSide;
+      tileTex.vScale = repeatPerSide;
+      return;
+    }
+    if (tileTex) tileTex.dispose();
+    const noMipmap = sampling === "nearest";
+    const mode =
+      sampling === "nearest"
+        ? Texture.NEAREST_SAMPLINGMODE
+        : Texture.TRILINEAR_SAMPLINGMODE;
+    const t = new Texture(url, scene, noMipmap, /* invertY */ true, mode);
+    t.wrapU = Texture.WRAP_ADDRESSMODE;
+    t.wrapV = Texture.WRAP_ADDRESSMODE;
+    t.uScale = repeatPerSide;
+    t.vScale = repeatPerSide;
+    tileTex = t;
+    tileUrl = url;
+    tileSampling = sampling;
+    groundMat.diffuseTexture = t;
+  }
+
   let shipHeight = SHIP_HEIGHT; // runtime-adjustable via the Ship Altitude slider
   const shipController = createShipController(scene, {
     addCaster(mesh) {
@@ -120,17 +171,52 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   void propField.scatter("/models/environment/tree_stylized.glb", 12, 24);
   void propField.scatter("/models/environment/rocks_small.glb", 30, 3);
 
+  // ── render pipeline (pixel-art spike) ────────────────────────────────────
+  // Two knobs decide the look:
+  //   pipelineMode  — direct (no pixelation) / low-res-nearest / low-res-bilinear
+  //   rtHeight      — target render-buffer height when in a low-res mode
+  // Hardware scaling shrinks the WebGL buffer to (rtHeight × aspect), and the
+  // canvas CSS `image-rendering` decides how the browser upscales it. The
+  // ground texture's sampling mode flips with the pipeline so trilinear
+  // filtering doesn't re-mush the pixels we just committed to.
   let pixelScale = 1;
+  let pipelineMode: PipelineMode = "direct";
+  let rtHeight = 270;
+
+  function applyPipeline() {
+    if (pipelineMode === "direct") {
+      canvas.style.imageRendering = "auto";
+      engine.setHardwareScalingLevel(pixelScale);
+      groundTex.updateSamplingMode(Texture.TRILINEAR_SAMPLINGMODE);
+      return;
+    }
+    const cssH = canvas.clientHeight || rtHeight;
+    const scale = Math.max(1, cssH / rtHeight);
+    engine.setHardwareScalingLevel(scale);
+    canvas.style.imageRendering =
+      pipelineMode === "low-res-nearest" ? "pixelated" : "auto";
+    groundTex.updateSamplingMode(
+      pipelineMode === "low-res-nearest"
+        ? Texture.NEAREST_SAMPLINGMODE
+        : Texture.TRILINEAR_SAMPLINGMODE,
+    );
+  }
+
   function applyPixelScale(level: number) {
     pixelScale = level;
-    engine.setHardwareScalingLevel(level);
+    applyPipeline();
   }
   function togglePixel() {
-    applyPixelScale(pixelScale > 1 ? 1 : 3);
+    pipelineMode =
+      pipelineMode === "low-res-nearest" ? "direct" : "low-res-nearest";
+    applyPipeline();
   }
   const input = createInputController(togglePixel);
 
-  const onResize = () => engine.resize();
+  const onResize = () => {
+    engine.resize();
+    applyPipeline(); // rtHeight is relative to canvas height — recompute scale
+  };
   window.addEventListener("resize", onResize);
 
   // --- loop ---
@@ -156,7 +242,8 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     // scroll the meadow + stream scenery toward the camera
     // scroll the texture to match prop world-speed for the CURRENT tiling
     // (1 texture tile spans groundDepth/vScale world units; ground depth = 1000)
-    groundTex.vOffset = (groundTex.vOffset + (dt * SCROLL * groundTex.vScale) / 1000) % 1;
+    const activeTex = tileTex ?? groundTex;
+    activeTex.vOffset = (activeTex.vOffset + (dt * SCROLL * activeTex.vScale) / 1000) % 1;
     propField.update(dt);
 
     scene.render();
@@ -184,10 +271,22 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       shipController.resetShip();
     },
     setGroundStyle(style) {
+      applyTile(null, 0); // any procedural style implicitly drops tile mode
       paintGround(style);
+    },
+    setGroundTile(url, repeatPerSide, sampling = "nearest") {
+      applyTile(url, repeatPerSide, sampling);
     },
     setPixelScale(level) {
       applyPixelScale(level);
+    },
+    setPipelineMode(mode) {
+      pipelineMode = mode;
+      applyPipeline();
+    },
+    setRtHeight(h) {
+      rtHeight = Math.max(60, h);
+      applyPipeline();
     },
     setLightingPreset(preset) {
       lighting.applyPreset(preset);

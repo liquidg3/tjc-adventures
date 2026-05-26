@@ -6,10 +6,14 @@ import {
 import {
   CAMERA_ROTATIONS,
   GROUND_STYLES,
+  GROUND_TILES,
   LIGHTING_PRESETS,
+  PIPELINE_MODES,
   PIXEL_LEVELS,
+  RT_HEIGHTS,
   buildDefaultsFromState,
   createInitialState,
+  findTile,
   mergeDefaults,
   readHashParams,
   serializeVerticalHash,
@@ -157,8 +161,21 @@ export function VerticalScroller() {
     handle.setCameraRotationMode(state.values.cameraMode);
     handle.setShipHeight(state.values.altitude);
     handle.setShipSize(state.values.shipSize);
-    handle.setGroundStyle(state.values.ground);
+    // Apply ground last so groundTile overrides the procedural setGroundStyle.
+    if (state.values.groundTile == null) {
+      handle.setGroundStyle(state.values.ground);
+      handle.setGroundTile(null, state.values.tileRepeat, "nearest");
+    } else {
+      const tile = findTile(state.values.groundTile);
+      handle.setGroundTile(
+        state.values.groundTile,
+        state.values.tileRepeat,
+        tile?.sampling ?? "nearest",
+      );
+    }
     handle.setPixelScale(state.values.pixelLevel);
+    handle.setRtHeight(state.values.rtHeight);
+    handle.setPipelineMode(state.values.pipelineMode);
     handle.setSunIntensity(state.values.sunI);
     handle.setSkyIntensity(state.values.skyI);
     handle.setSunAzimuth(state.values.azimuth);
@@ -345,21 +362,69 @@ export function VerticalScroller() {
       {/* right-side controls */}
       <div className="control-stack">
         <Panel id="ground" title="Ground" className="ground-panel" open={state.openRight === "ground"} onToggle={toggleRight}>
+          <p className="pos-hint" style={{ margin: "0 0 6px" }}>Procedural styles</p>
           <div className="camera-test-buttons">
             {GROUND_STYLES.map((g) => (
               <button
                 key={g.id}
                 type="button"
-                className={g.id === state.values.ground ? "active" : ""}
+                className={
+                  g.id === state.values.ground && state.values.groundTile == null ? "active" : ""
+                }
                 onClick={() => dispatch({ type: "set-ground", ground: g.id })}
               >
                 {g.label}
               </button>
             ))}
           </div>
+          <p className="pos-hint" style={{ margin: "10px 0 6px" }}>Pixel tiles (nearest sampling)</p>
+          <div className="camera-test-buttons">
+            {GROUND_TILES.filter((t) => t.sampling === "nearest").map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                title={t.attribution}
+                className={t.url === state.values.groundTile ? "active" : ""}
+                onClick={() => dispatch({ type: "set-ground-tile", tile: t.url })}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <p className="pos-hint" style={{ margin: "10px 0 6px" }}>Real textures (bilinear + mips)</p>
+          <div className="camera-test-buttons">
+            {GROUND_TILES.filter((t) => t.sampling === "trilinear").map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                title={t.attribution}
+                className={t.url === state.values.groundTile ? "active" : ""}
+                onClick={() => dispatch({ type: "set-ground-tile", tile: t.url })}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <LightSlider
+            label="Repeat"
+            title="How many times the tile repeats across the ground each side. Larger = smaller-looking tiles. Pixel tiles want ~32; real textures want ~6."
+            value={state.values.tileRepeat}
+            min={1}
+            max={96}
+            step={1}
+            digits={0}
+            onChange={(v) => dispatch({ type: "set-tile-repeat", repeat: v })}
+          />
           <button
             className="panel-save"
-            onClick={() => saveDefaults((prev) => ({ ...prev, ground: state.values.ground }))}
+            onClick={() =>
+              saveDefaults((prev) => ({
+                ...prev,
+                ground: state.values.ground,
+                groundTile: state.values.groundTile,
+                tileRepeat: state.values.tileRepeat,
+              }))
+            }
           >
             Save Defaults
           </button>
@@ -417,6 +482,57 @@ export function VerticalScroller() {
           <button
             className="panel-save"
             onClick={() => saveDefaults((prev) => ({ ...prev, pixelLevel: state.values.pixelLevel }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
+        <Panel
+          id="render-pipeline"
+          title="Render Pipeline"
+          open={state.openRight === "render-pipeline"}
+          onToggle={toggleRight}
+        >
+          <p className="pos-hint" style={{ margin: "0 0 6px" }}>
+            Pixel-art spike. Low-res = engine renders to a small buffer; mode
+            picks how the browser upscales. Nearest = crisp pixels.
+          </p>
+          <div className="camera-test-buttons">
+            {PIPELINE_MODES.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                className={m.id === state.values.pipelineMode ? "active" : ""}
+                onClick={() => dispatch({ type: "set-pipeline-mode", mode: m.id })}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <p className="pos-hint" style={{ margin: "10px 0 4px" }}>
+            Target render-buffer height (only used in low-res modes).
+          </p>
+          <div className="camera-test-buttons">
+            {RT_HEIGHTS.map((r) => (
+              <button
+                key={r.h}
+                type="button"
+                className={r.h === state.values.rtHeight ? "active" : ""}
+                onClick={() => dispatch({ type: "set-rt-height", h: r.h })}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="panel-save"
+            onClick={() =>
+              saveDefaults((prev) => ({
+                ...prev,
+                pipelineMode: state.values.pipelineMode,
+                rtHeight: state.values.rtHeight,
+              }))
+            }
           >
             Save Defaults
           </button>

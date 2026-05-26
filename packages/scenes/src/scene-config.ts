@@ -33,7 +33,14 @@ export interface SceneHandle {
   getShipPosition: () => { x: number; y: number; z: number } | null;
   resetShip: () => void;
   setGroundStyle: (style: GroundStyle) => void;
+  setGroundTile: (
+    url: string | null,
+    repeatPerSide: number,
+    sampling?: TileSampling,
+  ) => void;
   setPixelScale: (level: number) => void;
+  setPipelineMode: (mode: PipelineMode) => void;
+  setRtHeight: (h: number) => void;
   setLightingPreset: (preset: LightingPreset) => void;
   setSunIntensity: (v: number) => void;
   setSkyIntensity: (v: number) => void;
@@ -66,6 +73,24 @@ export type CameraRotationMode =
   | "rig-z";
 
 export type GroundStyle = "painterly" | "flat" | "stripes" | "checker";
+
+/**
+ * How the ground tile texture is sampled.
+ * - "nearest"   : pixel-art tiles; preserves every texel as a square.
+ * - "trilinear" : photoreal / painterly textures; smooth bilinear-with-mips
+ *                 (avoids ugly aliasing on photo content as the camera tilts).
+ */
+export type TileSampling = "nearest" | "trilinear";
+
+/**
+ * Render pipeline for the pixel-art aesthetic spike.
+ * - "direct"            : render at native canvas resolution (no pixelation).
+ * - "low-res-nearest"   : render to a low-res buffer; browser upscales with
+ *                         image-rendering: pixelated (crisp pixel-art).
+ * - "low-res-bilinear"  : same low-res render, but browser upscales bilinearly
+ *                         (the current "blurry" reading — kept as A/B baseline).
+ */
+export type PipelineMode = "direct" | "low-res-nearest" | "low-res-bilinear";
 
 export type LightingPreset = "noon" | "golden" | "overcast" | "dramatic" | "moonlit";
 
