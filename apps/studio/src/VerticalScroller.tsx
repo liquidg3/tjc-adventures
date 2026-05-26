@@ -18,6 +18,7 @@ import {
 } from "./vertical-scroller-state";
 
 const VERTICAL_DEFAULTS_URL = "/__vertical-defaults";
+const HASH_WRITE_DEBOUNCE_MS = 150;
 
 const ASSET_MAP_URL = "/__asset-map";
 
@@ -191,9 +192,12 @@ export function VerticalScroller() {
   useEffect(() => {
     if (!state.hydrated) return;
     const nextHash = serializeVerticalHash(state.values);
-    if (location.hash !== nextHash) {
-      history.replaceState(null, "", `${location.pathname}${location.search}${nextHash}`);
-    }
+    const id = window.setTimeout(() => {
+      if (location.hash !== nextHash) {
+        history.replaceState(null, "", `${location.pathname}${location.search}${nextHash}`);
+      }
+    }, HASH_WRITE_DEBOUNCE_MS);
+    return () => window.clearTimeout(id);
   }, [state.hydrated, state.values]);
 
   // live ship coordinates — fly to a spot you like and read off x/y/z
