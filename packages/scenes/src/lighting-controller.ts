@@ -9,6 +9,19 @@ import {
 } from "@babylonjs/core";
 import { LIGHTING, type LightingPreset } from "./scene-config";
 
+/** A fully concrete lighting state — what the sequencer lerps between. */
+export interface ResolvedLighting {
+  azimuth: number;
+  elevation: number;
+  sunI: number;
+  sunC: [number, number, number];
+  skyI: number;
+  skyC: [number, number, number];
+  groundC: [number, number, number];
+  clear: [number, number, number];
+  shadowDark: number;
+}
+
 export interface LightingController {
   sun: DirectionalLight;
   sky: HemisphericLight;
@@ -24,6 +37,14 @@ export interface LightingController {
     azimuth: number;
     elevation: number;
   };
+  /** Resolve a preset + sun overrides into a concrete lighting state (colors
+   *  come from the preset; intensity/angle from the overrides). */
+  resolve: (
+    preset: LightingPreset,
+    overrides: { sunI: number; skyI: number; azimuth: number; elevation: number },
+  ) => ResolvedLighting;
+  /** Apply a concrete lighting state outright (used by the zone sequencer). */
+  applyResolved: (r: ResolvedLighting) => void;
 }
 
 export function createLightingController(scene: Scene): LightingController {
@@ -90,6 +111,32 @@ export function createLightingController(scene: Scene): LightingController {
         azimuth: ((sunAz % 360) + 360) % 360,
         elevation: sunEl,
       };
+    },
+    resolve(preset, o) {
+      const p = LIGHTING[preset];
+      return {
+        azimuth: o.azimuth,
+        elevation: o.elevation,
+        sunI: o.sunI,
+        sunC: p.sunC,
+        skyI: o.skyI,
+        skyC: p.skyC,
+        groundC: p.groundC,
+        clear: p.clear,
+        shadowDark: p.shadowDark,
+      };
+    },
+    applyResolved(r) {
+      sunAz = r.azimuth;
+      sunEl = r.elevation;
+      applySunAngles();
+      sun.intensity = r.sunI;
+      sun.diffuse = Color3.FromArray(r.sunC);
+      sky.intensity = r.skyI;
+      sky.diffuse = Color3.FromArray(r.skyC);
+      sky.groundColor = Color3.FromArray(r.groundC);
+      scene.clearColor = new Color4(r.clear[0], r.clear[1], r.clear[2], 1);
+      shadowGen.setDarkness(r.shadowDark);
     },
   };
 }

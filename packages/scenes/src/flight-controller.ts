@@ -11,6 +11,7 @@ import {
   CAMERA_ROT_LERP,
   CAMERA_TEST_ROT,
   CAMERA_Z_ROT,
+  SHIP_ACCEL,
   SHIP_BANK_MAX,
   SHIP_SPEED,
   SHIP_YAW,
@@ -43,6 +44,8 @@ export function createFlightController(
 ): FlightController {
   let cameraRotationMode: CameraRotationMode = "camera-z";
   let roll = 0;
+  let velX = 0; // smoothed velocity (world units/s) — gives the ship momentum
+  let velZ = 0;
   const cameraRot = cameraBaseRot.clone();
   const cameraRotTarget = cameraBaseRot.clone();
   const rigRot = cameraRigBaseRot.clone();
@@ -61,24 +64,40 @@ export function createFlightController(
       const col = clamp(screen.x, 0, w);
       const row = clamp(screen.y, 0, h);
 
+      // momentum: ease velocity toward the held direction, so steering builds
+      // speed and releasing coasts to a stop with a little drag
+      const accel = Math.min(1, dt * SHIP_ACCEL);
+      velX += (input.vx * speed - velX) * accel;
+      velZ += (input.vz * speed - velZ) * accel;
+
       const nearEdge = pointOnFlightPlane(col, h).z;
       const farEdge = pointOnFlightPlane(col, 0).z;
       const loZ = isFinite(Math.min(nearEdge, farEdge)) ? Math.min(nearEdge, farEdge) : 2;
       const hiZ = isFinite(Math.max(nearEdge, farEdge)) ? Math.max(nearEdge, farEdge) : 60;
-      ship.position.z = clamp(ship.position.z + input.vz * speed * dt, loZ, hiZ);
+      const desiredZ = ship.position.z + velZ * dt;
+      const nextZ = clamp(desiredZ, loZ, hiZ);
+      if (nextZ !== desiredZ) velZ = 0; // hit the top/bottom edge — shed momentum
+      ship.position.z = nextZ;
 
       const leftEdge = pointOnFlightPlane(0, row).x;
       const rightEdge = pointOnFlightPlane(w, row).x;
       const loX = isFinite(Math.min(leftEdge, rightEdge)) ? Math.min(leftEdge, rightEdge) : -90;
       const hiX = isFinite(Math.max(leftEdge, rightEdge)) ? Math.max(leftEdge, rightEdge) : 90;
-      ship.position.x = clamp(ship.position.x + input.vx * speed * dt, loX, hiX);
+      const desiredX = ship.position.x + velX * dt;
+      const nextX = clamp(desiredX, loX, hiX);
+      if (nextX !== desiredX) velX = 0; // hit a side edge — shed momentum
+      ship.position.x = nextX;
 
       ship.position.y += (shipHeight - ship.position.y) * Math.min(1, dt * 6);
-      const targetRoll = -input.vx * SHIP_BANK_MAX;
+
+      // bank + camera lean follow the actual (smoothed) lateral velocity, so the
+      // ship rolls in as it accelerates and levels out as it coasts to a stop
+      const latFrac = clamp(velX / speed, -1, 1);
+      const targetRoll = -latFrac * SHIP_BANK_MAX;
       roll += (targetRoll - roll) * Math.min(1, dt * 10);
       if (shipPivot) shipPivot.rotation = new Vector3(0, SHIP_YAW, roll);
 
-      const testRot = -input.vx * CAMERA_TEST_ROT;
+      const testRot = -latFrac * CAMERA_TEST_ROT;
       cameraRotTarget.copyFrom(cameraBaseRot);
       rigRotTarget.copyFrom(cameraRigBaseRot);
       switch (cameraRotationMode) {
@@ -89,7 +108,7 @@ export function createFlightController(
           cameraRotTarget.y = cameraBaseRot.y + testRot;
           break;
         case "camera-z":
-          cameraRotTarget.z = cameraBaseRot.z + -input.vx * CAMERA_Z_ROT;
+          cameraRotTarget.z = cameraBaseRot.z + -latFrac * CAMERA_Z_ROT;
           break;
         case "rig-x":
           rigRotTarget.x = cameraRigBaseRot.x + testRot;

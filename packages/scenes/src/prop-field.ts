@@ -32,6 +32,8 @@ export function createPropFieldController(scene: Scene): PropFieldController {
     for (const node of nodes) {
       node.scaling.setAll(s);
       placeProp(node);
+      // props catch the ship's shadow (otherwise it slides under the rocks)
+      for (const mesh of node.getChildMeshes()) mesh.receiveShadows = true;
       props.push({ node, speedMul: 0.9 + Math.random() * 0.2 });
     }
     dbg("prop scattered", { url, count: nodes.length, scale: s });

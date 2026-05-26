@@ -7,6 +7,7 @@ export const SHIP_HEIGHT = 100;
 export const SHIP_SIZE = 2.3;
 export const SHIP_START_Z = 50;
 export const SHIP_BANK_MAX = 0.4;
+export const SHIP_ACCEL = 7; // momentum ease rate (per sec): higher = snappier, lower = draggier
 export const CAMERA_BASE_LOCAL_X = -0.3;
 export const CAMERA_TEST_ROT = 0.35;
 export const CAMERA_Z_ROT = 0.02;
@@ -61,6 +62,36 @@ export interface SceneHandle {
     azimuth: number;
     elevation: number;
   };
+  /** Load an auto-scrolling level plan (zones + blend), or null to return to
+   *  manual control (the scene shows whatever ground/lighting was last set). */
+  setLevelPlan: (plan: LevelPlan | null) => void;
+  /** Current zone while a plan is playing, or null when not sequencing. */
+  getZoneStatus: () => { index: number; name: string; progress: number } | null;
+}
+
+/**
+ * One zone's look + how long it holds before blending into the next. A zone is
+ * just a ground choice (procedural style or tile) plus a lighting setup; the
+ * sequencer cross-fades lighting between consecutive zones and swaps the ground
+ * at the seam.
+ */
+export interface ZonePlanEntry {
+  name: string;
+  ground: GroundStyle;
+  groundTile: string | null;
+  tileSampling: TileSampling;
+  tileRepeat: number;
+  lighting: LightingPreset;
+  sunI: number;
+  skyI: number;
+  azimuth: number;
+  elevation: number;
+  lengthSec: number;
+}
+
+export interface LevelPlan {
+  zones: ZonePlanEntry[];
+  blendSec: number;
 }
 
 export type CameraRotationMode =
@@ -123,3 +154,26 @@ export const DEFAULT_SHIP_LIGHTING: ShipLightingState = {
   albedoBoost: 1,
   ambientStrength: 0.16,
 };
+
+/**
+ * A preset's baseline sun sliders (intensity / sky-fill / azimuth / elevation),
+ * derived purely from its `LightingDef` — no Babylon scene needed. Picking a
+ * preset in the tuner seeds the sliders from this so it's a starting point you
+ * then nudge. (The sun direction → azimuth/elevation math mirrors the
+ * lighting-controller so the numbers agree.)
+ */
+export function presetSunDefaults(preset: LightingPreset): {
+  sunI: number;
+  skyI: number;
+  azimuth: number;
+  elevation: number;
+} {
+  const p = LIGHTING[preset];
+  const [x, y, z] = p.sun;
+  const len = Math.hypot(x, y, z) || 1;
+  const ny = y / len;
+  const elevation = Math.round((Math.asin(Math.max(-1, Math.min(1, -ny))) * 180) / Math.PI);
+  const azimuthRaw = Math.round((Math.atan2(-x / len, -z / len) * 180) / Math.PI);
+  const azimuth = ((azimuthRaw % 360) + 360) % 360;
+  return { sunI: p.sunI, skyI: p.skyI, azimuth, elevation };
+}

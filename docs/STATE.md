@@ -66,6 +66,8 @@ packages/scenes/
   src/lighting-controller.ts sun/sky/shadow preset + live sun controls
   src/prop-field.ts        prop scatter + recycling controller
   src/ground-texture.ts    procedural meadow painter
+  src/ground-layer.ts      one scrolling ground (style/tile + scroll + clip); the scene runs two for climate wipes
+  src/zone-sequencer.ts    scroll-distance track of zones; climate boundaries drift in at scroll speed, lighting cross-fades
   src/ship-materials.ts    model loading + imported-material normalization
   src/debug.ts             flaggable logging: dbg()/dbgWarn()/dbgError(); on in dev or with ?debug
   src/index.ts             re-exports ship-scene
@@ -73,7 +75,8 @@ packages/scenes/
 apps/studio/               ★ THE TUNER (port 5174) — primary surface
   src/Home.tsx             launcher: section cards → models | vertical | side | race
   src/App.tsx              section router (Home ↔ a section)
-  src/VerticalScroller.tsx the scene + collapsible tuning panels (camera/ship/ground/lighting/pixel)
+  src/VerticalScroller.tsx the scene + collapsible tuning panels (zone plan / camera / ship / ground / lighting / pixel)
+  src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
   src/ModelsBoard.tsx      3D Models board: a slot per game asset, grouped by category
   src/SlotCard.tsx         one slot: dropdown + live preview
   src/ModelPreview.tsx     orbit preview; lazy-mounts a Babylon engine ONLY when on screen + under budget
@@ -110,7 +113,8 @@ A tilted 2.5D vertical scroller (Raiden-style). `createShipScene(canvas)` return
 ```
 dispose, setCameraRotationMode, setShipHeight, setShipSize, getShipPosition,
 resetShip, setGroundStyle, setPixelScale, setLightingPreset,
-setSunIntensity, setSkyIntensity, setSunAzimuth, setSunElevation, getLightingState
+setSunIntensity, setSkyIntensity, setSunAzimuth, setSunElevation, getLightingState,
+setLevelPlan, getZoneStatus  (+ setGroundTile, setPipelineMode, setRtHeight, ship-light setters)
 ```
 
 **Structure after the refactor:**
@@ -122,6 +126,23 @@ setSunIntensity, setSkyIntensity, setSunAzimuth, setSunElevation, getLightingSta
 - `prop-field.ts` owns scatter/recycle behavior for environment props.
 - `ground-texture.ts` owns the procedural meadow painter.
 - `ship-materials.ts` owns imported-model loading and material normalization.
+- `ground-layer.ts` is one scrolling ground; the scene runs two so a climate can
+  wipe in across the field via a moving clip seam.
+- `zone-sequencer.ts` runs a `LevelPlan` as a scroll-distance track.
+
+**Zone plan (level sequencer).** `setLevelPlan({ zones })` runs an auto-scrolling
+track: the ship advances at `SCROLL`, each zone (climate) occupies `lengthSec` of
+travel, and zone boundaries are marks on the track that map to a world-Z and drift
+toward the camera **at scroll speed** — a boundary is a real line you fly through,
+drawn by clipping a second `ground-layer` to the far side of the seam. Lighting
+cross-fades as the seam crosses the field. `getZoneStatus()` reports the current
+zone; pass `null` to return to manual control. In the Studio, the **Zone Plan**
+panel owns the zone list, and the **selected zone is mirrored into the live look**
+so the existing **Ground** + **Lighting** panels edit it (no duplicate controls).
+Zones persist in `vertical-defaults.json` (`blendSec` is vestigial — the
+transition speed is the scroll speed). Default plan = Meadow → Woodland → Canyon →
+Approach (see `docs/prototype-meadow-run.md`). While a plan plays the sequencer
+owns ground + lighting; the manual panels drive the scene only when stopped.
 
 **Current tunables (constants at the top of the file):**
 

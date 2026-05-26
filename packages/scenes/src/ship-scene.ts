@@ -6,16 +6,13 @@ import {
   Matrix,
   Color3,
   Color4,
-  MeshBuilder,
-  StandardMaterial,
-  DynamicTexture,
   Texture,
   TransformNode,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF"; // registers the .glb loader
 import { dbg } from "./debug";
 import { createFlightController } from "./flight-controller";
-import { drawGround } from "./ground-texture";
+import { createGroundLayer } from "./ground-layer";
 import { createInputController } from "./input-controller";
 import { createLightingController } from "./lighting-controller";
 import { createPropFieldController } from "./prop-field";
@@ -23,6 +20,7 @@ import {
   CAMERA_BASE_LOCAL_X,
   SCROLL,
   SHIP_HEIGHT,
+  SHIP_START_Z,
   type CameraRotationMode,
   type GroundStyle,
   type LightingPreset,
@@ -30,19 +28,24 @@ import {
   type SceneHandle,
   type ShipLightingState,
   type TileSampling,
+  type ZonePlanEntry,
 } from "./scene-config";
 import { createShipController } from "./ship-controller";
+import { createZoneSequencer } from "./zone-sequencer";
 
 export {
+  presetSunDefaults,
   SHIP_HEIGHT,
   SHIP_SIZE,
   type CameraRotationMode,
   type GroundStyle,
+  type LevelPlan,
   type LightingPreset,
   type PipelineMode,
   type SceneHandle,
   type ShipLightingState,
   type TileSampling,
+  type ZonePlanEntry,
 } from "./scene-config";
 
 /**
@@ -87,73 +90,100 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   const lighting = createLightingController(scene);
   lighting.applyPreset("dramatic");
 
-  // --- meadow ground (scrolls via UV; style switchable at runtime) ---
-  const GROUND_SIZE = 512;
-  const groundTex = new DynamicTexture("ground", { width: GROUND_SIZE, height: GROUND_SIZE }, scene, true);
-  groundTex.updateSamplingMode(Texture.TRILINEAR_SAMPLINGMODE);
-  groundTex.wrapU = Texture.WRAP_ADDRESSMODE;
-  groundTex.wrapV = Texture.WRAP_ADDRESSMODE;
-  function paintGround(style: GroundStyle) {
-    const tiling = drawGround(groundTex.getContext(), GROUND_SIZE, style);
-    groundTex.update();
-    groundTex.uScale = tiling.u;
-    groundTex.vScale = tiling.v;
-  }
-  paintGround("painterly");
-  const groundMat = new StandardMaterial("groundMat", scene);
-  groundMat.diffuseTexture = groundTex;
-  groundMat.specularColor = new Color3(0, 0, 0);
-  const ground = MeshBuilder.CreateGround("ground", { width: 1200, height: 1000 }, scene);
-  ground.position.z = 400; // extends far ahead so it recedes to a horizon, no hard edge
-  ground.material = groundMat;
-  ground.receiveShadows = true;
+  // --- meadow ground: two stacked scrolling layers so the zone sequencer can
+  //     wipe a new biome in across the field (layerB sweeps over layerA) ---
+  const GROUND_W = 1200;
+  const GROUND_DEPTH = 1000;
+  const GROUND_Z = 400; // centered ahead so the plane recedes to a horizon
+  const SEAM_FAR = GROUND_Z + GROUND_DEPTH / 2; // far edge (top of screen)
+  const SEAM_NEAR = GROUND_Z - GROUND_DEPTH / 2; // near edge (past the camera)
+  const groundA = createGroundLayer(scene, {
+    name: "groundA",
+    width: GROUND_W,
+    depth: GROUND_DEPTH,
+    z: GROUND_Z,
+  });
+  const groundB = createGroundLayer(scene, {
+    name: "groundB",
+    width: GROUND_W,
+    depth: GROUND_DEPTH,
+    z: GROUND_Z,
+    y: 0.05, // sits just above A so it draws on top where it isn't clipped
+  });
+  groundB.setVisible(false);
 
-  // Image-backed ground texture that overrides the procedural DynamicTexture
-  // when set. Two sampling regimes:
-  //   nearest   — pixel-art tiles; mipmaps disabled so every texel stays a square
-  //   trilinear — photoreal/painterly; mipmaps on, bilinear-filtered (avoids
-  //               aliasing as the camera tilts toward the horizon)
-  // Idempotent: same URL + same sampling → only the repeat scale updates,
-  // so dragging the Repeat slider doesn't reload the PNG every tick.
-  let tileTex: Texture | null = null;
-  let tileUrl: string | null = null;
-  let tileSampling: TileSampling | null = null;
-  function applyTile(
-    url: string | null,
-    repeatPerSide: number,
-    sampling: TileSampling = "nearest",
-  ) {
-    if (!url) {
-      if (tileTex) {
-        tileTex.dispose();
-        tileTex = null;
-        tileUrl = null;
-        tileSampling = null;
-      }
-      groundMat.diffuseTexture = groundTex;
-      return;
-    }
-    if (url === tileUrl && sampling === tileSampling && tileTex) {
-      tileTex.uScale = repeatPerSide;
-      tileTex.vScale = repeatPerSide;
-      return;
-    }
-    if (tileTex) tileTex.dispose();
-    const noMipmap = sampling === "nearest";
-    const mode =
-      sampling === "nearest"
-        ? Texture.NEAREST_SAMPLINGMODE
-        : Texture.TRILINEAR_SAMPLINGMODE;
-    const t = new Texture(url, scene, noMipmap, /* invertY */ true, mode);
-    t.wrapU = Texture.WRAP_ADDRESSMODE;
-    t.wrapV = Texture.WRAP_ADDRESSMODE;
-    t.uScale = repeatPerSide;
-    t.vScale = repeatPerSide;
-    tileTex = t;
-    tileUrl = url;
-    tileSampling = sampling;
-    groundMat.diffuseTexture = t;
+  // Ground orchestration for the sequencer. layerA is the live zone; during a
+  // transition layerB holds the incoming zone and its clip seam sweeps from the
+  // far horizon toward the camera, so you watch the new biome arrive across the
+  // field. The look keys dedup repaints (painting a DynamicTexture is expensive).
+  const lookKey = (z: ZonePlanEntry) =>
+    z.groundTile ? `tile:${z.groundTile}|${z.tileRepeat}|${z.tileSampling}` : `style:${z.ground}`;
+  let aKey = "";
+  let bKey = "";
+  let bShown = false;
+  function ensureA(z: ZonePlanEntry) {
+    const k = lookKey(z);
+    if (k === aKey) return;
+    groundA.applyLook(z);
+    aKey = k;
   }
+  function ensureB(z: ZonePlanEntry) {
+    const k = lookKey(z);
+    if (k === bKey) return;
+    groundB.applyLook(z);
+    bKey = k;
+  }
+  function showGround(z: ZonePlanEntry) {
+    ensureA(z);
+    if (bShown) {
+      groundA.setVOffset(groundB.getVOffset()); // keep scroll phase across the handoff
+      groundB.setVisible(false);
+      groundB.setClip(null);
+      bShown = false;
+      bKey = "";
+    }
+  }
+  function transitionGround(near: ZonePlanEntry, far: ZonePlanEntry, seamZ: number) {
+    ensureA(near);
+    ensureB(far);
+    if (!bShown) {
+      groundB.setVisible(true);
+      bShown = true;
+    }
+    groundB.setClip(seamZ); // far climate fills z > seamZ; the seam drifts at scroll speed
+  }
+  function hideTransition() {
+    if (!bShown) return;
+    groundB.setVisible(false);
+    groundB.setClip(null);
+    bShown = false;
+    bKey = "";
+  }
+  function setGroundSampling(mode: number) {
+    groundA.setProceduralSampling(mode);
+    groundB.setProceduralSampling(mode);
+  }
+
+  // Auto-scrolling level plan (zones). When a plan is loaded it owns the ground
+  // and lighting; until then the scene stays under manual (Studio slider) control.
+  const sequencer = createZoneSequencer(
+    {
+      showGround,
+      transitionGround,
+      resolveLighting(z) {
+        return lighting.resolve(z.lighting, {
+          sunI: z.sunI,
+          skyI: z.skyI,
+          azimuth: z.azimuth,
+          elevation: z.elevation,
+        });
+      },
+      applyLighting(r) {
+        lighting.applyResolved(r);
+      },
+    },
+    { scrollSpeed: SCROLL, shipZ: SHIP_START_Z, seamFar: SEAM_FAR, seamNear: SEAM_NEAR },
+  );
 
   let shipHeight = SHIP_HEIGHT; // runtime-adjustable via the Ship Altitude slider
   const shipController = createShipController(scene, {
@@ -187,7 +217,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     if (pipelineMode === "direct") {
       canvas.style.imageRendering = "auto";
       engine.setHardwareScalingLevel(pixelScale);
-      groundTex.updateSamplingMode(Texture.TRILINEAR_SAMPLINGMODE);
+      setGroundSampling(Texture.TRILINEAR_SAMPLINGMODE);
       return;
     }
     const cssH = canvas.clientHeight || rtHeight;
@@ -195,7 +225,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     engine.setHardwareScalingLevel(scale);
     canvas.style.imageRendering =
       pipelineMode === "low-res-nearest" ? "pixelated" : "auto";
-    groundTex.updateSamplingMode(
+    setGroundSampling(
       pipelineMode === "low-res-nearest"
         ? Texture.NEAREST_SAMPLINGMODE
         : Texture.TRILINEAR_SAMPLINGMODE,
@@ -239,11 +269,13 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       });
     }
 
-    // scroll the meadow + stream scenery toward the camera
-    // scroll the texture to match prop world-speed for the CURRENT tiling
-    // (1 texture tile spans groundDepth/vScale world units; ground depth = 1000)
-    const activeTex = tileTex ?? groundTex;
-    activeTex.vOffset = (activeTex.vOffset + (dt * SCROLL * activeTex.vScale) / 1000) % 1;
+    // a level plan (when playing) drives ground + lighting by scrolled time
+    sequencer.update(dt);
+
+    // scroll the meadow + stream scenery toward the camera (both layers scroll
+    // so the incoming biome moves with the field during a transition)
+    groundA.scroll(dt * SCROLL);
+    if (bShown) groundB.scroll(dt * SCROLL);
     propField.update(dt);
 
     scene.render();
@@ -271,11 +303,12 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       shipController.resetShip();
     },
     setGroundStyle(style) {
-      applyTile(null, 0); // any procedural style implicitly drops tile mode
-      paintGround(style);
+      groundA.setStyle(style);
+      aKey = ""; // re-sync the sequencer's dedup if a plan plays later
     },
     setGroundTile(url, repeatPerSide, sampling = "nearest") {
-      applyTile(url, repeatPerSide, sampling);
+      groundA.setTile(url, repeatPerSide, sampling);
+      aKey = "";
     },
     setPixelScale(level) {
       applyPixelScale(level);
@@ -348,6 +381,13 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     },
     getLightingState() {
       return lighting.getLightingState();
+    },
+    setLevelPlan(plan) {
+      sequencer.setPlan(plan);
+      if (!plan) hideTransition(); // back to manual: drop the incoming layer
+    },
+    getZoneStatus() {
+      return sequencer.getStatus();
     },
     dispose() {
       input.dispose();

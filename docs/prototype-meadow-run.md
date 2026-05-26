@@ -68,6 +68,42 @@ thing, then combine at the boss.
 | 6 | **Extract** | 5:00–5:30 | Timed escape, collect freed animals |
 |   | **Results** | — | PR bars, Family PR, fun facts, menagerie update |
 
+### Zones — terrain bands over the phases
+
+The seven phases are grouped into **four biome zones**. Zones are the *visual +
+difficulty arc*; the phases stay the *mechanic-teaching* beats inside them. The
+field **auto-scrolls** straight through — zones are distance/time markers, **not
+gates** (no one can get stuck; a struggling player just drifts forward into the
+next biome).
+
+**Difficulty model (two layers):**
+- **Stakes & variety ramp for the whole crew** — each zone adds more rescues,
+  new hazards/obstacles, and tighter-but-fair timing. Same for everyone; this is
+  what drives the felt escalation.
+- **Lethality scales per player tier** — how *punishing* the threats are (enemy
+  count, fire rate, damage) is dialed by each player's complexity tier (§5), so
+  the same zone is gentler for a T1 kid than a T3 parent. Nobody gets walled, no
+  one gets bored.
+
+| Zone | Biome / ground | Lighting | Phases | What escalates | Seam into next |
+|---|---|---|---|---|---|
+| **1 · Meadow** | open grass (`painterly`) | `golden` | 0 Launch · 1 First Contact · 2 First Rescue | teach controls; first easy bunny rescue; sparse drones | meadow thickens into a **treeline** |
+| **2 · Woodland** | dense, darker (`painterly` + tree tile) | `overcast` | 3 Heat Wave | trees become a dodge-gauntlet; swarms force sustained fire (→ overheat beat); more rescues | trees give way to a **canyon mouth** |
+| **3 · Canyon** | rock/stone (`stripes` → rock tile) | `dramatic` | 4 The Gauntlet | narrow lanes, junk pillars, turrets, rammers; hull-breach + scripted down→rally; high-value cheetah/sloth rescues in side pockets | canyon opens onto the **Warden's scorched lair** |
+| **4 · Approach** | scorched ground, hazy | `dramatic` / `moonlit` | 5 The Warden · 6 Extract | the all-roles boss, then the destabilizing escape (scroll ramps up) | — (exit portal) |
+
+**Seams (transitions).** Between zones a short ~2–3s **transition band** — a
+treeline, a canyon mouth, a fog/ash bank — blends one biome into the next and
+gives a deliberate lull between intensity spikes. No hard ground swaps.
+
+**Implementation shape.** A zone is a **data bundle**: ground style + (optional)
+tile texture + lighting preset + prop mix + scroll speed + spawn table. The scene
+already swaps ground, lighting, props, and scroll live (and the recent split into
+`lighting-controller` / `prop-field` / `ground-texture` makes each knob a clean
+seam), so a "level" is a distance-driven *sequence* of these bundles with a blend
+band between — the config-driven scene plan we were already heading toward. Mostly
+**content + a small sequencer**, not new rendering tech.
+
 ---
 
 ## 4. Phase-by-Phase Walkthrough

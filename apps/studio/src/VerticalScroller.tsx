@@ -17,6 +17,7 @@ import {
   mergeDefaults,
   readHashParams,
   serializeVerticalHash,
+  toLevelPlan,
   verticalScrollerReducer,
   type VerticalDefaults,
 } from "./vertical-scroller-state";
@@ -112,6 +113,7 @@ export function VerticalScroller() {
     createInitialState
   );
   const [pos, setPos] = useState<{ x: number; y: number; z: number } | null>(null);
+  const [zoneStatus, setZoneStatus] = useState<{ index: number; name: string; progress: number } | null>(null);
 
   useEffect(() => {
     fetch(VERTICAL_DEFAULTS_URL)
@@ -161,25 +163,9 @@ export function VerticalScroller() {
     handle.setCameraRotationMode(state.values.cameraMode);
     handle.setShipHeight(state.values.altitude);
     handle.setShipSize(state.values.shipSize);
-    // Apply ground last so groundTile overrides the procedural setGroundStyle.
-    if (state.values.groundTile == null) {
-      handle.setGroundStyle(state.values.ground);
-      handle.setGroundTile(null, state.values.tileRepeat, "nearest");
-    } else {
-      const tile = findTile(state.values.groundTile);
-      handle.setGroundTile(
-        state.values.groundTile,
-        state.values.tileRepeat,
-        tile?.sampling ?? "nearest",
-      );
-    }
     handle.setPixelScale(state.values.pixelLevel);
     handle.setRtHeight(state.values.rtHeight);
     handle.setPipelineMode(state.values.pipelineMode);
-    handle.setSunIntensity(state.values.sunI);
-    handle.setSkyIntensity(state.values.skyI);
-    handle.setSunAzimuth(state.values.azimuth);
-    handle.setSunElevation(state.values.elevation);
     handle.setShipLightDirectIntensity(state.values.shipLight.directIntensity);
     handle.setShipLightEnvironmentIntensity(state.values.shipLight.environmentIntensity);
     handle.setShipLightRoughness(state.values.shipLight.roughness);
@@ -188,23 +174,35 @@ export function VerticalScroller() {
     handle.setShipLightContrast(state.values.shipLight.contrast);
     handle.setShipLightAlbedoBoost(state.values.shipLight.albedoBoost);
     handle.setShipLightAmbientStrength(state.values.shipLight.ambientStrength);
-  }, [state.values]);
+    // While a level is playing, the zone sequencer owns ground + lighting; the
+    // manual look only drives the scene when stopped (showing the selected zone).
+    if (!state.playing) {
+      if (state.values.groundTile == null) {
+        handle.setGroundStyle(state.values.ground);
+        handle.setGroundTile(null, state.values.tileRepeat, "nearest");
+      } else {
+        const tile = findTile(state.values.groundTile);
+        handle.setGroundTile(
+          state.values.groundTile,
+          state.values.tileRepeat,
+          tile?.sampling ?? "nearest",
+        );
+      }
+      // preset sets the colors; the sun sliders then override intensity/angle
+      handle.setLightingPreset(state.values.lighting);
+      handle.setSunIntensity(state.values.sunI);
+      handle.setSkyIntensity(state.values.skyI);
+      handle.setSunAzimuth(state.values.azimuth);
+      handle.setSunElevation(state.values.elevation);
+    }
+  }, [state.values, state.playing]);
 
-  // Selecting a preset applies it, then syncs the sliders to the result so
-  // fine-tuning starts from the preset instead of jumping.
+  // Drive (or release) the zone sequencer when Play Level toggles or zones change.
   useEffect(() => {
     const h = sceneRef.current;
     if (!h) return;
-    h.setLightingPreset(state.values.lighting);
-    const s = h.getLightingState();
-    dispatch({
-      type: "sync-lighting-from-scene",
-      sunI: s.sunIntensity,
-      skyI: s.skyIntensity,
-      azimuth: Math.round(s.azimuth),
-      elevation: Math.round(s.elevation),
-    });
-  }, [state.values.lighting]);
+    h.setLevelPlan(state.playing ? toLevelPlan(state.zones, state.blendSec) : null);
+  }, [state.playing, state.zones, state.blendSec]);
 
   useEffect(() => {
     if (!state.hydrated) return;
@@ -217,9 +215,12 @@ export function VerticalScroller() {
     return () => window.clearTimeout(id);
   }, [state.hydrated, state.values]);
 
-  // live ship coordinates — fly to a spot you like and read off x/y/z
+  // live ship coordinates + current zone (while a level is playing)
   useEffect(() => {
-    const id = setInterval(() => setPos(sceneRef.current?.getShipPosition() ?? null), 150);
+    const id = setInterval(() => {
+      setPos(sceneRef.current?.getShipPosition() ?? null);
+      setZoneStatus(sceneRef.current?.getZoneStatus() ?? null);
+    }, 150);
     return () => clearInterval(id);
   }, []);
 
@@ -361,7 +362,80 @@ export function VerticalScroller() {
 
       {/* right-side controls */}
       <div className="control-stack">
+        <Panel id="zone-plan" title="Zone Plan" className="zone-panel" open={state.openRight === "zone-plan"} onToggle={toggleRight}>
+          <button
+            className={`zone-play ${state.playing ? "on" : ""}`}
+            onClick={() => dispatch({ type: "set-playing", playing: !state.playing })}
+          >
+            {state.playing ? "■ Stop Level" : "▶ Play Level"}
+          </button>
+          {state.playing && zoneStatus && (
+            <div className="zone-status">
+              Zone {zoneStatus.index + 1}/{state.zones.length} · {zoneStatus.name} ·{" "}
+              {Math.round(zoneStatus.progress * 100)}%
+            </div>
+          )}
+          <p className="pos-hint" style={{ margin: "8px 0 6px" }}>
+            Select a zone, then tune it with the Ground &amp; Lighting panels.
+          </p>
+          <div className="zone-list">
+            {state.zones.map((z, i) => (
+              <div key={z.id} className={`zone-row ${i === state.selectedZone ? "selected" : ""}`}>
+                <button
+                  className="zone-pick"
+                  title="Edit this zone"
+                  onClick={() => dispatch({ type: "select-zone", index: i })}
+                >
+                  {i + 1}
+                </button>
+                <input
+                  className="zone-name"
+                  value={z.name}
+                  onChange={(e) => dispatch({ type: "rename-zone", index: i, name: e.target.value })}
+                />
+                <input
+                  className="zone-len"
+                  type="number"
+                  min={5}
+                  max={300}
+                  step={5}
+                  value={z.lengthSec}
+                  title="Seconds this zone holds before blending into the next"
+                  onChange={(e) =>
+                    dispatch({ type: "set-zone-length", index: i, lengthSec: parseFloat(e.target.value) || 0 })
+                  }
+                />
+                <span className="zone-unit">s</span>
+                <button
+                  className="zone-del"
+                  disabled={state.zones.length <= 1}
+                  title="Remove this zone"
+                  onClick={() => dispatch({ type: "remove-zone", index: i })}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <button className="zone-add" onClick={() => dispatch({ type: "add-zone" })}>
+            + Add zone (duplicates selected)
+          </button>
+          <p className="pos-hint" style={{ margin: "8px 0 0" }}>
+            Climate boundaries scroll past at flight speed — longer zones = more
+            time in each climate before the next sweeps in.
+          </p>
+          <button
+            className="panel-save"
+            onClick={() => saveDefaults((prev) => ({ ...prev, zones: state.zones, blendSec: state.blendSec }))}
+          >
+            Save Defaults
+          </button>
+        </Panel>
+
         <Panel id="ground" title="Ground" className="ground-panel" open={state.openRight === "ground"} onToggle={toggleRight}>
+          <p className="zone-editing">
+            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
+          </p>
           <p className="pos-hint" style={{ margin: "0 0 6px" }}>Procedural styles</p>
           <div className="camera-test-buttons">
             {GROUND_STYLES.map((g) => (
@@ -431,6 +505,9 @@ export function VerticalScroller() {
         </Panel>
 
         <Panel id="lighting" title="Lighting" className="lighting-panel" open={state.openRight === "lighting"} onToggle={toggleRight}>
+          <p className="zone-editing">
+            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
+          </p>
           <div className="camera-test-buttons">
             {LIGHTING_PRESETS.map((l) => (
               <button

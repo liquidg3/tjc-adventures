@@ -1,8 +1,10 @@
 import {
+  presetSunDefaults,
   SHIP_HEIGHT,
   SHIP_SIZE,
   type CameraRotationMode,
   type GroundStyle,
+  type LevelPlan,
   type LightingPreset,
   type PipelineMode,
   type ShipLightingState,
@@ -29,8 +31,35 @@ export interface VerticalValues {
   shipLight: ShipLightingState;
 }
 
+/**
+ * One zone in the level plan: a full ground + lighting look snapshot plus how
+ * long it holds before blending into the next. The currently-selected zone is
+ * mirrored into `values` so the existing Ground/Lighting panels edit it.
+ */
+export interface ZoneLook {
+  id: string;
+  name: string;
+  ground: GroundStyle;
+  groundTile: string | null;
+  tileRepeat: number;
+  lighting: LightingPreset;
+  sunI: number;
+  skyI: number;
+  azimuth: number;
+  elevation: number;
+  lengthSec: number;
+}
+
+/** The look fields a zone owns (shared between a zone and the live `values`). */
+export type ZoneLookFields = Pick<
+  VerticalValues,
+  "ground" | "groundTile" | "tileRepeat" | "lighting" | "sunI" | "skyI" | "azimuth" | "elevation"
+>;
+
 export interface VerticalDefaults extends VerticalValues {
   shipSizeByModel: Record<string, number>;
+  zones: ZoneLook[];
+  blendSec: number;
 }
 
 export interface VerticalScrollerState {
@@ -42,6 +71,10 @@ export interface VerticalScrollerState {
   openLeft: string;
   openRight: string;
   values: VerticalValues;
+  zones: ZoneLook[];
+  selectedZone: number;
+  blendSec: number;
+  playing: boolean;
 }
 
 export const DEFAULT_SHIP_LIGHTING: ShipLightingState = {
@@ -54,6 +87,43 @@ export const DEFAULT_SHIP_LIGHTING: ShipLightingState = {
   albedoBoost: 1,
   ambientStrength: 0.16,
 };
+
+/**
+ * The starting 4-zone plan from docs/prototype-meadow-run.md (Meadow → Woodland
+ * → Canyon → Approach). Each zone's sun sliders are seeded from its preset; the
+ * grounds are the closest procedural styles for now (swap in real tiles later).
+ */
+function makeZone(
+  id: string,
+  name: string,
+  ground: GroundStyle,
+  lighting: LightingPreset,
+  lengthSec: number,
+): ZoneLook {
+  const s = presetSunDefaults(lighting);
+  return {
+    id,
+    name,
+    ground,
+    groundTile: null,
+    tileRepeat: 32,
+    lighting,
+    sunI: s.sunI,
+    skyI: s.skyI,
+    azimuth: s.azimuth,
+    elevation: s.elevation,
+    lengthSec,
+  };
+}
+
+export const DEFAULT_ZONES: ZoneLook[] = [
+  makeZone("zone-meadow", "Meadow", "painterly", "golden", 60),
+  makeZone("zone-woodland", "Woodland", "painterly", "overcast", 75),
+  makeZone("zone-canyon", "Canyon", "stripes", "dramatic", 75),
+  makeZone("zone-approach", "Approach", "checker", "moonlit", 60),
+];
+
+export const DEFAULT_BLEND_SEC = 4;
 
 export const DEFAULT_VERTICAL_DEFAULTS: VerticalDefaults = {
   cameraMode: "camera-z",
@@ -72,6 +142,8 @@ export const DEFAULT_VERTICAL_DEFAULTS: VerticalDefaults = {
   elevation: 84,
   shipLight: DEFAULT_SHIP_LIGHTING,
   shipSizeByModel: {},
+  zones: DEFAULT_ZONES,
+  blendSec: DEFAULT_BLEND_SEC,
 };
 
 export const CAMERA_ROTATIONS: Array<{ mode: CameraRotationMode; label: string }> = [
@@ -173,6 +245,43 @@ function readEnum<T extends string>(params: URLSearchParams, key: string, allowe
   return raw && (allowed as readonly string[]).includes(raw) ? (raw as T) : fallback;
 }
 
+const num = (v: unknown, fb: number) => (typeof v === "number" && Number.isFinite(v) ? v : fb);
+
+/** Defensively fill any fields missing from a persisted/older zone record. */
+function normalizeZone(z: Partial<ZoneLook>, i: number): ZoneLook {
+  const base = DEFAULT_ZONES[i % DEFAULT_ZONES.length];
+  return {
+    id: z.id ?? `zone-${i}-${Math.random().toString(36).slice(2, 7)}`,
+    name: z.name ?? base.name,
+    ground: z.ground ?? base.ground,
+    groundTile: z.groundTile ?? null,
+    tileRepeat: num(z.tileRepeat, base.tileRepeat),
+    lighting: z.lighting ?? base.lighting,
+    sunI: num(z.sunI, base.sunI),
+    skyI: num(z.skyI, base.skyI),
+    azimuth: num(z.azimuth, base.azimuth),
+    elevation: num(z.elevation, base.elevation),
+    lengthSec: num(z.lengthSec, base.lengthSec),
+  };
+}
+
+/** Migration: a saved file with no `zones` (pre-zones) keeps the user's tuned
+ *  flat look as zone 0, with the rest of the default plan after it. */
+function seedZonesFromLook(data: Partial<VerticalDefaults> | null | undefined): ZoneLook[] {
+  const first: ZoneLook = {
+    ...DEFAULT_ZONES[0],
+    ground: data?.ground ?? DEFAULT_ZONES[0].ground,
+    groundTile: data?.groundTile ?? DEFAULT_ZONES[0].groundTile,
+    tileRepeat: num(data?.tileRepeat, DEFAULT_ZONES[0].tileRepeat),
+    lighting: data?.lighting ?? DEFAULT_ZONES[0].lighting,
+    sunI: num(data?.sunI, DEFAULT_ZONES[0].sunI),
+    skyI: num(data?.skyI, DEFAULT_ZONES[0].skyI),
+    azimuth: num(data?.azimuth, DEFAULT_ZONES[0].azimuth),
+    elevation: num(data?.elevation, DEFAULT_ZONES[0].elevation),
+  };
+  return [first, ...DEFAULT_ZONES.slice(1)];
+}
+
 export function mergeDefaults(data: Partial<VerticalDefaults> | null | undefined): VerticalDefaults {
   return {
     ...DEFAULT_VERTICAL_DEFAULTS,
@@ -185,6 +294,74 @@ export function mergeDefaults(data: Partial<VerticalDefaults> | null | undefined
       ...DEFAULT_VERTICAL_DEFAULTS.shipSizeByModel,
       ...(data?.shipSizeByModel ?? {}),
     },
+    zones: data?.zones?.length ? data.zones.map(normalizeZone) : seedZonesFromLook(data),
+    blendSec: num(data?.blendSec, DEFAULT_VERTICAL_DEFAULTS.blendSec),
+  };
+}
+
+/** Pull the zone-owned look fields out of the live `values`. */
+function lookFields(v: VerticalValues): ZoneLookFields {
+  return {
+    ground: v.ground,
+    groundTile: v.groundTile,
+    tileRepeat: v.tileRepeat,
+    lighting: v.lighting,
+    sunI: v.sunI,
+    skyI: v.skyI,
+    azimuth: v.azimuth,
+    elevation: v.elevation,
+  };
+}
+
+/** The look fields of a zone, shaped to overlay onto the live `values`. */
+function zoneToLook(z: ZoneLook): ZoneLookFields {
+  return {
+    ground: z.ground,
+    groundTile: z.groundTile,
+    tileRepeat: z.tileRepeat,
+    lighting: z.lighting,
+    sunI: z.sunI,
+    skyI: z.skyI,
+    azimuth: z.azimuth,
+    elevation: z.elevation,
+  };
+}
+
+let zoneIdSeq = 0;
+const newZoneId = () => `zone-${Date.now().toString(36)}-${zoneIdSeq++}`;
+
+/**
+ * Apply a look change to both the live `values` and the selected zone, so the
+ * Ground/Lighting panels always edit the zone they're showing.
+ */
+function patchLook(
+  state: VerticalScrollerState,
+  patch: Partial<ZoneLookFields>,
+): VerticalScrollerState {
+  const values = { ...state.values, ...patch };
+  const zones = state.zones.map((z, i) =>
+    i === state.selectedZone ? { ...z, ...lookFields(values) } : z,
+  );
+  return { ...state, values, zones };
+}
+
+/** Map the editable zone list into the scene's LevelPlan (adds tile sampling). */
+export function toLevelPlan(zones: ZoneLook[], blendSec: number): LevelPlan {
+  return {
+    blendSec,
+    zones: zones.map((z) => ({
+      name: z.name,
+      ground: z.ground,
+      groundTile: z.groundTile,
+      tileSampling: findTile(z.groundTile)?.sampling ?? "nearest",
+      tileRepeat: z.tileRepeat,
+      lighting: z.lighting,
+      sunI: z.sunI,
+      skyI: z.skyI,
+      azimuth: z.azimuth,
+      elevation: z.elevation,
+      lengthSec: z.lengthSec,
+    })),
   };
 }
 
@@ -240,6 +417,10 @@ export function createInitialState(params: URLSearchParams): VerticalScrollerSta
     openLeft: "ship-size",
     openRight: "lighting",
     values: readValuesFromHash(params),
+    zones: DEFAULT_VERTICAL_DEFAULTS.zones,
+    selectedZone: 0,
+    blendSec: DEFAULT_VERTICAL_DEFAULTS.blendSec,
+    playing: false,
   };
 }
 
@@ -293,6 +474,13 @@ export type VerticalAction =
   | { type: "sync-lighting-from-scene"; sunI: number; skyI: number; azimuth: number; elevation: number }
   | { type: "set-ship-size"; shipSize: number }
   | { type: "set-ship-light"; patch: Partial<ShipLightingState> }
+  | { type: "select-zone"; index: number }
+  | { type: "add-zone" }
+  | { type: "remove-zone"; index: number }
+  | { type: "rename-zone"; index: number; name: string }
+  | { type: "set-zone-length"; index: number; lengthSec: number }
+  | { type: "set-blend"; blendSec: number }
+  | { type: "set-playing"; playing: boolean }
   | { type: "reset-to-defaults" }
   | { type: "save-defaults-locally"; defaults: VerticalDefaults };
 
@@ -307,14 +495,20 @@ export function verticalScrollerReducer(
       const resolvedShipSize = hashParams.has("shipSize")
         ? values.shipSize
         : getDefaultShipSize(state.playerShipUrl, defaults.shipSizeByModel, defaults);
+      const zones = defaults.zones;
       return {
         ...state,
         hydrated: true,
         savedDefaults: defaults,
         shipSizeByModel: defaults.shipSizeByModel,
+        zones,
+        selectedZone: 0,
+        blendSec: defaults.blendSec,
         values: {
           ...values,
           shipSize: resolvedShipSize,
+          // the live look mirrors the selected zone so the panels + scene agree
+          ...zoneToLook(zones[0]),
         },
       };
     }
@@ -345,45 +539,44 @@ export function verticalScrollerReducer(
     case "set-ground":
       // Picking a procedural style implicitly drops out of pixel-tile mode so
       // the procedural style is actually visible (the scene reverts too).
-      return {
-        ...state,
-        values: { ...state.values, ground: action.ground, groundTile: null },
-      };
+      return patchLook(state, { ground: action.ground, groundTile: null });
     case "set-ground-tile": {
       // Switching tiles also resets the Repeat slider to the new tile's
       // recommended starting point (pixel tiles want ~32 repeats across the
       // ground, photoreal tiles want ~6). User can still drag from there.
       const tile = findTile(action.tile);
-      return {
-        ...state,
-        values: {
-          ...state.values,
-          groundTile: action.tile,
-          tileRepeat: tile ? tile.defaultRepeat : state.values.tileRepeat,
-        },
-      };
+      return patchLook(state, {
+        groundTile: action.tile,
+        tileRepeat: tile ? tile.defaultRepeat : state.values.tileRepeat,
+      });
     }
     case "set-tile-repeat":
-      return { ...state, values: { ...state.values, tileRepeat: action.repeat } };
+      return patchLook(state, { tileRepeat: action.repeat });
     case "set-pixel-level":
       return { ...state, values: { ...state.values, pixelLevel: action.pixelLevel } };
     case "set-pipeline-mode":
       return { ...state, values: { ...state.values, pipelineMode: action.mode } };
     case "set-rt-height":
       return { ...state, values: { ...state.values, rtHeight: action.h } };
-    case "set-lighting-preset":
-      return { ...state, values: { ...state.values, lighting: action.lighting } };
+    case "set-lighting-preset": {
+      // A preset seeds the sun sliders from its baseline (pure — no scene round
+      // trip), then write-through stores the result on the selected zone.
+      const s = presetSunDefaults(action.lighting);
+      return patchLook(state, {
+        lighting: action.lighting,
+        sunI: s.sunI,
+        skyI: s.skyI,
+        azimuth: s.azimuth,
+        elevation: s.elevation,
+      });
+    }
     case "sync-lighting-from-scene":
-      return {
-        ...state,
-        values: {
-          ...state.values,
-          sunI: action.sunI,
-          skyI: action.skyI,
-          azimuth: action.azimuth,
-          elevation: action.elevation,
-        },
-      };
+      return patchLook(state, {
+        sunI: action.sunI,
+        skyI: action.skyI,
+        azimuth: action.azimuth,
+        elevation: action.elevation,
+      });
     case "set-ship-size": {
       const shipSizeByModel = state.playerShipUrl
         ? {
@@ -405,28 +598,74 @@ export function verticalScrollerReducer(
           shipLight: { ...state.values.shipLight, ...action.patch },
         },
       };
-    case "reset-to-defaults":
+    case "select-zone": {
+      const z = state.zones[action.index];
+      if (!z) return state;
+      return {
+        ...state,
+        selectedZone: action.index,
+        values: { ...state.values, ...zoneToLook(z) },
+      };
+    }
+    case "add-zone": {
+      // duplicate the selected zone so you start from a known look, insert it
+      // right after, and select it for editing
+      const src = state.zones[state.selectedZone] ?? DEFAULT_ZONES[0];
+      const clone: ZoneLook = { ...src, id: newZoneId(), name: `${src.name} copy` };
+      const zones = [...state.zones];
+      zones.splice(state.selectedZone + 1, 0, clone);
+      const selectedZone = state.selectedZone + 1;
+      return { ...state, zones, selectedZone, values: { ...state.values, ...zoneToLook(clone) } };
+    }
+    case "remove-zone": {
+      if (state.zones.length <= 1) return state; // always keep at least one zone
+      const zones = state.zones.filter((_, i) => i !== action.index);
+      const selectedZone = Math.min(state.selectedZone, zones.length - 1);
+      return {
+        ...state,
+        zones,
+        selectedZone,
+        values: { ...state.values, ...zoneToLook(zones[selectedZone]) },
+      };
+    }
+    case "rename-zone":
+      return {
+        ...state,
+        zones: state.zones.map((z, i) => (i === action.index ? { ...z, name: action.name } : z)),
+      };
+    case "set-zone-length":
+      return {
+        ...state,
+        zones: state.zones.map((z, i) =>
+          i === action.index ? { ...z, lengthSec: action.lengthSec } : z,
+        ),
+      };
+    case "set-blend":
+      return { ...state, blendSec: action.blendSec };
+    case "set-playing":
+      return { ...state, playing: action.playing };
+    case "reset-to-defaults": {
+      const zones = state.savedDefaults.zones;
       return {
         ...state,
         shipSizeByModel: state.savedDefaults.shipSizeByModel,
+        zones,
+        selectedZone: 0,
+        blendSec: state.savedDefaults.blendSec,
+        playing: false,
         values: {
           cameraMode: state.savedDefaults.cameraMode,
           altitude: state.savedDefaults.altitude,
           shipSize: getDefaultShipSize(state.playerShipUrl, state.savedDefaults.shipSizeByModel, state.savedDefaults),
-          ground: state.savedDefaults.ground,
-          groundTile: state.savedDefaults.groundTile,
-          tileRepeat: state.savedDefaults.tileRepeat,
           pixelLevel: state.savedDefaults.pixelLevel,
           pipelineMode: state.savedDefaults.pipelineMode,
           rtHeight: state.savedDefaults.rtHeight,
-          lighting: state.savedDefaults.lighting,
-          sunI: state.savedDefaults.sunI,
-          skyI: state.savedDefaults.skyI,
-          azimuth: state.savedDefaults.azimuth,
-          elevation: state.savedDefaults.elevation,
           shipLight: { ...state.savedDefaults.shipLight },
+          // ground + lighting look comes from the (restored) first zone
+          ...zoneToLook(zones[0]),
         },
       };
+    }
     case "save-defaults-locally":
       return {
         ...state,
@@ -469,5 +708,7 @@ export function buildDefaultsFromState(state: VerticalScrollerState): VerticalDe
     ...state.values,
     shipLight: { ...state.values.shipLight },
     shipSizeByModel: state.shipSizeByModel,
+    zones: state.zones,
+    blendSec: state.blendSec,
   };
 }

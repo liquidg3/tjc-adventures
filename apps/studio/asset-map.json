@@ -1,5 +1,5 @@
 {
-  "ship-player": "model:ships/ship_classic",
+  "ship-player": "model:ships/ship_helicopter",
   "ship-enemy": "model:ships/ship_classic",
   "animal-sloth": "model:animals/sloth",
   "animal-bunny": "model:animals/bunny",
