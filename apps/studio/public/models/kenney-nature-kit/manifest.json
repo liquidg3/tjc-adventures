@@ -1,0 +1,1650 @@
+{
+  "pack": "kenney-nature-kit",
+  "models": [
+    {
+      "name": "bed",
+      "file": "bed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bed_floor",
+      "file": "bed_floor.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_center_stone",
+      "file": "bridge_center_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_center_stoneRound",
+      "file": "bridge_center_stoneRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_center_wood",
+      "file": "bridge_center_wood.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_center_woodRound",
+      "file": "bridge_center_woodRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_side_stone",
+      "file": "bridge_side_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_side_stoneRound",
+      "file": "bridge_side_stoneRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_side_wood",
+      "file": "bridge_side_wood.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_side_woodRound",
+      "file": "bridge_side_woodRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_stone",
+      "file": "bridge_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_stoneNarrow",
+      "file": "bridge_stoneNarrow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_stoneRound",
+      "file": "bridge_stoneRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_stoneRoundNarrow",
+      "file": "bridge_stoneRoundNarrow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_wood",
+      "file": "bridge_wood.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_woodNarrow",
+      "file": "bridge_woodNarrow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_woodRound",
+      "file": "bridge_woodRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bridge_woodRoundNarrow",
+      "file": "bridge_woodRoundNarrow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cactus_short",
+      "file": "cactus_short.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cactus_tall",
+      "file": "cactus_tall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "campfire_bricks",
+      "file": "campfire_bricks.glb",
+      "atlas": ""
+    },
+    {
+      "name": "campfire_logs",
+      "file": "campfire_logs.glb",
+      "atlas": ""
+    },
+    {
+      "name": "campfire_planks",
+      "file": "campfire_planks.glb",
+      "atlas": ""
+    },
+    {
+      "name": "campfire_stones",
+      "file": "campfire_stones.glb",
+      "atlas": ""
+    },
+    {
+      "name": "canoe",
+      "file": "canoe.glb",
+      "atlas": ""
+    },
+    {
+      "name": "canoe_paddle",
+      "file": "canoe_paddle.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_block_rock",
+      "file": "cliff_block_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_block_stone",
+      "file": "cliff_block_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockCave_rock",
+      "file": "cliff_blockCave_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockCave_stone",
+      "file": "cliff_blockCave_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockDiagonal_rock",
+      "file": "cliff_blockDiagonal_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockDiagonal_stone",
+      "file": "cliff_blockDiagonal_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockHalf_rock",
+      "file": "cliff_blockHalf_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockHalf_stone",
+      "file": "cliff_blockHalf_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockQuarter_rock",
+      "file": "cliff_blockQuarter_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockQuarter_stone",
+      "file": "cliff_blockQuarter_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockSlope_rock",
+      "file": "cliff_blockSlope_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockSlope_stone",
+      "file": "cliff_blockSlope_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockSlopeHalfWalls_rock",
+      "file": "cliff_blockSlopeHalfWalls_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockSlopeHalfWalls_stone",
+      "file": "cliff_blockSlopeHalfWalls_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockSlopeWalls_rock",
+      "file": "cliff_blockSlopeWalls_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_blockSlopeWalls_stone",
+      "file": "cliff_blockSlopeWalls_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cave_rock",
+      "file": "cliff_cave_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cave_stone",
+      "file": "cliff_cave_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_corner_rock",
+      "file": "cliff_corner_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_corner_stone",
+      "file": "cliff_corner_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerInner_rock",
+      "file": "cliff_cornerInner_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerInner_stone",
+      "file": "cliff_cornerInner_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerInnerLarge_rock",
+      "file": "cliff_cornerInnerLarge_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerInnerLarge_stone",
+      "file": "cliff_cornerInnerLarge_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerInnerTop_rock",
+      "file": "cliff_cornerInnerTop_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerInnerTop_stone",
+      "file": "cliff_cornerInnerTop_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerLarge_rock",
+      "file": "cliff_cornerLarge_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerLarge_stone",
+      "file": "cliff_cornerLarge_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerTop_rock",
+      "file": "cliff_cornerTop_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_cornerTop_stone",
+      "file": "cliff_cornerTop_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_diagonal_rock",
+      "file": "cliff_diagonal_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_diagonal_stone",
+      "file": "cliff_diagonal_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_half_rock",
+      "file": "cliff_half_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_half_stone",
+      "file": "cliff_half_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_halfCorner_rock",
+      "file": "cliff_halfCorner_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_halfCorner_stone",
+      "file": "cliff_halfCorner_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_halfCornerInner_rock",
+      "file": "cliff_halfCornerInner_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_halfCornerInner_stone",
+      "file": "cliff_halfCornerInner_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_large_rock",
+      "file": "cliff_large_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_large_stone",
+      "file": "cliff_large_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_rock",
+      "file": "cliff_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_steps_rock",
+      "file": "cliff_steps_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_steps_stone",
+      "file": "cliff_steps_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_stepsCorner_rock",
+      "file": "cliff_stepsCorner_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_stepsCorner_stone",
+      "file": "cliff_stepsCorner_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_stepsCornerInner_rock",
+      "file": "cliff_stepsCornerInner_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_stepsCornerInner_stone",
+      "file": "cliff_stepsCornerInner_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_stone",
+      "file": "cliff_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_top_rock",
+      "file": "cliff_top_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_top_stone",
+      "file": "cliff_top_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_topDiagonal_rock",
+      "file": "cliff_topDiagonal_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_topDiagonal_stone",
+      "file": "cliff_topDiagonal_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_waterfall_rock",
+      "file": "cliff_waterfall_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_waterfall_stone",
+      "file": "cliff_waterfall_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_waterfallTop_rock",
+      "file": "cliff_waterfallTop_rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "cliff_waterfallTop_stone",
+      "file": "cliff_waterfallTop_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crop_carrot",
+      "file": "crop_carrot.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crop_melon",
+      "file": "crop_melon.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crop_pumpkin",
+      "file": "crop_pumpkin.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crop_turnip",
+      "file": "crop_turnip.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_bambooStageA",
+      "file": "crops_bambooStageA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_bambooStageB",
+      "file": "crops_bambooStageB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_cornStageA",
+      "file": "crops_cornStageA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_cornStageB",
+      "file": "crops_cornStageB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_cornStageC",
+      "file": "crops_cornStageC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_cornStageD",
+      "file": "crops_cornStageD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtDoubleRow",
+      "file": "crops_dirtDoubleRow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtDoubleRowCorner",
+      "file": "crops_dirtDoubleRowCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtDoubleRowEnd",
+      "file": "crops_dirtDoubleRowEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtRow",
+      "file": "crops_dirtRow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtRowCorner",
+      "file": "crops_dirtRowCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtRowEnd",
+      "file": "crops_dirtRowEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_dirtSingle",
+      "file": "crops_dirtSingle.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_leafsStageA",
+      "file": "crops_leafsStageA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_leafsStageB",
+      "file": "crops_leafsStageB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_wheatStageA",
+      "file": "crops_wheatStageA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crops_wheatStageB",
+      "file": "crops_wheatStageB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_bend",
+      "file": "fence_bend.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_bendCenter",
+      "file": "fence_bendCenter.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_corner",
+      "file": "fence_corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_gate",
+      "file": "fence_gate.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_planks",
+      "file": "fence_planks.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_planksDouble",
+      "file": "fence_planksDouble.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_simple",
+      "file": "fence_simple.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_simpleCenter",
+      "file": "fence_simpleCenter.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_simpleDiagonal",
+      "file": "fence_simpleDiagonal.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_simpleDiagonalCenter",
+      "file": "fence_simpleDiagonalCenter.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_simpleHigh",
+      "file": "fence_simpleHigh.glb",
+      "atlas": ""
+    },
+    {
+      "name": "fence_simpleLow",
+      "file": "fence_simpleLow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_purpleA",
+      "file": "flower_purpleA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_purpleB",
+      "file": "flower_purpleB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_purpleC",
+      "file": "flower_purpleC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_redA",
+      "file": "flower_redA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_redB",
+      "file": "flower_redB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_redC",
+      "file": "flower_redC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_yellowA",
+      "file": "flower_yellowA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_yellowB",
+      "file": "flower_yellowB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "flower_yellowC",
+      "file": "flower_yellowC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "grass",
+      "file": "grass.glb",
+      "atlas": ""
+    },
+    {
+      "name": "grass_large",
+      "file": "grass_large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "grass_leafs",
+      "file": "grass_leafs.glb",
+      "atlas": ""
+    },
+    {
+      "name": "grass_leafsLarge",
+      "file": "grass_leafsLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_grass",
+      "file": "ground_grass.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathBend",
+      "file": "ground_pathBend.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathBendBank",
+      "file": "ground_pathBendBank.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathCorner",
+      "file": "ground_pathCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathCornerSmall",
+      "file": "ground_pathCornerSmall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathCross",
+      "file": "ground_pathCross.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathEnd",
+      "file": "ground_pathEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathEndClosed",
+      "file": "ground_pathEndClosed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathOpen",
+      "file": "ground_pathOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathRocks",
+      "file": "ground_pathRocks.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathSide",
+      "file": "ground_pathSide.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathSideOpen",
+      "file": "ground_pathSideOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathSplit",
+      "file": "ground_pathSplit.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathStraight",
+      "file": "ground_pathStraight.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_pathTile",
+      "file": "ground_pathTile.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverBend",
+      "file": "ground_riverBend.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverBendBank",
+      "file": "ground_riverBendBank.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverCorner",
+      "file": "ground_riverCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverCornerSmall",
+      "file": "ground_riverCornerSmall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverCross",
+      "file": "ground_riverCross.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverEnd",
+      "file": "ground_riverEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverEndClosed",
+      "file": "ground_riverEndClosed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverOpen",
+      "file": "ground_riverOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverRocks",
+      "file": "ground_riverRocks.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverSide",
+      "file": "ground_riverSide.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverSideOpen",
+      "file": "ground_riverSideOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverSplit",
+      "file": "ground_riverSplit.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverStraight",
+      "file": "ground_riverStraight.glb",
+      "atlas": ""
+    },
+    {
+      "name": "ground_riverTile",
+      "file": "ground_riverTile.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hanging_moss",
+      "file": "hanging_moss.glb",
+      "atlas": ""
+    },
+    {
+      "name": "lily_large",
+      "file": "lily_large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "lily_small",
+      "file": "lily_small.glb",
+      "atlas": ""
+    },
+    {
+      "name": "log",
+      "file": "log.glb",
+      "atlas": ""
+    },
+    {
+      "name": "log_large",
+      "file": "log_large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "log_stack",
+      "file": "log_stack.glb",
+      "atlas": ""
+    },
+    {
+      "name": "log_stackLarge",
+      "file": "log_stackLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "mushroom_red",
+      "file": "mushroom_red.glb",
+      "atlas": ""
+    },
+    {
+      "name": "mushroom_redGroup",
+      "file": "mushroom_redGroup.glb",
+      "atlas": ""
+    },
+    {
+      "name": "mushroom_redTall",
+      "file": "mushroom_redTall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "mushroom_tan",
+      "file": "mushroom_tan.glb",
+      "atlas": ""
+    },
+    {
+      "name": "mushroom_tanGroup",
+      "file": "mushroom_tanGroup.glb",
+      "atlas": ""
+    },
+    {
+      "name": "mushroom_tanTall",
+      "file": "mushroom_tanTall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_stone",
+      "file": "path_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_stoneCircle",
+      "file": "path_stoneCircle.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_stoneCorner",
+      "file": "path_stoneCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_stoneEnd",
+      "file": "path_stoneEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_wood",
+      "file": "path_wood.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_woodCorner",
+      "file": "path_woodCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "path_woodEnd",
+      "file": "path_woodEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_bush",
+      "file": "plant_bush.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_bushDetailed",
+      "file": "plant_bushDetailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_bushLarge",
+      "file": "plant_bushLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_bushLargeTriangle",
+      "file": "plant_bushLargeTriangle.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_bushSmall",
+      "file": "plant_bushSmall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_bushTriangle",
+      "file": "plant_bushTriangle.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_flatShort",
+      "file": "plant_flatShort.glb",
+      "atlas": ""
+    },
+    {
+      "name": "plant_flatTall",
+      "file": "plant_flatTall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_beach",
+      "file": "platform_beach.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_grass",
+      "file": "platform_grass.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_stone",
+      "file": "platform_stone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pot_large",
+      "file": "pot_large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pot_small",
+      "file": "pot_small.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeA",
+      "file": "rock_largeA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeB",
+      "file": "rock_largeB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeC",
+      "file": "rock_largeC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeD",
+      "file": "rock_largeD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeE",
+      "file": "rock_largeE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeF",
+      "file": "rock_largeF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallA",
+      "file": "rock_smallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallB",
+      "file": "rock_smallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallC",
+      "file": "rock_smallC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallD",
+      "file": "rock_smallD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallE",
+      "file": "rock_smallE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallF",
+      "file": "rock_smallF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallFlatA",
+      "file": "rock_smallFlatA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallFlatB",
+      "file": "rock_smallFlatB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallFlatC",
+      "file": "rock_smallFlatC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallG",
+      "file": "rock_smallG.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallH",
+      "file": "rock_smallH.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallI",
+      "file": "rock_smallI.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallTopA",
+      "file": "rock_smallTopA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_smallTopB",
+      "file": "rock_smallTopB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallA",
+      "file": "rock_tallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallB",
+      "file": "rock_tallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallC",
+      "file": "rock_tallC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallD",
+      "file": "rock_tallD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallE",
+      "file": "rock_tallE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallF",
+      "file": "rock_tallF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallG",
+      "file": "rock_tallG.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallH",
+      "file": "rock_tallH.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallI",
+      "file": "rock_tallI.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_tallJ",
+      "file": "rock_tallJ.glb",
+      "atlas": ""
+    },
+    {
+      "name": "sign",
+      "file": "sign.glb",
+      "atlas": ""
+    },
+    {
+      "name": "statue_block",
+      "file": "statue_block.glb",
+      "atlas": ""
+    },
+    {
+      "name": "statue_column",
+      "file": "statue_column.glb",
+      "atlas": ""
+    },
+    {
+      "name": "statue_columnDamaged",
+      "file": "statue_columnDamaged.glb",
+      "atlas": ""
+    },
+    {
+      "name": "statue_head",
+      "file": "statue_head.glb",
+      "atlas": ""
+    },
+    {
+      "name": "statue_obelisk",
+      "file": "statue_obelisk.glb",
+      "atlas": ""
+    },
+    {
+      "name": "statue_ring",
+      "file": "statue_ring.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_largeA",
+      "file": "stone_largeA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_largeB",
+      "file": "stone_largeB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_largeC",
+      "file": "stone_largeC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_largeD",
+      "file": "stone_largeD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_largeE",
+      "file": "stone_largeE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_largeF",
+      "file": "stone_largeF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallA",
+      "file": "stone_smallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallB",
+      "file": "stone_smallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallC",
+      "file": "stone_smallC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallD",
+      "file": "stone_smallD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallE",
+      "file": "stone_smallE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallF",
+      "file": "stone_smallF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallFlatA",
+      "file": "stone_smallFlatA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallFlatB",
+      "file": "stone_smallFlatB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallFlatC",
+      "file": "stone_smallFlatC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallG",
+      "file": "stone_smallG.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallH",
+      "file": "stone_smallH.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallI",
+      "file": "stone_smallI.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallTopA",
+      "file": "stone_smallTopA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_smallTopB",
+      "file": "stone_smallTopB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallA",
+      "file": "stone_tallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallB",
+      "file": "stone_tallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallC",
+      "file": "stone_tallC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallD",
+      "file": "stone_tallD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallE",
+      "file": "stone_tallE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallF",
+      "file": "stone_tallF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallG",
+      "file": "stone_tallG.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallH",
+      "file": "stone_tallH.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallI",
+      "file": "stone_tallI.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stone_tallJ",
+      "file": "stone_tallJ.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_old",
+      "file": "stump_old.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_oldTall",
+      "file": "stump_oldTall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_round",
+      "file": "stump_round.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_roundDetailed",
+      "file": "stump_roundDetailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_square",
+      "file": "stump_square.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_squareDetailed",
+      "file": "stump_squareDetailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stump_squareDetailedWide",
+      "file": "stump_squareDetailedWide.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tent_detailedClosed",
+      "file": "tent_detailedClosed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tent_detailedOpen",
+      "file": "tent_detailedOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tent_smallClosed",
+      "file": "tent_smallClosed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tent_smallOpen",
+      "file": "tent_smallOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_blocks",
+      "file": "tree_blocks.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_blocks_dark",
+      "file": "tree_blocks_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_blocks_fall",
+      "file": "tree_blocks_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_cone",
+      "file": "tree_cone.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_cone_dark",
+      "file": "tree_cone_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_cone_fall",
+      "file": "tree_cone_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_default",
+      "file": "tree_default.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_default_dark",
+      "file": "tree_default_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_default_fall",
+      "file": "tree_default_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_detailed",
+      "file": "tree_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_detailed_dark",
+      "file": "tree_detailed_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_detailed_fall",
+      "file": "tree_detailed_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_fat",
+      "file": "tree_fat.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_fat_darkh",
+      "file": "tree_fat_darkh.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_fat_fall",
+      "file": "tree_fat_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_oak",
+      "file": "tree_oak.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_oak_dark",
+      "file": "tree_oak_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_oak_fall",
+      "file": "tree_oak_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_palm",
+      "file": "tree_palm.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_palmBend",
+      "file": "tree_palmBend.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_palmDetailedShort",
+      "file": "tree_palmDetailedShort.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_palmDetailedTall",
+      "file": "tree_palmDetailedTall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_palmShort",
+      "file": "tree_palmShort.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_palmTall",
+      "file": "tree_palmTall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineDefaultA",
+      "file": "tree_pineDefaultA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineDefaultB",
+      "file": "tree_pineDefaultB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineGroundA",
+      "file": "tree_pineGroundA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineGroundB",
+      "file": "tree_pineGroundB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineRoundA",
+      "file": "tree_pineRoundA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineRoundB",
+      "file": "tree_pineRoundB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineRoundC",
+      "file": "tree_pineRoundC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineRoundD",
+      "file": "tree_pineRoundD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineRoundE",
+      "file": "tree_pineRoundE.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineRoundF",
+      "file": "tree_pineRoundF.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineSmallA",
+      "file": "tree_pineSmallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineSmallB",
+      "file": "tree_pineSmallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineSmallC",
+      "file": "tree_pineSmallC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineSmallD",
+      "file": "tree_pineSmallD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallA",
+      "file": "tree_pineTallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallA_detailed",
+      "file": "tree_pineTallA_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallB",
+      "file": "tree_pineTallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallB_detailed",
+      "file": "tree_pineTallB_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallC",
+      "file": "tree_pineTallC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallC_detailed",
+      "file": "tree_pineTallC_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallD",
+      "file": "tree_pineTallD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_pineTallD_detailed",
+      "file": "tree_pineTallD_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_plateau",
+      "file": "tree_plateau.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_plateau_dark",
+      "file": "tree_plateau_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_plateau_fall",
+      "file": "tree_plateau_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_simple",
+      "file": "tree_simple.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_simple_dark",
+      "file": "tree_simple_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_simple_fall",
+      "file": "tree_simple_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_small",
+      "file": "tree_small.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_small_dark",
+      "file": "tree_small_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_small_fall",
+      "file": "tree_small_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_tall",
+      "file": "tree_tall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_tall_dark",
+      "file": "tree_tall_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_tall_fall",
+      "file": "tree_tall_fall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_thin",
+      "file": "tree_thin.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_thin_dark",
+      "file": "tree_thin_dark.glb",
+      "atlas": ""
+    },
+    {
+      "name": "tree_thin_fall",
+      "file": "tree_thin_fall.glb",
+      "atlas": ""
+    }
+  ]
+}

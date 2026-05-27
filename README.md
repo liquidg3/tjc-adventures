@@ -15,7 +15,7 @@ and the vessel only succeeds when they work together.
 | Track | State |
 |---|---|
 | **M0 — cross-device spine** | ✅ Done & verified (host QR → phone joins a Colyseus room, input round-trips). **Parked** at `/host` + `/join` while we focus on graphics. |
-| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). The current focus: iterate on art, motion, feel. |
+| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Current focus: iterate on art, motion, feel. **Art direction = Kenney CC0 low-poly** (imported via the Studio's Asset Library). |
 
 ---
 
@@ -47,8 +47,8 @@ npm run dev          # boots server (:2567) + client (:5173) together
 | `npm run dev` | Frees ports, then boots **server + client** together (prefixed output, clean shutdown). |
 | `npm run dev:client` | Just the client (Vite, :5173). Enough for the graphics sandbox. |
 | `npm run dev:server` | Just the Colyseus server (:2567). |
-| `npm run dev:studio` | Studio — asset coverage board (Vite, :5174). |
-| `npm run convert-models` | Convert models from ~/Downloads → GLB for the Studio. |
+| `npm run dev:studio` | Studio — tuner + Kenney asset tools (Vite, :5174). |
+| `npm run stage-pack` | Stage a local GLB/OBJ/FBX pack folder into `public/models` (manual alternative to the Asset Library's one-click Import). |
 | `npm run build` | **Typechecks every workspace**, then builds. Won't build with type errors. |
 | `npm run typecheck` | Typecheck all workspaces. |
 | `npm run doctor` | Pre-flight health check (Node, deps, ports). |
@@ -68,7 +68,7 @@ apps/
                    /host  laptop "table" lobby (M0 spine, parked)
                    /join  phone controller (M0 spine, parked)
   game-server/   Colyseus authoritative server (:2567)
-  studio/        Studio (:5174) — the tuner: 3D-models board + scene tuning panels  ← primary work surface
+  studio/        Studio (:5174) — tuner + Kenney asset tools (Library/Test/Models board)  ← primary work surface
   marketing/     marketing site (stub)
 packages/
   scenes/        ★ the live Babylon scene (@tjc/scenes)
@@ -79,7 +79,7 @@ packages/
   ui/            shared React components (stub)                              ← game + marketing
   assets/        sprites, palettes, audio (stub)                            ← game + marketing
   config/        shared presets (stub)
-scripts/         free-ports, clean, doctor, verify-spine, convert/import-models
+scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 ```
 
 ## The vertical-scroller scene
@@ -105,50 +105,46 @@ scripts/         free-ports, clean, doctor, verify-spine, convert/import-models
 - **Debug logging:** `packages/scenes/src/debug.ts` exposes `dbg()` — on in dev and
   with `?debug`, off in production. Look for `[TJC]` lines in the console.
 
-## Studio — the tuner (`apps/studio`, :5174)
+## Studio — the tuner + asset tools (`apps/studio`, :5174)
 
-Opens to a **launcher** of section cards: **3D Models** (ready), **Vertical
-Scroller** (ready), Side Scroller / Death Race (coming soon).
+Opens to a **launcher** of section cards: **3D Models**, **Asset Library**, **Asset
+Test**, **Vertical Scroller** (Side Scroller / Death Race coming soon).
 
 ```bash
 npm run dev:studio   # → http://localhost:5174  (run from the repo root)
 ```
 
-**Vertical Scroller** — the live scene plus collapsible tuning panels (all collapsed
-by default): Ship Size, Ship Position (live x/y/z readout + reset), Camera Rotation,
-Ship Altitude, Ground, Lighting (presets + sun sliders), Pixelate. Each panel drives
-a `SceneHandle` method.
+**Art direction = Kenney CC0 low-poly.** All game art comes from Kenney's CC0 3D
+kits. They're browsed, imported, previewed, and assigned entirely in the Studio; the
+results commit to `apps/studio/public/models`.
+
+**Asset Library** — a live browser of every Kenney 3D pack (scraped from kenney.nl by
+the dev server). Hit **Import** on a pack and the server downloads + unzips + stages
+its GLBs straight into committed `public/models/kenney-<slug>/` (one click). Cards
+show "✓ imported" for packs already staged. *Manual alternative:* `node
+scripts/stage-pack.mjs <localDir> <name>` for a pack folder on disk.
+
+**Asset Test** — preview any staged model in **one shared 3D viewer** (a single WebGL
+context, so it scales to any pack size) with live X/Y/Z orientation sliders.
 
 **3D Models** — assign a real model to every asset slot the game needs (ships,
-animals, environment, terrain, props) and see which are still **missing**:
+environment, …):
 
 - Each slot has a **dropdown** + a **live orbit preview** (drag to rotate, scroll to
   zoom; **pixelate**/**spin** toggles). Previews lazy-mount a Babylon engine only
   while on screen and under a global context cap (see gotchas) — so the board can't
   exhaust WebGL contexts.
+- **Dropdown options** are loaded from the staged Kenney packs in `public/models`
+  (`loadStagedModels()` reads `index.json` → per-pack `manifest.json`). Import packs
+  in the **Asset Library** first; they appear here automatically.
 - **Assignments persist to `apps/studio/asset-map.json`** (committed, durable, the
   game will read it) via the dev server's `/__asset-map` endpoint; localStorage is a
   fast fallback.
-- Built-in placeholder ships are always selectable; **downloaded models in
-  `src/models/` appear in every dropdown** automatically as they're added.
-- **Add a model:** drop a `.glb`/`.gltf` into `apps/studio/src/models/`.
-- **Convert other formats:** `npm run convert-models` scans `~/Downloads`,
-  converts to `.glb` (via `assimp`), and drops them in `src/models/`:
 
-  | Format | Handling |
-  |---|---|
-  | `.glb` | used as-is |
-  | `.gltf` `.fbx` `.obj` `.stl` `.dae` `.ply` `.3ds` | converted via `assimp` (`brew install assimp`) |
-  | `.blend` `.max` `.usdz` | need their source app (e.g. Blender) — export to glb/fbx/obj first |
-
-- Approved assets get promoted into `packages/assets` for the game to consume.
-
-**Where to get models** (GLB drops straight into the viewer):
-- **Kenney.nl** — free CC0 game assets (incl. space/ships); great fit for our look.
-- **Quaternius** — free CC0 low-poly model packs.
-- **Poly Pizza** — free low-poly models (the ex–Google Poly library).
-- **Sketchfab** — huge library, many free/CC; export as glTF/GLB.
-- **Synty (POLYGON)** — paid, cohesive low-poly art style.
+**Vertical Scroller** — the live scene plus collapsible tuning panels (all collapsed
+by default): Zone Plan, Ship Size, Ship Position (live x/y/z readout + reset), Camera
+Rotation, Ship Altitude, Ground, Lighting (presets + sun sliders), Ship Lighting,
+Scenery, Pixelate. Each panel drives a `SceneHandle` method.
 
 ## Troubleshooting & gotchas (don't repeat these)
 
@@ -156,8 +152,9 @@ animals, environment, terrain, props) and see which are still **missing**:
   context; past the cap the browser drops the oldest, which corrupts *every* engine
   on the page ("Unable to create texture / vertex buffer / uniform buffer", blank
   screen). The 3D Models board hit this (one engine per card), so previews now
-  lazy-mount only when on screen and lease from a hard cap of 12
-  (`apps/studio/src/viewer-budget.ts`). **Never create unbounded engines.**
+  lazy-mount only when on screen and lease from a hard cap of 6
+  (`apps/studio/src/viewer-budget.ts`); the Asset Test screen uses a single shared
+  viewer instead. **Never create unbounded engines.**
 - **Pixelation breaks screen-space math if you use render-buffer dims.**
   `engine.setHardwareScalingLevel(n)` shrinks the render buffer to 1/n, and Babylon's
   `createPickingRay` *also* divides input coords by that level — so using

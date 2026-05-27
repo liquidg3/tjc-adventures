@@ -46,10 +46,20 @@ route `/`). **See `docs/STATE.md`** for exact tunables, the `SceneHandle` contra
 the open punch list, and ordered next steps. The M0 multiplayer spine is built and
 **parked** (`/host` + `/join`).
 
+**Art direction = Kenney CC0 low-poly.** Game art is sourced exclusively from
+Kenney's CC0 3D kits via the Studio's **Asset Library** (live browser + one-click
+Import → committed `apps/studio/public/models`). The earlier Sketchfab library and
+a Synty experiment were removed. **The current next task is the scene swap** —
+repoint `packages/scenes/src/scene-config.ts` from the last legacy models
+(`ship_classic` + `environment/*`) to Kenney models. See `docs/STATE.md`.
+
 ## Where things live
 - **Live scene (Babylon):** `packages/scenes/src/ship-scene.ts` → `@tjc/scenes`
-- **Studio (tuner + asset board):** `apps/studio` (:5174) — the primary work surface
+- **Studio (tuner + Kenney asset tools):** `apps/studio` (:5174) — primary work
+  surface. Asset Library (import) · Asset Test (preview) · 3D Models board (assign)
 - **Game client (mounts the scene):** `apps/game-client` (:5173)
+- **Production models (committed, CC0):** `apps/studio/public/models` (Kenney packs
+  + `index.json`); `apps/game-client/public/models` is the scene's runtime copy — keep synced
 - Game logic core (shared types): `packages/core`
 - Server (Colyseus, parked): `apps/game-server`
-- Helper scripts: `scripts/` (free-ports, clean, doctor, verify-spine, convert/import-models)
+- Helper scripts: `scripts/` (free-ports, clean, doctor, verify-spine, stage-pack)

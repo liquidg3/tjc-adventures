@@ -8,12 +8,28 @@ import { acquireContext, releaseContext, onContextFreed } from "./viewer-budget"
  *  Each preview owns a WebGL context, and browsers cap those at ~16 per page, so
  *  we only run an engine while the card is on screen AND holds a context lease
  *  (see viewer-budget). Off-screen / over-budget cards show a cheap placeholder. */
-export function ModelPreview({ modelUrl, variant }: { modelUrl?: string; variant?: ShipVariant }) {
+export function ModelPreview({
+  modelUrl,
+  variant,
+  atlasUrl,
+  orientX = 0,
+  orientY = 0,
+  orientZ = 0,
+  defaultSpin = true,
+}: {
+  modelUrl?: string;
+  variant?: ShipVariant;
+  atlasUrl?: string;
+  orientX?: number;
+  orientY?: number;
+  orientZ?: number;
+  defaultSpin?: boolean;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handleRef = useRef<ViewerHandle | null>(null);
   const [pixelate, setPixelate] = useState(false);
-  const [spin, setSpin] = useState(true);
+  const [spin, setSpin] = useState(defaultSpin);
   const [status, setStatus] = useState("");
   const [visible, setVisible] = useState(false);
   const [live, setLive] = useState(false); // do we currently hold a context + engine?
@@ -54,14 +70,23 @@ export function ModelPreview({ modelUrl, variant }: { modelUrl?: string; variant
   // Spin up / tear down the actual Babylon engine when we hold a lease.
   useEffect(() => {
     if (!live || !canvasRef.current) return;
-    const h = createViewer(canvasRef.current, { modelUrl, variant, pixelate, spin }, setStatus);
+    const h = createViewer(
+      canvasRef.current,
+      { modelUrl, variant, atlasUrl, pixelate, spin, orient: [orientX, orientY, orientZ] },
+      setStatus,
+    );
     handleRef.current = h;
     return () => {
       h.dispose();
       handleRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [live, modelUrl, variant]);
+  }, [live, modelUrl, variant, atlasUrl]);
+
+  // live-update orientation from the sliders (no engine rebuild)
+  useEffect(() => {
+    handleRef.current?.setOrient(orientX, orientY, orientZ);
+  }, [orientX, orientY, orientZ]);
 
   useEffect(() => {
     handleRef.current?.setPixelate(pixelate);

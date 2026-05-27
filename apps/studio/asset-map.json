@@ -1,5 +1,5 @@
 {
-  "ship-player": "model:ships/ship_helicopter",
+  "ship-player": "model:kenney-space-kit/craft_racer",
   "ship-enemy": "model:ships/ship_classic",
   "animal-sloth": "model:animals/sloth",
   "animal-bunny": "model:animals/bunny",

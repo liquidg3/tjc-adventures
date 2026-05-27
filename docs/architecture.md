@@ -130,6 +130,11 @@ for types/helpers. Built as a lightweight **ECS / system pipeline**:
 
 2D gameplay, rendered in a 3D scene for depth (the Octopath-style "HD-2D" look).
 
+- **Art direction (locked): Kenney CC0 low-poly 3D kits** are the source for all
+  game models — vertex-colored, self-contained, license-clean to commit. They're
+  browsed and one-click-imported via the Studio's Asset Library into committed
+  `public/models` (see `docs/STATE.md` → "Assets & art direction"). The pixel/
+  posterize post-process below sits *on top of* these flat-shaded models.
 - **Orthographic camera**, top-down, for the vertical scroller (slight tilt
   optional for into-screen depth).
 - **Layered Z-depth:** parallax background(s) → ground plane → gameplay sprites →

@@ -1,4 +1,4 @@
-export type SectionId = "models" | "vertical" | "side" | "race";
+export type SectionId = "models" | "assets" | "asset-test" | "vertical" | "side" | "race";
 
 interface SectionCard {
   id: SectionId;
@@ -9,6 +9,18 @@ interface SectionCard {
 
 const SECTIONS: SectionCard[] = [
   { id: "models", title: "3D Models", desc: "Assign a model to every game asset slot.", status: "ready" },
+  {
+    id: "assets",
+    title: "Asset Library",
+    desc: "Browse CC0 packs to source scenery, ruins & props from.",
+    status: "ready",
+  },
+  {
+    id: "asset-test",
+    title: "Asset Test",
+    desc: "Preview imported Kenney packs in one shared 3D viewer — confirm they load clean.",
+    status: "ready",
+  },
   {
     id: "vertical",
     title: "Vertical Scroller",

@@ -1,0 +1,770 @@
+{
+  "pack": "kenney-space-kit",
+  "models": [
+    {
+      "name": "alien",
+      "file": "alien.glb",
+      "atlas": ""
+    },
+    {
+      "name": "astronautA",
+      "file": "astronautA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "astronautB",
+      "file": "astronautB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "barrel",
+      "file": "barrel.glb",
+      "atlas": ""
+    },
+    {
+      "name": "barrels",
+      "file": "barrels.glb",
+      "atlas": ""
+    },
+    {
+      "name": "barrels_rail",
+      "file": "barrels_rail.glb",
+      "atlas": ""
+    },
+    {
+      "name": "bones",
+      "file": "bones.glb",
+      "atlas": ""
+    },
+    {
+      "name": "chimney",
+      "file": "chimney.glb",
+      "atlas": ""
+    },
+    {
+      "name": "chimney_detailed",
+      "file": "chimney_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor",
+      "file": "corridor.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_corner",
+      "file": "corridor_corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_cornerRound",
+      "file": "corridor_cornerRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_cornerRoundWindow",
+      "file": "corridor_cornerRoundWindow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_cross",
+      "file": "corridor_cross.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_detailed",
+      "file": "corridor_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_end",
+      "file": "corridor_end.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_open",
+      "file": "corridor_open.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_roof",
+      "file": "corridor_roof.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_split",
+      "file": "corridor_split.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_wall",
+      "file": "corridor_wall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_wallCorner",
+      "file": "corridor_wallCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_window",
+      "file": "corridor_window.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor_windowClosed",
+      "file": "corridor_windowClosed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_cargoA",
+      "file": "craft_cargoA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_cargoB",
+      "file": "craft_cargoB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_miner",
+      "file": "craft_miner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_racer",
+      "file": "craft_racer.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_speederA",
+      "file": "craft_speederA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_speederB",
+      "file": "craft_speederB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_speederC",
+      "file": "craft_speederC.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craft_speederD",
+      "file": "craft_speederD.glb",
+      "atlas": ""
+    },
+    {
+      "name": "crater",
+      "file": "crater.glb",
+      "atlas": ""
+    },
+    {
+      "name": "craterLarge",
+      "file": "craterLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "desk_chair",
+      "file": "desk_chair.glb",
+      "atlas": ""
+    },
+    {
+      "name": "desk_chairArms",
+      "file": "desk_chairArms.glb",
+      "atlas": ""
+    },
+    {
+      "name": "desk_chairStool",
+      "file": "desk_chairStool.glb",
+      "atlas": ""
+    },
+    {
+      "name": "desk_computer",
+      "file": "desk_computer.glb",
+      "atlas": ""
+    },
+    {
+      "name": "desk_computerCorner",
+      "file": "desk_computerCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "desk_computerScreen",
+      "file": "desk_computerScreen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "gate_complex",
+      "file": "gate_complex.glb",
+      "atlas": ""
+    },
+    {
+      "name": "gate_simple",
+      "file": "gate_simple.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_largeA",
+      "file": "hangar_largeA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_largeB",
+      "file": "hangar_largeB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_roundA",
+      "file": "hangar_roundA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_roundB",
+      "file": "hangar_roundB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_roundGlass",
+      "file": "hangar_roundGlass.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_smallA",
+      "file": "hangar_smallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "hangar_smallB",
+      "file": "hangar_smallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "machine_barrel",
+      "file": "machine_barrel.glb",
+      "atlas": ""
+    },
+    {
+      "name": "machine_barrelLarge",
+      "file": "machine_barrelLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "machine_generator",
+      "file": "machine_generator.glb",
+      "atlas": ""
+    },
+    {
+      "name": "machine_generatorLarge",
+      "file": "machine_generatorLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "machine_wireless",
+      "file": "machine_wireless.glb",
+      "atlas": ""
+    },
+    {
+      "name": "machine_wirelessCable",
+      "file": "machine_wirelessCable.glb",
+      "atlas": ""
+    },
+    {
+      "name": "meteor",
+      "file": "meteor.glb",
+      "atlas": ""
+    },
+    {
+      "name": "meteor_detailed",
+      "file": "meteor_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "meteor_half",
+      "file": "meteor_half.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trackCornerLarge",
+      "file": "monorail_trackCornerLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trackCornerSmall",
+      "file": "monorail_trackCornerSmall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trackSlope",
+      "file": "monorail_trackSlope.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trackStraight",
+      "file": "monorail_trackStraight.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trackSupport",
+      "file": "monorail_trackSupport.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trackSupportCorner",
+      "file": "monorail_trackSupportCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trainBox",
+      "file": "monorail_trainBox.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trainCargo",
+      "file": "monorail_trainCargo.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trainEnd",
+      "file": "monorail_trainEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trainFlat",
+      "file": "monorail_trainFlat.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trainFront",
+      "file": "monorail_trainFront.glb",
+      "atlas": ""
+    },
+    {
+      "name": "monorail_trainPassenger",
+      "file": "monorail_trainPassenger.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_corner",
+      "file": "pipe_corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_cornerDiagonal",
+      "file": "pipe_cornerDiagonal.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_cornerRound",
+      "file": "pipe_cornerRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_cornerRoundLarge",
+      "file": "pipe_cornerRoundLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_cross",
+      "file": "pipe_cross.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_end",
+      "file": "pipe_end.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_entrance",
+      "file": "pipe_entrance.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_open",
+      "file": "pipe_open.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_rampLarge",
+      "file": "pipe_rampLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_rampSmall",
+      "file": "pipe_rampSmall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_ring",
+      "file": "pipe_ring.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_ringHigh",
+      "file": "pipe_ringHigh.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_ringHighEnd",
+      "file": "pipe_ringHighEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_ringSupport",
+      "file": "pipe_ringSupport.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_split",
+      "file": "pipe_split.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_straight",
+      "file": "pipe_straight.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_supportHigh",
+      "file": "pipe_supportHigh.glb",
+      "atlas": ""
+    },
+    {
+      "name": "pipe_supportLow",
+      "file": "pipe_supportLow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_center",
+      "file": "platform_center.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_corner",
+      "file": "platform_corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_cornerOpen",
+      "file": "platform_cornerOpen.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_cornerRound",
+      "file": "platform_cornerRound.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_end",
+      "file": "platform_end.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_high",
+      "file": "platform_high.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_large",
+      "file": "platform_large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_long",
+      "file": "platform_long.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_low",
+      "file": "platform_low.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_side",
+      "file": "platform_side.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_small",
+      "file": "platform_small.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_smallDiagonal",
+      "file": "platform_smallDiagonal.glb",
+      "atlas": ""
+    },
+    {
+      "name": "platform_straight",
+      "file": "platform_straight.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rail",
+      "file": "rail.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rail_corner",
+      "file": "rail_corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rail_end",
+      "file": "rail_end.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rail_middle",
+      "file": "rail_middle.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock",
+      "file": "rock.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_crystals",
+      "file": "rock_crystals.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_crystalsLargeA",
+      "file": "rock_crystalsLargeA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_crystalsLargeB",
+      "file": "rock_crystalsLargeB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeA",
+      "file": "rock_largeA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rock_largeB",
+      "file": "rock_largeB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_baseA",
+      "file": "rocket_baseA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_baseB",
+      "file": "rocket_baseB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_finsA",
+      "file": "rocket_finsA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_finsB",
+      "file": "rocket_finsB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_fuelA",
+      "file": "rocket_fuelA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_fuelB",
+      "file": "rocket_fuelB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_sidesA",
+      "file": "rocket_sidesA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_sidesB",
+      "file": "rocket_sidesB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_topA",
+      "file": "rocket_topA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocket_topB",
+      "file": "rocket_topB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocks_smallA",
+      "file": "rocks_smallA.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rocks_smallB",
+      "file": "rocks_smallB.glb",
+      "atlas": ""
+    },
+    {
+      "name": "rover",
+      "file": "rover.glb",
+      "atlas": ""
+    },
+    {
+      "name": "satelliteDish",
+      "file": "satelliteDish.glb",
+      "atlas": ""
+    },
+    {
+      "name": "satelliteDish_detailed",
+      "file": "satelliteDish_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "satelliteDish_large",
+      "file": "satelliteDish_large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stairs",
+      "file": "stairs.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stairs_corner",
+      "file": "stairs_corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stairs_short",
+      "file": "stairs_short.glb",
+      "atlas": ""
+    },
+    {
+      "name": "structure",
+      "file": "structure.glb",
+      "atlas": ""
+    },
+    {
+      "name": "structure_closed",
+      "file": "structure_closed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "structure_detailed",
+      "file": "structure_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "structure_diagonal",
+      "file": "structure_diagonal.glb",
+      "atlas": ""
+    },
+    {
+      "name": "supports_high",
+      "file": "supports_high.glb",
+      "atlas": ""
+    },
+    {
+      "name": "supports_low",
+      "file": "supports_low.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain",
+      "file": "terrain.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_ramp",
+      "file": "terrain_ramp.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_rampLarge",
+      "file": "terrain_rampLarge.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_rampLarge_detailed",
+      "file": "terrain_rampLarge_detailed.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_roadCorner",
+      "file": "terrain_roadCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_roadCross",
+      "file": "terrain_roadCross.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_roadEnd",
+      "file": "terrain_roadEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_roadSplit",
+      "file": "terrain_roadSplit.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_roadStraight",
+      "file": "terrain_roadStraight.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_side",
+      "file": "terrain_side.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_sideCliff",
+      "file": "terrain_sideCliff.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_sideCorner",
+      "file": "terrain_sideCorner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_sideCornerInner",
+      "file": "terrain_sideCornerInner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "terrain_sideEnd",
+      "file": "terrain_sideEnd.glb",
+      "atlas": ""
+    },
+    {
+      "name": "turret_double",
+      "file": "turret_double.glb",
+      "atlas": ""
+    },
+    {
+      "name": "turret_single",
+      "file": "turret_single.glb",
+      "atlas": ""
+    },
+    {
+      "name": "weapon_gun",
+      "file": "weapon_gun.glb",
+      "atlas": ""
+    },
+    {
+      "name": "weapon_rifle",
+      "file": "weapon_rifle.glb",
+      "atlas": ""
+    }
+  ]
+}

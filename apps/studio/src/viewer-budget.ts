@@ -9,7 +9,7 @@
 // Each preview leases a slot before it spins up an engine and releases it when it
 // scrolls out of view or unmounts. Cards that are visible but over budget wait in
 // a queue and mount as soon as a slot frees.
-const MAX_CONTEXTS = 12;
+const MAX_CONTEXTS = 6;
 
 let active = 0;
 const waiters: Array<() => void> = [];

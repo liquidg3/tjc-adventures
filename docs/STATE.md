@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-05-26._
+_Last updated: 2026-05-27._
 
 ---
 
@@ -21,8 +21,19 @@ _Last updated: 2026-05-26._
   the 3D game. `npm run verify:spine` exercises it headlessly.
 - **ACTIVE WORK → the single-player 3D vertical-scroller, tuned through the
   Studio.** We are iterating the *look and flight feel* of the meadow scroller,
-  decoupled from netcode/gameplay. The last sessions added live tuning panels
-  (lighting, pixel, ground, camera, ship) and hardened the asset board.
+  decoupled from netcode/gameplay. Recent work: zones/climates, momentum + barrel
+  roll, and the asset tooling below.
+- **ART DIRECTION → Kenney CC0 low-poly (committed decision).** All non-Kenney
+  assets were removed — the old ~505 MB Sketchfab `src/models` library and the
+  Synty experiment are gone. Game art now comes exclusively from Kenney's CC0 3D
+  kits, browsed + one-click-imported in the Studio's **Asset Library**. See
+  "Assets & art direction" below. **Imported so far:** `kenney-nature-kit` (329
+  models), `kenney-space-kit` (153).
+- **NEXT (not yet done): the scene swap.** The scene still loads the *legacy*
+  ship + scenery from `public/models/{ships,environment}` (`ship_classic`,
+  `tree_fur`, …) — those are the last non-Kenney holdouts, kept only so the scene
+  runs. Replacing them with Kenney models (Space-Kit ship + Nature-Kit scenery) +
+  simplifying lighting for flat-shaded is the immediate next task.
 
 ## The one thing that changed structurally (don't trip on the old layout)
 
@@ -72,22 +83,24 @@ packages/scenes/
   src/debug.ts             flaggable logging: dbg()/dbgWarn()/dbgError(); on in dev or with ?debug
   src/index.ts             re-exports ship-scene
 
-apps/studio/               ★ THE TUNER (port 5174) — primary surface
-  src/Home.tsx             launcher: section cards → models | vertical | side | race
+apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary surface
+  src/Home.tsx             launcher cards → models | assets | asset-test | vertical (+ side/race soon)
   src/App.tsx              section router (Home ↔ a section)
-  src/VerticalScroller.tsx the scene + collapsible tuning panels (zone plan / camera / ship / ground / lighting / pixel)
-  src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
-  src/ModelsBoard.tsx      3D Models board: a slot per game asset, grouped by category
+  src/AssetLibrary.tsx     ★ Kenney pack browser: live thumbnails + one-click Import (Assets section below)
+  src/AssetTest.tsx        single shared 3D viewer — pick a staged model to preview; X/Y/Z orientation sliders
+  src/ModelsBoard.tsx      3D Models board: assign a staged model to each game slot → asset-map.json
   src/SlotCard.tsx         one slot: dropdown + live preview
-  src/ModelPreview.tsx     orbit preview; lazy-mounts a Babylon engine ONLY when on screen + under budget
-  src/viewer-scene.ts      createViewer(): the orbit-preview engine (loads GLB or built-in placeholder)
-  src/viewer-budget.ts     ★ caps live WebGL contexts at 12 (see gotcha) — leased by ModelPreview
-  src/slots.ts             the asset slots (Ships/Animals/Environment/Terrain/Props)
-  src/models.ts            AUTO-DISCOVERS src/models/**/*.glb via import.meta.glob
-  src/models/{ships,animals,environment,terrain,props}/  the full imported model library (~508 MB, unoptimized)
-  public/models/{ships,environment}/  the LIGHT models the scene loads at runtime (/models/...)
-  vite.config.ts           assetMapPlugin(): GET/POST /__asset-map ↔ asset-map.json (durable persistence)
-  asset-map.json           committed slot→model assignments (source of truth; localStorage is fallback)
+  src/ModelPreview.tsx     budgeted orbit preview (lazy-mounts an engine on screen, capped by viewer-budget)
+  src/viewer-scene.ts      createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
+  src/viewer-budget.ts     caps live WebGL contexts at 6 — leased by ModelPreview (Asset Test uses ONE shared viewer)
+  src/models.ts            loadStagedModels(): reads imported packs from public/models (index.json + manifests)
+  src/slots.ts             the game asset slots (Ships/Animals/Environment/…)
+  src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel)
+  src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
+  public/models/           ★ PRODUCTION assets (committed): kenney-<pack>/*.glb + manifest.json, index.json;
+                             plus legacy ships/ + environment/ the scene still loads (pending the swap)
+  vite.config.ts           dev endpoints: /__asset-map, /__vertical-defaults, /__kenney/{list,meta,import}
+  asset-map.json           committed slot→model assignments
 
 apps/game-client/          Vite + React (port 5173)
   src/GameSandbox.tsx      mounts @tjc/scenes on a canvas (route /)
@@ -99,7 +112,7 @@ apps/game-server/          Colyseus authoritative server (parked); GameRoom + Ga
 apps/marketing/            stub
 packages/core/             shared TS types (Role, JoinOptions, ROOM_NAME, ports)
 packages/ui|assets|config/ stubs (assets = intended future home for game art)
-scripts/                   free-ports, clean, doctor, verify-spine, convert-models, import-models
+scripts/                   free-ports, clean, doctor, verify-spine, stage-pack (manual pack staging), gen-grass-tiles
 docs/                      brief.md (canon), prototype-meadow-run.md (the level), architecture.md, this file
 ```
 
@@ -210,10 +223,12 @@ owns ground + lighting; the manual panels drive the scene only when stopped.
 
 Live panels around the canvas (all **collapsed by default**; click a header to open):
 
+- **Zone Plan** (the level's ordered climates; selecting a zone mirrors it into the
+  Ground/Lighting/Ship-Lighting/Scenery panels so they edit *that* zone)
 - **Ship Size** (slider) · **Ship Position** (live x/y/z readout + "Reset to start")
 - **Camera Rotation** (the 7 modes) · **Ship Altitude** (slider)
 - **Ground** (4 styles) · **Lighting** (5 presets + Sun / Sky / Angle / Height sliders)
-- **Pixelate** (Off / 2× / 3× / 4×)
+- **Ship Lighting** (PBR) · **Scenery** (per-model density) · **Pixelate** (Off / 2× / 3× / 4×)
 
 Each panel maps to a `SceneHandle` method. The Ship-Position readout is how QE
 reports good coordinates back; that's why `getShipPosition`/`resetShip` exist.
@@ -223,8 +238,45 @@ reports good coordinates back; that's why `getShipPosition`/`resetShip` exist.
 Assign a real model to each game asset slot. **Assignments persist to the committed
 `apps/studio/asset-map.json`** via the dev server's `/__asset-map` GET/POST endpoint
 (`assetMapPlugin` in `vite.config.ts`); localStorage is a fast fallback. The game
-will read this map later. Dropdown options = built-in placeholder ships +
-auto-discovered `src/models/**/*.glb`.
+will read this map later. Dropdown options come from `loadStagedModels()` — every
+model in the imported Kenney packs under `public/models` (the old `src/models`
+`import.meta.glob` is gone). Import packs from the **Asset Library** first.
+
+---
+
+## Assets & art direction (Kenney CC0)
+
+**Decision:** all game art comes from **Kenney's CC0 3D kits** (kenney.nl). We ditched
+the earlier mixed Sketchfab library (~505 MB, sometimes broken GLBs) and a brief Synty
+experiment (FBX with dead Windows `.psd` texture paths). Kenney models are
+vertex-colored, self-contained, Y-up — no atlas wrangling, no orientation fixes, tiny,
+license-clean to commit.
+
+**The pipeline (all in the Studio):**
+1. **Asset Library** (`/assets`) — live browser of every Kenney 3D pack. The dev server
+   scrapes kenney.nl (`/__kenney/list` paginates `category:3D`; `/__kenney/meta?slug=`
+   finds each pack's preview + zip). Each card's one-click **Import** →
+   `POST /__kenney/import?slug=` downloads the zip, `unzip`s it, copies the GLBs (and
+   only textures a GLB actually references — not Kenney's preview PNGs) into
+   `public/models/kenney-<slug>/`, writes `manifest.json`, and appends the pack to
+   `public/models/index.json`. Cards show "✓ imported" for staged packs.
+2. **Asset Test** (`/asset-test`) — one shared 3D viewer (single WebGL context) to
+   preview any staged model, with live X/Y/Z orientation sliders.
+3. **3D Models board** (`/models`) — assign a staged model to each game slot → `asset-map.json`.
+4. **`scripts/stage-pack.mjs`** — manual equivalent of Import for a local pack folder;
+   assimp-converts OBJ/FBX if a pack ships those instead of GLB.
+
+**Where assets live:** `apps/studio/public/models/` — **committed** (CC0). Layout:
+`kenney-<pack>/*.glb` + `manifest.json` per pack, plus top-level `index.json`
+(`{"packs":[…]}`). **Imported so far:** `kenney-nature-kit` (329), `kenney-space-kit`
+(153). The game-client has its own `public/models` to sync when the scene's runtime
+models change.
+
+**Still legacy (pending the scene swap):** `public/models/ships/ship_classic.glb` and
+`public/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` — the *only*
+non-Kenney files left, kept because `packages/scenes` still loads them
+(`DEFAULT_SHIP_MODEL_URL`, `SCENERY_MODELS` in `scene-config.ts`). Swapping these to
+Kenney is the next task (below).
 
 ---
 
@@ -248,14 +300,15 @@ auto-discovered `src/models/**/*.glb`.
    deferred to gameplay.
 
 **Art pipeline:**
-6. **Models are HUGE & unoptimized** (`apps/studio/src/models` ≈ **508 MB**; terrain
-   scans 40–100 MB, `sloth` ~63 MB). The scene only loads the light ones from
-   `public/models`. **Before using the heavy/nice models in the game, run a
-   `gltfpack` (meshoptimizer) pass** (simplify + texture downscale + compress).
-7. **A few GLBs may have texture issues** (`ship_helicopter`, `bunny`, `sloth`
-   showed "Unable to create texture"). That surfaced *during* the WebGL
-   context-loss cascade (now fixed), so **re-verify after a fresh reload**; if a
-   specific model still fails, reconvert it.
+6. **Scene still runs legacy models.** The runtime scene loads `ship_classic` +
+   the four `environment/` props (the last non-Kenney files). **The swap to Kenney
+   models is the #1 next step** (see below) — pick a Space-Kit ship + Nature-Kit
+   scenery in the **3D Models board**, repoint `scene-config.ts`, delete the legacy
+   files, then sync `apps/game-client/public/models`.
+7. **Kenney kits are big catalogs, not curated sets.** `nature-kit` is 329 models,
+   `space-kit` 153 — most won't be used. Curate the handful the scene actually needs
+   via the 3D Models board; no `gltfpack` pass is needed (Kenney GLBs are already
+   tiny and vertex-colored).
 
 **Gameplay (not started — pilot-flight only):**
 8. No shooting / enemies / pickups / rescue / cages yet. Roles (Gunner, Spotter) are
@@ -266,11 +319,15 @@ auto-discovered `src/models/**/*.glb`.
 
 ## Suggested next steps (in order)
 
-1. Lock the **look**: settle lighting + ground direction; decide if hardware-scaling
-   pixel stays or the low-res-RT pipeline is needed.
-2. Bake the chosen lighting/ground into defaults; trim now-unneeded tuner panels.
-3. **Optimize** the heavy models (`gltfpack`) and curate final env/ship models via
-   the 3D Models board.
+1. **The scene swap (do this first).** Repoint `packages/scenes/src/scene-config.ts`
+   (`DEFAULT_SHIP_MODEL_URL`, `SCENERY_MODELS`) to Kenney models — a Space-Kit ship +
+   Nature-Kit trees/rocks — using the 3D Models board to choose. Then delete the
+   legacy `public/models/ships` + `public/models/environment` files, **sync
+   `apps/game-client/public/models`**, and simplify lighting for Kenney's flat-shaded
+   look (PBR matte tuning matters less). This unblocks a fully-Kenney scene.
+2. Lock the **look**: settle lighting + ground direction; decide if hardware-scaling
+   pixel stays or the low-res-RT pipeline (`architecture.md` §6) is needed; bake into defaults.
+3. Curate the final env/ship Kenney models via the 3D Models board.
 4. Build the **gameplay layer** (Raiden-inspired): enemies, wire the **Gunner's**
    shooting, pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
@@ -284,9 +341,11 @@ auto-discovered `src/models/**/*.glb`.
   3D Models board renders one engine per card, so a full board exceeded the cap, the
   browser dropped the oldest contexts, and **every** engine on the page died
   ("Unable to create texture / vertex buffer / uniform buffer", blank screen).
-  Fixed by `apps/studio/src/viewer-budget.ts` (hard cap of **12** leased slots) +
+  Fixed by `apps/studio/src/viewer-budget.ts` (hard cap of **6** leased slots) +
   `ModelPreview.tsx` lazy-mounting an engine only while the card is on screen
   (IntersectionObserver). **Never create unbounded Babylon engines on one page.**
+  The **Asset Test** screen sidesteps the cap entirely with ONE shared viewer that
+  recreates its engine on model-select — preview any pack size at one context.
 - **Pixelation breaks screen-space math if you use render-buffer dims.**
   `setHardwareScalingLevel(n)` shrinks the render buffer to 1/n, and Babylon's
   `createPickingRay` *also* divides input coords by the hardware-scaling level — so
@@ -303,13 +362,18 @@ auto-discovered `src/models/**/*.glb`.
 - **No `React.StrictMode`** — double-invoked effects would start Babylon/rooms twice.
 - **Run npm scripts from the repo root.** `dev:studio`, `dev:client`, etc. are root
   scripts; running them inside a workspace dir errors with "Missing script".
-- **Model conversion:** `npm run convert-models` (assimp: fbx/obj/stl→glb from
-  `~/Downloads`) and `node scripts/import-models.mjs` (the one-time categorized
-  import that produced `apps/studio/src/models`, bundling Sketchfab `scene.gltf`
-  packages into single GLBs via gltf-pipeline).
-- **Where models live:** the scene loads `/models/**` served from each app's
-  `public/models` (`apps/studio/public/models`, `apps/game-client/public/models`);
-  the 3D Models board previews auto-discover `apps/studio/src/models/**` via
-  `import.meta.glob`.
+- **Asset import = Studio, not scripts.** Use the **Asset Library**'s one-click
+  Import (Kenney, over the network) or `node scripts/stage-pack.mjs <dir> <name>`
+  (local folder). The old `convert-models`/`import-models` scripts and the 505 MB
+  `src/models` library they built are **deleted** — don't look for them.
+- **Where models live:** **committed** under each app's `public/models` (served at
+  `/models/**`). The Studio's 3D Models board + Asset Test read
+  `apps/studio/public/models` via `index.json` → per-pack `manifest.json` (no
+  `import.meta.glob`). The scene loads from the app it runs in
+  (`apps/game-client/public/models`), so **keep the two `public/models` in sync**
+  when scene-runtime models change.
+- **Kenney GLBs are vertex-colored (no texture images)** — they render correctly
+  flat-shaded; don't expect PBR atlases. Import copies only referenced textures, so
+  Kenney's preview PNGs are (correctly) skipped.
 - **Ports:** server **2567**, game client **5173**, Studio **5174**.
 </content>

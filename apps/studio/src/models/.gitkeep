@@ -1,3 +1,0 @@
-# Converted .glb / .gltf models live here and are auto-discovered by the gallery
-# (via import.meta.glob in src/models.ts). Add files manually or via
-# `npm run convert-models`.

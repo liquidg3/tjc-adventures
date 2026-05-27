@@ -1,22 +1,14 @@
 import { useEffect, useState } from "react";
 import { SLOTS, type AssetOption } from "./slots";
-import { MODELS } from "./models";
+import { loadStagedModels } from "./models";
 import { SlotCard } from "./SlotCard";
 
-// Built-in procedural placeholders are always available in every dropdown;
-// discovered model files (src/models/) are added as they appear.
+// Built-in procedural placeholders are always available; the real options come
+// from the packs you import in the Asset Library (public/models/).
 const BUILTINS: AssetOption[] = [
   { value: "builtin:interceptor", label: "Interceptor (built-in)", variant: "interceptor" },
   { value: "builtin:hauler", label: "Hauler (built-in)", variant: "hauler" },
   { value: "builtin:scout", label: "Scout (built-in)", variant: "scout" },
-];
-const OPTIONS: AssetOption[] = [
-  ...BUILTINS,
-  ...MODELS.map((m) => ({
-    value: `model:${m.category}/${m.name}`,
-    label: `${m.category}/${m.name}`,
-    url: m.url,
-  })),
 ];
 
 // Assignments persist to a committed file (apps/studio/asset-map.json) via the
@@ -37,6 +29,22 @@ const loadLocal = (): Record<string, string> => {
 export function ModelsBoard() {
   const [assign, setAssign] = useState<Record<string, string>>(loadLocal);
   const [saved, setSaved] = useState(true);
+  const [options, setOptions] = useState<AssetOption[]>(BUILTINS);
+
+  // model options come from the imported (staged) packs
+  useEffect(() => {
+    loadStagedModels().then((models) =>
+      setOptions([
+        ...BUILTINS,
+        ...models.map((m) => ({
+          value: `model:${m.category}/${m.name}`,
+          label: `${m.category}/${m.name}`,
+          url: m.url,
+          atlas: m.atlas,
+        })),
+      ]),
+    );
+  }, []);
 
   // load the durable file as the source of truth (falls back to localStorage)
   useEffect(() => {
@@ -68,16 +76,16 @@ export function ModelsBoard() {
   const allSlots = SLOTS.flatMap((c) => c.slots);
   const filled = allSlots.filter((s) => assign[s.id]).length;
   const missing = allSlots.filter((s) => !assign[s.id]).map((s) => s.label);
-  const downloadedCount = OPTIONS.length - BUILTINS.length;
+  const modelCount = options.length - BUILTINS.length;
 
   return (
     <div className="studio">
       <header>
         <h1>3D Models</h1>
         <p>
-          Assign a model to each asset slot the game needs. Downloaded models in{" "}
-          <code>src/models/</code> appear in the dropdowns — run{" "}
-          <code>npm run convert-models</code> to pull &amp; convert from ~/Downloads.
+          Assign a model to each asset slot the game needs. Options come from the
+          Kenney packs you import in the <b>Asset Library</b> ({modelCount} models
+          available) — import more there and they appear here.
         </p>
         <div className="summary">
           <b>
@@ -101,7 +109,7 @@ export function ModelsBoard() {
                 key={s.id}
                 label={s.label}
                 value={assign[s.id] || ""}
-                options={OPTIONS}
+                options={options}
                 onChange={(v) => set(s.id, v)}
               />
             ))}

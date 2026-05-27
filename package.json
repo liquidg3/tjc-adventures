@@ -24,7 +24,7 @@
     "clean": "node scripts/clean.mjs",
     "reset": "node scripts/clean.mjs --modules && npm install",
     "verify:spine": "node scripts/verify-spine.mjs",
-    "convert-models": "node scripts/convert-models.mjs"
+    "stage-pack": "node scripts/stage-pack.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.0.1",

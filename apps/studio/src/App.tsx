@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { AssetLibrary } from "./AssetLibrary";
+import { AssetTest } from "./AssetTest";
 import { Home, type SectionId } from "./Home";
 import { ModelsBoard } from "./ModelsBoard";
 import { VerticalScroller } from "./VerticalScroller";
@@ -6,7 +8,12 @@ import { VerticalScroller } from "./VerticalScroller";
 function readSectionFromHash(): SectionId | null {
   const raw = location.hash.replace(/^#/, "");
   const section = raw.split("?")[0] as SectionId | "";
-  return section === "models" || section === "vertical" || section === "side" || section === "race"
+  return section === "models" ||
+    section === "assets" ||
+    section === "asset-test" ||
+    section === "vertical" ||
+    section === "side" ||
+    section === "race"
     ? section
     : null;
 }
@@ -39,6 +46,8 @@ export function App() {
         ← Studio
       </button>
       {section === "models" && <ModelsBoard />}
+      {section === "assets" && <AssetLibrary />}
+      {section === "asset-test" && <AssetTest />}
       {section === "vertical" && <VerticalScroller />}
     </div>
   );

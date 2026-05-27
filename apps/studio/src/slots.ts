@@ -7,6 +7,7 @@ export interface AssetOption {
   label: string;
   variant?: ShipVariant;
   url?: string;
+  atlas?: string;
 }
 
 export interface SlotDef {

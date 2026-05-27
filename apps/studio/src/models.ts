@@ -1,24 +1,42 @@
-// Auto-discovers every .glb / .gltf under src/models/ (any category subfolder)
-// — no manual list. Drop files in (or run `npm run convert-models` /
-// `node scripts/import-models.mjs`) and they appear in the Studio dropdowns.
-const modules = import.meta.glob("./models/**/*.{glb,gltf}", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>;
-
+// The Studio's model options come from the packs you import in the Asset Library,
+// which land in public/models/<pack>/ (index.json + per-pack manifest.json).
+// Served at runtime, so we fetch rather than glob the source tree.
 export interface ModelEntry {
   name: string;
-  category: string;
+  category: string; // pack name, e.g. "kenney-nature-kit"
   url: string;
+  atlas: string; // "" when the GLB is self-contained (Kenney)
 }
 
-export const MODELS: ModelEntry[] = Object.entries(modules)
-  .map(([path, url]) => {
-    const rel = path.replace(/^\.\/models\//, "");
-    const parts = rel.split("/");
-    const category = parts.length > 1 ? parts[0] : "misc";
-    const name = parts[parts.length - 1].replace(/\.(glb|gltf)$/i, "");
-    return { name, category, url };
-  })
-  .sort((a, b) => `${a.category}/${a.name}`.localeCompare(`${b.category}/${b.name}`));
+interface PackManifest {
+  pack: string;
+  models: Array<{ name: string; file: string; atlas: string }>;
+}
+
+/** Load every staged model across all imported packs, grouped by pack. */
+export async function loadStagedModels(): Promise<ModelEntry[]> {
+  const idx = await fetch("/models/index.json")
+    .then((r) => r.json())
+    .catch(() => ({ packs: [] as string[] }));
+  const packs: string[] = idx.packs ?? [];
+  const manifests = await Promise.all(
+    packs.map((p) =>
+      fetch(`/models/${p}/manifest.json`)
+        .then((r) => r.json() as Promise<PackManifest>)
+        .catch(() => null),
+    ),
+  );
+  const out: ModelEntry[] = [];
+  for (const m of manifests) {
+    if (!m) continue;
+    for (const model of m.models) {
+      out.push({
+        name: model.name,
+        category: m.pack,
+        url: `/models/${m.pack}/${model.file}`,
+        atlas: model.atlas ? `/models/${m.pack}/${model.atlas}` : "",
+      });
+    }
+  }
+  return out.sort((a, b) => `${a.category}/${a.name}`.localeCompare(`${b.category}/${b.name}`));
+}

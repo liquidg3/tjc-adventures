@@ -32,7 +32,7 @@ export function SlotCard({
         ))}
       </select>
       {assigned ? (
-        <ModelPreview modelUrl={selected!.url} variant={selected!.variant} />
+        <ModelPreview modelUrl={selected!.url} atlasUrl={selected!.atlas} variant={selected!.variant} />
       ) : (
         <div className="missing-box">no model yet</div>
       )}

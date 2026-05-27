@@ -9,9 +9,12 @@ import {
   Color4,
   TransformNode,
   MeshBuilder,
+  MultiMaterial,
   StandardMaterial,
   SceneLoader,
+  Texture,
   type AbstractMesh,
+  type Material,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF"; // registers the .glb / .gltf loader
 
@@ -23,12 +26,18 @@ export interface ViewerOptions {
   pixelate?: boolean;
   spin?: boolean;
   bg?: string;
+  /** Apply this texture to all loaded materials (a shared atlas, if a pack uses one). */
+  atlasUrl?: string;
+  /** Extra orientation (degrees, XYZ) applied to the loaded model. */
+  orient?: [number, number, number];
 }
 
 export interface ViewerHandle {
   dispose: () => void;
   setPixelate: (on: boolean) => void;
   setSpin: (on: boolean) => void;
+  /** Live-update the model orientation (degrees, XYZ) — for dialing in fixes. */
+  setOrient: (x: number, y: number, z: number) => void;
   onStatus?: (cb: (msg: string) => void) => void;
 }
 
@@ -57,6 +66,15 @@ export function createViewer(
   let spin = opts.spin ?? true;
   let loaded: AbstractMesh[] = [];
 
+  // orientation applied to the loaded model (separate from the turntable spin on
+  // the pivot), so it can be dialed live to find a pack's correct rotation
+  let modelRoot: AbstractMesh | null = null;
+  const orient: [number, number, number] = opts.orient ? [...opts.orient] : [0, 0, 0];
+  const d2r = (d: number) => (d * Math.PI) / 180;
+  function applyOrient() {
+    if (modelRoot) modelRoot.rotation = new Vector3(d2r(orient[0]), d2r(orient[1]), d2r(orient[2]));
+  }
+
   function frameToContent() {
     let min = new Vector3(Infinity, Infinity, Infinity);
     let max = new Vector3(-Infinity, -Infinity, -Infinity);
@@ -76,13 +94,39 @@ export function createViewer(
     camera.upperRadiusLimit = size * 8;
   }
 
+  // Optional shared-atlas support: paint a single texture onto every loaded
+  // material and flatten the PBR response (for packs that ship one colormap).
+  // Kenney GLBs are self-contained/vertex-colored, so this is usually a no-op.
+  function applyAtlas(meshes: AbstractMesh[], url: string) {
+    const tex = new Texture(url, scene, false, false); // glTF UVs: don't invert Y
+    tex.name = "atlas";
+    const paint = (mat: Material | null) => {
+      if (!mat) return;
+      const subs = mat instanceof MultiMaterial ? mat.subMaterials : [mat];
+      for (const sm of subs) {
+        if (!sm) continue;
+        const anyMat = sm as unknown as Record<string, unknown>;
+        if ("albedoTexture" in anyMat) anyMat.albedoTexture = tex; // PBRMaterial (from glb)
+        if ("diffuseTexture" in anyMat) anyMat.diffuseTexture = tex; // StandardMaterial
+        if ("metallic" in anyMat) anyMat.metallic = 0; // flat shading
+        if ("roughness" in anyMat) anyMat.roughness = 1;
+      }
+    };
+    for (const m of meshes) paint(m.material);
+  }
+
   if (opts.modelUrl) {
     onStatus?.("loading…");
     SceneLoader.ImportMeshAsync("", "", opts.modelUrl, scene)
       .then((res) => {
         loaded = res.meshes;
         const root = res.meshes.find((m) => !m.parent) ?? res.meshes[0];
-        if (root) root.parent = pivot;
+        if (root) {
+          root.parent = pivot;
+          modelRoot = root;
+          applyOrient();
+        }
+        if (opts.atlasUrl) applyAtlas(res.meshes, opts.atlasUrl);
         frameToContent();
         onStatus?.("");
       })
@@ -199,6 +243,12 @@ export function createViewer(
     setPixelate,
     setSpin(on: boolean) {
       spin = on;
+    },
+    setOrient(x: number, y: number, z: number) {
+      orient[0] = x;
+      orient[1] = y;
+      orient[2] = z;
+      applyOrient();
     },
   };
 }
