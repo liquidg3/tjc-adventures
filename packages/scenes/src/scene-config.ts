@@ -28,10 +28,18 @@ export interface ShipLightingState {
   ambientStrength: number;
 }
 
+export type ShipNormalizationAnchor = "none" | "center" | "bottom-center";
+
+export interface ShipModelNormalization {
+  orient: [number, number, number];
+  offset: [number, number, number];
+  anchor: ShipNormalizationAnchor;
+}
+
 export interface SceneHandle {
   dispose: () => void;
   setCameraRotationMode: (mode: CameraRotationMode) => void;
-  setPlayerShipModel: (url: string) => void;
+  setPlayerShipModel: (url: string, normalization?: ShipModelNormalization) => void;
   setShipHeight: (height: number) => void;
   setShipSize: (size: number) => void;
   getShipPosition: () => { x: number; y: number; z: number } | null;

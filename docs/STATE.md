@@ -87,20 +87,24 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/Home.tsx             launcher cards → models | assets | asset-test | vertical (+ side/race soon)
   src/App.tsx              section router (Home ↔ a section)
   src/AssetLibrary.tsx     ★ Kenney pack browser: live thumbnails + one-click Import (Assets section below)
-  src/AssetTest.tsx        single shared 3D viewer — pick a staged model to preview; X/Y/Z orientation sliders
-  src/ModelsBoard.tsx      3D Models board: assign a staged model to each game slot → asset-map.json
-  src/SlotCard.tsx         one slot: dropdown + live preview
-  src/ModelPreview.tsx     budgeted orbit preview (lazy-mounts an engine on screen, capped by viewer-budget)
+  src/AssetTest.tsx        single shared 3D viewer — simple rotating isometric browse view; auto-applies kit preset
+  src/ModelsBoard.tsx      3D Models board: assign a staged model + normalization preset to each game slot → asset-map.json
+  src/SlotCard.tsx         one slot: dropdown + preset select + expanded modal draft/save normalization workflow
+  src/ModelPreview.tsx     budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
+  src/asset-normalization.ts preset registry + asset-map parsing/serialization helpers + model overrides
   src/viewer-scene.ts      createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
   src/viewer-budget.ts     caps live WebGL contexts at 6 — leased by ModelPreview (Asset Test uses ONE shared viewer)
   src/models.ts            loadStagedModels(): reads imported packs from public/models (index.json + manifests)
   src/slots.ts             the game asset slots (Ships/Animals/Environment/…)
-  src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel)
+  src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
+                           now reads asset-map + normalization presets so the live ship matches the 3D Models board
   src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
   public/models/           ★ PRODUCTION assets (committed): kenney-<pack>/*.glb + manifest.json, index.json;
                              plus legacy ships/ + environment/ the scene still loads (pending the swap)
-  vite.config.ts           dev endpoints: /__asset-map, /__vertical-defaults, /__kenney/{list,meta,import}
+  vite.config.ts           dev endpoints: /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides}, /__kenney/{list,meta,import}
   asset-map.json           committed slot→model assignments
+  asset-normalization-presets.json   committed shared normalization baselines
+  asset-normalization-overrides.json committed per-model normalization overrides
 
 apps/game-client/          Vite + React (port 5173)
   src/GameSandbox.tsx      mounts @tjc/scenes on a canvas (route /)
@@ -134,7 +138,8 @@ setLevelPlan, getZoneStatus, setScenery  (+ setGroundTile, setPipelineMode, setR
 
 - `ship-scene.ts` is now the composition root, not the implementation dump.
 - `flight-controller.ts` owns ship movement, viewport clamp math, and camera bank.
-- `ship-controller.ts` owns player ship load/swap/size/shadow/material state.
+- `ship-controller.ts` owns player ship load/swap/size/shadow/material state,
+  including runtime model normalization (orient/anchor/offset) under a pivot.
 - `lighting-controller.ts` owns sun/sky/shadow preset math and live sun controls.
 - `prop-field.ts` owns scatter/recycle behavior for environment props.
 - `ground-texture.ts` owns the procedural meadow painter.
@@ -242,6 +247,55 @@ will read this map later. Dropdown options come from `loadStagedModels()` — ev
 model in the imported Kenney packs under `public/models` (the old `src/models`
 `import.meta.glob` is gone). Import packs from the **Asset Library** first.
 
+**Normalization now lives here too.** Each slot assignment also carries a
+**normalization preset** so the chosen model can be made game-ready at selection
+time, not later in Asset Test. Current presets:
+
+- `none`
+- `kenney-space-kit`
+- `kenney-nature-kit`
+
+The grid card preview is the lightweight beauty view:
+- rotating isometric camera
+- mouse interaction enabled
+- no gizmos
+
+The expanded modal is the real alignment tool:
+- 2×2 grid: `Top`, `Front`, `Side`, `Iso`
+- side-panel tuning controls
+- draft-only edits until saved
+- actions:
+  - `Reset Draft`
+  - `Save Preset`
+  - `Save For Model`
+  - `Clear Model Override`
+- confirmations are in-app UI, not browser `confirm()`
+
+Persistence model:
+- `asset-normalization-presets.json` = shared kit baseline
+- `asset-normalization-overrides.json` = model-specific exceptions
+
+Important unresolved bug:
+- the preview/reference tooling and the runtime scene are still not fully aligned
+  on ship forward. A ship can look correct against the preview forward indicator
+  and still fly backward in the vertical scroller. Treat this as a
+  runtime-vs-preview convention mismatch, not as a tuning mistake.
+
+The asset map supports both the old string form and the new object form:
+
+```json
+"ship-player": "model:kenney-space-kit/craft_racer"
+```
+
+or:
+
+```json
+"ship-player": {
+  "model": "model:kenney-space-kit/craft_racer",
+  "preset": "kenney-space-kit"
+}
+```
+
 ---
 
 ## Assets & art direction (Kenney CC0)
@@ -252,6 +306,12 @@ experiment (FBX with dead Windows `.psd` texture paths). Kenney models are
 vertex-colored, self-contained, Y-up — no atlas wrangling, no orientation fixes, tiny,
 license-clean to commit.
 
+**Other CC0 sources to revisit** (parked — we're on Kenney for now, but worth a look
+if we want more variety or a complementary style):
+- **Quaternius** — https://quaternius.com/index.html — free CC0 low-poly model packs,
+  same spirit as Kenney (a strong candidate if Kenney's kits don't cover something).
+- Also on the radar: **Poly Pizza** (ex-Google Poly), **Sketchfab** (filter to CC0/CC-BY).
+
 **The pipeline (all in the Studio):**
 1. **Asset Library** (`/assets`) — live browser of every Kenney 3D pack. The dev server
    scrapes kenney.nl (`/__kenney/list` paginates `category:3D`; `/__kenney/meta?slug=`
@@ -261,7 +321,8 @@ license-clean to commit.
    `public/models/kenney-<slug>/`, writes `manifest.json`, and appends the pack to
    `public/models/index.json`. Cards show "✓ imported" for staged packs.
 2. **Asset Test** (`/asset-test`) — one shared 3D viewer (single WebGL context) to
-   preview any staged model, with live X/Y/Z orientation sliders.
+   preview any staged model as a rotating isometric browse view. Kits start
+   collapsed. The viewer auto-applies the matching preset by kit.
 3. **3D Models board** (`/models`) — assign a staged model to each game slot → `asset-map.json`.
 4. **`scripts/stage-pack.mjs`** — manual equivalent of Import for a local pack folder;
    assimp-converts OBJ/FBX if a pack ships those instead of GLB.

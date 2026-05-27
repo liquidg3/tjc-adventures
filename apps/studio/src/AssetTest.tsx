@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createViewer, type ViewerHandle } from "./viewer-scene";
+import {
+  getDefaultNormalizationPresets,
+  getNormalizationPreset,
+  mergeNormalizationPresets,
+  suggestPresetForModel,
+  type AssetNormalization,
+} from "./asset-normalization";
 
 // per-page-load cache-buster — staged GLBs change on re-stage and browsers cache
 // .glb aggressively, so a fresh load should always re-fetch them
@@ -27,17 +34,11 @@ interface Selection {
 function AssetViewer({
   modelUrl,
   atlasUrl,
-  orientX,
-  orientY,
-  orientZ,
-  spin,
+  normalization,
 }: {
   modelUrl: string;
   atlasUrl: string;
-  orientX: number;
-  orientY: number;
-  orientZ: number;
-  spin: boolean;
+  normalization: AssetNormalization;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handleRef = useRef<ViewerHandle | null>(null);
@@ -49,7 +50,7 @@ function AssetViewer({
     if (!canvasRef.current) return;
     const h = createViewer(
       canvasRef.current,
-      { modelUrl, atlasUrl, spin, orient: [orientX, orientY, orientZ] },
+      { modelUrl, atlasUrl, spin: true, view: "isometric", normalization },
       setStatus,
     );
     handleRef.current = h;
@@ -58,14 +59,7 @@ function AssetViewer({
       handleRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelUrl, atlasUrl]);
-
-  useEffect(() => {
-    handleRef.current?.setOrient(orientX, orientY, orientZ);
-  }, [orientX, orientY, orientZ]);
-  useEffect(() => {
-    handleRef.current?.setSpin(spin);
-  }, [spin]);
+  }, [atlasUrl, modelUrl, normalization]);
 
   return (
     <div className="asset-stage">
@@ -80,9 +74,18 @@ export function AssetTest() {
   const [packs, setPacks] = useState<PackManifest[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
-  const [rot, setRot] = useState({ x: 0, y: 0, z: 0 });
-  const [spin, setSpin] = useState(true);
   const [sel, setSel] = useState<Selection | null>(null);
+  const [openPacks, setOpenPacks] = useState<Record<string, boolean>>({});
+  const [presetValues, setPresetValues] = useState(getDefaultNormalizationPresets);
+
+  useEffect(() => {
+    fetch("/__asset-normalization-presets")
+      .then((r) => r.json())
+      .then((data) => setPresetValues(mergeNormalizationPresets(data)))
+      .catch(() => {
+        /* keep defaults */
+      });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -99,6 +102,9 @@ export function AssetTest() {
         );
         if (cancelled) return;
         setPacks(manifests);
+        setOpenPacks(
+          Object.fromEntries(manifests.map((m) => [m.pack, false]))
+        );
         const first = manifests.find((m) => m.models.length);
         if (first) setSel({ pack: first.pack, model: first.models[0] });
       })
@@ -120,6 +126,14 @@ export function AssetTest() {
     [packs, needle],
   );
 
+  const selectedNormalization =
+    sel == null
+      ? getNormalizationPreset(presetValues, "none")
+      : getNormalizationPreset(
+          presetValues,
+          suggestPresetForModel(`model:${sel.pack}/${sel.model.name}`),
+        );
+
   return (
     <div className="studio">
       <header>
@@ -131,34 +145,6 @@ export function AssetTest() {
           committed <code>public/models/</code> (Kenney is CC0).
         </p>
       </header>
-
-      <div className="rot-bar">
-        <span className="rot-title">Orientation</span>
-        {(["x", "y", "z"] as const).map((ax) => (
-          <label key={ax} className="rot-ctl">
-            <span>{ax.toUpperCase()}</span>
-            <input
-              type="range"
-              min={-180}
-              max={180}
-              step={5}
-              value={rot[ax]}
-              onChange={(e) => setRot((r) => ({ ...r, [ax]: parseInt(e.target.value, 10) }))}
-            />
-            <b>{rot[ax]}°</b>
-          </label>
-        ))}
-        <button className="rot-reset" onClick={() => setRot({ x: 0, y: 0, z: 0 })}>
-          reset
-        </button>
-        <code className="rot-vals">
-          [{rot.x}, {rot.y}, {rot.z}]
-        </code>
-        <label className="rot-ctl">
-          <input type="checkbox" checked={spin} onChange={(e) => setSpin(e.target.checked)} /> spin
-        </label>
-      </div>
-
       {error && <p className="dim">{error}</p>}
       {!error && !packs && <p className="dim">Loading staged packs…</p>}
 
@@ -173,10 +159,15 @@ export function AssetTest() {
             />
             {filtered.map((pk) => (
               <div key={pk.pack}>
-                <div className="asset-list-pack">
-                  {pk.pack} ({pk.models.length})
-                </div>
-                {pk.models.map((m) => (
+                <button
+                  className="asset-list-pack"
+                  type="button"
+                  onClick={() => setOpenPacks((prev) => ({ ...prev, [pk.pack]: !prev[pk.pack] }))}
+                >
+                  <span>{openPacks[pk.pack] ? "▾" : "▸"}</span>
+                  <span>{pk.pack} ({pk.models.length})</span>
+                </button>
+                {openPacks[pk.pack] && pk.models.map((m) => (
                   <button
                     key={m.name}
                     className={`asset-item ${sel?.model.name === m.name && sel?.pack === pk.pack ? "active" : ""}`}
@@ -193,10 +184,7 @@ export function AssetTest() {
             <AssetViewer
               modelUrl={`/models/${sel.pack}/${sel.model.file}?v=${BUST}`}
               atlasUrl={sel.model.atlas ? `/models/${sel.pack}/${sel.model.atlas}?v=${BUST}` : ""}
-              orientX={rot.x}
-              orientY={rot.y}
-              orientZ={rot.z}
-              spin={spin}
+              normalization={selectedNormalization}
             />
           ) : (
             <div className="asset-stage">

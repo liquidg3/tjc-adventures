@@ -1,22 +1,82 @@
 {
-  "ship-player": "model:kenney-space-kit/craft_racer",
-  "ship-enemy": "model:ships/ship_classic",
-  "animal-sloth": "model:animals/sloth",
-  "animal-bunny": "model:animals/bunny",
-  "animal-fox": "model:animals/fox",
-  "animal-cheetah": "model:animals/cheetah",
-  "env-trees": "model:environment/tree_fur",
-  "env-tree-2": "model:environment/tree_stylized",
-  "env-grass": "model:environment/bush",
-  "env-bushes": "model:environment/bush",
-  "env-rocks": "model:environment/rocks_small",
-  "terrain-a": "model:terrain/hill_chapel_ruin",
-  "terrain-b": "model:terrain/hill_recycle_park",
-  "terrain-c": "model:terrain/hill_wood_folly",
-  "prop-cage": "model:props/cage",
-  "prop-box": "model:props/box_crate",
-  "prop-fruit": "model:props/fruit_dragon",
-  "prop-fruit-2": "model:props/fruit_orange",
-  "prop-fruit-3": "model:props/fruit_pomegranate",
-  "prop-berries": "model:props/berries_cherry"
+  "ship-player": {
+    "model": "model:kenney-space-kit/craft_racer",
+    "preset": "kenney-space-kit"
+  },
+  "ship-enemy": {
+    "model": "model:kenney-space-kit/craft_miner",
+    "preset": "kenney-space-kit"
+  },
+  "animal-sloth": {
+    "model": "model:animals/sloth",
+    "preset": "none"
+  },
+  "animal-bunny": {
+    "model": "model:animals/bunny",
+    "preset": "none"
+  },
+  "animal-fox": {
+    "model": "model:animals/fox",
+    "preset": "none"
+  },
+  "animal-cheetah": {
+    "model": "model:animals/cheetah",
+    "preset": "none"
+  },
+  "env-trees": {
+    "model": "model:environment/tree_fur",
+    "preset": "none"
+  },
+  "env-tree-2": {
+    "model": "model:environment/tree_stylized",
+    "preset": "none"
+  },
+  "env-grass": {
+    "model": "model:environment/bush",
+    "preset": "none"
+  },
+  "env-bushes": {
+    "model": "model:environment/bush",
+    "preset": "none"
+  },
+  "env-rocks": {
+    "model": "model:environment/rocks_small",
+    "preset": "none"
+  },
+  "terrain-a": {
+    "model": "model:terrain/hill_chapel_ruin",
+    "preset": "none"
+  },
+  "terrain-b": {
+    "model": "model:terrain/hill_recycle_park",
+    "preset": "none"
+  },
+  "terrain-c": {
+    "model": "model:terrain/hill_wood_folly",
+    "preset": "none"
+  },
+  "prop-cage": {
+    "model": "model:props/cage",
+    "preset": "none"
+  },
+  "prop-box": {
+    "model": "model:props/box_crate",
+    "preset": "none"
+  },
+  "prop-fruit": {
+    "model": "model:props/fruit_dragon",
+    "preset": "none"
+  },
+  "prop-fruit-2": {
+    "model": "model:props/fruit_orange",
+    "preset": "none"
+  },
+  "prop-fruit-3": {
+    "model": "model:props/fruit_pomegranate",
+    "preset": "none"
+  },
+  "prop-berries": {
+    "model": "model:props/berries_cherry",
+    "preset": "none"
+  }
 }

@@ -27,6 +27,7 @@ import {
   type LightingPreset,
   type PipelineMode,
   type SceneHandle,
+  type ShipModelNormalization,
   type SceneryDensities,
   type ShipLightingState,
   type TileSampling,
@@ -303,8 +304,8 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     setCameraRotationMode(mode) {
       flight.setCameraRotationMode(mode);
     },
-    setPlayerShipModel(url) {
-      shipController.setModelUrl(url);
+    setPlayerShipModel(url, normalization) {
+      shipController.setModelUrl(url, normalization);
     },
     setShipHeight(height) {
       shipHeight = height;

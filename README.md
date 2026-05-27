@@ -101,7 +101,10 @@ scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 - **Runtime contract:** `createShipScene(canvas)` returns a `SceneHandle` with
   setters for camera mode, ship height/size, ground style, pixel scale, lighting
   preset, and sun intensity/sky/azimuth/elevation (plus `getShipPosition`,
-  `resetShip`, `getLightingState`). Tunable constants are at the top of the file.
+  `resetShip`, `getLightingState`). The Studio vertical scroller now also reads
+  the selected `ship-player` assignment plus its saved normalization preset, so
+  the live ship matches the 3D Models board. Tunable constants are at the top
+  of the file.
 - **Debug logging:** `packages/scenes/src/debug.ts` exposes `dbg()` — on in dev and
   with `?debug`, off in production. Look for `[TJC]` lines in the console.
 
@@ -125,10 +128,12 @@ show "✓ imported" for packs already staged. *Manual alternative:* `node
 scripts/stage-pack.mjs <localDir> <name>` for a pack folder on disk.
 
 **Asset Test** — preview any staged model in **one shared 3D viewer** (a single WebGL
-context, so it scales to any pack size) with live X/Y/Z orientation sliders.
+context, so it scales to any pack size) as a simple rotating isometric browse view.
+All kits start collapsed. The viewer auto-applies the matching normalization preset
+based on the selected pack.
 
 **3D Models** — assign a real model to every asset slot the game needs (ships,
-environment, …):
+environment, …), and choose a **normalization preset** for that assignment:
 
 - Each slot has a **dropdown** + a **live orbit preview** (drag to rotate, scroll to
   zoom; **pixelate**/**spin** toggles). Previews lazy-mount a Babylon engine only
@@ -137,9 +142,26 @@ environment, …):
 - **Dropdown options** are loaded from the staged Kenney packs in `public/models`
   (`loadStagedModels()` reads `index.json` → per-pack `manifest.json`). Import packs
   in the **Asset Library** first; they appear here automatically.
+- Each assigned slot also has a **normalization preset** (`none`,
+  `kenney-space-kit`, `kenney-nature-kit`). The grid card stays presentational:
+  a slow rotating isometric orbit preview with mouse interaction.
+- The **expanded modal** is the real normalization tool:
+  a 2×2 alignment grid (`Top`, `Front`, `Side`, `Iso`) plus the tuning controls in
+  the side panel.
+- Normalization editing is now **draft-based**, not live-persisted. The modal has:
+  `Reset Draft`, `Save Preset`, `Save For Model`, and `Clear Model Override`.
+- Shared preset baselines persist to `apps/studio/asset-normalization-presets.json`.
+- Model-specific overrides persist to `apps/studio/asset-normalization-overrides.json`.
 - **Assignments persist to `apps/studio/asset-map.json`** (committed, durable, the
   game will read it) via the dev server's `/__asset-map` endpoint; localStorage is a
-  fast fallback.
+  fast fallback. The file now supports both the old string form and the new object
+  form with `{ model, preset }`.
+
+Current known issue:
+- The **vertical scroller ship can still fly backward even when the preview alignment
+  looks correct**. The runtime ship normalization wiring exists and the scene reads
+  presets + overrides, but the final runtime forward convention still disagrees with
+  the preview reference somewhere. That is the next bug to solve.
 
 **Vertical Scroller** — the live scene plus collapsible tuning panels (all collapsed
 by default): Zone Plan, Ship Size, Ship Position (live x/y/z readout + reset), Camera

@@ -23,11 +23,20 @@ import {
   verticalScrollerReducer,
   type VerticalDefaults,
 } from "./vertical-scroller-state";
+import {
+  mergeNormalizationOverrides,
+  getNormalizationPreset,
+  resolveAssetNormalization,
+  mergeNormalizationPresets,
+  parseAssetAssignment,
+} from "./asset-normalization";
 
 const VERTICAL_DEFAULTS_URL = "/__vertical-defaults";
 const HASH_WRITE_DEBOUNCE_MS = 150;
 
 const ASSET_MAP_URL = "/__asset-map";
+const ASSET_NORMALIZATION_PRESETS_URL = "/__asset-normalization-presets";
+const ASSET_NORMALIZATION_OVERRIDES_URL = "/__asset-normalization-overrides";
 
 function assetValueToPublicModelUrl(value: string | undefined): string | null {
   if (!value?.startsWith("model:")) return null;
@@ -139,17 +148,33 @@ export function VerticalScroller() {
   useEffect(() => {
     if (!canvasRef.current) return;
     const handle = createShipScene(canvasRef.current);
-    fetch(ASSET_MAP_URL)
-      .then((r) => r.json())
-      .then((data: Record<string, string>) => {
-        const playerShip = assetValueToPublicModelUrl(data?.["ship-player"]);
+    Promise.all([
+      fetch(ASSET_MAP_URL).then((r) => r.json()),
+      fetch(ASSET_NORMALIZATION_PRESETS_URL)
+        .then((r) => r.json())
+        .catch(() => ({})),
+      fetch(ASSET_NORMALIZATION_OVERRIDES_URL)
+        .then((r) => r.json())
+        .catch(() => ({})),
+    ])
+      .then(([assetMapData, presetData, overrideData]: [Record<string, unknown>, unknown, unknown]) => {
+        const assignment = parseAssetAssignment(assetMapData?.["ship-player"]);
+        const playerShip = assetValueToPublicModelUrl(assignment.model);
+        const presets = mergeNormalizationPresets(presetData);
+        const overrides = mergeNormalizationOverrides(overrideData);
         if (playerShip) {
           dispatch({
             type: "set-player-ship-url",
             url: playerShip,
             respectHashShipSize: initialHashParamsRef.current.has("shipSize"),
           });
-          handle.setPlayerShipModel(playerShip);
+          handle.setPlayerShipModel(
+            playerShip,
+            resolveAssetNormalization(
+              getNormalizationPreset(presets, assignment.preset),
+              overrides[assignment.model],
+            ),
+          );
         }
       })
       .catch(() => {

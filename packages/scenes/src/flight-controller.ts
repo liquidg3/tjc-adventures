@@ -1,7 +1,6 @@
 import {
   Matrix,
   Vector3,
-  type AbstractMesh,
   type FreeCamera,
   type Scene,
   type TransformNode,
@@ -26,7 +25,7 @@ export interface FlightStepInput {
   scene: Scene;
   camera: FreeCamera;
   cameraRig: TransformNode;
-  ship: AbstractMesh;
+  ship: TransformNode;
   shipPivot: TransformNode | null;
   shipHeight: number;
   input: { vx: number; vz: number; boosting: boolean; dodge: number };

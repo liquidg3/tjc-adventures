@@ -18,6 +18,8 @@ import { execFileSync } from "node:child_process";
 const here = dirname(fileURLToPath(import.meta.url));
 const ASSET_MAP_FILE = resolve(here, "asset-map.json");
 const VERTICAL_DEFAULTS_FILE = resolve(here, "vertical-defaults.json");
+const ASSET_NORMALIZATION_PRESETS_FILE = resolve(here, "asset-normalization-presets.json");
+const ASSET_NORMALIZATION_OVERRIDES_FILE = resolve(here, "asset-normalization-overrides.json");
 
 // Dev-only endpoint that persists Studio assignments to a committed JSON file
 // (durable + version-controlled), instead of fragile browser localStorage.
@@ -74,6 +76,74 @@ function verticalDefaultsPlugin(): Plugin {
           req.on("end", () => {
             try {
               writeFileSync(VERTICAL_DEFAULTS_FILE, body || "{}");
+              res.end("ok");
+            } catch (err) {
+              res.statusCode = 500;
+              res.end(String(err));
+            }
+          });
+          return;
+        }
+        res.statusCode = 405;
+        res.end();
+      });
+    },
+  };
+}
+
+function assetNormalizationPresetsPlugin(): Plugin {
+  return {
+    name: "tjc-asset-normalization-presets",
+    configureServer(server) {
+      server.middlewares.use("/__asset-normalization-presets", (req, res) => {
+        if (req.method === "GET") {
+          const data = existsSync(ASSET_NORMALIZATION_PRESETS_FILE)
+            ? readFileSync(ASSET_NORMALIZATION_PRESETS_FILE, "utf8")
+            : "{}";
+          res.setHeader("content-type", "application/json");
+          res.end(data);
+          return;
+        }
+        if (req.method === "POST") {
+          let body = "";
+          req.on("data", (chunk) => (body += chunk));
+          req.on("end", () => {
+            try {
+              writeFileSync(ASSET_NORMALIZATION_PRESETS_FILE, body || "{}");
+              res.end("ok");
+            } catch (err) {
+              res.statusCode = 500;
+              res.end(String(err));
+            }
+          });
+          return;
+        }
+        res.statusCode = 405;
+        res.end();
+      });
+    },
+  };
+}
+
+function assetNormalizationOverridesPlugin(): Plugin {
+  return {
+    name: "tjc-asset-normalization-overrides",
+    configureServer(server) {
+      server.middlewares.use("/__asset-normalization-overrides", (req, res) => {
+        if (req.method === "GET") {
+          const data = existsSync(ASSET_NORMALIZATION_OVERRIDES_FILE)
+            ? readFileSync(ASSET_NORMALIZATION_OVERRIDES_FILE, "utf8")
+            : "{}";
+          res.setHeader("content-type", "application/json");
+          res.end(data);
+          return;
+        }
+        if (req.method === "POST") {
+          let body = "";
+          req.on("data", (chunk) => (body += chunk));
+          req.on("end", () => {
+            try {
+              writeFileSync(ASSET_NORMALIZATION_OVERRIDES_FILE, body || "{}");
               res.end("ok");
             } catch (err) {
               res.statusCode = 500;
@@ -280,7 +350,14 @@ function kenneyPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), assetMapPlugin(), verticalDefaultsPlugin(), kenneyPlugin()],
+  plugins: [
+    react(),
+    assetMapPlugin(),
+    verticalDefaultsPlugin(),
+    assetNormalizationPresetsPlugin(),
+    assetNormalizationOverridesPlugin(),
+    kenneyPlugin(),
+  ],
   server: {
     host: true,
     port: 5174, // distinct from the game client (5173) so both can run

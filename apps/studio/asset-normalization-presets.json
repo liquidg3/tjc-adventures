@@ -1,0 +1,44 @@
+{
+  "none": {
+    "orient": [
+      0,
+      0,
+      0
+    ],
+    "offset": [
+      0,
+      0,
+      0
+    ],
+    "anchor": "center",
+    "fitMargin": 1.5
+  },
+  "kenney-space-kit": {
+    "orient": [
+      0,
+      0,
+      0
+    ],
+    "offset": [
+      -0.7,
+      0.1,
+      0.3
+    ],
+    "anchor": "center",
+    "fitMargin": 1.35
+  },
+  "kenney-nature-kit": {
+    "orient": [
+      0,
+      0,
+      0
+    ],
+    "offset": [
+      0,
+      0,
+      0
+    ],
+    "anchor": "bottom-center",
+    "fitMargin": 1.9
+  }
+}

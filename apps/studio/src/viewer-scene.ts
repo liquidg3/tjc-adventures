@@ -13,12 +13,15 @@ import {
   StandardMaterial,
   SceneLoader,
   Texture,
+  type Mesh,
   type AbstractMesh,
   type Material,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF"; // registers the .glb / .gltf loader
+import type { AssetNormalization } from "./asset-normalization";
 
 export type ShipVariant = "interceptor" | "hauler" | "scout";
+export type ViewerCameraView = "isometric" | "top" | "front" | "side";
 
 export interface ViewerOptions {
   modelUrl?: string;
@@ -26,16 +29,25 @@ export interface ViewerOptions {
   pixelate?: boolean;
   spin?: boolean;
   bg?: string;
+  showPivotMarker?: boolean;
+  showForwardMarker?: boolean;
   /** Apply this texture to all loaded materials (a shared atlas, if a pack uses one). */
   atlasUrl?: string;
   /** Extra orientation (degrees, XYZ) applied to the loaded model. */
   orient?: [number, number, number];
+  /** Preset normalization applied under the turntable spin. */
+  normalization?: AssetNormalization;
+  view?: ViewerCameraView;
+  lockTargetToPivot?: boolean;
+  wheelZoomOnly?: boolean;
+  spinSpeed?: number;
 }
 
 export interface ViewerHandle {
   dispose: () => void;
   setPixelate: (on: boolean) => void;
   setSpin: (on: boolean) => void;
+  setView: (view: ViewerCameraView) => void;
   /** Live-update the model orientation (degrees, XYZ) — for dialing in fixes. */
   setOrient: (x: number, y: number, z: number) => void;
   onStatus?: (cb: (msg: string) => void) => void;
@@ -52,10 +64,28 @@ export function createViewer(
   scene.clearColor = hexToColor4(opts.bg ?? "#0b1020");
 
   const camera = new ArcRotateCamera("cam", -Math.PI / 2, Math.PI / 2.4, 6, Vector3.Zero(), scene);
-  camera.attachControl(canvas, true);
-  camera.wheelDeltaPercentage = 0.01;
   camera.lowerRadiusLimit = 1.5;
   camera.upperRadiusLimit = 80;
+  let view: ViewerCameraView = opts.view ?? "top";
+  const lockTargetToPivot = opts.lockTargetToPivot ?? false;
+
+  if (opts.wheelZoomOnly) {
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const nextRadius = camera.radius * (1 + event.deltaY * 0.0015);
+      camera.radius = clamp(
+        nextRadius,
+        camera.lowerRadiusLimit ?? 0.01,
+        camera.upperRadiusLimit ?? Number.POSITIVE_INFINITY,
+      );
+    };
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+    scene.onDisposeObservable.add(() => canvas.removeEventListener("wheel", onWheel));
+  } else {
+    camera.attachControl(canvas, true);
+    camera.wheelDeltaPercentage = 0.01;
+    camera.panningSensibility = 0;
+  }
 
   const hemi = new HemisphericLight("hemi", new Vector3(0, 1, 0), scene);
   hemi.intensity = 0.85;
@@ -63,19 +93,33 @@ export function createViewer(
   dir.intensity = 1.1;
 
   const pivot = new TransformNode("pivot", scene);
+  const content = new TransformNode("content", scene);
+  content.parent = pivot;
   let spin = opts.spin ?? true;
+  const spinSpeed = opts.spinSpeed ?? 0.6;
   let loaded: AbstractMesh[] = [];
 
   // orientation applied to the loaded model (separate from the turntable spin on
   // the pivot), so it can be dialed live to find a pack's correct rotation
   let modelRoot: AbstractMesh | null = null;
   const orient: [number, number, number] = opts.orient ? [...opts.orient] : [0, 0, 0];
+  const normalization =
+    opts.normalization ?? { orient: [0, 0, 0], offset: [0, 0, 0], anchor: "center", fitMargin: 1.5 };
   const d2r = (d: number) => (d * Math.PI) / 180;
+
+  if (opts.showPivotMarker) buildPivotMarker();
+  if (opts.showForwardMarker) buildForwardMarker();
+
   function applyOrient() {
-    if (modelRoot) modelRoot.rotation = new Vector3(d2r(orient[0]), d2r(orient[1]), d2r(orient[2]));
+    if (!modelRoot) return;
+    modelRoot.rotation = new Vector3(
+      d2r(normalization.orient[0] + orient[0]),
+      d2r(normalization.orient[1] + orient[1]),
+      d2r(normalization.orient[2] + orient[2]),
+    );
   }
 
-  function frameToContent() {
+  function getWorldBounds() {
     let min = new Vector3(Infinity, Infinity, Infinity);
     let max = new Vector3(-Infinity, -Infinity, -Infinity);
     for (const m of loaded) {
@@ -85,13 +129,60 @@ export function createViewer(
       min = Vector3.Minimize(min, info.boundingBox.minimumWorld);
       max = Vector3.Maximize(max, info.boundingBox.maximumWorld);
     }
-    if (!isFinite(min.x)) return;
-    const center = Vector3.Center(min, max);
-    const size = max.subtract(min).length() || 4;
-    camera.setTarget(center);
-    camera.radius = size * 1.5;
+    return isFinite(min.x) ? { min, max } : null;
+  }
+
+  function normalizeContent() {
+    const bounds = getWorldBounds();
+    if (!bounds) return;
+    const center = Vector3.Center(bounds.min, bounds.max);
+    const anchor =
+      normalization.anchor === "bottom-center"
+        ? new Vector3(center.x, bounds.min.y, center.z)
+        : normalization.anchor === "center"
+          ? center
+          : Vector3.Zero();
+    content.position = anchor.scale(-1).add(
+      new Vector3(normalization.offset[0], normalization.offset[1], normalization.offset[2]),
+    );
+  }
+
+  function frameToContent() {
+    const bounds = getWorldBounds();
+    if (!bounds) return;
+    const center = Vector3.Center(bounds.min, bounds.max);
+    const size = bounds.max.subtract(bounds.min).length() || 4;
+    camera.setTarget(lockTargetToPivot ? Vector3.Zero() : center);
+    camera.radius = size * normalization.fitMargin;
     camera.lowerRadiusLimit = size * 0.4;
     camera.upperRadiusLimit = size * 8;
+    camera.minZ = Math.max(0.01, size * 0.01);
+    applyCameraView();
+  }
+
+  function applyCameraView() {
+    const target = camera.getTarget().clone();
+    const radius = camera.radius;
+    switch (view) {
+      case "front":
+        camera.upVector.copyFromFloats(0, 1, 0);
+        camera.setPosition(target.add(new Vector3(0, 0, radius)));
+        break;
+      case "side":
+        camera.upVector.copyFromFloats(0, 1, 0);
+        camera.setPosition(target.add(new Vector3(radius, 0, 0)));
+        break;
+      case "top":
+        camera.upVector.copyFromFloats(0, 0, 1);
+        camera.setPosition(target.add(new Vector3(0, radius, 0.001)));
+        break;
+      case "isometric":
+      default:
+        camera.upVector.copyFromFloats(0, 1, 0);
+        camera.alpha = -Math.PI / 4;
+        camera.beta = Math.PI / 3;
+        break;
+    }
   }
 
   // Optional shared-atlas support: paint a single texture onto every loaded
@@ -122,11 +213,12 @@ export function createViewer(
         loaded = res.meshes;
         const root = res.meshes.find((m) => !m.parent) ?? res.meshes[0];
         if (root) {
-          root.parent = pivot;
+          root.parent = content;
           modelRoot = root;
           applyOrient();
         }
         if (opts.atlasUrl) applyAtlas(res.meshes, opts.atlasUrl);
+        normalizeContent();
         frameToContent();
         onStatus?.("");
       })
@@ -215,9 +307,102 @@ export function createViewer(
     }
 
     loaded = parts;
-    for (const m of loaded) m.parent = pivot;
+    for (const m of loaded) m.parent = content;
+    normalizeContent();
     frameToContent();
     onStatus?.(`${variant} · procedural`);
+  }
+
+  function buildPivotMarker() {
+    const makeMat = (name: string, hex: string) => {
+      const mat = new StandardMaterial(name, scene);
+      mat.diffuseColor = Color3.FromHexString(hex);
+      mat.emissiveColor = Color3.FromHexString(hex).scale(0.7);
+      mat.disableLighting = true;
+      mat.alpha = 0.95;
+      return mat;
+    };
+    const showThrough = (mesh: Mesh) => {
+      mesh.onBeforeRenderObservable.add(() => engine.setDepthBuffer(false));
+      mesh.onAfterRenderObservable.add(() => engine.setDepthBuffer(true));
+    };
+
+    const dot = MeshBuilder.CreateSphere("pivot-dot", { diameter: 0.28, segments: 12 }, scene);
+    dot.material = makeMat("pivot-dot-mat", "#ffffff");
+    dot.isPickable = false;
+    dot.renderingGroupId = 2;
+    showThrough(dot);
+
+    const xAxis = MeshBuilder.CreateCylinder("pivot-x", { diameter: 0.07, height: 2.4, tessellation: 12 }, scene);
+    xAxis.rotation.z = Math.PI / 2;
+    xAxis.material = makeMat("pivot-x-mat", "#ff6b6b");
+    xAxis.isPickable = false;
+    xAxis.renderingGroupId = 2;
+    showThrough(xAxis);
+
+    const yAxis = MeshBuilder.CreateCylinder("pivot-y", { diameter: 0.07, height: 2.4, tessellation: 12 }, scene);
+    yAxis.material = makeMat("pivot-y-mat", "#6affb0");
+    yAxis.isPickable = false;
+    yAxis.renderingGroupId = 2;
+    showThrough(yAxis);
+
+    const zAxis = MeshBuilder.CreateCylinder("pivot-z", { diameter: 0.07, height: 2.4, tessellation: 12 }, scene);
+    zAxis.rotation.x = Math.PI / 2;
+    zAxis.material = makeMat("pivot-z-mat", "#6aa8ff");
+    zAxis.isPickable = false;
+    zAxis.renderingGroupId = 2;
+    showThrough(zAxis);
+
+    const ring = MeshBuilder.CreateTorus("pivot-ring", { diameter: 0.9, thickness: 0.04, tessellation: 32 }, scene);
+    ring.rotation.x = Math.PI / 2;
+    ring.material = makeMat("pivot-ring-mat", "#ffe28a");
+    ring.isPickable = false;
+    ring.renderingGroupId = 2;
+    showThrough(ring);
+  }
+
+  function buildForwardMarker() {
+    const makeMat = (name: string, hex: string) => {
+      const mat = new StandardMaterial(name, scene);
+      mat.diffuseColor = Color3.FromHexString(hex);
+      mat.emissiveColor = Color3.FromHexString(hex).scale(0.8);
+      mat.disableLighting = true;
+      mat.alpha = 0.95;
+      return mat;
+    };
+
+    const shaft = MeshBuilder.CreateCylinder(
+      "forward-shaft",
+      { diameter: 0.08, height: 3.2, tessellation: 12 },
+      scene,
+    );
+    shaft.rotation.x = Math.PI / 2;
+    shaft.position.z = 1.6;
+    shaft.position.y = -0.02;
+    shaft.material = makeMat("forward-shaft-mat", "#ffd76a");
+    shaft.isPickable = false;
+
+    const tip = MeshBuilder.CreateCylinder(
+      "forward-tip",
+      { diameterTop: 0, diameterBottom: 0.28, height: 0.7, tessellation: 12 },
+      scene,
+    );
+    tip.rotation.x = Math.PI / 2;
+    tip.position.z = 3.55;
+    tip.position.y = -0.02;
+    tip.material = makeMat("forward-tip-mat", "#ffd76a");
+    tip.isPickable = false;
+
+    const crossbar = MeshBuilder.CreateCylinder(
+      "forward-crossbar",
+      { diameter: 0.05, height: 0.8, tessellation: 12 },
+      scene,
+    );
+    crossbar.rotation.z = Math.PI / 2;
+    crossbar.position.z = 0.2;
+    crossbar.position.y = -0.02;
+    crossbar.material = makeMat("forward-crossbar-mat", "#ffd76a");
+    crossbar.isPickable = false;
   }
 
   function setPixelate(on: boolean) {
@@ -226,7 +411,7 @@ export function createViewer(
   setPixelate(opts.pixelate ?? false);
 
   engine.runRenderLoop(() => {
-    if (spin) pivot.rotation.y += engine.getDeltaTime() / 1000 * 0.6;
+    if (spin) pivot.rotation.y += engine.getDeltaTime() / 1000 * spinSpeed;
     scene.render();
   });
 
@@ -244,11 +429,17 @@ export function createViewer(
     setSpin(on: boolean) {
       spin = on;
     },
+    setView(nextView: ViewerCameraView) {
+      view = nextView;
+      applyCameraView();
+    },
     setOrient(x: number, y: number, z: number) {
       orient[0] = x;
       orient[1] = y;
       orient[2] = z;
       applyOrient();
+      normalizeContent();
+      frameToContent();
     },
   };
 }
@@ -256,4 +447,8 @@ export function createViewer(
 function hexToColor4(hex: string): Color4 {
   const c = Color3.FromHexString(hex);
   return new Color4(c.r, c.g, c.b, 1);
+}
+
+function clamp(v: number, lo: number, hi: number) {
+  return Math.max(lo, Math.min(hi, v));
 }
