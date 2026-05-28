@@ -192,7 +192,16 @@ export function createViewer(
   // Optional shared-atlas support: paint a single texture onto every loaded
   // material and flatten the PBR response (for packs that ship one colormap).
   // Kenney GLBs are self-contained/vertex-colored, so this is usually a no-op.
+  // Narrow surface of fields we may touch on either PBRMaterial (albedoTexture)
+  // or StandardMaterial (diffuseTexture) — Babylon's Material type doesn't union
+  // them so a structural shape keeps the casts honest.
   function applyAtlas(meshes: AbstractMesh[], url: string) {
+    type AtlasMaterial = Material & {
+      albedoTexture?: Texture;
+      diffuseTexture?: Texture;
+      metallic?: number;
+      roughness?: number;
+    };
     const tex = new Texture(url, scene, false, false); // glTF UVs: don't invert Y
     tex.name = "atlas";
     const paint = (mat: Material | null) => {
@@ -200,11 +209,11 @@ export function createViewer(
       const subs = mat instanceof MultiMaterial ? mat.subMaterials : [mat];
       for (const sm of subs) {
         if (!sm) continue;
-        const anyMat = sm as unknown as Record<string, unknown>;
-        if ("albedoTexture" in anyMat) anyMat.albedoTexture = tex; // PBRMaterial (from glb)
-        if ("diffuseTexture" in anyMat) anyMat.diffuseTexture = tex; // StandardMaterial
-        if ("metallic" in anyMat) anyMat.metallic = 0; // flat shading
-        if ("roughness" in anyMat) anyMat.roughness = 1;
+        const m = sm as AtlasMaterial;
+        if ("albedoTexture" in m) m.albedoTexture = tex; // PBRMaterial (from glb)
+        if ("diffuseTexture" in m) m.diffuseTexture = tex; // StandardMaterial
+        if ("metallic" in m) m.metallic = 0; // flat shading
+        if ("roughness" in m) m.roughness = 1;
       }
     };
     for (const m of meshes) paint(m.material);
@@ -228,7 +237,7 @@ export function createViewer(
       })
       .catch((err) => {
         onStatus?.(`failed to load — showing placeholder`);
-        console.error("[designs] model load failed:", err);
+        console.error("[studio] model load failed:", err);
         buildPlaceholder();
       });
   } else {

@@ -16,6 +16,42 @@ import { SLOTS, type AssetOption } from "./slots";
 import { loadStagedModels } from "./models";
 import { SlotCard } from "./SlotCard";
 
+/**
+ * Mirror a JSON file served by a dev endpoint: GET on mount, POST on update,
+ * surfaces a saved flag so the UI can show "✓ / …". `parse` runs on the raw
+ * response so each caller can validate + merge defaults.
+ */
+function usePersistedJson<T>(url: string, initial: T, parse: (raw: unknown) => T) {
+  const [value, setValueState] = useState<T>(initial);
+  const [saved, setSaved] = useState(true);
+
+  useEffect(() => {
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => setValueState(parse(data)))
+      .catch(() => {
+        /* keep the initial value */
+      });
+    // parse is a stable function reference at each call site — re-fetching on a
+    // changed identity would cause a stale-write race against in-flight saves
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url]);
+
+  const setValue = (next: T) => {
+    setValueState(next);
+    setSaved(false);
+    fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(next, null, 2),
+    })
+      .then(() => setSaved(true))
+      .catch(() => setSaved(false));
+  };
+
+  return { value, setValue, saved };
+}
+
 // Built-in procedural placeholders are always available; the real options come
 // from the packs you import in the Asset Library (public/models/).
 const BUILTINS: AssetOption[] = [
@@ -43,12 +79,20 @@ const loadLocal = (): Record<string, AssetAssignment> => {
 /** The 3D Models section: assign a model to each game asset slot. */
 export function ModelsBoard() {
   const [assign, setAssign] = useState<Record<string, AssetAssignment>>(loadLocal);
-  const [presetValues, setPresetValuesState] = useState<NormalizationPresetMap>(getDefaultNormalizationPresets);
-  const [overrideValues, setOverrideValuesState] = useState<AssetNormalizationOverrideMap>({});
   const [saved, setSaved] = useState(true);
-  const [presetSaved, setPresetSaved] = useState(true);
-  const [overrideSaved, setOverrideSaved] = useState(true);
   const [options, setOptions] = useState<AssetOption[]>(BUILTINS);
+  // presets and overrides ride a generic hook; assignments stay bespoke because
+  // they cache to localStorage as an offline fallback (and serialize differently)
+  const presets = usePersistedJson<NormalizationPresetMap>(
+    ASSET_NORMALIZATION_PRESETS_URL,
+    getDefaultNormalizationPresets(),
+    mergeNormalizationPresets,
+  );
+  const overrides = usePersistedJson<AssetNormalizationOverrideMap>(
+    ASSET_NORMALIZATION_OVERRIDES_URL,
+    {},
+    mergeNormalizationOverrides,
+  );
 
   // model options come from the imported (staged) packs
   useEffect(() => {
@@ -77,24 +121,6 @@ export function ModelsBoard() {
       });
   }, []);
 
-  useEffect(() => {
-    fetch(ASSET_NORMALIZATION_PRESETS_URL)
-      .then((r) => r.json())
-      .then((data) => setPresetValuesState(mergeNormalizationPresets(data)))
-      .catch(() => {
-        /* keep defaults */
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch(ASSET_NORMALIZATION_OVERRIDES_URL)
-      .then((r) => r.json())
-      .then((data) => setOverrideValuesState(mergeNormalizationOverrides(data)))
-      .catch(() => {
-        /* keep empty overrides */
-      });
-  }, []);
-
   const persist = (next: Record<string, AssetAssignment>) => {
     const serialized = serializeAssetAssignments(next);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
@@ -106,30 +132,6 @@ export function ModelsBoard() {
     })
       .then(() => setSaved(true))
       .catch(() => setSaved(false));
-  };
-
-  const persistPresetValues = (next: NormalizationPresetMap) => {
-    setPresetValuesState(next);
-    setPresetSaved(false);
-    fetch(ASSET_NORMALIZATION_PRESETS_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(next, null, 2),
-    })
-      .then(() => setPresetSaved(true))
-      .catch(() => setPresetSaved(false));
-  };
-
-  const persistOverrideValues = (next: AssetNormalizationOverrideMap) => {
-    setOverrideValuesState(next);
-    setOverrideSaved(false);
-    fetch(ASSET_NORMALIZATION_OVERRIDES_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(next, null, 2),
-    })
-      .then(() => setOverrideSaved(true))
-      .catch(() => setOverrideSaved(false));
   };
 
   const setModel = (id: string, value: string) =>
@@ -151,14 +153,14 @@ export function ModelsBoard() {
     });
 
   const savePresetValues = (preset: NormalizationPresetId, nextValue: NormalizationPresetMap[NormalizationPresetId]) => {
-    persistPresetValues({ ...presetValues, [preset]: nextValue });
+    presets.setValue({ ...presets.value, [preset]: nextValue });
   };
 
   const saveOverrideValues = (modelValue: string, nextValue: AssetNormalizationOverride | null) => {
-    const next = { ...overrideValues };
+    const next = { ...overrides.value };
     if (nextValue) next[modelValue] = nextValue;
     else delete next[modelValue];
-    persistOverrideValues(next);
+    overrides.setValue(next);
   };
 
   const allSlots = SLOTS.flatMap((c) => c.slots);
@@ -187,11 +189,11 @@ export function ModelsBoard() {
           </span>
           <span className="dim">
             {" "}
-            · presets {presetSaved ? "✓" : "…"}
+            · presets {presets.saved ? "✓" : "…"}
           </span>
           <span className="dim">
             {" "}
-            · overrides {overrideSaved ? "✓" : "…"}
+            · overrides {overrides.saved ? "✓" : "…"}
           </span>
         </div>
       </header>
@@ -206,8 +208,8 @@ export function ModelsBoard() {
                 label={s.label}
                 value={assign[s.id]?.model || ""}
                 preset={assign[s.id]?.preset || "none"}
-                presetValues={presetValues}
-                overrideValues={overrideValues}
+                presetValues={presets.value}
+                overrideValues={overrides.value}
                 options={options}
                 onChange={(v) => setModel(s.id, v)}
                 onPresetChange={(preset) => setPreset(s.id, preset)}

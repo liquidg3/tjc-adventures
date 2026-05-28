@@ -1,5 +1,29 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createViewer, type ViewerCameraView, type ViewerHandle, type ShipVariant } from "./viewer-scene";
+
+// The expanded modal's 2×2 grid: top/front/side share defaults; iso spins and
+// drops the markers. Driven from a config so the JSX is one `.map`.
+interface GridPane {
+  label: string;
+  view: ViewerCameraView;
+  spin?: boolean;
+  lockTargetToPivot?: boolean;
+  wheelZoomOnly?: boolean;
+  showMarkers?: boolean;
+}
+const GRID_PANES: GridPane[] = [
+  { label: "top", view: "top" },
+  { label: "front", view: "front" },
+  { label: "side", view: "side" },
+  {
+    label: "iso",
+    view: "isometric",
+    spin: true,
+    lockTargetToPivot: false,
+    wheelZoomOnly: false,
+    showMarkers: false,
+  },
+];
 import { acquireContext, releaseContext, onContextFreed } from "./viewer-budget";
 import {
   getDefaultNormalizationPresets,
@@ -54,6 +78,18 @@ export function ModelPreview({
   const [live, setLive] = useState(false); // do we currently hold a context + engine?
   const [expanded, setExpanded] = useState(false);
 
+  // resolve preset + override (or use the caller's draft) once per render — the
+  // main preview and every pane in the expanded grid all want the same value
+  const resolvedNormalization = useMemo(
+    () =>
+      normalizationResolved ??
+      resolveAssetNormalization(
+        getNormalizationPreset(normalizationPresets, normalizationPreset),
+        normalizationOverride,
+      ),
+    [normalizationResolved, normalizationPresets, normalizationPreset, normalizationOverride],
+  );
+
   // Only run engines for cards that are actually on screen.
   useEffect(() => {
     const el = wrapRef.current;
@@ -99,12 +135,6 @@ export function ModelPreview({
   // Spin up / tear down the actual Babylon engine when we hold a lease.
   useEffect(() => {
     if (!live || !canvasRef.current) return;
-    const normalization =
-      normalizationResolved ??
-      resolveAssetNormalization(
-        getNormalizationPreset(normalizationPresets, normalizationPreset),
-        normalizationOverride,
-      );
     const h = createViewer(
       canvasRef.current,
       {
@@ -117,7 +147,7 @@ export function ModelPreview({
         showPivotMarker: false,
         showForwardMarker: false,
         orient: [orientX, orientY, orientZ],
-        normalization,
+        normalization: resolvedNormalization,
         lockTargetToPivot: true,
         view: "isometric",
       },
@@ -128,8 +158,11 @@ export function ModelPreview({
       h.dispose();
       handleRef.current = null;
     };
+    // Intentionally omits orient*/pixelate/spin/setStatus — orientation, pixelate
+    // and spin are pushed to the running engine via separate effects below
+    // (avoiding an engine rebuild on every tweak); setStatus is a stable setter.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [atlasUrl, expanded, live, modelUrl, normalizationOverride, normalizationPreset, normalizationPresets, normalizationResolved, variant]);
+  }, [atlasUrl, live, modelUrl, resolvedNormalization, variant]);
 
   // live-update orientation from the sliders (no engine rebuild)
   useEffect(() => {
@@ -160,70 +193,17 @@ export function ModelPreview({
           <div className="preview-main">
             {expanded ? (
               <div className="preview-grid">
-                <FixedPreview
-                  label="top"
-                  view="top"
-                  modelUrl={modelUrl}
-                  variant={variant}
-                  atlasUrl={atlasUrl}
-                  pixelate={pixelate}
-                  normalization={
-                    normalizationResolved ??
-                    resolveAssetNormalization(
-                      getNormalizationPreset(normalizationPresets, normalizationPreset),
-                      normalizationOverride,
-                    )
-                  }
-                />
-                <FixedPreview
-                  label="front"
-                  view="front"
-                  modelUrl={modelUrl}
-                  variant={variant}
-                  atlasUrl={atlasUrl}
-                  pixelate={pixelate}
-                  normalization={
-                    normalizationResolved ??
-                    resolveAssetNormalization(
-                      getNormalizationPreset(normalizationPresets, normalizationPreset),
-                      normalizationOverride,
-                    )
-                  }
-                />
-                <FixedPreview
-                  label="side"
-                  view="side"
-                  modelUrl={modelUrl}
-                  variant={variant}
-                  atlasUrl={atlasUrl}
-                  pixelate={pixelate}
-                  normalization={
-                    normalizationResolved ??
-                    resolveAssetNormalization(
-                      getNormalizationPreset(normalizationPresets, normalizationPreset),
-                      normalizationOverride,
-                    )
-                  }
-                />
-                <FixedPreview
-                  label="iso"
-                  view="isometric"
-                  modelUrl={modelUrl}
-                  variant={variant}
-                  atlasUrl={atlasUrl}
-                  pixelate={pixelate}
-                  normalization={
-                    normalizationResolved ??
-                    resolveAssetNormalization(
-                      getNormalizationPreset(normalizationPresets, normalizationPreset),
-                      normalizationOverride,
-                    )
-                  }
-                  spin
-                  lockTargetToPivot={false}
-                  wheelZoomOnly={false}
-                  showMarkers={false}
-                />
+                {GRID_PANES.map((pane) => (
+                  <FixedPreview
+                    key={pane.label}
+                    {...pane}
+                    modelUrl={modelUrl}
+                    variant={variant}
+                    atlasUrl={atlasUrl}
+                    pixelate={pixelate}
+                    normalization={resolvedNormalization}
+                  />
+                ))}
               </div>
             ) : live ? (
               <canvas ref={canvasRef} className="viewer" />

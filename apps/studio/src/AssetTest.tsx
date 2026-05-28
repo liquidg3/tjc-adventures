@@ -58,6 +58,8 @@ function AssetViewer({
       h.dispose();
       handleRef.current = null;
     };
+    // setStatus is a stable React setter — intentionally not a dep so it
+    // doesn't churn the engine. (Other props don't change in this screen.)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [atlasUrl, modelUrl, normalization]);
 
