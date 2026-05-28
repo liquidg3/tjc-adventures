@@ -26,6 +26,16 @@ next agent doesn't repeat it.
 - **WebGL context cap (~16/page).** Each Babylon `Engine` = one WebGL context;
   exceeding the cap kills the oldest and corrupts every engine on the page. Never
   create unbounded engines — see `apps/studio/src/viewer-budget.ts`.
+- **Ship forward-yaw is player-only.** The runtime applies `SHIP_MODEL_FORWARD_YAW = π`
+  to the player ship's model root so Kenney's −Z-nosed art faces +Z (the direction
+  of travel). Do NOT bake this into enemies — they want the opposite facing
+  (nose toward the player). See STATE.md → Gotchas for the full convention.
+- **Bank/dodge roll signs must match** (both negative-on-input). The 180° yaw on
+  the model swaps left/right relative to world; bank uses `-latFrac`, dodge uses
+  `-dodgeDir`. New roll behaviours must use the same sign.
+- **`ArcRotateCamera` vertical singularity.** Don't `setPosition` it perfectly
+  overhead — drive top-down views via `alpha`/`beta` with `beta = 0.01`. See
+  `viewer-scene.ts:applyCameraView`.
 - **Pixelation + screen-space math:** `setHardwareScalingLevel` changes render-buffer
   dims; do picking/clamp math in CSS-pixel space (`canvas.clientWidth`), not
   `getRenderWidth()`.
@@ -49,9 +59,11 @@ the open punch list, and ordered next steps. The M0 multiplayer spine is built a
 **Art direction = Kenney CC0 low-poly.** Game art is sourced exclusively from
 Kenney's CC0 3D kits via the Studio's **Asset Library** (live browser + one-click
 Import → committed `apps/studio/public/models`). The earlier Sketchfab library and
-a Synty experiment were removed. **The current next task is the scene swap** —
-repoint `packages/scenes/src/scene-config.ts` from the last legacy models
-(`ship_classic` + `environment/*`) to Kenney models. See `docs/STATE.md`.
+a Synty experiment were removed. The player ship is already a Kenney pick
+(`craft_racer`, faces +Z via `SHIP_MODEL_FORWARD_YAW`, dodge tuned). **The
+current next task is enemies** — `ship-enemy = craft_miner` is assigned in
+`asset-map.json` but never spawns; per `prototype-meadow-run.md`. See
+`docs/STATE.md` for the ordered next-step list.
 
 ## Where things live
 - **Live scene (Babylon):** `packages/scenes/src/ship-scene.ts` → `@tjc/scenes`

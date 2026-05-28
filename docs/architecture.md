@@ -141,7 +141,11 @@ for types/helpers. Built as a lightweight **ECS / system pipeline**:
   foreground → FX → UI overlay. Real parallax + sorting from actual Z.
 - **Sprites** via Babylon `SpriteManager` / textured planes; **hero objects**
   (ship, Warden) as low-poly **3D models with a pixel/posterize shader** so they
-  bank, roll, and animate while still reading as 8-bit.
+  bank, roll, and animate while still reading as 8-bit. Facing is a runtime
+  concern, not a model-data one — the player ship gets a fixed 180° yaw applied
+  to its visual root so Kenney's glTF-forward (−Z) becomes gameplay-forward
+  (+Z). Enemies will use a separate facing constant so they look at the player.
+  See `STATE.md` → Gotchas for the convention.
 - **Crisp-pixel pipeline:** render the scene to a **low-res target (~384×216)**
   with nearest-neighbor + limited-palette post-process, then **integer-upscale**
   to fullscreen. Authentic chunky pixels *over* real 3D lighting.

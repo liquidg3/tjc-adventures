@@ -177,6 +177,22 @@ Scenery, Pixelate. Each panel drives a `SceneHandle` method.
   lazy-mount only when on screen and lease from a hard cap of 6
   (`apps/studio/src/viewer-budget.ts`); the Asset Test screen uses a single shared
   viewer instead. **Never create unbounded engines.**
+- **Ship forward-yaw convention (player only).** Kenney space-kit ships are
+  modeled nose-toward −Z; gameplay-forward is +Z. The runtime applies
+  `SHIP_MODEL_FORWARD_YAW = π` to the *visual model root* (inside the pivot, so
+  bank/roll axes stay world-Z) — see `packages/scenes/src/ship-controller.ts`.
+  Don't reuse for enemies; they want the opposite facing.
+- **Bank/dodge roll signs match** (both negative on input). The 180° model yaw
+  swaps left/right relative to world, so both bank (`-latFrac`) and dodge
+  (`-dodgeDir`) use a negative coefficient — see `flight-controller.ts`. New
+  roll behaviours must follow the same sign.
+- **`ArcRotateCamera` vertical singularity.** Don't `setPosition` it perfectly
+  overhead — drive top-down views via `alpha`/`beta` with `beta ≈ 0.01`
+  (`viewer-scene.ts:applyCameraView`).
+- **Dodge bypasses momentum easing.** A one-shot velocity burst gets bled off
+  in ~0.1s by the normal `velX += (target - velX) * accel`. The dodge instead
+  *locks* velX to `dodgeDir * SHIP_SPEED * DODGE_DASH` for the whole
+  `DODGE_DURATION` — see `flight-controller.ts`.
 - **Pixelation breaks screen-space math if you use render-buffer dims.**
   `engine.setHardwareScalingLevel(n)` shrinks the render buffer to 1/n, and Babylon's
   `createPickingRay` *also* divides input coords by that level — so using

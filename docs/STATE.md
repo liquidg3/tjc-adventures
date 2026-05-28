@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-05-27._
+_Last updated: 2026-05-28._
 
 ---
 
@@ -22,18 +22,26 @@ _Last updated: 2026-05-27._
 - **ACTIVE WORK → the single-player 3D vertical-scroller, tuned through the
   Studio.** We are iterating the *look and flight feel* of the meadow scroller,
   decoupled from netcode/gameplay. Recent work: zones/climates, momentum + barrel
-  roll, and the asset tooling below.
+  roll, the asset tooling below, and (this session) the player ship is fully
+  **gameplay-ready** — flies forward, banks into turns, the double-tap barrel
+  roll is a real emergency juke (locked at 2.5×SHIP_SPEED for 0.28s, rolls
+  toward the tapped direction).
 - **ART DIRECTION → Kenney CC0 low-poly (committed decision).** All non-Kenney
   assets were removed — the old ~505 MB Sketchfab `src/models` library and the
   Synty experiment are gone. Game art now comes exclusively from Kenney's CC0 3D
   kits, browsed + one-click-imported in the Studio's **Asset Library**. See
   "Assets & art direction" below. **Imported so far:** `kenney-nature-kit` (329
   models), `kenney-space-kit` (153).
-- **NEXT (not yet done): the scene swap.** The scene still loads the *legacy*
-  ship + scenery from `public/models/{ships,environment}` (`ship_classic`,
-  `tree_fur`, …) — those are the last non-Kenney holdouts, kept only so the scene
-  runs. Replacing them with Kenney models (Space-Kit ship + Nature-Kit scenery) +
-  simplifying lighting for flat-shaded is the immediate next task.
+- **Player ship is Kenney** (`craft_racer` from kenney-space-kit, via
+  `asset-map.json`). `scene-config.DEFAULT_SHIP_MODEL_URL` still points at the
+  legacy `ship_classic.glb` as the cold-start default, but `VerticalScroller`
+  fetches `asset-map.json` and immediately swaps in the Kenney ship — the legacy
+  one only appears for the ~50 ms before that fetch resolves. Scenery is still
+  the last legacy holdout (`tree_fur`, `bush`, `rocks_small`, `tree_stylized`).
+- **NEXT: gameplay layer (enemies first).** `ship-enemy = craft_miner` is
+  already in `asset-map.json` but never spawns. The dodge is now built to dodge
+  *something* — that something is the natural next step. See "Suggested next
+  steps" below.
 
 ## The one thing that changed structurally (don't trip on the old layout)
 
@@ -380,19 +388,27 @@ Kenney is the next task (below).
 
 ## Suggested next steps (in order)
 
-1. **The scene swap (do this first).** Repoint `packages/scenes/src/scene-config.ts`
-   (`DEFAULT_SHIP_MODEL_URL`, `SCENERY_MODELS`) to Kenney models — a Space-Kit ship +
-   Nature-Kit trees/rocks — using the 3D Models board to choose. Then delete the
-   legacy `public/models/ships` + `public/models/environment` files, **sync
-   `apps/game-client/public/models`**, and simplify lighting for Kenney's flat-shaded
-   look (PBR matte tuning matters less). This unblocks a fully-Kenney scene.
-2. Lock the **look**: settle lighting + ground direction; decide if hardware-scaling
-   pixel stays or the low-res-RT pipeline (`architecture.md` §6) is needed; bake into defaults.
-3. Curate the final env/ship Kenney models via the 3D Models board.
-4. Build the **gameplay layer** (Raiden-inspired): enemies, wire the **Gunner's**
-   shooting, pickups, **rescue cages**, the **Warden** boss — per
+1. **Enemies — start the gameplay layer.** `asset-map.json` already has
+   `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
+   simple straight-line enemies streaming down-screen, no shooting yet — give
+   the player something to use the freshly-tuned dodge on. Per
+   `prototype-meadow-run.md`. (When you spawn enemies, remember they face the
+   **opposite** way to the player — they should look toward the player, so do
+   NOT apply `SHIP_MODEL_FORWARD_YAW` to them; that constant is player-only.)
+2. **Finish the Kenney scenery swap.** The scene still loads the last legacy
+   `/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` props.
+   Pick Kenney nature-kit replacements via the 3D Models board, repoint
+   `scene-config.SCENERY_MODELS`, delete the legacy files, sync
+   `apps/game-client/public/models`. (Scenery doesn't need a forward-yaw — only
+   ships have a front.)
+3. **Shooting** — wire projectiles from the player ship's nose (the Gunner
+   role); enemies become real targets.
+4. Lock the **look**: settle lighting + ground direction; decide if
+   hardware-scaling pixel stays or the low-res-RT pipeline
+   (`architecture.md` §6) is needed; bake into defaults.
+5. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
-5. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
+6. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
 
 ---
 
@@ -420,6 +436,33 @@ Kenney is the next task (below).
   (`metallic=0`) so the lights catch them, or add an environment texture.
 - **Don't drive `engine.resize()` from a `ResizeObserver` on the canvas** — it feeds
   back and oscillates. Use the window `resize` event.
+- **Ship forward-yaw convention (player only).** Kenney space-kit ships are
+  modeled nose-toward −Z (glTF native). Gameplay-forward in the scroller is +Z
+  (away from camera, up the field). The artist aligns the model's nose to the
+  preview's gold arrow (+Z) in the 3D Models modal, and the runtime applies
+  `SHIP_MODEL_FORWARD_YAW = π` to the **visual model root inside the ship pivot**
+  — see `packages/scenes/src/ship-controller.ts`. Applied to the root (not the
+  pivot) so the pivot's bank/roll axis stays world-Z and the bank math
+  doesn't have to change. **Don't reuse this constant for enemies** — they need
+  the opposite facing (nose toward the player).
+- **Bank/dodge roll signs must match.** Because the 180° yaw lives on the
+  model root, the world-X side that ends up on the *observer's* right is the
+  model's native left. The regular bank uses `-latFrac * SHIP_BANK_MAX`
+  (negative coefficient on the input) and the dodge uses
+  `-dodgeDir * Math.PI * 2 * eased` — same sign convention. If you ever add a
+  new roll behaviour (e.g. a Spotter ping), use the same sign or it'll spin the
+  wrong way. See `packages/scenes/src/flight-controller.ts`.
+- **ArcRotateCamera vertical singularity.** Don't position an `ArcRotateCamera`
+  perfectly overhead with `setPosition(target + (0, r, 0))` — `rebuildAnglesAndRadius`
+  throws inside `Vector3.TransformCoordinatesToRef` for that degenerate vector.
+  In `apps/studio/src/viewer-scene.ts:applyCameraView` we drive all four views
+  by `alpha`/`beta`/`radius` instead, with the top pane using `beta = 0.01` to
+  sit just off straight-down.
+- **Dodge velocity must bypass momentum easing.** The `velX` easing immediately
+  bleeds off any one-shot burst, so the dodge has to *lock* `velX` for the
+  duration (see `flight-controller.ts` — `if (dodgeTimer > 0) { velX = … }`
+  short-circuits the normal `velX += (target − velX) * accel`). Without that
+  lock it reads as "a small nudge," not an emergency juke.
 - **No `React.StrictMode`** — double-invoked effects would start Babylon/rooms twice.
 - **Run npm scripts from the repo root.** `dev:studio`, `dev:client`, etc. are root
   scripts; running them inside a workspace dir errors with "Missing script".
