@@ -1,0 +1,4446 @@
+{
+  "pack": "kenney-ui-pack-sci-fi",
+  "kind": "ui",
+  "items": [
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_large",
+      "file": "PNG/Blue/Default/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_large_l",
+      "file": "PNG/Blue/Default/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_large_m",
+      "file": "PNG/Blue/Default/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_large_r",
+      "file": "PNG/Blue/Default/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_large_square",
+      "file": "PNG/Blue/Default/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_small",
+      "file": "PNG/Blue/Default/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_small_l",
+      "file": "PNG/Blue/Default/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_small_m",
+      "file": "PNG/Blue/Default/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_small_r",
+      "file": "PNG/Blue/Default/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_gloss_small_square",
+      "file": "PNG/Blue/Default/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_large",
+      "file": "PNG/Blue/Default/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_large_l",
+      "file": "PNG/Blue/Default/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_large_m",
+      "file": "PNG/Blue/Default/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_large_r",
+      "file": "PNG/Blue/Default/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_large_square",
+      "file": "PNG/Blue/Default/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_small",
+      "file": "PNG/Blue/Default/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_small_l",
+      "file": "PNG/Blue/Default/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_small_m",
+      "file": "PNG/Blue/Default/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_small_r",
+      "file": "PNG/Blue/Default/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_round_small_square",
+      "file": "PNG/Blue/Default/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_large",
+      "file": "PNG/Blue/Default/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_large_l",
+      "file": "PNG/Blue/Default/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_large_m",
+      "file": "PNG/Blue/Default/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_large_r",
+      "file": "PNG/Blue/Default/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_large_square",
+      "file": "PNG/Blue/Default/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_small",
+      "file": "PNG/Blue/Default/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_small_l",
+      "file": "PNG/Blue/Default/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_small_m",
+      "file": "PNG/Blue/Default/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_small_r",
+      "file": "PNG/Blue/Default/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_gloss_small_square",
+      "file": "PNG/Blue/Default/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_large",
+      "file": "PNG/Blue/Default/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_large_l",
+      "file": "PNG/Blue/Default/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_large_m",
+      "file": "PNG/Blue/Default/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_large_r",
+      "file": "PNG/Blue/Default/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_large_square",
+      "file": "PNG/Blue/Default/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_small",
+      "file": "PNG/Blue/Default/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_small_l",
+      "file": "PNG/Blue/Default/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_small_m",
+      "file": "PNG/Blue/Default/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_small_r",
+      "file": "PNG/Blue/Default/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Default/bar_square_small_square",
+      "file": "PNG/Blue/Default/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_blade_rectangle",
+      "file": "PNG/Blue/Default/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Blue/Default/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_blade_square",
+      "file": "PNG/Blue/Default/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_blade_square_screws",
+      "file": "PNG/Blue/Default/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_large_rectangle",
+      "file": "PNG/Blue/Default/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_large_rectangle_screws",
+      "file": "PNG/Blue/Default/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_large_square",
+      "file": "PNG/Blue/Default/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_large_square_screws",
+      "file": "PNG/Blue/Default/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_notch_rectangle",
+      "file": "PNG/Blue/Default/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Blue/Default/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_notch_square",
+      "file": "PNG/Blue/Default/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_notch_square_screws",
+      "file": "PNG/Blue/Default/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_small_rectangle",
+      "file": "PNG/Blue/Default/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_small_rectangle_screws",
+      "file": "PNG/Blue/Default/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_small_square",
+      "file": "PNG/Blue/Default/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_header_small_square_screws",
+      "file": "PNG/Blue/Default/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Default/crosshair_color_a",
+      "file": "PNG/Blue/Default/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Blue/Default/crosshair_color_b",
+      "file": "PNG/Blue/Default/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Blue/Default/crosshair_color_c",
+      "file": "PNG/Blue/Default/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Blue/Default/crosshair_color_d",
+      "file": "PNG/Blue/Default/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_large",
+      "file": "PNG/Blue/Double/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_large_l",
+      "file": "PNG/Blue/Double/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_large_m",
+      "file": "PNG/Blue/Double/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_large_r",
+      "file": "PNG/Blue/Double/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_large_square",
+      "file": "PNG/Blue/Double/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_small",
+      "file": "PNG/Blue/Double/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_small_l",
+      "file": "PNG/Blue/Double/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_small_m",
+      "file": "PNG/Blue/Double/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_small_r",
+      "file": "PNG/Blue/Double/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_gloss_small_square",
+      "file": "PNG/Blue/Double/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_large",
+      "file": "PNG/Blue/Double/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_large_l",
+      "file": "PNG/Blue/Double/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_large_m",
+      "file": "PNG/Blue/Double/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_large_r",
+      "file": "PNG/Blue/Double/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_large_square",
+      "file": "PNG/Blue/Double/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_small",
+      "file": "PNG/Blue/Double/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_small_l",
+      "file": "PNG/Blue/Double/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_small_m",
+      "file": "PNG/Blue/Double/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_small_r",
+      "file": "PNG/Blue/Double/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_round_small_square",
+      "file": "PNG/Blue/Double/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_large",
+      "file": "PNG/Blue/Double/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_large_l",
+      "file": "PNG/Blue/Double/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_large_m",
+      "file": "PNG/Blue/Double/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_large_r",
+      "file": "PNG/Blue/Double/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_large_square",
+      "file": "PNG/Blue/Double/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_small",
+      "file": "PNG/Blue/Double/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_small_l",
+      "file": "PNG/Blue/Double/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_small_m",
+      "file": "PNG/Blue/Double/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_small_r",
+      "file": "PNG/Blue/Double/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_gloss_small_square",
+      "file": "PNG/Blue/Double/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_large",
+      "file": "PNG/Blue/Double/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_large_l",
+      "file": "PNG/Blue/Double/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_large_m",
+      "file": "PNG/Blue/Double/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_large_r",
+      "file": "PNG/Blue/Double/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_large_square",
+      "file": "PNG/Blue/Double/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_small",
+      "file": "PNG/Blue/Double/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_small_l",
+      "file": "PNG/Blue/Double/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_small_m",
+      "file": "PNG/Blue/Double/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_small_r",
+      "file": "PNG/Blue/Double/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Blue/Double/bar_square_small_square",
+      "file": "PNG/Blue/Double/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_blade_rectangle",
+      "file": "PNG/Blue/Double/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Blue/Double/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_blade_square",
+      "file": "PNG/Blue/Double/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_blade_square_screws",
+      "file": "PNG/Blue/Double/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_large_rectangle",
+      "file": "PNG/Blue/Double/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_large_rectangle_screws",
+      "file": "PNG/Blue/Double/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_large_square",
+      "file": "PNG/Blue/Double/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_large_square_screws",
+      "file": "PNG/Blue/Double/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_notch_rectangle",
+      "file": "PNG/Blue/Double/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Blue/Double/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_notch_square",
+      "file": "PNG/Blue/Double/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_notch_square_screws",
+      "file": "PNG/Blue/Double/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_small_rectangle",
+      "file": "PNG/Blue/Double/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_small_rectangle_screws",
+      "file": "PNG/Blue/Double/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_small_square",
+      "file": "PNG/Blue/Double/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_header_small_square_screws",
+      "file": "PNG/Blue/Double/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Blue/Double/crosshair_color_a",
+      "file": "PNG/Blue/Double/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Blue/Double/crosshair_color_b",
+      "file": "PNG/Blue/Double/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Blue/Double/crosshair_color_c",
+      "file": "PNG/Blue/Double/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Blue/Double/crosshair_color_d",
+      "file": "PNG/Blue/Double/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_large",
+      "file": "PNG/Extra/Default/bar_shadow_round_large.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_large_l",
+      "file": "PNG/Extra/Default/bar_shadow_round_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_large_m",
+      "file": "PNG/Extra/Default/bar_shadow_round_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_large_r",
+      "file": "PNG/Extra/Default/bar_shadow_round_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_large_square",
+      "file": "PNG/Extra/Default/bar_shadow_round_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_large",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_large.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_large_l",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_large_m",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_large_r",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_large_square",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_small",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_small.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_small_l",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_small_m",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_small_r",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_outline_small_square",
+      "file": "PNG/Extra/Default/bar_shadow_round_outline_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_small",
+      "file": "PNG/Extra/Default/bar_shadow_round_small.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_small_l",
+      "file": "PNG/Extra/Default/bar_shadow_round_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_small_m",
+      "file": "PNG/Extra/Default/bar_shadow_round_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_small_r",
+      "file": "PNG/Extra/Default/bar_shadow_round_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_round_small_square",
+      "file": "PNG/Extra/Default/bar_shadow_round_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_large",
+      "file": "PNG/Extra/Default/bar_shadow_square_large.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_large_l",
+      "file": "PNG/Extra/Default/bar_shadow_square_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_large_m",
+      "file": "PNG/Extra/Default/bar_shadow_square_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_large_r",
+      "file": "PNG/Extra/Default/bar_shadow_square_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_large_square",
+      "file": "PNG/Extra/Default/bar_shadow_square_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_large",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_large.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_large_l",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_large_m",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_large_r",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_large_square",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_small",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_small.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_small_l",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_small_m",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_small_r",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_outline_small_square",
+      "file": "PNG/Extra/Default/bar_shadow_square_outline_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_small",
+      "file": "PNG/Extra/Default/bar_shadow_square_small.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_small_l",
+      "file": "PNG/Extra/Default/bar_shadow_square_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_small_m",
+      "file": "PNG/Extra/Default/bar_shadow_square_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_small_r",
+      "file": "PNG/Extra/Default/bar_shadow_square_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Default/bar_shadow_square_small_square",
+      "file": "PNG/Extra/Default/bar_shadow_square_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_rectangle",
+      "file": "PNG/Extra/Default/button_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_rectangle_depth",
+      "file": "PNG/Extra/Default/button_rectangle_depth.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_square",
+      "file": "PNG/Extra/Default/button_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_square_depth",
+      "file": "PNG/Extra/Default/button_square_depth.png"
+    },
+    {
+      "name": "PNG/Extra/Default/crosshair_a",
+      "file": "PNG/Extra/Default/crosshair_a.png"
+    },
+    {
+      "name": "PNG/Extra/Default/crosshair_b",
+      "file": "PNG/Extra/Default/crosshair_b.png"
+    },
+    {
+      "name": "PNG/Extra/Default/crosshair_c",
+      "file": "PNG/Extra/Default/crosshair_c.png"
+    },
+    {
+      "name": "PNG/Extra/Default/crosshair_d",
+      "file": "PNG/Extra/Default/crosshair_d.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_a",
+      "file": "PNG/Extra/Default/cursor_a.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_b",
+      "file": "PNG/Extra/Default/cursor_b.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_c",
+      "file": "PNG/Extra/Default/cursor_c.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_d",
+      "file": "PNG/Extra/Default/cursor_d.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_e",
+      "file": "PNG/Extra/Default/cursor_e.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_f",
+      "file": "PNG/Extra/Default/cursor_f.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_g",
+      "file": "PNG/Extra/Default/cursor_g.png"
+    },
+    {
+      "name": "PNG/Extra/Default/cursor_h",
+      "file": "PNG/Extra/Default/cursor_h.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass",
+      "file": "PNG/Extra/Default/panel_glass.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_notch_bl",
+      "file": "PNG/Extra/Default/panel_glass_notch_bl.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_notch_br",
+      "file": "PNG/Extra/Default/panel_glass_notch_br.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_notch_tl",
+      "file": "PNG/Extra/Default/panel_glass_notch_tl.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_notch_tr",
+      "file": "PNG/Extra/Default/panel_glass_notch_tr.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_notches",
+      "file": "PNG/Extra/Default/panel_glass_notches.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_notches_top",
+      "file": "PNG/Extra/Default/panel_glass_notches_top.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_screws",
+      "file": "PNG/Extra/Default/panel_glass_screws.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_tab",
+      "file": "PNG/Extra/Default/panel_glass_tab.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_glass_tab_blade",
+      "file": "PNG/Extra/Default/panel_glass_tab_blade.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_rectangle",
+      "file": "PNG/Extra/Default/panel_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_rectangle_screws",
+      "file": "PNG/Extra/Default/panel_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_square",
+      "file": "PNG/Extra/Default/panel_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/panel_square_screws",
+      "file": "PNG/Extra/Default/panel_square_screws.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_large",
+      "file": "PNG/Extra/Double/bar_shadow_round_large.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_large_l",
+      "file": "PNG/Extra/Double/bar_shadow_round_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_large_m",
+      "file": "PNG/Extra/Double/bar_shadow_round_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_large_r",
+      "file": "PNG/Extra/Double/bar_shadow_round_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_large_square",
+      "file": "PNG/Extra/Double/bar_shadow_round_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_large",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_large.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_large_l",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_large_m",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_large_r",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_large_square",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_small",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_small.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_small_l",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_small_m",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_small_r",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_outline_small_square",
+      "file": "PNG/Extra/Double/bar_shadow_round_outline_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_small",
+      "file": "PNG/Extra/Double/bar_shadow_round_small.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_small_l",
+      "file": "PNG/Extra/Double/bar_shadow_round_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_small_m",
+      "file": "PNG/Extra/Double/bar_shadow_round_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_small_r",
+      "file": "PNG/Extra/Double/bar_shadow_round_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_round_small_square",
+      "file": "PNG/Extra/Double/bar_shadow_round_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_large",
+      "file": "PNG/Extra/Double/bar_shadow_square_large.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_large_l",
+      "file": "PNG/Extra/Double/bar_shadow_square_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_large_m",
+      "file": "PNG/Extra/Double/bar_shadow_square_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_large_r",
+      "file": "PNG/Extra/Double/bar_shadow_square_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_large_square",
+      "file": "PNG/Extra/Double/bar_shadow_square_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_large",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_large.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_large_l",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_large_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_large_m",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_large_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_large_r",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_large_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_large_square",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_large_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_small",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_small.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_small_l",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_small_m",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_small_r",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_outline_small_square",
+      "file": "PNG/Extra/Double/bar_shadow_square_outline_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_small",
+      "file": "PNG/Extra/Double/bar_shadow_square_small.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_small_l",
+      "file": "PNG/Extra/Double/bar_shadow_square_small_l.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_small_m",
+      "file": "PNG/Extra/Double/bar_shadow_square_small_m.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_small_r",
+      "file": "PNG/Extra/Double/bar_shadow_square_small_r.png"
+    },
+    {
+      "name": "PNG/Extra/Double/bar_shadow_square_small_square",
+      "file": "PNG/Extra/Double/bar_shadow_square_small_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_rectangle",
+      "file": "PNG/Extra/Double/button_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_rectangle_depth",
+      "file": "PNG/Extra/Double/button_rectangle_depth.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_square",
+      "file": "PNG/Extra/Double/button_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_square_depth",
+      "file": "PNG/Extra/Double/button_square_depth.png"
+    },
+    {
+      "name": "PNG/Extra/Double/crosshair_a",
+      "file": "PNG/Extra/Double/crosshair_a.png"
+    },
+    {
+      "name": "PNG/Extra/Double/crosshair_b",
+      "file": "PNG/Extra/Double/crosshair_b.png"
+    },
+    {
+      "name": "PNG/Extra/Double/crosshair_c",
+      "file": "PNG/Extra/Double/crosshair_c.png"
+    },
+    {
+      "name": "PNG/Extra/Double/crosshair_d",
+      "file": "PNG/Extra/Double/crosshair_d.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_a",
+      "file": "PNG/Extra/Double/cursor_a.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_b",
+      "file": "PNG/Extra/Double/cursor_b.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_c",
+      "file": "PNG/Extra/Double/cursor_c.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_d",
+      "file": "PNG/Extra/Double/cursor_d.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_e",
+      "file": "PNG/Extra/Double/cursor_e.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_f",
+      "file": "PNG/Extra/Double/cursor_f.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_g",
+      "file": "PNG/Extra/Double/cursor_g.png"
+    },
+    {
+      "name": "PNG/Extra/Double/cursor_h",
+      "file": "PNG/Extra/Double/cursor_h.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass",
+      "file": "PNG/Extra/Double/panel_glass.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_notch_bl",
+      "file": "PNG/Extra/Double/panel_glass_notch_bl.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_notch_br",
+      "file": "PNG/Extra/Double/panel_glass_notch_br.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_notch_tl",
+      "file": "PNG/Extra/Double/panel_glass_notch_tl.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_notch_tr",
+      "file": "PNG/Extra/Double/panel_glass_notch_tr.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_notches",
+      "file": "PNG/Extra/Double/panel_glass_notches.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_notches_top",
+      "file": "PNG/Extra/Double/panel_glass_notches_top.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_screws",
+      "file": "PNG/Extra/Double/panel_glass_screws.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_tab",
+      "file": "PNG/Extra/Double/panel_glass_tab.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_glass_tab_blade",
+      "file": "PNG/Extra/Double/panel_glass_tab_blade.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_rectangle",
+      "file": "PNG/Extra/Double/panel_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_rectangle_screws",
+      "file": "PNG/Extra/Double/panel_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_square",
+      "file": "PNG/Extra/Double/panel_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/panel_square_screws",
+      "file": "PNG/Extra/Double/panel_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_large",
+      "file": "PNG/Green/Default/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_large_l",
+      "file": "PNG/Green/Default/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_large_m",
+      "file": "PNG/Green/Default/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_large_r",
+      "file": "PNG/Green/Default/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_large_square",
+      "file": "PNG/Green/Default/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_small",
+      "file": "PNG/Green/Default/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_small_l",
+      "file": "PNG/Green/Default/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_small_m",
+      "file": "PNG/Green/Default/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_small_r",
+      "file": "PNG/Green/Default/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_gloss_small_square",
+      "file": "PNG/Green/Default/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_large",
+      "file": "PNG/Green/Default/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_large_l",
+      "file": "PNG/Green/Default/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_large_m",
+      "file": "PNG/Green/Default/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_large_r",
+      "file": "PNG/Green/Default/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_large_square",
+      "file": "PNG/Green/Default/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_small",
+      "file": "PNG/Green/Default/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_small_l",
+      "file": "PNG/Green/Default/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_small_m",
+      "file": "PNG/Green/Default/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_small_r",
+      "file": "PNG/Green/Default/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_round_small_square",
+      "file": "PNG/Green/Default/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_large",
+      "file": "PNG/Green/Default/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_large_l",
+      "file": "PNG/Green/Default/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_large_m",
+      "file": "PNG/Green/Default/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_large_r",
+      "file": "PNG/Green/Default/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_large_square",
+      "file": "PNG/Green/Default/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_small",
+      "file": "PNG/Green/Default/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_small_l",
+      "file": "PNG/Green/Default/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_small_m",
+      "file": "PNG/Green/Default/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_small_r",
+      "file": "PNG/Green/Default/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_gloss_small_square",
+      "file": "PNG/Green/Default/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_large",
+      "file": "PNG/Green/Default/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_large_l",
+      "file": "PNG/Green/Default/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_large_m",
+      "file": "PNG/Green/Default/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_large_r",
+      "file": "PNG/Green/Default/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_large_square",
+      "file": "PNG/Green/Default/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_small",
+      "file": "PNG/Green/Default/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_small_l",
+      "file": "PNG/Green/Default/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_small_m",
+      "file": "PNG/Green/Default/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_small_r",
+      "file": "PNG/Green/Default/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Default/bar_square_small_square",
+      "file": "PNG/Green/Default/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_blade_rectangle",
+      "file": "PNG/Green/Default/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Green/Default/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_blade_square",
+      "file": "PNG/Green/Default/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_blade_square_screws",
+      "file": "PNG/Green/Default/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_large_rectangle",
+      "file": "PNG/Green/Default/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_large_rectangle_screws",
+      "file": "PNG/Green/Default/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_large_square",
+      "file": "PNG/Green/Default/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_large_square_screws",
+      "file": "PNG/Green/Default/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_notch_rectangle",
+      "file": "PNG/Green/Default/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Green/Default/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_notch_square",
+      "file": "PNG/Green/Default/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_notch_square_screws",
+      "file": "PNG/Green/Default/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_small_rectangle",
+      "file": "PNG/Green/Default/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_small_rectangle_screws",
+      "file": "PNG/Green/Default/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_small_square",
+      "file": "PNG/Green/Default/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_header_small_square_screws",
+      "file": "PNG/Green/Default/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Default/crosshair_color_a",
+      "file": "PNG/Green/Default/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Green/Default/crosshair_color_b",
+      "file": "PNG/Green/Default/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Green/Default/crosshair_color_c",
+      "file": "PNG/Green/Default/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Green/Default/crosshair_color_d",
+      "file": "PNG/Green/Default/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_large",
+      "file": "PNG/Green/Double/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_large_l",
+      "file": "PNG/Green/Double/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_large_m",
+      "file": "PNG/Green/Double/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_large_r",
+      "file": "PNG/Green/Double/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_large_square",
+      "file": "PNG/Green/Double/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_small",
+      "file": "PNG/Green/Double/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_small_l",
+      "file": "PNG/Green/Double/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_small_m",
+      "file": "PNG/Green/Double/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_small_r",
+      "file": "PNG/Green/Double/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_gloss_small_square",
+      "file": "PNG/Green/Double/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_large",
+      "file": "PNG/Green/Double/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_large_l",
+      "file": "PNG/Green/Double/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_large_m",
+      "file": "PNG/Green/Double/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_large_r",
+      "file": "PNG/Green/Double/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_large_square",
+      "file": "PNG/Green/Double/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_small",
+      "file": "PNG/Green/Double/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_small_l",
+      "file": "PNG/Green/Double/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_small_m",
+      "file": "PNG/Green/Double/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_small_r",
+      "file": "PNG/Green/Double/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_round_small_square",
+      "file": "PNG/Green/Double/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_large",
+      "file": "PNG/Green/Double/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_large_l",
+      "file": "PNG/Green/Double/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_large_m",
+      "file": "PNG/Green/Double/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_large_r",
+      "file": "PNG/Green/Double/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_large_square",
+      "file": "PNG/Green/Double/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_small",
+      "file": "PNG/Green/Double/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_small_l",
+      "file": "PNG/Green/Double/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_small_m",
+      "file": "PNG/Green/Double/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_small_r",
+      "file": "PNG/Green/Double/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_gloss_small_square",
+      "file": "PNG/Green/Double/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_large",
+      "file": "PNG/Green/Double/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_large_l",
+      "file": "PNG/Green/Double/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_large_m",
+      "file": "PNG/Green/Double/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_large_r",
+      "file": "PNG/Green/Double/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_large_square",
+      "file": "PNG/Green/Double/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_small",
+      "file": "PNG/Green/Double/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_small_l",
+      "file": "PNG/Green/Double/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_small_m",
+      "file": "PNG/Green/Double/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_small_r",
+      "file": "PNG/Green/Double/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Green/Double/bar_square_small_square",
+      "file": "PNG/Green/Double/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_blade_rectangle",
+      "file": "PNG/Green/Double/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Green/Double/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_blade_square",
+      "file": "PNG/Green/Double/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_blade_square_screws",
+      "file": "PNG/Green/Double/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_large_rectangle",
+      "file": "PNG/Green/Double/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_large_rectangle_screws",
+      "file": "PNG/Green/Double/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_large_square",
+      "file": "PNG/Green/Double/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_large_square_screws",
+      "file": "PNG/Green/Double/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_notch_rectangle",
+      "file": "PNG/Green/Double/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Green/Double/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_notch_square",
+      "file": "PNG/Green/Double/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_notch_square_screws",
+      "file": "PNG/Green/Double/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_small_rectangle",
+      "file": "PNG/Green/Double/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_small_rectangle_screws",
+      "file": "PNG/Green/Double/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_small_square",
+      "file": "PNG/Green/Double/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_header_small_square_screws",
+      "file": "PNG/Green/Double/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Green/Double/crosshair_color_a",
+      "file": "PNG/Green/Double/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Green/Double/crosshair_color_b",
+      "file": "PNG/Green/Double/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Green/Double/crosshair_color_c",
+      "file": "PNG/Green/Double/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Green/Double/crosshair_color_d",
+      "file": "PNG/Green/Double/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_large",
+      "file": "PNG/Grey/Default/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_large_l",
+      "file": "PNG/Grey/Default/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_large_m",
+      "file": "PNG/Grey/Default/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_large_r",
+      "file": "PNG/Grey/Default/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_large_square",
+      "file": "PNG/Grey/Default/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_small",
+      "file": "PNG/Grey/Default/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_small_l",
+      "file": "PNG/Grey/Default/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_small_m",
+      "file": "PNG/Grey/Default/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_small_r",
+      "file": "PNG/Grey/Default/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_gloss_small_square",
+      "file": "PNG/Grey/Default/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_large",
+      "file": "PNG/Grey/Default/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_large_l",
+      "file": "PNG/Grey/Default/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_large_m",
+      "file": "PNG/Grey/Default/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_large_r",
+      "file": "PNG/Grey/Default/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_large_square",
+      "file": "PNG/Grey/Default/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_small",
+      "file": "PNG/Grey/Default/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_small_l",
+      "file": "PNG/Grey/Default/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_small_m",
+      "file": "PNG/Grey/Default/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_small_r",
+      "file": "PNG/Grey/Default/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_round_small_square",
+      "file": "PNG/Grey/Default/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_large",
+      "file": "PNG/Grey/Default/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_large_l",
+      "file": "PNG/Grey/Default/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_large_m",
+      "file": "PNG/Grey/Default/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_large_r",
+      "file": "PNG/Grey/Default/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_large_square",
+      "file": "PNG/Grey/Default/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_small",
+      "file": "PNG/Grey/Default/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_small_l",
+      "file": "PNG/Grey/Default/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_small_m",
+      "file": "PNG/Grey/Default/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_small_r",
+      "file": "PNG/Grey/Default/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_gloss_small_square",
+      "file": "PNG/Grey/Default/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_large",
+      "file": "PNG/Grey/Default/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_large_l",
+      "file": "PNG/Grey/Default/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_large_m",
+      "file": "PNG/Grey/Default/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_large_r",
+      "file": "PNG/Grey/Default/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_large_square",
+      "file": "PNG/Grey/Default/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_small",
+      "file": "PNG/Grey/Default/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_small_l",
+      "file": "PNG/Grey/Default/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_small_m",
+      "file": "PNG/Grey/Default/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_small_r",
+      "file": "PNG/Grey/Default/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Default/bar_square_small_square",
+      "file": "PNG/Grey/Default/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_blade_rectangle",
+      "file": "PNG/Grey/Default/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Grey/Default/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_blade_square",
+      "file": "PNG/Grey/Default/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_blade_square_screws",
+      "file": "PNG/Grey/Default/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_large_rectangle",
+      "file": "PNG/Grey/Default/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_large_rectangle_screws",
+      "file": "PNG/Grey/Default/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_large_square",
+      "file": "PNG/Grey/Default/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_large_square_screws",
+      "file": "PNG/Grey/Default/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_notch_rectangle",
+      "file": "PNG/Grey/Default/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Grey/Default/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_notch_square",
+      "file": "PNG/Grey/Default/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_notch_square_screws",
+      "file": "PNG/Grey/Default/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_small_rectangle",
+      "file": "PNG/Grey/Default/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_small_rectangle_screws",
+      "file": "PNG/Grey/Default/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_small_square",
+      "file": "PNG/Grey/Default/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_header_small_square_screws",
+      "file": "PNG/Grey/Default/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Default/crosshair_color_a",
+      "file": "PNG/Grey/Default/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Grey/Default/crosshair_color_b",
+      "file": "PNG/Grey/Default/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Grey/Default/crosshair_color_c",
+      "file": "PNG/Grey/Default/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Grey/Default/crosshair_color_d",
+      "file": "PNG/Grey/Default/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_large",
+      "file": "PNG/Grey/Double/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_large_l",
+      "file": "PNG/Grey/Double/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_large_m",
+      "file": "PNG/Grey/Double/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_large_r",
+      "file": "PNG/Grey/Double/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_large_square",
+      "file": "PNG/Grey/Double/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_small",
+      "file": "PNG/Grey/Double/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_small_l",
+      "file": "PNG/Grey/Double/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_small_m",
+      "file": "PNG/Grey/Double/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_small_r",
+      "file": "PNG/Grey/Double/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_gloss_small_square",
+      "file": "PNG/Grey/Double/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_large",
+      "file": "PNG/Grey/Double/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_large_l",
+      "file": "PNG/Grey/Double/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_large_m",
+      "file": "PNG/Grey/Double/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_large_r",
+      "file": "PNG/Grey/Double/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_large_square",
+      "file": "PNG/Grey/Double/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_small",
+      "file": "PNG/Grey/Double/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_small_l",
+      "file": "PNG/Grey/Double/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_small_m",
+      "file": "PNG/Grey/Double/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_small_r",
+      "file": "PNG/Grey/Double/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_round_small_square",
+      "file": "PNG/Grey/Double/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_large",
+      "file": "PNG/Grey/Double/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_large_l",
+      "file": "PNG/Grey/Double/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_large_m",
+      "file": "PNG/Grey/Double/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_large_r",
+      "file": "PNG/Grey/Double/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_large_square",
+      "file": "PNG/Grey/Double/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_small",
+      "file": "PNG/Grey/Double/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_small_l",
+      "file": "PNG/Grey/Double/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_small_m",
+      "file": "PNG/Grey/Double/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_small_r",
+      "file": "PNG/Grey/Double/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_gloss_small_square",
+      "file": "PNG/Grey/Double/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_large",
+      "file": "PNG/Grey/Double/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_large_l",
+      "file": "PNG/Grey/Double/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_large_m",
+      "file": "PNG/Grey/Double/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_large_r",
+      "file": "PNG/Grey/Double/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_large_square",
+      "file": "PNG/Grey/Double/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_small",
+      "file": "PNG/Grey/Double/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_small_l",
+      "file": "PNG/Grey/Double/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_small_m",
+      "file": "PNG/Grey/Double/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_small_r",
+      "file": "PNG/Grey/Double/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Grey/Double/bar_square_small_square",
+      "file": "PNG/Grey/Double/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_blade_rectangle",
+      "file": "PNG/Grey/Double/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Grey/Double/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_blade_square",
+      "file": "PNG/Grey/Double/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_blade_square_screws",
+      "file": "PNG/Grey/Double/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_large_rectangle",
+      "file": "PNG/Grey/Double/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_large_rectangle_screws",
+      "file": "PNG/Grey/Double/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_large_square",
+      "file": "PNG/Grey/Double/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_large_square_screws",
+      "file": "PNG/Grey/Double/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_notch_rectangle",
+      "file": "PNG/Grey/Double/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Grey/Double/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_notch_square",
+      "file": "PNG/Grey/Double/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_notch_square_screws",
+      "file": "PNG/Grey/Double/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_small_rectangle",
+      "file": "PNG/Grey/Double/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_small_rectangle_screws",
+      "file": "PNG/Grey/Double/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_small_square",
+      "file": "PNG/Grey/Double/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_header_small_square_screws",
+      "file": "PNG/Grey/Double/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Grey/Double/crosshair_color_a",
+      "file": "PNG/Grey/Double/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Grey/Double/crosshair_color_b",
+      "file": "PNG/Grey/Double/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Grey/Double/crosshair_color_c",
+      "file": "PNG/Grey/Double/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Grey/Double/crosshair_color_d",
+      "file": "PNG/Grey/Double/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_large",
+      "file": "PNG/Red/Default/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_large_l",
+      "file": "PNG/Red/Default/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_large_m",
+      "file": "PNG/Red/Default/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_large_r",
+      "file": "PNG/Red/Default/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_large_square",
+      "file": "PNG/Red/Default/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_small",
+      "file": "PNG/Red/Default/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_small_l",
+      "file": "PNG/Red/Default/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_small_m",
+      "file": "PNG/Red/Default/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_small_r",
+      "file": "PNG/Red/Default/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_gloss_small_square",
+      "file": "PNG/Red/Default/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_large",
+      "file": "PNG/Red/Default/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_large_l",
+      "file": "PNG/Red/Default/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_large_m",
+      "file": "PNG/Red/Default/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_large_r",
+      "file": "PNG/Red/Default/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_large_square",
+      "file": "PNG/Red/Default/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_small",
+      "file": "PNG/Red/Default/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_small_l",
+      "file": "PNG/Red/Default/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_small_m",
+      "file": "PNG/Red/Default/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_small_r",
+      "file": "PNG/Red/Default/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_round_small_square",
+      "file": "PNG/Red/Default/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_large",
+      "file": "PNG/Red/Default/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_large_l",
+      "file": "PNG/Red/Default/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_large_m",
+      "file": "PNG/Red/Default/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_large_r",
+      "file": "PNG/Red/Default/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_large_square",
+      "file": "PNG/Red/Default/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_small",
+      "file": "PNG/Red/Default/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_small_l",
+      "file": "PNG/Red/Default/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_small_m",
+      "file": "PNG/Red/Default/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_small_r",
+      "file": "PNG/Red/Default/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_gloss_small_square",
+      "file": "PNG/Red/Default/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_large",
+      "file": "PNG/Red/Default/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_large_l",
+      "file": "PNG/Red/Default/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_large_m",
+      "file": "PNG/Red/Default/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_large_r",
+      "file": "PNG/Red/Default/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_large_square",
+      "file": "PNG/Red/Default/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_small",
+      "file": "PNG/Red/Default/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_small_l",
+      "file": "PNG/Red/Default/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_small_m",
+      "file": "PNG/Red/Default/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_small_r",
+      "file": "PNG/Red/Default/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Default/bar_square_small_square",
+      "file": "PNG/Red/Default/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_blade_rectangle",
+      "file": "PNG/Red/Default/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Red/Default/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_blade_square",
+      "file": "PNG/Red/Default/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_blade_square_screws",
+      "file": "PNG/Red/Default/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_large_rectangle",
+      "file": "PNG/Red/Default/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_large_rectangle_screws",
+      "file": "PNG/Red/Default/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_large_square",
+      "file": "PNG/Red/Default/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_large_square_screws",
+      "file": "PNG/Red/Default/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_notch_rectangle",
+      "file": "PNG/Red/Default/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Red/Default/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_notch_square",
+      "file": "PNG/Red/Default/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_notch_square_screws",
+      "file": "PNG/Red/Default/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_small_rectangle",
+      "file": "PNG/Red/Default/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_small_rectangle_screws",
+      "file": "PNG/Red/Default/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_small_square",
+      "file": "PNG/Red/Default/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_header_small_square_screws",
+      "file": "PNG/Red/Default/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Default/crosshair_color_a",
+      "file": "PNG/Red/Default/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Red/Default/crosshair_color_b",
+      "file": "PNG/Red/Default/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Red/Default/crosshair_color_c",
+      "file": "PNG/Red/Default/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Red/Default/crosshair_color_d",
+      "file": "PNG/Red/Default/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_large",
+      "file": "PNG/Red/Double/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_large_l",
+      "file": "PNG/Red/Double/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_large_m",
+      "file": "PNG/Red/Double/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_large_r",
+      "file": "PNG/Red/Double/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_large_square",
+      "file": "PNG/Red/Double/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_small",
+      "file": "PNG/Red/Double/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_small_l",
+      "file": "PNG/Red/Double/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_small_m",
+      "file": "PNG/Red/Double/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_small_r",
+      "file": "PNG/Red/Double/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_gloss_small_square",
+      "file": "PNG/Red/Double/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_large",
+      "file": "PNG/Red/Double/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_large_l",
+      "file": "PNG/Red/Double/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_large_m",
+      "file": "PNG/Red/Double/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_large_r",
+      "file": "PNG/Red/Double/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_large_square",
+      "file": "PNG/Red/Double/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_small",
+      "file": "PNG/Red/Double/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_small_l",
+      "file": "PNG/Red/Double/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_small_m",
+      "file": "PNG/Red/Double/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_small_r",
+      "file": "PNG/Red/Double/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_round_small_square",
+      "file": "PNG/Red/Double/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_large",
+      "file": "PNG/Red/Double/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_large_l",
+      "file": "PNG/Red/Double/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_large_m",
+      "file": "PNG/Red/Double/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_large_r",
+      "file": "PNG/Red/Double/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_large_square",
+      "file": "PNG/Red/Double/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_small",
+      "file": "PNG/Red/Double/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_small_l",
+      "file": "PNG/Red/Double/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_small_m",
+      "file": "PNG/Red/Double/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_small_r",
+      "file": "PNG/Red/Double/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_gloss_small_square",
+      "file": "PNG/Red/Double/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_large",
+      "file": "PNG/Red/Double/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_large_l",
+      "file": "PNG/Red/Double/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_large_m",
+      "file": "PNG/Red/Double/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_large_r",
+      "file": "PNG/Red/Double/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_large_square",
+      "file": "PNG/Red/Double/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_small",
+      "file": "PNG/Red/Double/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_small_l",
+      "file": "PNG/Red/Double/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_small_m",
+      "file": "PNG/Red/Double/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_small_r",
+      "file": "PNG/Red/Double/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Red/Double/bar_square_small_square",
+      "file": "PNG/Red/Double/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_blade_rectangle",
+      "file": "PNG/Red/Double/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Red/Double/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_blade_square",
+      "file": "PNG/Red/Double/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_blade_square_screws",
+      "file": "PNG/Red/Double/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_large_rectangle",
+      "file": "PNG/Red/Double/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_large_rectangle_screws",
+      "file": "PNG/Red/Double/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_large_square",
+      "file": "PNG/Red/Double/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_large_square_screws",
+      "file": "PNG/Red/Double/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_notch_rectangle",
+      "file": "PNG/Red/Double/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Red/Double/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_notch_square",
+      "file": "PNG/Red/Double/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_notch_square_screws",
+      "file": "PNG/Red/Double/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_small_rectangle",
+      "file": "PNG/Red/Double/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_small_rectangle_screws",
+      "file": "PNG/Red/Double/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_small_square",
+      "file": "PNG/Red/Double/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_header_small_square_screws",
+      "file": "PNG/Red/Double/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Red/Double/crosshair_color_a",
+      "file": "PNG/Red/Double/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Red/Double/crosshair_color_b",
+      "file": "PNG/Red/Double/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Red/Double/crosshair_color_c",
+      "file": "PNG/Red/Double/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Red/Double/crosshair_color_d",
+      "file": "PNG/Red/Double/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_large",
+      "file": "PNG/Yellow/Default/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_large_l",
+      "file": "PNG/Yellow/Default/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_large_m",
+      "file": "PNG/Yellow/Default/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_large_r",
+      "file": "PNG/Yellow/Default/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_large_square",
+      "file": "PNG/Yellow/Default/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_small",
+      "file": "PNG/Yellow/Default/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_small_l",
+      "file": "PNG/Yellow/Default/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_small_m",
+      "file": "PNG/Yellow/Default/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_small_r",
+      "file": "PNG/Yellow/Default/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_gloss_small_square",
+      "file": "PNG/Yellow/Default/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_large",
+      "file": "PNG/Yellow/Default/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_large_l",
+      "file": "PNG/Yellow/Default/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_large_m",
+      "file": "PNG/Yellow/Default/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_large_r",
+      "file": "PNG/Yellow/Default/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_large_square",
+      "file": "PNG/Yellow/Default/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_small",
+      "file": "PNG/Yellow/Default/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_small_l",
+      "file": "PNG/Yellow/Default/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_small_m",
+      "file": "PNG/Yellow/Default/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_small_r",
+      "file": "PNG/Yellow/Default/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_round_small_square",
+      "file": "PNG/Yellow/Default/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_large",
+      "file": "PNG/Yellow/Default/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_large_l",
+      "file": "PNG/Yellow/Default/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_large_m",
+      "file": "PNG/Yellow/Default/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_large_r",
+      "file": "PNG/Yellow/Default/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_large_square",
+      "file": "PNG/Yellow/Default/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_small",
+      "file": "PNG/Yellow/Default/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_small_l",
+      "file": "PNG/Yellow/Default/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_small_m",
+      "file": "PNG/Yellow/Default/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_small_r",
+      "file": "PNG/Yellow/Default/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_gloss_small_square",
+      "file": "PNG/Yellow/Default/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_large",
+      "file": "PNG/Yellow/Default/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_large_l",
+      "file": "PNG/Yellow/Default/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_large_m",
+      "file": "PNG/Yellow/Default/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_large_r",
+      "file": "PNG/Yellow/Default/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_large_square",
+      "file": "PNG/Yellow/Default/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_small",
+      "file": "PNG/Yellow/Default/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_small_l",
+      "file": "PNG/Yellow/Default/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_small_m",
+      "file": "PNG/Yellow/Default/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_small_r",
+      "file": "PNG/Yellow/Default/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/bar_square_small_square",
+      "file": "PNG/Yellow/Default/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_blade_rectangle",
+      "file": "PNG/Yellow/Default/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Yellow/Default/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_blade_square",
+      "file": "PNG/Yellow/Default/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_blade_square_screws",
+      "file": "PNG/Yellow/Default/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_large_rectangle",
+      "file": "PNG/Yellow/Default/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_large_rectangle_screws",
+      "file": "PNG/Yellow/Default/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_large_square",
+      "file": "PNG/Yellow/Default/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_large_square_screws",
+      "file": "PNG/Yellow/Default/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_notch_rectangle",
+      "file": "PNG/Yellow/Default/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Yellow/Default/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_notch_square",
+      "file": "PNG/Yellow/Default/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_notch_square_screws",
+      "file": "PNG/Yellow/Default/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_small_rectangle",
+      "file": "PNG/Yellow/Default/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_small_rectangle_screws",
+      "file": "PNG/Yellow/Default/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_small_square",
+      "file": "PNG/Yellow/Default/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_header_small_square_screws",
+      "file": "PNG/Yellow/Default/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/crosshair_color_a",
+      "file": "PNG/Yellow/Default/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/crosshair_color_b",
+      "file": "PNG/Yellow/Default/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/crosshair_color_c",
+      "file": "PNG/Yellow/Default/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/crosshair_color_d",
+      "file": "PNG/Yellow/Default/crosshair_color_d.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_large",
+      "file": "PNG/Yellow/Double/bar_round_gloss_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_large_l",
+      "file": "PNG/Yellow/Double/bar_round_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_large_m",
+      "file": "PNG/Yellow/Double/bar_round_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_large_r",
+      "file": "PNG/Yellow/Double/bar_round_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_large_square",
+      "file": "PNG/Yellow/Double/bar_round_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_small",
+      "file": "PNG/Yellow/Double/bar_round_gloss_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_small_l",
+      "file": "PNG/Yellow/Double/bar_round_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_small_m",
+      "file": "PNG/Yellow/Double/bar_round_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_small_r",
+      "file": "PNG/Yellow/Double/bar_round_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_gloss_small_square",
+      "file": "PNG/Yellow/Double/bar_round_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_large",
+      "file": "PNG/Yellow/Double/bar_round_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_large_l",
+      "file": "PNG/Yellow/Double/bar_round_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_large_m",
+      "file": "PNG/Yellow/Double/bar_round_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_large_r",
+      "file": "PNG/Yellow/Double/bar_round_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_large_square",
+      "file": "PNG/Yellow/Double/bar_round_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_small",
+      "file": "PNG/Yellow/Double/bar_round_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_small_l",
+      "file": "PNG/Yellow/Double/bar_round_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_small_m",
+      "file": "PNG/Yellow/Double/bar_round_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_small_r",
+      "file": "PNG/Yellow/Double/bar_round_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_round_small_square",
+      "file": "PNG/Yellow/Double/bar_round_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_large",
+      "file": "PNG/Yellow/Double/bar_square_gloss_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_large_l",
+      "file": "PNG/Yellow/Double/bar_square_gloss_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_large_m",
+      "file": "PNG/Yellow/Double/bar_square_gloss_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_large_r",
+      "file": "PNG/Yellow/Double/bar_square_gloss_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_large_square",
+      "file": "PNG/Yellow/Double/bar_square_gloss_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_small",
+      "file": "PNG/Yellow/Double/bar_square_gloss_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_small_l",
+      "file": "PNG/Yellow/Double/bar_square_gloss_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_small_m",
+      "file": "PNG/Yellow/Double/bar_square_gloss_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_small_r",
+      "file": "PNG/Yellow/Double/bar_square_gloss_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_gloss_small_square",
+      "file": "PNG/Yellow/Double/bar_square_gloss_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_large",
+      "file": "PNG/Yellow/Double/bar_square_large.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_large_l",
+      "file": "PNG/Yellow/Double/bar_square_large_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_large_m",
+      "file": "PNG/Yellow/Double/bar_square_large_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_large_r",
+      "file": "PNG/Yellow/Double/bar_square_large_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_large_square",
+      "file": "PNG/Yellow/Double/bar_square_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_small",
+      "file": "PNG/Yellow/Double/bar_square_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_small_l",
+      "file": "PNG/Yellow/Double/bar_square_small_l.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_small_m",
+      "file": "PNG/Yellow/Double/bar_square_small_m.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_small_r",
+      "file": "PNG/Yellow/Double/bar_square_small_r.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/bar_square_small_square",
+      "file": "PNG/Yellow/Double/bar_square_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_blade_rectangle",
+      "file": "PNG/Yellow/Double/button_square_header_blade_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_blade_rectangle_screws",
+      "file": "PNG/Yellow/Double/button_square_header_blade_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_blade_square",
+      "file": "PNG/Yellow/Double/button_square_header_blade_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_blade_square_screws",
+      "file": "PNG/Yellow/Double/button_square_header_blade_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_large_rectangle",
+      "file": "PNG/Yellow/Double/button_square_header_large_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_large_rectangle_screws",
+      "file": "PNG/Yellow/Double/button_square_header_large_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_large_square",
+      "file": "PNG/Yellow/Double/button_square_header_large_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_large_square_screws",
+      "file": "PNG/Yellow/Double/button_square_header_large_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_notch_rectangle",
+      "file": "PNG/Yellow/Double/button_square_header_notch_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_notch_rectangle_screws",
+      "file": "PNG/Yellow/Double/button_square_header_notch_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_notch_square",
+      "file": "PNG/Yellow/Double/button_square_header_notch_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_notch_square_screws",
+      "file": "PNG/Yellow/Double/button_square_header_notch_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_small_rectangle",
+      "file": "PNG/Yellow/Double/button_square_header_small_rectangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_small_rectangle_screws",
+      "file": "PNG/Yellow/Double/button_square_header_small_rectangle_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_small_square",
+      "file": "PNG/Yellow/Double/button_square_header_small_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_header_small_square_screws",
+      "file": "PNG/Yellow/Double/button_square_header_small_square_screws.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/crosshair_color_a",
+      "file": "PNG/Yellow/Double/crosshair_color_a.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/crosshair_color_b",
+      "file": "PNG/Yellow/Double/crosshair_color_b.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/crosshair_color_c",
+      "file": "PNG/Yellow/Double/crosshair_color_c.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/crosshair_color_d",
+      "file": "PNG/Yellow/Double/crosshair_color_d.png"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_large",
+      "file": "Vector/Blue/bar_round_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_large_l",
+      "file": "Vector/Blue/bar_round_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_large_m",
+      "file": "Vector/Blue/bar_round_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_large_r",
+      "file": "Vector/Blue/bar_round_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_large_square",
+      "file": "Vector/Blue/bar_round_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_small",
+      "file": "Vector/Blue/bar_round_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_small_l",
+      "file": "Vector/Blue/bar_round_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_small_m",
+      "file": "Vector/Blue/bar_round_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_small_r",
+      "file": "Vector/Blue/bar_round_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_gloss_small_square",
+      "file": "Vector/Blue/bar_round_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_large",
+      "file": "Vector/Blue/bar_round_large.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_large_l",
+      "file": "Vector/Blue/bar_round_large_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_large_m",
+      "file": "Vector/Blue/bar_round_large_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_large_r",
+      "file": "Vector/Blue/bar_round_large_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_large_square",
+      "file": "Vector/Blue/bar_round_large_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_small",
+      "file": "Vector/Blue/bar_round_small.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_small_l",
+      "file": "Vector/Blue/bar_round_small_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_small_m",
+      "file": "Vector/Blue/bar_round_small_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_small_r",
+      "file": "Vector/Blue/bar_round_small_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_round_small_square",
+      "file": "Vector/Blue/bar_round_small_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_large",
+      "file": "Vector/Blue/bar_square_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_large_l",
+      "file": "Vector/Blue/bar_square_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_large_m",
+      "file": "Vector/Blue/bar_square_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_large_r",
+      "file": "Vector/Blue/bar_square_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_large_square",
+      "file": "Vector/Blue/bar_square_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_small",
+      "file": "Vector/Blue/bar_square_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_small_l",
+      "file": "Vector/Blue/bar_square_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_small_m",
+      "file": "Vector/Blue/bar_square_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_small_r",
+      "file": "Vector/Blue/bar_square_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_gloss_small_square",
+      "file": "Vector/Blue/bar_square_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_large",
+      "file": "Vector/Blue/bar_square_large.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_large_l",
+      "file": "Vector/Blue/bar_square_large_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_large_m",
+      "file": "Vector/Blue/bar_square_large_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_large_r",
+      "file": "Vector/Blue/bar_square_large_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_large_square",
+      "file": "Vector/Blue/bar_square_large_square.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_small",
+      "file": "Vector/Blue/bar_square_small.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_small_l",
+      "file": "Vector/Blue/bar_square_small_l.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_small_m",
+      "file": "Vector/Blue/bar_square_small_m.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_small_r",
+      "file": "Vector/Blue/bar_square_small_r.svg"
+    },
+    {
+      "name": "Vector/Blue/bar_square_small_square",
+      "file": "Vector/Blue/bar_square_small_square.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_blade_rectangle",
+      "file": "Vector/Blue/button_square_header_blade_rectangle.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_blade_rectangle_screws",
+      "file": "Vector/Blue/button_square_header_blade_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_blade_square",
+      "file": "Vector/Blue/button_square_header_blade_square.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_blade_square_screws",
+      "file": "Vector/Blue/button_square_header_blade_square_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_large_rectangle",
+      "file": "Vector/Blue/button_square_header_large_rectangle.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_large_rectangle_screws",
+      "file": "Vector/Blue/button_square_header_large_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_large_square",
+      "file": "Vector/Blue/button_square_header_large_square.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_large_square_screws",
+      "file": "Vector/Blue/button_square_header_large_square_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_notch_rectangle",
+      "file": "Vector/Blue/button_square_header_notch_rectangle.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_notch_rectangle_screws",
+      "file": "Vector/Blue/button_square_header_notch_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_notch_square",
+      "file": "Vector/Blue/button_square_header_notch_square.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_notch_square_screws",
+      "file": "Vector/Blue/button_square_header_notch_square_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_small_rectangle",
+      "file": "Vector/Blue/button_square_header_small_rectangle.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_small_rectangle_screws",
+      "file": "Vector/Blue/button_square_header_small_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_small_square",
+      "file": "Vector/Blue/button_square_header_small_square.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_header_small_square_screws",
+      "file": "Vector/Blue/button_square_header_small_square_screws.svg"
+    },
+    {
+      "name": "Vector/Blue/crosshair_color_a",
+      "file": "Vector/Blue/crosshair_color_a.svg"
+    },
+    {
+      "name": "Vector/Blue/crosshair_color_b",
+      "file": "Vector/Blue/crosshair_color_b.svg"
+    },
+    {
+      "name": "Vector/Blue/crosshair_color_c",
+      "file": "Vector/Blue/crosshair_color_c.svg"
+    },
+    {
+      "name": "Vector/Blue/crosshair_color_d",
+      "file": "Vector/Blue/crosshair_color_d.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_large",
+      "file": "Vector/Extra/bar_shadow_round_large.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_large_l",
+      "file": "Vector/Extra/bar_shadow_round_large_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_large_m",
+      "file": "Vector/Extra/bar_shadow_round_large_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_large_r",
+      "file": "Vector/Extra/bar_shadow_round_large_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_large_square",
+      "file": "Vector/Extra/bar_shadow_round_large_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_large",
+      "file": "Vector/Extra/bar_shadow_round_outline_large.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_large_l",
+      "file": "Vector/Extra/bar_shadow_round_outline_large_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_large_m",
+      "file": "Vector/Extra/bar_shadow_round_outline_large_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_large_r",
+      "file": "Vector/Extra/bar_shadow_round_outline_large_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_large_square",
+      "file": "Vector/Extra/bar_shadow_round_outline_large_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_small",
+      "file": "Vector/Extra/bar_shadow_round_outline_small.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_small_l",
+      "file": "Vector/Extra/bar_shadow_round_outline_small_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_small_m",
+      "file": "Vector/Extra/bar_shadow_round_outline_small_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_small_r",
+      "file": "Vector/Extra/bar_shadow_round_outline_small_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_outline_small_square",
+      "file": "Vector/Extra/bar_shadow_round_outline_small_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_small",
+      "file": "Vector/Extra/bar_shadow_round_small.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_small_l",
+      "file": "Vector/Extra/bar_shadow_round_small_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_small_m",
+      "file": "Vector/Extra/bar_shadow_round_small_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_small_r",
+      "file": "Vector/Extra/bar_shadow_round_small_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_round_small_square",
+      "file": "Vector/Extra/bar_shadow_round_small_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_large",
+      "file": "Vector/Extra/bar_shadow_square_large.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_large_l",
+      "file": "Vector/Extra/bar_shadow_square_large_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_large_m",
+      "file": "Vector/Extra/bar_shadow_square_large_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_large_r",
+      "file": "Vector/Extra/bar_shadow_square_large_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_large_square",
+      "file": "Vector/Extra/bar_shadow_square_large_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_large",
+      "file": "Vector/Extra/bar_shadow_square_outline_large.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_large_l",
+      "file": "Vector/Extra/bar_shadow_square_outline_large_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_large_m",
+      "file": "Vector/Extra/bar_shadow_square_outline_large_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_large_r",
+      "file": "Vector/Extra/bar_shadow_square_outline_large_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_large_square",
+      "file": "Vector/Extra/bar_shadow_square_outline_large_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_small",
+      "file": "Vector/Extra/bar_shadow_square_outline_small.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_small_l",
+      "file": "Vector/Extra/bar_shadow_square_outline_small_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_small_m",
+      "file": "Vector/Extra/bar_shadow_square_outline_small_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_small_r",
+      "file": "Vector/Extra/bar_shadow_square_outline_small_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_outline_small_square",
+      "file": "Vector/Extra/bar_shadow_square_outline_small_square.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_small",
+      "file": "Vector/Extra/bar_shadow_square_small.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_small_l",
+      "file": "Vector/Extra/bar_shadow_square_small_l.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_small_m",
+      "file": "Vector/Extra/bar_shadow_square_small_m.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_small_r",
+      "file": "Vector/Extra/bar_shadow_square_small_r.svg"
+    },
+    {
+      "name": "Vector/Extra/bar_shadow_square_small_square",
+      "file": "Vector/Extra/bar_shadow_square_small_square.svg"
+    },
+    {
+      "name": "Vector/Extra/button_rectangle",
+      "file": "Vector/Extra/button_rectangle.svg"
+    },
+    {
+      "name": "Vector/Extra/button_rectangle_depth",
+      "file": "Vector/Extra/button_rectangle_depth.svg"
+    },
+    {
+      "name": "Vector/Extra/button_square",
+      "file": "Vector/Extra/button_square.svg"
+    },
+    {
+      "name": "Vector/Extra/button_square_depth",
+      "file": "Vector/Extra/button_square_depth.svg"
+    },
+    {
+      "name": "Vector/Extra/crosshair_a",
+      "file": "Vector/Extra/crosshair_a.svg"
+    },
+    {
+      "name": "Vector/Extra/crosshair_b",
+      "file": "Vector/Extra/crosshair_b.svg"
+    },
+    {
+      "name": "Vector/Extra/crosshair_c",
+      "file": "Vector/Extra/crosshair_c.svg"
+    },
+    {
+      "name": "Vector/Extra/crosshair_d",
+      "file": "Vector/Extra/crosshair_d.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_a",
+      "file": "Vector/Extra/cursor_a.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_b",
+      "file": "Vector/Extra/cursor_b.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_c",
+      "file": "Vector/Extra/cursor_c.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_d",
+      "file": "Vector/Extra/cursor_d.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_e",
+      "file": "Vector/Extra/cursor_e.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_f",
+      "file": "Vector/Extra/cursor_f.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_g",
+      "file": "Vector/Extra/cursor_g.svg"
+    },
+    {
+      "name": "Vector/Extra/cursor_h",
+      "file": "Vector/Extra/cursor_h.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass",
+      "file": "Vector/Extra/panel_glass.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_notch_bl",
+      "file": "Vector/Extra/panel_glass_notch_bl.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_notch_br",
+      "file": "Vector/Extra/panel_glass_notch_br.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_notch_tl",
+      "file": "Vector/Extra/panel_glass_notch_tl.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_notch_tr",
+      "file": "Vector/Extra/panel_glass_notch_tr.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_notches",
+      "file": "Vector/Extra/panel_glass_notches.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_notches_top",
+      "file": "Vector/Extra/panel_glass_notches_top.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_screws",
+      "file": "Vector/Extra/panel_glass_screws.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_tab",
+      "file": "Vector/Extra/panel_glass_tab.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_glass_tab_blade",
+      "file": "Vector/Extra/panel_glass_tab_blade.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_rectangle",
+      "file": "Vector/Extra/panel_rectangle.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_rectangle_screws",
+      "file": "Vector/Extra/panel_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_square",
+      "file": "Vector/Extra/panel_square.svg"
+    },
+    {
+      "name": "Vector/Extra/panel_square_screws",
+      "file": "Vector/Extra/panel_square_screws.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_large",
+      "file": "Vector/Green/bar_round_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_large_l",
+      "file": "Vector/Green/bar_round_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_large_m",
+      "file": "Vector/Green/bar_round_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_large_r",
+      "file": "Vector/Green/bar_round_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_large_square",
+      "file": "Vector/Green/bar_round_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_small",
+      "file": "Vector/Green/bar_round_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_small_l",
+      "file": "Vector/Green/bar_round_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_small_m",
+      "file": "Vector/Green/bar_round_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_small_r",
+      "file": "Vector/Green/bar_round_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_gloss_small_square",
+      "file": "Vector/Green/bar_round_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_large",
+      "file": "Vector/Green/bar_round_large.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_large_l",
+      "file": "Vector/Green/bar_round_large_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_large_m",
+      "file": "Vector/Green/bar_round_large_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_large_r",
+      "file": "Vector/Green/bar_round_large_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_large_square",
+      "file": "Vector/Green/bar_round_large_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_small",
+      "file": "Vector/Green/bar_round_small.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_small_l",
+      "file": "Vector/Green/bar_round_small_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_small_m",
+      "file": "Vector/Green/bar_round_small_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_small_r",
+      "file": "Vector/Green/bar_round_small_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_round_small_square",
+      "file": "Vector/Green/bar_round_small_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_large",
+      "file": "Vector/Green/bar_square_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_large_l",
+      "file": "Vector/Green/bar_square_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_large_m",
+      "file": "Vector/Green/bar_square_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_large_r",
+      "file": "Vector/Green/bar_square_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_large_square",
+      "file": "Vector/Green/bar_square_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_small",
+      "file": "Vector/Green/bar_square_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_small_l",
+      "file": "Vector/Green/bar_square_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_small_m",
+      "file": "Vector/Green/bar_square_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_small_r",
+      "file": "Vector/Green/bar_square_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_gloss_small_square",
+      "file": "Vector/Green/bar_square_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_large",
+      "file": "Vector/Green/bar_square_large.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_large_l",
+      "file": "Vector/Green/bar_square_large_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_large_m",
+      "file": "Vector/Green/bar_square_large_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_large_r",
+      "file": "Vector/Green/bar_square_large_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_large_square",
+      "file": "Vector/Green/bar_square_large_square.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_small",
+      "file": "Vector/Green/bar_square_small.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_small_l",
+      "file": "Vector/Green/bar_square_small_l.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_small_m",
+      "file": "Vector/Green/bar_square_small_m.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_small_r",
+      "file": "Vector/Green/bar_square_small_r.svg"
+    },
+    {
+      "name": "Vector/Green/bar_square_small_square",
+      "file": "Vector/Green/bar_square_small_square.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_blade_rectangle",
+      "file": "Vector/Green/button_square_header_blade_rectangle.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_blade_rectangle_screws",
+      "file": "Vector/Green/button_square_header_blade_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_blade_square",
+      "file": "Vector/Green/button_square_header_blade_square.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_blade_square_screws",
+      "file": "Vector/Green/button_square_header_blade_square_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_large_rectangle",
+      "file": "Vector/Green/button_square_header_large_rectangle.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_large_rectangle_screws",
+      "file": "Vector/Green/button_square_header_large_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_large_square",
+      "file": "Vector/Green/button_square_header_large_square.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_large_square_screws",
+      "file": "Vector/Green/button_square_header_large_square_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_notch_rectangle",
+      "file": "Vector/Green/button_square_header_notch_rectangle.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_notch_rectangle_screws",
+      "file": "Vector/Green/button_square_header_notch_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_notch_square",
+      "file": "Vector/Green/button_square_header_notch_square.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_notch_square_screws",
+      "file": "Vector/Green/button_square_header_notch_square_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_small_rectangle",
+      "file": "Vector/Green/button_square_header_small_rectangle.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_small_rectangle_screws",
+      "file": "Vector/Green/button_square_header_small_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_small_square",
+      "file": "Vector/Green/button_square_header_small_square.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_header_small_square_screws",
+      "file": "Vector/Green/button_square_header_small_square_screws.svg"
+    },
+    {
+      "name": "Vector/Green/crosshair_color_a",
+      "file": "Vector/Green/crosshair_color_a.svg"
+    },
+    {
+      "name": "Vector/Green/crosshair_color_b",
+      "file": "Vector/Green/crosshair_color_b.svg"
+    },
+    {
+      "name": "Vector/Green/crosshair_color_c",
+      "file": "Vector/Green/crosshair_color_c.svg"
+    },
+    {
+      "name": "Vector/Green/crosshair_color_d",
+      "file": "Vector/Green/crosshair_color_d.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_large",
+      "file": "Vector/Grey/bar_round_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_large_l",
+      "file": "Vector/Grey/bar_round_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_large_m",
+      "file": "Vector/Grey/bar_round_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_large_r",
+      "file": "Vector/Grey/bar_round_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_large_square",
+      "file": "Vector/Grey/bar_round_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_small",
+      "file": "Vector/Grey/bar_round_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_small_l",
+      "file": "Vector/Grey/bar_round_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_small_m",
+      "file": "Vector/Grey/bar_round_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_small_r",
+      "file": "Vector/Grey/bar_round_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_gloss_small_square",
+      "file": "Vector/Grey/bar_round_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_large",
+      "file": "Vector/Grey/bar_round_large.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_large_l",
+      "file": "Vector/Grey/bar_round_large_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_large_m",
+      "file": "Vector/Grey/bar_round_large_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_large_r",
+      "file": "Vector/Grey/bar_round_large_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_large_square",
+      "file": "Vector/Grey/bar_round_large_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_small",
+      "file": "Vector/Grey/bar_round_small.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_small_l",
+      "file": "Vector/Grey/bar_round_small_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_small_m",
+      "file": "Vector/Grey/bar_round_small_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_small_r",
+      "file": "Vector/Grey/bar_round_small_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_round_small_square",
+      "file": "Vector/Grey/bar_round_small_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_large",
+      "file": "Vector/Grey/bar_square_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_large_l",
+      "file": "Vector/Grey/bar_square_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_large_m",
+      "file": "Vector/Grey/bar_square_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_large_r",
+      "file": "Vector/Grey/bar_square_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_large_square",
+      "file": "Vector/Grey/bar_square_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_small",
+      "file": "Vector/Grey/bar_square_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_small_l",
+      "file": "Vector/Grey/bar_square_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_small_m",
+      "file": "Vector/Grey/bar_square_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_small_r",
+      "file": "Vector/Grey/bar_square_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_gloss_small_square",
+      "file": "Vector/Grey/bar_square_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_large",
+      "file": "Vector/Grey/bar_square_large.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_large_l",
+      "file": "Vector/Grey/bar_square_large_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_large_m",
+      "file": "Vector/Grey/bar_square_large_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_large_r",
+      "file": "Vector/Grey/bar_square_large_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_large_square",
+      "file": "Vector/Grey/bar_square_large_square.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_small",
+      "file": "Vector/Grey/bar_square_small.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_small_l",
+      "file": "Vector/Grey/bar_square_small_l.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_small_m",
+      "file": "Vector/Grey/bar_square_small_m.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_small_r",
+      "file": "Vector/Grey/bar_square_small_r.svg"
+    },
+    {
+      "name": "Vector/Grey/bar_square_small_square",
+      "file": "Vector/Grey/bar_square_small_square.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_blade_rectangle",
+      "file": "Vector/Grey/button_square_header_blade_rectangle.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_blade_rectangle_screws",
+      "file": "Vector/Grey/button_square_header_blade_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_blade_square",
+      "file": "Vector/Grey/button_square_header_blade_square.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_blade_square_screws",
+      "file": "Vector/Grey/button_square_header_blade_square_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_large_rectangle",
+      "file": "Vector/Grey/button_square_header_large_rectangle.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_large_rectangle_screws",
+      "file": "Vector/Grey/button_square_header_large_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_large_square",
+      "file": "Vector/Grey/button_square_header_large_square.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_large_square_screws",
+      "file": "Vector/Grey/button_square_header_large_square_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_notch_rectangle",
+      "file": "Vector/Grey/button_square_header_notch_rectangle.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_notch_rectangle_screws",
+      "file": "Vector/Grey/button_square_header_notch_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_notch_square",
+      "file": "Vector/Grey/button_square_header_notch_square.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_notch_square_screws",
+      "file": "Vector/Grey/button_square_header_notch_square_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_small_rectangle",
+      "file": "Vector/Grey/button_square_header_small_rectangle.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_small_rectangle_screws",
+      "file": "Vector/Grey/button_square_header_small_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_small_square",
+      "file": "Vector/Grey/button_square_header_small_square.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_header_small_square_screws",
+      "file": "Vector/Grey/button_square_header_small_square_screws.svg"
+    },
+    {
+      "name": "Vector/Grey/crosshair_color_a",
+      "file": "Vector/Grey/crosshair_color_a.svg"
+    },
+    {
+      "name": "Vector/Grey/crosshair_color_b",
+      "file": "Vector/Grey/crosshair_color_b.svg"
+    },
+    {
+      "name": "Vector/Grey/crosshair_color_c",
+      "file": "Vector/Grey/crosshair_color_c.svg"
+    },
+    {
+      "name": "Vector/Grey/crosshair_color_d",
+      "file": "Vector/Grey/crosshair_color_d.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_large",
+      "file": "Vector/Red/bar_round_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_large_l",
+      "file": "Vector/Red/bar_round_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_large_m",
+      "file": "Vector/Red/bar_round_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_large_r",
+      "file": "Vector/Red/bar_round_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_large_square",
+      "file": "Vector/Red/bar_round_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_small",
+      "file": "Vector/Red/bar_round_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_small_l",
+      "file": "Vector/Red/bar_round_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_small_m",
+      "file": "Vector/Red/bar_round_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_small_r",
+      "file": "Vector/Red/bar_round_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_gloss_small_square",
+      "file": "Vector/Red/bar_round_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_large",
+      "file": "Vector/Red/bar_round_large.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_large_l",
+      "file": "Vector/Red/bar_round_large_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_large_m",
+      "file": "Vector/Red/bar_round_large_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_large_r",
+      "file": "Vector/Red/bar_round_large_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_large_square",
+      "file": "Vector/Red/bar_round_large_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_small",
+      "file": "Vector/Red/bar_round_small.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_small_l",
+      "file": "Vector/Red/bar_round_small_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_small_m",
+      "file": "Vector/Red/bar_round_small_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_small_r",
+      "file": "Vector/Red/bar_round_small_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_round_small_square",
+      "file": "Vector/Red/bar_round_small_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_large",
+      "file": "Vector/Red/bar_square_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_large_l",
+      "file": "Vector/Red/bar_square_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_large_m",
+      "file": "Vector/Red/bar_square_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_large_r",
+      "file": "Vector/Red/bar_square_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_large_square",
+      "file": "Vector/Red/bar_square_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_small",
+      "file": "Vector/Red/bar_square_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_small_l",
+      "file": "Vector/Red/bar_square_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_small_m",
+      "file": "Vector/Red/bar_square_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_small_r",
+      "file": "Vector/Red/bar_square_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_gloss_small_square",
+      "file": "Vector/Red/bar_square_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_large",
+      "file": "Vector/Red/bar_square_large.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_large_l",
+      "file": "Vector/Red/bar_square_large_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_large_m",
+      "file": "Vector/Red/bar_square_large_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_large_r",
+      "file": "Vector/Red/bar_square_large_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_large_square",
+      "file": "Vector/Red/bar_square_large_square.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_small",
+      "file": "Vector/Red/bar_square_small.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_small_l",
+      "file": "Vector/Red/bar_square_small_l.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_small_m",
+      "file": "Vector/Red/bar_square_small_m.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_small_r",
+      "file": "Vector/Red/bar_square_small_r.svg"
+    },
+    {
+      "name": "Vector/Red/bar_square_small_square",
+      "file": "Vector/Red/bar_square_small_square.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_blade_rectangle",
+      "file": "Vector/Red/button_square_header_blade_rectangle.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_blade_rectangle_screws",
+      "file": "Vector/Red/button_square_header_blade_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_blade_square",
+      "file": "Vector/Red/button_square_header_blade_square.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_blade_square_screws",
+      "file": "Vector/Red/button_square_header_blade_square_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_large_rectangle",
+      "file": "Vector/Red/button_square_header_large_rectangle.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_large_rectangle_screws",
+      "file": "Vector/Red/button_square_header_large_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_large_square",
+      "file": "Vector/Red/button_square_header_large_square.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_large_square_screws",
+      "file": "Vector/Red/button_square_header_large_square_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_notch_rectangle",
+      "file": "Vector/Red/button_square_header_notch_rectangle.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_notch_rectangle_screws",
+      "file": "Vector/Red/button_square_header_notch_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_notch_square",
+      "file": "Vector/Red/button_square_header_notch_square.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_notch_square_screws",
+      "file": "Vector/Red/button_square_header_notch_square_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_small_rectangle",
+      "file": "Vector/Red/button_square_header_small_rectangle.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_small_rectangle_screws",
+      "file": "Vector/Red/button_square_header_small_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_small_square",
+      "file": "Vector/Red/button_square_header_small_square.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_header_small_square_screws",
+      "file": "Vector/Red/button_square_header_small_square_screws.svg"
+    },
+    {
+      "name": "Vector/Red/crosshair_color_a",
+      "file": "Vector/Red/crosshair_color_a.svg"
+    },
+    {
+      "name": "Vector/Red/crosshair_color_b",
+      "file": "Vector/Red/crosshair_color_b.svg"
+    },
+    {
+      "name": "Vector/Red/crosshair_color_c",
+      "file": "Vector/Red/crosshair_color_c.svg"
+    },
+    {
+      "name": "Vector/Red/crosshair_color_d",
+      "file": "Vector/Red/crosshair_color_d.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_large",
+      "file": "Vector/Yellow/bar_round_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_large_l",
+      "file": "Vector/Yellow/bar_round_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_large_m",
+      "file": "Vector/Yellow/bar_round_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_large_r",
+      "file": "Vector/Yellow/bar_round_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_large_square",
+      "file": "Vector/Yellow/bar_round_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_small",
+      "file": "Vector/Yellow/bar_round_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_small_l",
+      "file": "Vector/Yellow/bar_round_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_small_m",
+      "file": "Vector/Yellow/bar_round_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_small_r",
+      "file": "Vector/Yellow/bar_round_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_gloss_small_square",
+      "file": "Vector/Yellow/bar_round_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_large",
+      "file": "Vector/Yellow/bar_round_large.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_large_l",
+      "file": "Vector/Yellow/bar_round_large_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_large_m",
+      "file": "Vector/Yellow/bar_round_large_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_large_r",
+      "file": "Vector/Yellow/bar_round_large_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_large_square",
+      "file": "Vector/Yellow/bar_round_large_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_small",
+      "file": "Vector/Yellow/bar_round_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_small_l",
+      "file": "Vector/Yellow/bar_round_small_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_small_m",
+      "file": "Vector/Yellow/bar_round_small_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_small_r",
+      "file": "Vector/Yellow/bar_round_small_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_round_small_square",
+      "file": "Vector/Yellow/bar_round_small_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_large",
+      "file": "Vector/Yellow/bar_square_gloss_large.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_large_l",
+      "file": "Vector/Yellow/bar_square_gloss_large_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_large_m",
+      "file": "Vector/Yellow/bar_square_gloss_large_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_large_r",
+      "file": "Vector/Yellow/bar_square_gloss_large_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_large_square",
+      "file": "Vector/Yellow/bar_square_gloss_large_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_small",
+      "file": "Vector/Yellow/bar_square_gloss_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_small_l",
+      "file": "Vector/Yellow/bar_square_gloss_small_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_small_m",
+      "file": "Vector/Yellow/bar_square_gloss_small_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_small_r",
+      "file": "Vector/Yellow/bar_square_gloss_small_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_gloss_small_square",
+      "file": "Vector/Yellow/bar_square_gloss_small_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_large",
+      "file": "Vector/Yellow/bar_square_large.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_large_l",
+      "file": "Vector/Yellow/bar_square_large_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_large_m",
+      "file": "Vector/Yellow/bar_square_large_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_large_r",
+      "file": "Vector/Yellow/bar_square_large_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_large_square",
+      "file": "Vector/Yellow/bar_square_large_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_small",
+      "file": "Vector/Yellow/bar_square_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_small_l",
+      "file": "Vector/Yellow/bar_square_small_l.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_small_m",
+      "file": "Vector/Yellow/bar_square_small_m.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_small_r",
+      "file": "Vector/Yellow/bar_square_small_r.svg"
+    },
+    {
+      "name": "Vector/Yellow/bar_square_small_square",
+      "file": "Vector/Yellow/bar_square_small_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_blade_rectangle",
+      "file": "Vector/Yellow/button_square_header_blade_rectangle.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_blade_rectangle_screws",
+      "file": "Vector/Yellow/button_square_header_blade_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_blade_square",
+      "file": "Vector/Yellow/button_square_header_blade_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_blade_square_screws",
+      "file": "Vector/Yellow/button_square_header_blade_square_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_large_rectangle",
+      "file": "Vector/Yellow/button_square_header_large_rectangle.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_large_rectangle_screws",
+      "file": "Vector/Yellow/button_square_header_large_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_large_square",
+      "file": "Vector/Yellow/button_square_header_large_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_large_square_screws",
+      "file": "Vector/Yellow/button_square_header_large_square_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_notch_rectangle",
+      "file": "Vector/Yellow/button_square_header_notch_rectangle.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_notch_rectangle_screws",
+      "file": "Vector/Yellow/button_square_header_notch_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_notch_square",
+      "file": "Vector/Yellow/button_square_header_notch_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_notch_square_screws",
+      "file": "Vector/Yellow/button_square_header_notch_square_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_small_rectangle",
+      "file": "Vector/Yellow/button_square_header_small_rectangle.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_small_rectangle_screws",
+      "file": "Vector/Yellow/button_square_header_small_rectangle_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_small_square",
+      "file": "Vector/Yellow/button_square_header_small_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_header_small_square_screws",
+      "file": "Vector/Yellow/button_square_header_small_square_screws.svg"
+    },
+    {
+      "name": "Vector/Yellow/crosshair_color_a",
+      "file": "Vector/Yellow/crosshair_color_a.svg"
+    },
+    {
+      "name": "Vector/Yellow/crosshair_color_b",
+      "file": "Vector/Yellow/crosshair_color_b.svg"
+    },
+    {
+      "name": "Vector/Yellow/crosshair_color_c",
+      "file": "Vector/Yellow/crosshair_color_c.svg"
+    },
+    {
+      "name": "Vector/Yellow/crosshair_color_d",
+      "file": "Vector/Yellow/crosshair_color_d.svg"
+    }
+  ]
+}

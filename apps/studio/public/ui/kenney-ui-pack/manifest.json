@@ -1,0 +1,5214 @@
+{
+  "pack": "kenney-ui-pack",
+  "kind": "ui",
+  "items": [
+    {
+      "name": "PNG/Blue/Default/arrow_basic_e",
+      "file": "PNG/Blue/Default/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_e_small",
+      "file": "PNG/Blue/Default/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_n",
+      "file": "PNG/Blue/Default/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_n_small",
+      "file": "PNG/Blue/Default/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_s",
+      "file": "PNG/Blue/Default/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_s_small",
+      "file": "PNG/Blue/Default/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_w",
+      "file": "PNG/Blue/Default/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_basic_w_small",
+      "file": "PNG/Blue/Default/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_e",
+      "file": "PNG/Blue/Default/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_e_small",
+      "file": "PNG/Blue/Default/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_n",
+      "file": "PNG/Blue/Default/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_n_small",
+      "file": "PNG/Blue/Default/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_s",
+      "file": "PNG/Blue/Default/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_s_small",
+      "file": "PNG/Blue/Default/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_w",
+      "file": "PNG/Blue/Default/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Blue/Default/arrow_decorative_w_small",
+      "file": "PNG/Blue/Default/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_border",
+      "file": "PNG/Blue/Default/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_depth_border",
+      "file": "PNG/Blue/Default/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_depth_flat",
+      "file": "PNG/Blue/Default/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_depth_gloss",
+      "file": "PNG/Blue/Default/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_depth_gradient",
+      "file": "PNG/Blue/Default/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_depth_line",
+      "file": "PNG/Blue/Default/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_flat",
+      "file": "PNG/Blue/Default/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_gloss",
+      "file": "PNG/Blue/Default/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_gradient",
+      "file": "PNG/Blue/Default/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_rectangle_line",
+      "file": "PNG/Blue/Default/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_border",
+      "file": "PNG/Blue/Default/button_round_border.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_depth_border",
+      "file": "PNG/Blue/Default/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_depth_flat",
+      "file": "PNG/Blue/Default/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_depth_gloss",
+      "file": "PNG/Blue/Default/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_depth_gradient",
+      "file": "PNG/Blue/Default/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_depth_line",
+      "file": "PNG/Blue/Default/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_flat",
+      "file": "PNG/Blue/Default/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_gloss",
+      "file": "PNG/Blue/Default/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_gradient",
+      "file": "PNG/Blue/Default/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_round_line",
+      "file": "PNG/Blue/Default/button_round_line.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_border",
+      "file": "PNG/Blue/Default/button_square_border.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_depth_border",
+      "file": "PNG/Blue/Default/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_depth_flat",
+      "file": "PNG/Blue/Default/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_depth_gloss",
+      "file": "PNG/Blue/Default/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_depth_gradient",
+      "file": "PNG/Blue/Default/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_depth_line",
+      "file": "PNG/Blue/Default/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_flat",
+      "file": "PNG/Blue/Default/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_gloss",
+      "file": "PNG/Blue/Default/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_gradient",
+      "file": "PNG/Blue/Default/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Default/button_square_line",
+      "file": "PNG/Blue/Default/button_square_line.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_round_color",
+      "file": "PNG/Blue/Default/check_round_color.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_round_grey",
+      "file": "PNG/Blue/Default/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_round_grey_circle",
+      "file": "PNG/Blue/Default/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_round_round_circle",
+      "file": "PNG/Blue/Default/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_color",
+      "file": "PNG/Blue/Default/check_square_color.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_color_checkmark",
+      "file": "PNG/Blue/Default/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_color_cross",
+      "file": "PNG/Blue/Default/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_color_square",
+      "file": "PNG/Blue/Default/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_grey",
+      "file": "PNG/Blue/Default/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_grey_checkmark",
+      "file": "PNG/Blue/Default/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_grey_cross",
+      "file": "PNG/Blue/Default/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Default/check_square_grey_square",
+      "file": "PNG/Blue/Default/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_checkmark",
+      "file": "PNG/Blue/Default/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_circle",
+      "file": "PNG/Blue/Default/icon_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_cross",
+      "file": "PNG/Blue/Default/icon_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_outline_checkmark",
+      "file": "PNG/Blue/Default/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_outline_circle",
+      "file": "PNG/Blue/Default/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_outline_cross",
+      "file": "PNG/Blue/Default/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_outline_square",
+      "file": "PNG/Blue/Default/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/icon_square",
+      "file": "PNG/Blue/Default/icon_square.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_hangle",
+      "file": "PNG/Blue/Default/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_horizontal_color",
+      "file": "PNG/Blue/Default/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_horizontal_color_section",
+      "file": "PNG/Blue/Default/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_horizontal_color_section_wide",
+      "file": "PNG/Blue/Default/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_horizontal_grey",
+      "file": "PNG/Blue/Default/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_horizontal_grey_section",
+      "file": "PNG/Blue/Default/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_horizontal_grey_section_wide",
+      "file": "PNG/Blue/Default/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_vertical_color",
+      "file": "PNG/Blue/Default/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_vertical_color_section",
+      "file": "PNG/Blue/Default/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_vertical_color_section_wide",
+      "file": "PNG/Blue/Default/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_vertical_grey",
+      "file": "PNG/Blue/Default/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_vertical_grey_section",
+      "file": "PNG/Blue/Default/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Blue/Default/slide_vertical_grey_section_wide",
+      "file": "PNG/Blue/Default/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Default/star",
+      "file": "PNG/Blue/Default/star.png"
+    },
+    {
+      "name": "PNG/Blue/Default/star_outline",
+      "file": "PNG/Blue/Default/star_outline.png"
+    },
+    {
+      "name": "PNG/Blue/Default/star_outline_depth",
+      "file": "PNG/Blue/Default/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_e",
+      "file": "PNG/Blue/Double/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_e_small",
+      "file": "PNG/Blue/Double/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_n",
+      "file": "PNG/Blue/Double/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_n_small",
+      "file": "PNG/Blue/Double/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_s",
+      "file": "PNG/Blue/Double/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_s_small",
+      "file": "PNG/Blue/Double/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_w",
+      "file": "PNG/Blue/Double/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_basic_w_small",
+      "file": "PNG/Blue/Double/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_e",
+      "file": "PNG/Blue/Double/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_e_small",
+      "file": "PNG/Blue/Double/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_n",
+      "file": "PNG/Blue/Double/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_n_small",
+      "file": "PNG/Blue/Double/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_s",
+      "file": "PNG/Blue/Double/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_s_small",
+      "file": "PNG/Blue/Double/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_w",
+      "file": "PNG/Blue/Double/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Blue/Double/arrow_decorative_w_small",
+      "file": "PNG/Blue/Double/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_border",
+      "file": "PNG/Blue/Double/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_depth_border",
+      "file": "PNG/Blue/Double/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_depth_flat",
+      "file": "PNG/Blue/Double/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_depth_gloss",
+      "file": "PNG/Blue/Double/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_depth_gradient",
+      "file": "PNG/Blue/Double/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_depth_line",
+      "file": "PNG/Blue/Double/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_flat",
+      "file": "PNG/Blue/Double/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_gloss",
+      "file": "PNG/Blue/Double/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_gradient",
+      "file": "PNG/Blue/Double/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_rectangle_line",
+      "file": "PNG/Blue/Double/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_border",
+      "file": "PNG/Blue/Double/button_round_border.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_depth_border",
+      "file": "PNG/Blue/Double/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_depth_flat",
+      "file": "PNG/Blue/Double/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_depth_gloss",
+      "file": "PNG/Blue/Double/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_depth_gradient",
+      "file": "PNG/Blue/Double/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_depth_line",
+      "file": "PNG/Blue/Double/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_flat",
+      "file": "PNG/Blue/Double/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_gloss",
+      "file": "PNG/Blue/Double/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_gradient",
+      "file": "PNG/Blue/Double/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_round_line",
+      "file": "PNG/Blue/Double/button_round_line.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_border",
+      "file": "PNG/Blue/Double/button_square_border.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_depth_border",
+      "file": "PNG/Blue/Double/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_depth_flat",
+      "file": "PNG/Blue/Double/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_depth_gloss",
+      "file": "PNG/Blue/Double/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_depth_gradient",
+      "file": "PNG/Blue/Double/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_depth_line",
+      "file": "PNG/Blue/Double/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_flat",
+      "file": "PNG/Blue/Double/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_gloss",
+      "file": "PNG/Blue/Double/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_gradient",
+      "file": "PNG/Blue/Double/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Blue/Double/button_square_line",
+      "file": "PNG/Blue/Double/button_square_line.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_round_color",
+      "file": "PNG/Blue/Double/check_round_color.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_round_grey",
+      "file": "PNG/Blue/Double/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_round_grey_circle",
+      "file": "PNG/Blue/Double/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_round_round_circle",
+      "file": "PNG/Blue/Double/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_color",
+      "file": "PNG/Blue/Double/check_square_color.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_color_checkmark",
+      "file": "PNG/Blue/Double/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_color_cross",
+      "file": "PNG/Blue/Double/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_color_square",
+      "file": "PNG/Blue/Double/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_grey",
+      "file": "PNG/Blue/Double/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_grey_checkmark",
+      "file": "PNG/Blue/Double/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_grey_cross",
+      "file": "PNG/Blue/Double/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Double/check_square_grey_square",
+      "file": "PNG/Blue/Double/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_checkmark",
+      "file": "PNG/Blue/Double/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_circle",
+      "file": "PNG/Blue/Double/icon_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_cross",
+      "file": "PNG/Blue/Double/icon_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_outline_checkmark",
+      "file": "PNG/Blue/Double/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_outline_circle",
+      "file": "PNG/Blue/Double/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_outline_cross",
+      "file": "PNG/Blue/Double/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_outline_square",
+      "file": "PNG/Blue/Double/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/icon_square",
+      "file": "PNG/Blue/Double/icon_square.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_hangle",
+      "file": "PNG/Blue/Double/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_horizontal_color",
+      "file": "PNG/Blue/Double/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_horizontal_color_section",
+      "file": "PNG/Blue/Double/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_horizontal_color_section_wide",
+      "file": "PNG/Blue/Double/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_horizontal_grey",
+      "file": "PNG/Blue/Double/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_horizontal_grey_section",
+      "file": "PNG/Blue/Double/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_horizontal_grey_section_wide",
+      "file": "PNG/Blue/Double/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_vertical_color",
+      "file": "PNG/Blue/Double/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_vertical_color_section",
+      "file": "PNG/Blue/Double/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_vertical_color_section_wide",
+      "file": "PNG/Blue/Double/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_vertical_grey",
+      "file": "PNG/Blue/Double/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_vertical_grey_section",
+      "file": "PNG/Blue/Double/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Blue/Double/slide_vertical_grey_section_wide",
+      "file": "PNG/Blue/Double/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Blue/Double/star",
+      "file": "PNG/Blue/Double/star.png"
+    },
+    {
+      "name": "PNG/Blue/Double/star_outline",
+      "file": "PNG/Blue/Double/star_outline.png"
+    },
+    {
+      "name": "PNG/Blue/Double/star_outline_depth",
+      "file": "PNG/Blue/Double/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_rectangle_depth_line",
+      "file": "PNG/Extra/Default/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_rectangle_line",
+      "file": "PNG/Extra/Default/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_round_depth_line",
+      "file": "PNG/Extra/Default/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_round_line",
+      "file": "PNG/Extra/Default/button_round_line.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_square_depth_line",
+      "file": "PNG/Extra/Default/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Extra/Default/button_square_line",
+      "file": "PNG/Extra/Default/button_square_line.png"
+    },
+    {
+      "name": "PNG/Extra/Default/divider",
+      "file": "PNG/Extra/Default/divider.png"
+    },
+    {
+      "name": "PNG/Extra/Default/divider_edges",
+      "file": "PNG/Extra/Default/divider_edges.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_arrow_down_dark",
+      "file": "PNG/Extra/Default/icon_arrow_down_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_arrow_down_light",
+      "file": "PNG/Extra/Default/icon_arrow_down_light.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_arrow_down_outline",
+      "file": "PNG/Extra/Default/icon_arrow_down_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_arrow_up_dark",
+      "file": "PNG/Extra/Default/icon_arrow_up_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_arrow_up_light",
+      "file": "PNG/Extra/Default/icon_arrow_up_light.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_arrow_up_outline",
+      "file": "PNG/Extra/Default/icon_arrow_up_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_play_dark",
+      "file": "PNG/Extra/Default/icon_play_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_play_light",
+      "file": "PNG/Extra/Default/icon_play_light.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_play_outline",
+      "file": "PNG/Extra/Default/icon_play_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_repeat_dark",
+      "file": "PNG/Extra/Default/icon_repeat_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_repeat_light",
+      "file": "PNG/Extra/Default/icon_repeat_light.png"
+    },
+    {
+      "name": "PNG/Extra/Default/icon_repeat_outline",
+      "file": "PNG/Extra/Default/icon_repeat_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Default/input_outline_rectangle",
+      "file": "PNG/Extra/Default/input_outline_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Default/input_outline_square",
+      "file": "PNG/Extra/Default/input_outline_square.png"
+    },
+    {
+      "name": "PNG/Extra/Default/input_rectangle",
+      "file": "PNG/Extra/Default/input_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Default/input_square",
+      "file": "PNG/Extra/Default/input_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_rectangle_depth_line",
+      "file": "PNG/Extra/Double/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_rectangle_line",
+      "file": "PNG/Extra/Double/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_round_depth_line",
+      "file": "PNG/Extra/Double/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_round_line",
+      "file": "PNG/Extra/Double/button_round_line.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_square_depth_line",
+      "file": "PNG/Extra/Double/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Extra/Double/button_square_line",
+      "file": "PNG/Extra/Double/button_square_line.png"
+    },
+    {
+      "name": "PNG/Extra/Double/divider",
+      "file": "PNG/Extra/Double/divider.png"
+    },
+    {
+      "name": "PNG/Extra/Double/divider_edges",
+      "file": "PNG/Extra/Double/divider_edges.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_arrow_down_dark",
+      "file": "PNG/Extra/Double/icon_arrow_down_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_arrow_down_light",
+      "file": "PNG/Extra/Double/icon_arrow_down_light.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_arrow_down_outline",
+      "file": "PNG/Extra/Double/icon_arrow_down_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_arrow_up_dark",
+      "file": "PNG/Extra/Double/icon_arrow_up_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_arrow_up_light",
+      "file": "PNG/Extra/Double/icon_arrow_up_light.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_arrow_up_outline",
+      "file": "PNG/Extra/Double/icon_arrow_up_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_play_dark",
+      "file": "PNG/Extra/Double/icon_play_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_play_light",
+      "file": "PNG/Extra/Double/icon_play_light.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_play_outline",
+      "file": "PNG/Extra/Double/icon_play_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_repeat_dark",
+      "file": "PNG/Extra/Double/icon_repeat_dark.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_repeat_light",
+      "file": "PNG/Extra/Double/icon_repeat_light.png"
+    },
+    {
+      "name": "PNG/Extra/Double/icon_repeat_outline",
+      "file": "PNG/Extra/Double/icon_repeat_outline.png"
+    },
+    {
+      "name": "PNG/Extra/Double/input_outline_rectangle",
+      "file": "PNG/Extra/Double/input_outline_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Double/input_outline_square",
+      "file": "PNG/Extra/Double/input_outline_square.png"
+    },
+    {
+      "name": "PNG/Extra/Double/input_rectangle",
+      "file": "PNG/Extra/Double/input_rectangle.png"
+    },
+    {
+      "name": "PNG/Extra/Double/input_square",
+      "file": "PNG/Extra/Double/input_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_e",
+      "file": "PNG/Green/Default/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_e_small",
+      "file": "PNG/Green/Default/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_n",
+      "file": "PNG/Green/Default/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_n_small",
+      "file": "PNG/Green/Default/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_s",
+      "file": "PNG/Green/Default/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_s_small",
+      "file": "PNG/Green/Default/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_w",
+      "file": "PNG/Green/Default/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_basic_w_small",
+      "file": "PNG/Green/Default/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_e",
+      "file": "PNG/Green/Default/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_e_small",
+      "file": "PNG/Green/Default/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_n",
+      "file": "PNG/Green/Default/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_n_small",
+      "file": "PNG/Green/Default/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_s",
+      "file": "PNG/Green/Default/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_s_small",
+      "file": "PNG/Green/Default/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_w",
+      "file": "PNG/Green/Default/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Green/Default/arrow_decorative_w_small",
+      "file": "PNG/Green/Default/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_border",
+      "file": "PNG/Green/Default/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_depth_border",
+      "file": "PNG/Green/Default/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_depth_flat",
+      "file": "PNG/Green/Default/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_depth_gloss",
+      "file": "PNG/Green/Default/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_depth_gradient",
+      "file": "PNG/Green/Default/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_depth_line",
+      "file": "PNG/Green/Default/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_flat",
+      "file": "PNG/Green/Default/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_gloss",
+      "file": "PNG/Green/Default/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_gradient",
+      "file": "PNG/Green/Default/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_rectangle_line",
+      "file": "PNG/Green/Default/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_border",
+      "file": "PNG/Green/Default/button_round_border.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_depth_border",
+      "file": "PNG/Green/Default/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_depth_flat",
+      "file": "PNG/Green/Default/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_depth_gloss",
+      "file": "PNG/Green/Default/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_depth_gradient",
+      "file": "PNG/Green/Default/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_depth_line",
+      "file": "PNG/Green/Default/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_flat",
+      "file": "PNG/Green/Default/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_gloss",
+      "file": "PNG/Green/Default/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_gradient",
+      "file": "PNG/Green/Default/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_round_line",
+      "file": "PNG/Green/Default/button_round_line.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_border",
+      "file": "PNG/Green/Default/button_square_border.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_depth_border",
+      "file": "PNG/Green/Default/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_depth_flat",
+      "file": "PNG/Green/Default/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_depth_gloss",
+      "file": "PNG/Green/Default/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_depth_gradient",
+      "file": "PNG/Green/Default/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_depth_line",
+      "file": "PNG/Green/Default/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_flat",
+      "file": "PNG/Green/Default/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_gloss",
+      "file": "PNG/Green/Default/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_gradient",
+      "file": "PNG/Green/Default/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Default/button_square_line",
+      "file": "PNG/Green/Default/button_square_line.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_round_color",
+      "file": "PNG/Green/Default/check_round_color.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_round_grey",
+      "file": "PNG/Green/Default/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_round_grey_circle",
+      "file": "PNG/Green/Default/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_round_round_circle",
+      "file": "PNG/Green/Default/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_color",
+      "file": "PNG/Green/Default/check_square_color.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_color_checkmark",
+      "file": "PNG/Green/Default/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_color_cross",
+      "file": "PNG/Green/Default/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_color_square",
+      "file": "PNG/Green/Default/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_grey",
+      "file": "PNG/Green/Default/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_grey_checkmark",
+      "file": "PNG/Green/Default/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_grey_cross",
+      "file": "PNG/Green/Default/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Green/Default/check_square_grey_square",
+      "file": "PNG/Green/Default/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_checkmark",
+      "file": "PNG/Green/Default/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_circle",
+      "file": "PNG/Green/Default/icon_circle.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_cross",
+      "file": "PNG/Green/Default/icon_cross.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_outline_checkmark",
+      "file": "PNG/Green/Default/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_outline_circle",
+      "file": "PNG/Green/Default/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_outline_cross",
+      "file": "PNG/Green/Default/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_outline_square",
+      "file": "PNG/Green/Default/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/icon_square",
+      "file": "PNG/Green/Default/icon_square.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_hangle",
+      "file": "PNG/Green/Default/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_horizontal_color",
+      "file": "PNG/Green/Default/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_horizontal_color_section",
+      "file": "PNG/Green/Default/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_horizontal_color_section_wide",
+      "file": "PNG/Green/Default/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_horizontal_grey",
+      "file": "PNG/Green/Default/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_horizontal_grey_section",
+      "file": "PNG/Green/Default/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_horizontal_grey_section_wide",
+      "file": "PNG/Green/Default/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_vertical_color",
+      "file": "PNG/Green/Default/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_vertical_color_section",
+      "file": "PNG/Green/Default/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_vertical_color_section_wide",
+      "file": "PNG/Green/Default/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_vertical_grey",
+      "file": "PNG/Green/Default/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_vertical_grey_section",
+      "file": "PNG/Green/Default/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Green/Default/slide_vertical_grey_section_wide",
+      "file": "PNG/Green/Default/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Default/star",
+      "file": "PNG/Green/Default/star.png"
+    },
+    {
+      "name": "PNG/Green/Default/star_outline",
+      "file": "PNG/Green/Default/star_outline.png"
+    },
+    {
+      "name": "PNG/Green/Default/star_outline_depth",
+      "file": "PNG/Green/Default/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_e",
+      "file": "PNG/Green/Double/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_e_small",
+      "file": "PNG/Green/Double/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_n",
+      "file": "PNG/Green/Double/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_n_small",
+      "file": "PNG/Green/Double/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_s",
+      "file": "PNG/Green/Double/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_s_small",
+      "file": "PNG/Green/Double/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_w",
+      "file": "PNG/Green/Double/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_basic_w_small",
+      "file": "PNG/Green/Double/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_e",
+      "file": "PNG/Green/Double/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_e_small",
+      "file": "PNG/Green/Double/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_n",
+      "file": "PNG/Green/Double/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_n_small",
+      "file": "PNG/Green/Double/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_s",
+      "file": "PNG/Green/Double/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_s_small",
+      "file": "PNG/Green/Double/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_w",
+      "file": "PNG/Green/Double/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Green/Double/arrow_decorative_w_small",
+      "file": "PNG/Green/Double/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_border",
+      "file": "PNG/Green/Double/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_depth_border",
+      "file": "PNG/Green/Double/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_depth_flat",
+      "file": "PNG/Green/Double/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_depth_gloss",
+      "file": "PNG/Green/Double/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_depth_gradient",
+      "file": "PNG/Green/Double/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_depth_line",
+      "file": "PNG/Green/Double/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_flat",
+      "file": "PNG/Green/Double/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_gloss",
+      "file": "PNG/Green/Double/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_gradient",
+      "file": "PNG/Green/Double/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_rectangle_line",
+      "file": "PNG/Green/Double/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_border",
+      "file": "PNG/Green/Double/button_round_border.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_depth_border",
+      "file": "PNG/Green/Double/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_depth_flat",
+      "file": "PNG/Green/Double/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_depth_gloss",
+      "file": "PNG/Green/Double/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_depth_gradient",
+      "file": "PNG/Green/Double/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_depth_line",
+      "file": "PNG/Green/Double/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_flat",
+      "file": "PNG/Green/Double/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_gloss",
+      "file": "PNG/Green/Double/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_gradient",
+      "file": "PNG/Green/Double/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_round_line",
+      "file": "PNG/Green/Double/button_round_line.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_border",
+      "file": "PNG/Green/Double/button_square_border.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_depth_border",
+      "file": "PNG/Green/Double/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_depth_flat",
+      "file": "PNG/Green/Double/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_depth_gloss",
+      "file": "PNG/Green/Double/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_depth_gradient",
+      "file": "PNG/Green/Double/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_depth_line",
+      "file": "PNG/Green/Double/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_flat",
+      "file": "PNG/Green/Double/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_gloss",
+      "file": "PNG/Green/Double/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_gradient",
+      "file": "PNG/Green/Double/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Green/Double/button_square_line",
+      "file": "PNG/Green/Double/button_square_line.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_round_color",
+      "file": "PNG/Green/Double/check_round_color.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_round_grey",
+      "file": "PNG/Green/Double/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_round_grey_circle",
+      "file": "PNG/Green/Double/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_round_round_circle",
+      "file": "PNG/Green/Double/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_color",
+      "file": "PNG/Green/Double/check_square_color.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_color_checkmark",
+      "file": "PNG/Green/Double/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_color_cross",
+      "file": "PNG/Green/Double/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_color_square",
+      "file": "PNG/Green/Double/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_grey",
+      "file": "PNG/Green/Double/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_grey_checkmark",
+      "file": "PNG/Green/Double/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_grey_cross",
+      "file": "PNG/Green/Double/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Green/Double/check_square_grey_square",
+      "file": "PNG/Green/Double/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_checkmark",
+      "file": "PNG/Green/Double/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_circle",
+      "file": "PNG/Green/Double/icon_circle.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_cross",
+      "file": "PNG/Green/Double/icon_cross.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_outline_checkmark",
+      "file": "PNG/Green/Double/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_outline_circle",
+      "file": "PNG/Green/Double/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_outline_cross",
+      "file": "PNG/Green/Double/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_outline_square",
+      "file": "PNG/Green/Double/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/icon_square",
+      "file": "PNG/Green/Double/icon_square.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_hangle",
+      "file": "PNG/Green/Double/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_horizontal_color",
+      "file": "PNG/Green/Double/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_horizontal_color_section",
+      "file": "PNG/Green/Double/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_horizontal_color_section_wide",
+      "file": "PNG/Green/Double/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_horizontal_grey",
+      "file": "PNG/Green/Double/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_horizontal_grey_section",
+      "file": "PNG/Green/Double/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_horizontal_grey_section_wide",
+      "file": "PNG/Green/Double/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_vertical_color",
+      "file": "PNG/Green/Double/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_vertical_color_section",
+      "file": "PNG/Green/Double/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_vertical_color_section_wide",
+      "file": "PNG/Green/Double/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_vertical_grey",
+      "file": "PNG/Green/Double/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_vertical_grey_section",
+      "file": "PNG/Green/Double/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Green/Double/slide_vertical_grey_section_wide",
+      "file": "PNG/Green/Double/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Green/Double/star",
+      "file": "PNG/Green/Double/star.png"
+    },
+    {
+      "name": "PNG/Green/Double/star_outline",
+      "file": "PNG/Green/Double/star_outline.png"
+    },
+    {
+      "name": "PNG/Green/Double/star_outline_depth",
+      "file": "PNG/Green/Double/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_e",
+      "file": "PNG/Grey/Default/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_e_small",
+      "file": "PNG/Grey/Default/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_n",
+      "file": "PNG/Grey/Default/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_n_small",
+      "file": "PNG/Grey/Default/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_s",
+      "file": "PNG/Grey/Default/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_s_small",
+      "file": "PNG/Grey/Default/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_w",
+      "file": "PNG/Grey/Default/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_basic_w_small",
+      "file": "PNG/Grey/Default/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_e",
+      "file": "PNG/Grey/Default/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_e_small",
+      "file": "PNG/Grey/Default/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_n",
+      "file": "PNG/Grey/Default/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_n_small",
+      "file": "PNG/Grey/Default/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_s",
+      "file": "PNG/Grey/Default/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_s_small",
+      "file": "PNG/Grey/Default/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_w",
+      "file": "PNG/Grey/Default/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Grey/Default/arrow_decorative_w_small",
+      "file": "PNG/Grey/Default/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_border",
+      "file": "PNG/Grey/Default/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_depth_border",
+      "file": "PNG/Grey/Default/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_depth_flat",
+      "file": "PNG/Grey/Default/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_depth_gloss",
+      "file": "PNG/Grey/Default/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_depth_gradient",
+      "file": "PNG/Grey/Default/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_depth_line",
+      "file": "PNG/Grey/Default/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_flat",
+      "file": "PNG/Grey/Default/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_gloss",
+      "file": "PNG/Grey/Default/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_gradient",
+      "file": "PNG/Grey/Default/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_rectangle_line",
+      "file": "PNG/Grey/Default/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_border",
+      "file": "PNG/Grey/Default/button_round_border.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_depth_border",
+      "file": "PNG/Grey/Default/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_depth_flat",
+      "file": "PNG/Grey/Default/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_depth_gloss",
+      "file": "PNG/Grey/Default/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_depth_gradient",
+      "file": "PNG/Grey/Default/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_depth_line",
+      "file": "PNG/Grey/Default/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_flat",
+      "file": "PNG/Grey/Default/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_gloss",
+      "file": "PNG/Grey/Default/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_gradient",
+      "file": "PNG/Grey/Default/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_round_line",
+      "file": "PNG/Grey/Default/button_round_line.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_border",
+      "file": "PNG/Grey/Default/button_square_border.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_depth_border",
+      "file": "PNG/Grey/Default/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_depth_flat",
+      "file": "PNG/Grey/Default/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_depth_gloss",
+      "file": "PNG/Grey/Default/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_depth_gradient",
+      "file": "PNG/Grey/Default/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_depth_line",
+      "file": "PNG/Grey/Default/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_flat",
+      "file": "PNG/Grey/Default/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_gloss",
+      "file": "PNG/Grey/Default/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_gradient",
+      "file": "PNG/Grey/Default/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Default/button_square_line",
+      "file": "PNG/Grey/Default/button_square_line.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_round_color",
+      "file": "PNG/Grey/Default/check_round_color.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_round_grey",
+      "file": "PNG/Grey/Default/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_round_grey_circle",
+      "file": "PNG/Grey/Default/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_round_round_circle",
+      "file": "PNG/Grey/Default/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_color",
+      "file": "PNG/Grey/Default/check_square_color.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_color_checkmark",
+      "file": "PNG/Grey/Default/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_color_cross",
+      "file": "PNG/Grey/Default/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_color_square",
+      "file": "PNG/Grey/Default/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_grey",
+      "file": "PNG/Grey/Default/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_grey_checkmark",
+      "file": "PNG/Grey/Default/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_grey_cross",
+      "file": "PNG/Grey/Default/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Default/check_square_grey_square",
+      "file": "PNG/Grey/Default/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_checkmark",
+      "file": "PNG/Grey/Default/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_circle",
+      "file": "PNG/Grey/Default/icon_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_cross",
+      "file": "PNG/Grey/Default/icon_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_outline_checkmark",
+      "file": "PNG/Grey/Default/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_outline_circle",
+      "file": "PNG/Grey/Default/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_outline_cross",
+      "file": "PNG/Grey/Default/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_outline_square",
+      "file": "PNG/Grey/Default/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/icon_square",
+      "file": "PNG/Grey/Default/icon_square.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_hangle",
+      "file": "PNG/Grey/Default/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_horizontal_color",
+      "file": "PNG/Grey/Default/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_horizontal_color_section",
+      "file": "PNG/Grey/Default/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_horizontal_color_section_wide",
+      "file": "PNG/Grey/Default/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_horizontal_grey",
+      "file": "PNG/Grey/Default/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_horizontal_grey_section",
+      "file": "PNG/Grey/Default/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_horizontal_grey_section_wide",
+      "file": "PNG/Grey/Default/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_vertical_color",
+      "file": "PNG/Grey/Default/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_vertical_color_section",
+      "file": "PNG/Grey/Default/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_vertical_color_section_wide",
+      "file": "PNG/Grey/Default/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_vertical_grey",
+      "file": "PNG/Grey/Default/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_vertical_grey_section",
+      "file": "PNG/Grey/Default/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Grey/Default/slide_vertical_grey_section_wide",
+      "file": "PNG/Grey/Default/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Default/star",
+      "file": "PNG/Grey/Default/star.png"
+    },
+    {
+      "name": "PNG/Grey/Default/star_outline",
+      "file": "PNG/Grey/Default/star_outline.png"
+    },
+    {
+      "name": "PNG/Grey/Default/star_outline_depth",
+      "file": "PNG/Grey/Default/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_e",
+      "file": "PNG/Grey/Double/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_e_small",
+      "file": "PNG/Grey/Double/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_n",
+      "file": "PNG/Grey/Double/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_n_small",
+      "file": "PNG/Grey/Double/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_s",
+      "file": "PNG/Grey/Double/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_s_small",
+      "file": "PNG/Grey/Double/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_w",
+      "file": "PNG/Grey/Double/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_basic_w_small",
+      "file": "PNG/Grey/Double/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_e",
+      "file": "PNG/Grey/Double/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_e_small",
+      "file": "PNG/Grey/Double/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_n",
+      "file": "PNG/Grey/Double/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_n_small",
+      "file": "PNG/Grey/Double/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_s",
+      "file": "PNG/Grey/Double/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_s_small",
+      "file": "PNG/Grey/Double/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_w",
+      "file": "PNG/Grey/Double/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Grey/Double/arrow_decorative_w_small",
+      "file": "PNG/Grey/Double/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_border",
+      "file": "PNG/Grey/Double/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_depth_border",
+      "file": "PNG/Grey/Double/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_depth_flat",
+      "file": "PNG/Grey/Double/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_depth_gloss",
+      "file": "PNG/Grey/Double/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_depth_gradient",
+      "file": "PNG/Grey/Double/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_depth_line",
+      "file": "PNG/Grey/Double/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_flat",
+      "file": "PNG/Grey/Double/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_gloss",
+      "file": "PNG/Grey/Double/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_gradient",
+      "file": "PNG/Grey/Double/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_rectangle_line",
+      "file": "PNG/Grey/Double/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_border",
+      "file": "PNG/Grey/Double/button_round_border.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_depth_border",
+      "file": "PNG/Grey/Double/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_depth_flat",
+      "file": "PNG/Grey/Double/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_depth_gloss",
+      "file": "PNG/Grey/Double/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_depth_gradient",
+      "file": "PNG/Grey/Double/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_depth_line",
+      "file": "PNG/Grey/Double/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_flat",
+      "file": "PNG/Grey/Double/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_gloss",
+      "file": "PNG/Grey/Double/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_gradient",
+      "file": "PNG/Grey/Double/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_round_line",
+      "file": "PNG/Grey/Double/button_round_line.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_border",
+      "file": "PNG/Grey/Double/button_square_border.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_depth_border",
+      "file": "PNG/Grey/Double/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_depth_flat",
+      "file": "PNG/Grey/Double/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_depth_gloss",
+      "file": "PNG/Grey/Double/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_depth_gradient",
+      "file": "PNG/Grey/Double/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_depth_line",
+      "file": "PNG/Grey/Double/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_flat",
+      "file": "PNG/Grey/Double/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_gloss",
+      "file": "PNG/Grey/Double/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_gradient",
+      "file": "PNG/Grey/Double/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Grey/Double/button_square_line",
+      "file": "PNG/Grey/Double/button_square_line.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_round_color",
+      "file": "PNG/Grey/Double/check_round_color.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_round_grey",
+      "file": "PNG/Grey/Double/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_round_grey_circle",
+      "file": "PNG/Grey/Double/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_round_round_circle",
+      "file": "PNG/Grey/Double/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_color",
+      "file": "PNG/Grey/Double/check_square_color.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_color_checkmark",
+      "file": "PNG/Grey/Double/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_color_cross",
+      "file": "PNG/Grey/Double/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_color_square",
+      "file": "PNG/Grey/Double/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_grey",
+      "file": "PNG/Grey/Double/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_grey_checkmark",
+      "file": "PNG/Grey/Double/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_grey_cross",
+      "file": "PNG/Grey/Double/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Double/check_square_grey_square",
+      "file": "PNG/Grey/Double/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_checkmark",
+      "file": "PNG/Grey/Double/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_circle",
+      "file": "PNG/Grey/Double/icon_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_cross",
+      "file": "PNG/Grey/Double/icon_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_outline_checkmark",
+      "file": "PNG/Grey/Double/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_outline_circle",
+      "file": "PNG/Grey/Double/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_outline_cross",
+      "file": "PNG/Grey/Double/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_outline_square",
+      "file": "PNG/Grey/Double/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/icon_square",
+      "file": "PNG/Grey/Double/icon_square.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_hangle",
+      "file": "PNG/Grey/Double/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_horizontal_color",
+      "file": "PNG/Grey/Double/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_horizontal_color_section",
+      "file": "PNG/Grey/Double/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_horizontal_color_section_wide",
+      "file": "PNG/Grey/Double/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_horizontal_grey",
+      "file": "PNG/Grey/Double/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_horizontal_grey_section",
+      "file": "PNG/Grey/Double/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_horizontal_grey_section_wide",
+      "file": "PNG/Grey/Double/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_vertical_color",
+      "file": "PNG/Grey/Double/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_vertical_color_section",
+      "file": "PNG/Grey/Double/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_vertical_color_section_wide",
+      "file": "PNG/Grey/Double/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_vertical_grey",
+      "file": "PNG/Grey/Double/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_vertical_grey_section",
+      "file": "PNG/Grey/Double/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Grey/Double/slide_vertical_grey_section_wide",
+      "file": "PNG/Grey/Double/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Grey/Double/star",
+      "file": "PNG/Grey/Double/star.png"
+    },
+    {
+      "name": "PNG/Grey/Double/star_outline",
+      "file": "PNG/Grey/Double/star_outline.png"
+    },
+    {
+      "name": "PNG/Grey/Double/star_outline_depth",
+      "file": "PNG/Grey/Double/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_e",
+      "file": "PNG/Red/Default/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_e_small",
+      "file": "PNG/Red/Default/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_n",
+      "file": "PNG/Red/Default/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_n_small",
+      "file": "PNG/Red/Default/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_s",
+      "file": "PNG/Red/Default/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_s_small",
+      "file": "PNG/Red/Default/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_w",
+      "file": "PNG/Red/Default/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_basic_w_small",
+      "file": "PNG/Red/Default/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_e",
+      "file": "PNG/Red/Default/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_e_small",
+      "file": "PNG/Red/Default/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_n",
+      "file": "PNG/Red/Default/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_n_small",
+      "file": "PNG/Red/Default/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_s",
+      "file": "PNG/Red/Default/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_s_small",
+      "file": "PNG/Red/Default/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_w",
+      "file": "PNG/Red/Default/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Red/Default/arrow_decorative_w_small",
+      "file": "PNG/Red/Default/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_border",
+      "file": "PNG/Red/Default/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_depth_border",
+      "file": "PNG/Red/Default/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_depth_flat",
+      "file": "PNG/Red/Default/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_depth_gloss",
+      "file": "PNG/Red/Default/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_depth_gradient",
+      "file": "PNG/Red/Default/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_depth_line",
+      "file": "PNG/Red/Default/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_flat",
+      "file": "PNG/Red/Default/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_gloss",
+      "file": "PNG/Red/Default/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_gradient",
+      "file": "PNG/Red/Default/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_rectangle_line",
+      "file": "PNG/Red/Default/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_border",
+      "file": "PNG/Red/Default/button_round_border.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_depth_border",
+      "file": "PNG/Red/Default/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_depth_flat",
+      "file": "PNG/Red/Default/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_depth_gloss",
+      "file": "PNG/Red/Default/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_depth_gradient",
+      "file": "PNG/Red/Default/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_depth_line",
+      "file": "PNG/Red/Default/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_flat",
+      "file": "PNG/Red/Default/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_gloss",
+      "file": "PNG/Red/Default/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_gradient",
+      "file": "PNG/Red/Default/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_round_line",
+      "file": "PNG/Red/Default/button_round_line.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_border",
+      "file": "PNG/Red/Default/button_square_border.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_depth_border",
+      "file": "PNG/Red/Default/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_depth_flat",
+      "file": "PNG/Red/Default/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_depth_gloss",
+      "file": "PNG/Red/Default/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_depth_gradient",
+      "file": "PNG/Red/Default/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_depth_line",
+      "file": "PNG/Red/Default/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_flat",
+      "file": "PNG/Red/Default/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_gloss",
+      "file": "PNG/Red/Default/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_gradient",
+      "file": "PNG/Red/Default/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Default/button_square_line",
+      "file": "PNG/Red/Default/button_square_line.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_round_color",
+      "file": "PNG/Red/Default/check_round_color.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_round_grey",
+      "file": "PNG/Red/Default/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_round_grey_circle",
+      "file": "PNG/Red/Default/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_round_round_circle",
+      "file": "PNG/Red/Default/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_color",
+      "file": "PNG/Red/Default/check_square_color.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_color_checkmark",
+      "file": "PNG/Red/Default/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_color_cross",
+      "file": "PNG/Red/Default/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_color_square",
+      "file": "PNG/Red/Default/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_grey",
+      "file": "PNG/Red/Default/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_grey_checkmark",
+      "file": "PNG/Red/Default/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_grey_cross",
+      "file": "PNG/Red/Default/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Red/Default/check_square_grey_square",
+      "file": "PNG/Red/Default/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_checkmark",
+      "file": "PNG/Red/Default/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_circle",
+      "file": "PNG/Red/Default/icon_circle.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_cross",
+      "file": "PNG/Red/Default/icon_cross.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_outline_checkmark",
+      "file": "PNG/Red/Default/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_outline_circle",
+      "file": "PNG/Red/Default/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_outline_cross",
+      "file": "PNG/Red/Default/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_outline_square",
+      "file": "PNG/Red/Default/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/icon_square",
+      "file": "PNG/Red/Default/icon_square.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_hangle",
+      "file": "PNG/Red/Default/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_horizontal_color",
+      "file": "PNG/Red/Default/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_horizontal_color_section",
+      "file": "PNG/Red/Default/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_horizontal_color_section_wide",
+      "file": "PNG/Red/Default/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_horizontal_grey",
+      "file": "PNG/Red/Default/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_horizontal_grey_section",
+      "file": "PNG/Red/Default/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_horizontal_grey_section_wide",
+      "file": "PNG/Red/Default/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_vertical_color",
+      "file": "PNG/Red/Default/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_vertical_color_section",
+      "file": "PNG/Red/Default/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_vertical_color_section_wide",
+      "file": "PNG/Red/Default/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_vertical_grey",
+      "file": "PNG/Red/Default/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_vertical_grey_section",
+      "file": "PNG/Red/Default/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Red/Default/slide_vertical_grey_section_wide",
+      "file": "PNG/Red/Default/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Default/star",
+      "file": "PNG/Red/Default/star.png"
+    },
+    {
+      "name": "PNG/Red/Default/star_outline",
+      "file": "PNG/Red/Default/star_outline.png"
+    },
+    {
+      "name": "PNG/Red/Default/star_outline_depth",
+      "file": "PNG/Red/Default/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_e",
+      "file": "PNG/Red/Double/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_e_small",
+      "file": "PNG/Red/Double/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_n",
+      "file": "PNG/Red/Double/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_n_small",
+      "file": "PNG/Red/Double/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_s",
+      "file": "PNG/Red/Double/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_s_small",
+      "file": "PNG/Red/Double/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_w",
+      "file": "PNG/Red/Double/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_basic_w_small",
+      "file": "PNG/Red/Double/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_e",
+      "file": "PNG/Red/Double/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_e_small",
+      "file": "PNG/Red/Double/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_n",
+      "file": "PNG/Red/Double/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_n_small",
+      "file": "PNG/Red/Double/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_s",
+      "file": "PNG/Red/Double/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_s_small",
+      "file": "PNG/Red/Double/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_w",
+      "file": "PNG/Red/Double/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Red/Double/arrow_decorative_w_small",
+      "file": "PNG/Red/Double/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_border",
+      "file": "PNG/Red/Double/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_depth_border",
+      "file": "PNG/Red/Double/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_depth_flat",
+      "file": "PNG/Red/Double/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_depth_gloss",
+      "file": "PNG/Red/Double/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_depth_gradient",
+      "file": "PNG/Red/Double/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_depth_line",
+      "file": "PNG/Red/Double/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_flat",
+      "file": "PNG/Red/Double/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_gloss",
+      "file": "PNG/Red/Double/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_gradient",
+      "file": "PNG/Red/Double/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_rectangle_line",
+      "file": "PNG/Red/Double/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_border",
+      "file": "PNG/Red/Double/button_round_border.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_depth_border",
+      "file": "PNG/Red/Double/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_depth_flat",
+      "file": "PNG/Red/Double/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_depth_gloss",
+      "file": "PNG/Red/Double/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_depth_gradient",
+      "file": "PNG/Red/Double/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_depth_line",
+      "file": "PNG/Red/Double/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_flat",
+      "file": "PNG/Red/Double/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_gloss",
+      "file": "PNG/Red/Double/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_gradient",
+      "file": "PNG/Red/Double/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_round_line",
+      "file": "PNG/Red/Double/button_round_line.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_border",
+      "file": "PNG/Red/Double/button_square_border.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_depth_border",
+      "file": "PNG/Red/Double/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_depth_flat",
+      "file": "PNG/Red/Double/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_depth_gloss",
+      "file": "PNG/Red/Double/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_depth_gradient",
+      "file": "PNG/Red/Double/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_depth_line",
+      "file": "PNG/Red/Double/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_flat",
+      "file": "PNG/Red/Double/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_gloss",
+      "file": "PNG/Red/Double/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_gradient",
+      "file": "PNG/Red/Double/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Red/Double/button_square_line",
+      "file": "PNG/Red/Double/button_square_line.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_round_color",
+      "file": "PNG/Red/Double/check_round_color.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_round_grey",
+      "file": "PNG/Red/Double/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_round_grey_circle",
+      "file": "PNG/Red/Double/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_round_round_circle",
+      "file": "PNG/Red/Double/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_color",
+      "file": "PNG/Red/Double/check_square_color.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_color_checkmark",
+      "file": "PNG/Red/Double/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_color_cross",
+      "file": "PNG/Red/Double/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_color_square",
+      "file": "PNG/Red/Double/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_grey",
+      "file": "PNG/Red/Double/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_grey_checkmark",
+      "file": "PNG/Red/Double/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_grey_cross",
+      "file": "PNG/Red/Double/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Red/Double/check_square_grey_square",
+      "file": "PNG/Red/Double/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_checkmark",
+      "file": "PNG/Red/Double/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_circle",
+      "file": "PNG/Red/Double/icon_circle.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_cross",
+      "file": "PNG/Red/Double/icon_cross.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_outline_checkmark",
+      "file": "PNG/Red/Double/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_outline_circle",
+      "file": "PNG/Red/Double/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_outline_cross",
+      "file": "PNG/Red/Double/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_outline_square",
+      "file": "PNG/Red/Double/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/icon_square",
+      "file": "PNG/Red/Double/icon_square.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_hangle",
+      "file": "PNG/Red/Double/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_horizontal_color",
+      "file": "PNG/Red/Double/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_horizontal_color_section",
+      "file": "PNG/Red/Double/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_horizontal_color_section_wide",
+      "file": "PNG/Red/Double/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_horizontal_grey",
+      "file": "PNG/Red/Double/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_horizontal_grey_section",
+      "file": "PNG/Red/Double/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_horizontal_grey_section_wide",
+      "file": "PNG/Red/Double/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_vertical_color",
+      "file": "PNG/Red/Double/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_vertical_color_section",
+      "file": "PNG/Red/Double/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_vertical_color_section_wide",
+      "file": "PNG/Red/Double/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_vertical_grey",
+      "file": "PNG/Red/Double/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_vertical_grey_section",
+      "file": "PNG/Red/Double/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Red/Double/slide_vertical_grey_section_wide",
+      "file": "PNG/Red/Double/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Red/Double/star",
+      "file": "PNG/Red/Double/star.png"
+    },
+    {
+      "name": "PNG/Red/Double/star_outline",
+      "file": "PNG/Red/Double/star_outline.png"
+    },
+    {
+      "name": "PNG/Red/Double/star_outline_depth",
+      "file": "PNG/Red/Double/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_e",
+      "file": "PNG/Yellow/Default/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_e_small",
+      "file": "PNG/Yellow/Default/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_n",
+      "file": "PNG/Yellow/Default/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_n_small",
+      "file": "PNG/Yellow/Default/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_s",
+      "file": "PNG/Yellow/Default/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_s_small",
+      "file": "PNG/Yellow/Default/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_w",
+      "file": "PNG/Yellow/Default/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_basic_w_small",
+      "file": "PNG/Yellow/Default/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_e",
+      "file": "PNG/Yellow/Default/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_e_small",
+      "file": "PNG/Yellow/Default/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_n",
+      "file": "PNG/Yellow/Default/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_n_small",
+      "file": "PNG/Yellow/Default/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_s",
+      "file": "PNG/Yellow/Default/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_s_small",
+      "file": "PNG/Yellow/Default/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_w",
+      "file": "PNG/Yellow/Default/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/arrow_decorative_w_small",
+      "file": "PNG/Yellow/Default/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_border",
+      "file": "PNG/Yellow/Default/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_depth_border",
+      "file": "PNG/Yellow/Default/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_depth_flat",
+      "file": "PNG/Yellow/Default/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_depth_gloss",
+      "file": "PNG/Yellow/Default/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_depth_gradient",
+      "file": "PNG/Yellow/Default/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_depth_line",
+      "file": "PNG/Yellow/Default/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_flat",
+      "file": "PNG/Yellow/Default/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_gloss",
+      "file": "PNG/Yellow/Default/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_gradient",
+      "file": "PNG/Yellow/Default/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_rectangle_line",
+      "file": "PNG/Yellow/Default/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_border",
+      "file": "PNG/Yellow/Default/button_round_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_depth_border",
+      "file": "PNG/Yellow/Default/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_depth_flat",
+      "file": "PNG/Yellow/Default/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_depth_gloss",
+      "file": "PNG/Yellow/Default/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_depth_gradient",
+      "file": "PNG/Yellow/Default/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_depth_line",
+      "file": "PNG/Yellow/Default/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_flat",
+      "file": "PNG/Yellow/Default/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_gloss",
+      "file": "PNG/Yellow/Default/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_gradient",
+      "file": "PNG/Yellow/Default/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_round_line",
+      "file": "PNG/Yellow/Default/button_round_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_border",
+      "file": "PNG/Yellow/Default/button_square_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_depth_border",
+      "file": "PNG/Yellow/Default/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_depth_flat",
+      "file": "PNG/Yellow/Default/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_depth_gloss",
+      "file": "PNG/Yellow/Default/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_depth_gradient",
+      "file": "PNG/Yellow/Default/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_depth_line",
+      "file": "PNG/Yellow/Default/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_flat",
+      "file": "PNG/Yellow/Default/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_gloss",
+      "file": "PNG/Yellow/Default/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_gradient",
+      "file": "PNG/Yellow/Default/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/button_square_line",
+      "file": "PNG/Yellow/Default/button_square_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_round_color",
+      "file": "PNG/Yellow/Default/check_round_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_round_grey",
+      "file": "PNG/Yellow/Default/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_round_grey_circle",
+      "file": "PNG/Yellow/Default/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_round_round_circle",
+      "file": "PNG/Yellow/Default/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_color",
+      "file": "PNG/Yellow/Default/check_square_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_color_checkmark",
+      "file": "PNG/Yellow/Default/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_color_cross",
+      "file": "PNG/Yellow/Default/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_color_square",
+      "file": "PNG/Yellow/Default/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_grey",
+      "file": "PNG/Yellow/Default/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_grey_checkmark",
+      "file": "PNG/Yellow/Default/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_grey_cross",
+      "file": "PNG/Yellow/Default/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/check_square_grey_square",
+      "file": "PNG/Yellow/Default/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_checkmark",
+      "file": "PNG/Yellow/Default/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_circle",
+      "file": "PNG/Yellow/Default/icon_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_cross",
+      "file": "PNG/Yellow/Default/icon_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_outline_checkmark",
+      "file": "PNG/Yellow/Default/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_outline_circle",
+      "file": "PNG/Yellow/Default/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_outline_cross",
+      "file": "PNG/Yellow/Default/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_outline_square",
+      "file": "PNG/Yellow/Default/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/icon_square",
+      "file": "PNG/Yellow/Default/icon_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_hangle",
+      "file": "PNG/Yellow/Default/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_horizontal_color",
+      "file": "PNG/Yellow/Default/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_horizontal_color_section",
+      "file": "PNG/Yellow/Default/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_horizontal_color_section_wide",
+      "file": "PNG/Yellow/Default/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_horizontal_grey",
+      "file": "PNG/Yellow/Default/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_horizontal_grey_section",
+      "file": "PNG/Yellow/Default/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_horizontal_grey_section_wide",
+      "file": "PNG/Yellow/Default/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_vertical_color",
+      "file": "PNG/Yellow/Default/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_vertical_color_section",
+      "file": "PNG/Yellow/Default/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_vertical_color_section_wide",
+      "file": "PNG/Yellow/Default/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_vertical_grey",
+      "file": "PNG/Yellow/Default/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_vertical_grey_section",
+      "file": "PNG/Yellow/Default/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/slide_vertical_grey_section_wide",
+      "file": "PNG/Yellow/Default/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/star",
+      "file": "PNG/Yellow/Default/star.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/star_outline",
+      "file": "PNG/Yellow/Default/star_outline.png"
+    },
+    {
+      "name": "PNG/Yellow/Default/star_outline_depth",
+      "file": "PNG/Yellow/Default/star_outline_depth.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_e",
+      "file": "PNG/Yellow/Double/arrow_basic_e.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_e_small",
+      "file": "PNG/Yellow/Double/arrow_basic_e_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_n",
+      "file": "PNG/Yellow/Double/arrow_basic_n.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_n_small",
+      "file": "PNG/Yellow/Double/arrow_basic_n_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_s",
+      "file": "PNG/Yellow/Double/arrow_basic_s.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_s_small",
+      "file": "PNG/Yellow/Double/arrow_basic_s_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_w",
+      "file": "PNG/Yellow/Double/arrow_basic_w.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_basic_w_small",
+      "file": "PNG/Yellow/Double/arrow_basic_w_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_e",
+      "file": "PNG/Yellow/Double/arrow_decorative_e.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_e_small",
+      "file": "PNG/Yellow/Double/arrow_decorative_e_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_n",
+      "file": "PNG/Yellow/Double/arrow_decorative_n.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_n_small",
+      "file": "PNG/Yellow/Double/arrow_decorative_n_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_s",
+      "file": "PNG/Yellow/Double/arrow_decorative_s.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_s_small",
+      "file": "PNG/Yellow/Double/arrow_decorative_s_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_w",
+      "file": "PNG/Yellow/Double/arrow_decorative_w.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/arrow_decorative_w_small",
+      "file": "PNG/Yellow/Double/arrow_decorative_w_small.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_border",
+      "file": "PNG/Yellow/Double/button_rectangle_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_depth_border",
+      "file": "PNG/Yellow/Double/button_rectangle_depth_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_depth_flat",
+      "file": "PNG/Yellow/Double/button_rectangle_depth_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_depth_gloss",
+      "file": "PNG/Yellow/Double/button_rectangle_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_depth_gradient",
+      "file": "PNG/Yellow/Double/button_rectangle_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_depth_line",
+      "file": "PNG/Yellow/Double/button_rectangle_depth_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_flat",
+      "file": "PNG/Yellow/Double/button_rectangle_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_gloss",
+      "file": "PNG/Yellow/Double/button_rectangle_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_gradient",
+      "file": "PNG/Yellow/Double/button_rectangle_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_rectangle_line",
+      "file": "PNG/Yellow/Double/button_rectangle_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_border",
+      "file": "PNG/Yellow/Double/button_round_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_depth_border",
+      "file": "PNG/Yellow/Double/button_round_depth_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_depth_flat",
+      "file": "PNG/Yellow/Double/button_round_depth_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_depth_gloss",
+      "file": "PNG/Yellow/Double/button_round_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_depth_gradient",
+      "file": "PNG/Yellow/Double/button_round_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_depth_line",
+      "file": "PNG/Yellow/Double/button_round_depth_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_flat",
+      "file": "PNG/Yellow/Double/button_round_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_gloss",
+      "file": "PNG/Yellow/Double/button_round_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_gradient",
+      "file": "PNG/Yellow/Double/button_round_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_round_line",
+      "file": "PNG/Yellow/Double/button_round_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_border",
+      "file": "PNG/Yellow/Double/button_square_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_depth_border",
+      "file": "PNG/Yellow/Double/button_square_depth_border.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_depth_flat",
+      "file": "PNG/Yellow/Double/button_square_depth_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_depth_gloss",
+      "file": "PNG/Yellow/Double/button_square_depth_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_depth_gradient",
+      "file": "PNG/Yellow/Double/button_square_depth_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_depth_line",
+      "file": "PNG/Yellow/Double/button_square_depth_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_flat",
+      "file": "PNG/Yellow/Double/button_square_flat.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_gloss",
+      "file": "PNG/Yellow/Double/button_square_gloss.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_gradient",
+      "file": "PNG/Yellow/Double/button_square_gradient.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/button_square_line",
+      "file": "PNG/Yellow/Double/button_square_line.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_round_color",
+      "file": "PNG/Yellow/Double/check_round_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_round_grey",
+      "file": "PNG/Yellow/Double/check_round_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_round_grey_circle",
+      "file": "PNG/Yellow/Double/check_round_grey_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_round_round_circle",
+      "file": "PNG/Yellow/Double/check_round_round_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_color",
+      "file": "PNG/Yellow/Double/check_square_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_color_checkmark",
+      "file": "PNG/Yellow/Double/check_square_color_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_color_cross",
+      "file": "PNG/Yellow/Double/check_square_color_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_color_square",
+      "file": "PNG/Yellow/Double/check_square_color_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_grey",
+      "file": "PNG/Yellow/Double/check_square_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_grey_checkmark",
+      "file": "PNG/Yellow/Double/check_square_grey_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_grey_cross",
+      "file": "PNG/Yellow/Double/check_square_grey_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/check_square_grey_square",
+      "file": "PNG/Yellow/Double/check_square_grey_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_checkmark",
+      "file": "PNG/Yellow/Double/icon_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_circle",
+      "file": "PNG/Yellow/Double/icon_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_cross",
+      "file": "PNG/Yellow/Double/icon_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_outline_checkmark",
+      "file": "PNG/Yellow/Double/icon_outline_checkmark.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_outline_circle",
+      "file": "PNG/Yellow/Double/icon_outline_circle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_outline_cross",
+      "file": "PNG/Yellow/Double/icon_outline_cross.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_outline_square",
+      "file": "PNG/Yellow/Double/icon_outline_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/icon_square",
+      "file": "PNG/Yellow/Double/icon_square.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_hangle",
+      "file": "PNG/Yellow/Double/slide_hangle.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_horizontal_color",
+      "file": "PNG/Yellow/Double/slide_horizontal_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_horizontal_color_section",
+      "file": "PNG/Yellow/Double/slide_horizontal_color_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_horizontal_color_section_wide",
+      "file": "PNG/Yellow/Double/slide_horizontal_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_horizontal_grey",
+      "file": "PNG/Yellow/Double/slide_horizontal_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_horizontal_grey_section",
+      "file": "PNG/Yellow/Double/slide_horizontal_grey_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_horizontal_grey_section_wide",
+      "file": "PNG/Yellow/Double/slide_horizontal_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_vertical_color",
+      "file": "PNG/Yellow/Double/slide_vertical_color.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_vertical_color_section",
+      "file": "PNG/Yellow/Double/slide_vertical_color_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_vertical_color_section_wide",
+      "file": "PNG/Yellow/Double/slide_vertical_color_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_vertical_grey",
+      "file": "PNG/Yellow/Double/slide_vertical_grey.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_vertical_grey_section",
+      "file": "PNG/Yellow/Double/slide_vertical_grey_section.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/slide_vertical_grey_section_wide",
+      "file": "PNG/Yellow/Double/slide_vertical_grey_section_wide.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/star",
+      "file": "PNG/Yellow/Double/star.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/star_outline",
+      "file": "PNG/Yellow/Double/star_outline.png"
+    },
+    {
+      "name": "PNG/Yellow/Double/star_outline_depth",
+      "file": "PNG/Yellow/Double/star_outline_depth.png"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_e",
+      "file": "Vector/Blue/arrow_basic_e.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_e_small",
+      "file": "Vector/Blue/arrow_basic_e_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_n",
+      "file": "Vector/Blue/arrow_basic_n.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_n_small",
+      "file": "Vector/Blue/arrow_basic_n_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_s",
+      "file": "Vector/Blue/arrow_basic_s.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_s_small",
+      "file": "Vector/Blue/arrow_basic_s_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_w",
+      "file": "Vector/Blue/arrow_basic_w.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_basic_w_small",
+      "file": "Vector/Blue/arrow_basic_w_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_e",
+      "file": "Vector/Blue/arrow_decorative_e.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_e_small",
+      "file": "Vector/Blue/arrow_decorative_e_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_n",
+      "file": "Vector/Blue/arrow_decorative_n.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_n_small",
+      "file": "Vector/Blue/arrow_decorative_n_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_s",
+      "file": "Vector/Blue/arrow_decorative_s.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_s_small",
+      "file": "Vector/Blue/arrow_decorative_s_small.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_w",
+      "file": "Vector/Blue/arrow_decorative_w.svg"
+    },
+    {
+      "name": "Vector/Blue/arrow_decorative_w_small",
+      "file": "Vector/Blue/arrow_decorative_w_small.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_border",
+      "file": "Vector/Blue/button_rectangle_border.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_depth_border",
+      "file": "Vector/Blue/button_rectangle_depth_border.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_depth_flat",
+      "file": "Vector/Blue/button_rectangle_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_depth_gloss",
+      "file": "Vector/Blue/button_rectangle_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_depth_gradient",
+      "file": "Vector/Blue/button_rectangle_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_depth_line",
+      "file": "Vector/Blue/button_rectangle_depth_line.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_flat",
+      "file": "Vector/Blue/button_rectangle_flat.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_gloss",
+      "file": "Vector/Blue/button_rectangle_gloss.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_gradient",
+      "file": "Vector/Blue/button_rectangle_gradient.svg"
+    },
+    {
+      "name": "Vector/Blue/button_rectangle_line",
+      "file": "Vector/Blue/button_rectangle_line.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_border",
+      "file": "Vector/Blue/button_round_border.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_depth_border",
+      "file": "Vector/Blue/button_round_depth_border.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_depth_flat",
+      "file": "Vector/Blue/button_round_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_depth_gloss",
+      "file": "Vector/Blue/button_round_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_depth_gradient",
+      "file": "Vector/Blue/button_round_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_depth_line",
+      "file": "Vector/Blue/button_round_depth_line.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_flat",
+      "file": "Vector/Blue/button_round_flat.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_gloss",
+      "file": "Vector/Blue/button_round_gloss.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_gradient",
+      "file": "Vector/Blue/button_round_gradient.svg"
+    },
+    {
+      "name": "Vector/Blue/button_round_line",
+      "file": "Vector/Blue/button_round_line.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_border",
+      "file": "Vector/Blue/button_square_border.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_depth_border",
+      "file": "Vector/Blue/button_square_depth_border.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_depth_flat",
+      "file": "Vector/Blue/button_square_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_depth_gloss",
+      "file": "Vector/Blue/button_square_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_depth_gradient",
+      "file": "Vector/Blue/button_square_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_depth_line",
+      "file": "Vector/Blue/button_square_depth_line.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_flat",
+      "file": "Vector/Blue/button_square_flat.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_gloss",
+      "file": "Vector/Blue/button_square_gloss.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_gradient",
+      "file": "Vector/Blue/button_square_gradient.svg"
+    },
+    {
+      "name": "Vector/Blue/button_square_line",
+      "file": "Vector/Blue/button_square_line.svg"
+    },
+    {
+      "name": "Vector/Blue/check_round_color",
+      "file": "Vector/Blue/check_round_color.svg"
+    },
+    {
+      "name": "Vector/Blue/check_round_grey",
+      "file": "Vector/Blue/check_round_grey.svg"
+    },
+    {
+      "name": "Vector/Blue/check_round_grey_circle",
+      "file": "Vector/Blue/check_round_grey_circle.svg"
+    },
+    {
+      "name": "Vector/Blue/check_round_round_circle",
+      "file": "Vector/Blue/check_round_round_circle.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_color",
+      "file": "Vector/Blue/check_square_color.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_color_checkmark",
+      "file": "Vector/Blue/check_square_color_checkmark.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_color_cross",
+      "file": "Vector/Blue/check_square_color_cross.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_color_square",
+      "file": "Vector/Blue/check_square_color_square.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_grey",
+      "file": "Vector/Blue/check_square_grey.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_grey_checkmark",
+      "file": "Vector/Blue/check_square_grey_checkmark.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_grey_cross",
+      "file": "Vector/Blue/check_square_grey_cross.svg"
+    },
+    {
+      "name": "Vector/Blue/check_square_grey_square",
+      "file": "Vector/Blue/check_square_grey_square.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_checkmark",
+      "file": "Vector/Blue/icon_checkmark.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_circle",
+      "file": "Vector/Blue/icon_circle.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_cross",
+      "file": "Vector/Blue/icon_cross.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_outline_checkmark",
+      "file": "Vector/Blue/icon_outline_checkmark.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_outline_circle",
+      "file": "Vector/Blue/icon_outline_circle.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_outline_cross",
+      "file": "Vector/Blue/icon_outline_cross.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_outline_square",
+      "file": "Vector/Blue/icon_outline_square.svg"
+    },
+    {
+      "name": "Vector/Blue/icon_square",
+      "file": "Vector/Blue/icon_square.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_hangle",
+      "file": "Vector/Blue/slide_hangle.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_horizontal_color",
+      "file": "Vector/Blue/slide_horizontal_color.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_horizontal_color_section",
+      "file": "Vector/Blue/slide_horizontal_color_section.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_horizontal_color_section_wide",
+      "file": "Vector/Blue/slide_horizontal_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_horizontal_grey",
+      "file": "Vector/Blue/slide_horizontal_grey.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_horizontal_grey_section",
+      "file": "Vector/Blue/slide_horizontal_grey_section.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_horizontal_grey_section_wide",
+      "file": "Vector/Blue/slide_horizontal_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_vertical_color",
+      "file": "Vector/Blue/slide_vertical_color.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_vertical_color_section",
+      "file": "Vector/Blue/slide_vertical_color_section.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_vertical_color_section_wide",
+      "file": "Vector/Blue/slide_vertical_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_vertical_grey",
+      "file": "Vector/Blue/slide_vertical_grey.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_vertical_grey_section",
+      "file": "Vector/Blue/slide_vertical_grey_section.svg"
+    },
+    {
+      "name": "Vector/Blue/slide_vertical_grey_section_wide",
+      "file": "Vector/Blue/slide_vertical_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Blue/star",
+      "file": "Vector/Blue/star.svg"
+    },
+    {
+      "name": "Vector/Blue/star_outline",
+      "file": "Vector/Blue/star_outline.svg"
+    },
+    {
+      "name": "Vector/Blue/star_outline_depth",
+      "file": "Vector/Blue/star_outline_depth.svg"
+    },
+    {
+      "name": "Vector/Extra/button_rectangle_depth_line",
+      "file": "Vector/Extra/button_rectangle_depth_line.svg"
+    },
+    {
+      "name": "Vector/Extra/button_rectangle_line",
+      "file": "Vector/Extra/button_rectangle_line.svg"
+    },
+    {
+      "name": "Vector/Extra/button_round_depth_line",
+      "file": "Vector/Extra/button_round_depth_line.svg"
+    },
+    {
+      "name": "Vector/Extra/button_round_line",
+      "file": "Vector/Extra/button_round_line.svg"
+    },
+    {
+      "name": "Vector/Extra/button_square_depth_line",
+      "file": "Vector/Extra/button_square_depth_line.svg"
+    },
+    {
+      "name": "Vector/Extra/button_square_line",
+      "file": "Vector/Extra/button_square_line.svg"
+    },
+    {
+      "name": "Vector/Extra/divider",
+      "file": "Vector/Extra/divider.svg"
+    },
+    {
+      "name": "Vector/Extra/divider_edges",
+      "file": "Vector/Extra/divider_edges.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_arrow_down_dark",
+      "file": "Vector/Extra/icon_arrow_down_dark.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_arrow_down_light",
+      "file": "Vector/Extra/icon_arrow_down_light.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_arrow_down_outline",
+      "file": "Vector/Extra/icon_arrow_down_outline.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_arrow_up_dark",
+      "file": "Vector/Extra/icon_arrow_up_dark.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_arrow_up_light",
+      "file": "Vector/Extra/icon_arrow_up_light.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_arrow_up_outline",
+      "file": "Vector/Extra/icon_arrow_up_outline.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_play_dark",
+      "file": "Vector/Extra/icon_play_dark.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_play_light",
+      "file": "Vector/Extra/icon_play_light.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_play_outline",
+      "file": "Vector/Extra/icon_play_outline.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_repeat_dark",
+      "file": "Vector/Extra/icon_repeat_dark.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_repeat_light",
+      "file": "Vector/Extra/icon_repeat_light.svg"
+    },
+    {
+      "name": "Vector/Extra/icon_repeat_outline",
+      "file": "Vector/Extra/icon_repeat_outline.svg"
+    },
+    {
+      "name": "Vector/Extra/input_outline_rectangle",
+      "file": "Vector/Extra/input_outline_rectangle.svg"
+    },
+    {
+      "name": "Vector/Extra/input_outline_square",
+      "file": "Vector/Extra/input_outline_square.svg"
+    },
+    {
+      "name": "Vector/Extra/input_rectangle",
+      "file": "Vector/Extra/input_rectangle.svg"
+    },
+    {
+      "name": "Vector/Extra/input_square",
+      "file": "Vector/Extra/input_square.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_e",
+      "file": "Vector/Green/arrow_basic_e.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_e_small",
+      "file": "Vector/Green/arrow_basic_e_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_n",
+      "file": "Vector/Green/arrow_basic_n.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_n_small",
+      "file": "Vector/Green/arrow_basic_n_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_s",
+      "file": "Vector/Green/arrow_basic_s.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_s_small",
+      "file": "Vector/Green/arrow_basic_s_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_w",
+      "file": "Vector/Green/arrow_basic_w.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_basic_w_small",
+      "file": "Vector/Green/arrow_basic_w_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_e",
+      "file": "Vector/Green/arrow_decorative_e.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_e_small",
+      "file": "Vector/Green/arrow_decorative_e_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_n",
+      "file": "Vector/Green/arrow_decorative_n.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_n_small",
+      "file": "Vector/Green/arrow_decorative_n_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_s",
+      "file": "Vector/Green/arrow_decorative_s.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_s_small",
+      "file": "Vector/Green/arrow_decorative_s_small.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_w",
+      "file": "Vector/Green/arrow_decorative_w.svg"
+    },
+    {
+      "name": "Vector/Green/arrow_decorative_w_small",
+      "file": "Vector/Green/arrow_decorative_w_small.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_border",
+      "file": "Vector/Green/button_rectangle_border.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_depth_border",
+      "file": "Vector/Green/button_rectangle_depth_border.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_depth_flat",
+      "file": "Vector/Green/button_rectangle_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_depth_gloss",
+      "file": "Vector/Green/button_rectangle_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_depth_gradient",
+      "file": "Vector/Green/button_rectangle_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_depth_line",
+      "file": "Vector/Green/button_rectangle_depth_line.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_flat",
+      "file": "Vector/Green/button_rectangle_flat.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_gloss",
+      "file": "Vector/Green/button_rectangle_gloss.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_gradient",
+      "file": "Vector/Green/button_rectangle_gradient.svg"
+    },
+    {
+      "name": "Vector/Green/button_rectangle_line",
+      "file": "Vector/Green/button_rectangle_line.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_border",
+      "file": "Vector/Green/button_round_border.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_depth_border",
+      "file": "Vector/Green/button_round_depth_border.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_depth_flat",
+      "file": "Vector/Green/button_round_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_depth_gloss",
+      "file": "Vector/Green/button_round_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_depth_gradient",
+      "file": "Vector/Green/button_round_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_depth_line",
+      "file": "Vector/Green/button_round_depth_line.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_flat",
+      "file": "Vector/Green/button_round_flat.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_gloss",
+      "file": "Vector/Green/button_round_gloss.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_gradient",
+      "file": "Vector/Green/button_round_gradient.svg"
+    },
+    {
+      "name": "Vector/Green/button_round_line",
+      "file": "Vector/Green/button_round_line.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_border",
+      "file": "Vector/Green/button_square_border.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_depth_border",
+      "file": "Vector/Green/button_square_depth_border.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_depth_flat",
+      "file": "Vector/Green/button_square_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_depth_gloss",
+      "file": "Vector/Green/button_square_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_depth_gradient",
+      "file": "Vector/Green/button_square_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_depth_line",
+      "file": "Vector/Green/button_square_depth_line.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_flat",
+      "file": "Vector/Green/button_square_flat.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_gloss",
+      "file": "Vector/Green/button_square_gloss.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_gradient",
+      "file": "Vector/Green/button_square_gradient.svg"
+    },
+    {
+      "name": "Vector/Green/button_square_line",
+      "file": "Vector/Green/button_square_line.svg"
+    },
+    {
+      "name": "Vector/Green/check_round_color",
+      "file": "Vector/Green/check_round_color.svg"
+    },
+    {
+      "name": "Vector/Green/check_round_grey",
+      "file": "Vector/Green/check_round_grey.svg"
+    },
+    {
+      "name": "Vector/Green/check_round_grey_circle",
+      "file": "Vector/Green/check_round_grey_circle.svg"
+    },
+    {
+      "name": "Vector/Green/check_round_round_circle",
+      "file": "Vector/Green/check_round_round_circle.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_color",
+      "file": "Vector/Green/check_square_color.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_color_checkmark",
+      "file": "Vector/Green/check_square_color_checkmark.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_color_cross",
+      "file": "Vector/Green/check_square_color_cross.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_color_square",
+      "file": "Vector/Green/check_square_color_square.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_grey",
+      "file": "Vector/Green/check_square_grey.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_grey_checkmark",
+      "file": "Vector/Green/check_square_grey_checkmark.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_grey_cross",
+      "file": "Vector/Green/check_square_grey_cross.svg"
+    },
+    {
+      "name": "Vector/Green/check_square_grey_square",
+      "file": "Vector/Green/check_square_grey_square.svg"
+    },
+    {
+      "name": "Vector/Green/icon_checkmark",
+      "file": "Vector/Green/icon_checkmark.svg"
+    },
+    {
+      "name": "Vector/Green/icon_circle",
+      "file": "Vector/Green/icon_circle.svg"
+    },
+    {
+      "name": "Vector/Green/icon_cross",
+      "file": "Vector/Green/icon_cross.svg"
+    },
+    {
+      "name": "Vector/Green/icon_outline_checkmark",
+      "file": "Vector/Green/icon_outline_checkmark.svg"
+    },
+    {
+      "name": "Vector/Green/icon_outline_circle",
+      "file": "Vector/Green/icon_outline_circle.svg"
+    },
+    {
+      "name": "Vector/Green/icon_outline_cross",
+      "file": "Vector/Green/icon_outline_cross.svg"
+    },
+    {
+      "name": "Vector/Green/icon_outline_square",
+      "file": "Vector/Green/icon_outline_square.svg"
+    },
+    {
+      "name": "Vector/Green/icon_square",
+      "file": "Vector/Green/icon_square.svg"
+    },
+    {
+      "name": "Vector/Green/slide_hangle",
+      "file": "Vector/Green/slide_hangle.svg"
+    },
+    {
+      "name": "Vector/Green/slide_horizontal_color",
+      "file": "Vector/Green/slide_horizontal_color.svg"
+    },
+    {
+      "name": "Vector/Green/slide_horizontal_color_section",
+      "file": "Vector/Green/slide_horizontal_color_section.svg"
+    },
+    {
+      "name": "Vector/Green/slide_horizontal_color_section_wide",
+      "file": "Vector/Green/slide_horizontal_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Green/slide_horizontal_grey",
+      "file": "Vector/Green/slide_horizontal_grey.svg"
+    },
+    {
+      "name": "Vector/Green/slide_horizontal_grey_section",
+      "file": "Vector/Green/slide_horizontal_grey_section.svg"
+    },
+    {
+      "name": "Vector/Green/slide_horizontal_grey_section_wide",
+      "file": "Vector/Green/slide_horizontal_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Green/slide_vertical_color",
+      "file": "Vector/Green/slide_vertical_color.svg"
+    },
+    {
+      "name": "Vector/Green/slide_vertical_color_section",
+      "file": "Vector/Green/slide_vertical_color_section.svg"
+    },
+    {
+      "name": "Vector/Green/slide_vertical_color_section_wide",
+      "file": "Vector/Green/slide_vertical_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Green/slide_vertical_grey",
+      "file": "Vector/Green/slide_vertical_grey.svg"
+    },
+    {
+      "name": "Vector/Green/slide_vertical_grey_section",
+      "file": "Vector/Green/slide_vertical_grey_section.svg"
+    },
+    {
+      "name": "Vector/Green/slide_vertical_grey_section_wide",
+      "file": "Vector/Green/slide_vertical_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Green/star",
+      "file": "Vector/Green/star.svg"
+    },
+    {
+      "name": "Vector/Green/star_outline",
+      "file": "Vector/Green/star_outline.svg"
+    },
+    {
+      "name": "Vector/Green/star_outline_depth",
+      "file": "Vector/Green/star_outline_depth.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_e",
+      "file": "Vector/Grey/arrow_basic_e.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_e_small",
+      "file": "Vector/Grey/arrow_basic_e_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_n",
+      "file": "Vector/Grey/arrow_basic_n.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_n_small",
+      "file": "Vector/Grey/arrow_basic_n_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_s",
+      "file": "Vector/Grey/arrow_basic_s.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_s_small",
+      "file": "Vector/Grey/arrow_basic_s_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_w",
+      "file": "Vector/Grey/arrow_basic_w.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_basic_w_small",
+      "file": "Vector/Grey/arrow_basic_w_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_e",
+      "file": "Vector/Grey/arrow_decorative_e.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_e_small",
+      "file": "Vector/Grey/arrow_decorative_e_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_n",
+      "file": "Vector/Grey/arrow_decorative_n.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_n_small",
+      "file": "Vector/Grey/arrow_decorative_n_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_s",
+      "file": "Vector/Grey/arrow_decorative_s.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_s_small",
+      "file": "Vector/Grey/arrow_decorative_s_small.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_w",
+      "file": "Vector/Grey/arrow_decorative_w.svg"
+    },
+    {
+      "name": "Vector/Grey/arrow_decorative_w_small",
+      "file": "Vector/Grey/arrow_decorative_w_small.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_border",
+      "file": "Vector/Grey/button_rectangle_border.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_depth_border",
+      "file": "Vector/Grey/button_rectangle_depth_border.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_depth_flat",
+      "file": "Vector/Grey/button_rectangle_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_depth_gloss",
+      "file": "Vector/Grey/button_rectangle_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_depth_gradient",
+      "file": "Vector/Grey/button_rectangle_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_depth_line",
+      "file": "Vector/Grey/button_rectangle_depth_line.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_flat",
+      "file": "Vector/Grey/button_rectangle_flat.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_gloss",
+      "file": "Vector/Grey/button_rectangle_gloss.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_gradient",
+      "file": "Vector/Grey/button_rectangle_gradient.svg"
+    },
+    {
+      "name": "Vector/Grey/button_rectangle_line",
+      "file": "Vector/Grey/button_rectangle_line.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_border",
+      "file": "Vector/Grey/button_round_border.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_depth_border",
+      "file": "Vector/Grey/button_round_depth_border.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_depth_flat",
+      "file": "Vector/Grey/button_round_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_depth_gloss",
+      "file": "Vector/Grey/button_round_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_depth_gradient",
+      "file": "Vector/Grey/button_round_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_depth_line",
+      "file": "Vector/Grey/button_round_depth_line.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_flat",
+      "file": "Vector/Grey/button_round_flat.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_gloss",
+      "file": "Vector/Grey/button_round_gloss.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_gradient",
+      "file": "Vector/Grey/button_round_gradient.svg"
+    },
+    {
+      "name": "Vector/Grey/button_round_line",
+      "file": "Vector/Grey/button_round_line.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_border",
+      "file": "Vector/Grey/button_square_border.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_depth_border",
+      "file": "Vector/Grey/button_square_depth_border.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_depth_flat",
+      "file": "Vector/Grey/button_square_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_depth_gloss",
+      "file": "Vector/Grey/button_square_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_depth_gradient",
+      "file": "Vector/Grey/button_square_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_depth_line",
+      "file": "Vector/Grey/button_square_depth_line.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_flat",
+      "file": "Vector/Grey/button_square_flat.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_gloss",
+      "file": "Vector/Grey/button_square_gloss.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_gradient",
+      "file": "Vector/Grey/button_square_gradient.svg"
+    },
+    {
+      "name": "Vector/Grey/button_square_line",
+      "file": "Vector/Grey/button_square_line.svg"
+    },
+    {
+      "name": "Vector/Grey/check_round_color",
+      "file": "Vector/Grey/check_round_color.svg"
+    },
+    {
+      "name": "Vector/Grey/check_round_grey",
+      "file": "Vector/Grey/check_round_grey.svg"
+    },
+    {
+      "name": "Vector/Grey/check_round_grey_circle",
+      "file": "Vector/Grey/check_round_grey_circle.svg"
+    },
+    {
+      "name": "Vector/Grey/check_round_round_circle",
+      "file": "Vector/Grey/check_round_round_circle.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_color",
+      "file": "Vector/Grey/check_square_color.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_color_checkmark",
+      "file": "Vector/Grey/check_square_color_checkmark.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_color_cross",
+      "file": "Vector/Grey/check_square_color_cross.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_color_square",
+      "file": "Vector/Grey/check_square_color_square.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_grey",
+      "file": "Vector/Grey/check_square_grey.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_grey_checkmark",
+      "file": "Vector/Grey/check_square_grey_checkmark.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_grey_cross",
+      "file": "Vector/Grey/check_square_grey_cross.svg"
+    },
+    {
+      "name": "Vector/Grey/check_square_grey_square",
+      "file": "Vector/Grey/check_square_grey_square.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_checkmark",
+      "file": "Vector/Grey/icon_checkmark.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_circle",
+      "file": "Vector/Grey/icon_circle.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_cross",
+      "file": "Vector/Grey/icon_cross.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_outline_checkmark",
+      "file": "Vector/Grey/icon_outline_checkmark.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_outline_circle",
+      "file": "Vector/Grey/icon_outline_circle.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_outline_cross",
+      "file": "Vector/Grey/icon_outline_cross.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_outline_square",
+      "file": "Vector/Grey/icon_outline_square.svg"
+    },
+    {
+      "name": "Vector/Grey/icon_square",
+      "file": "Vector/Grey/icon_square.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_hangle",
+      "file": "Vector/Grey/slide_hangle.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_horizontal_color",
+      "file": "Vector/Grey/slide_horizontal_color.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_horizontal_color_section",
+      "file": "Vector/Grey/slide_horizontal_color_section.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_horizontal_color_section_wide",
+      "file": "Vector/Grey/slide_horizontal_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_horizontal_grey",
+      "file": "Vector/Grey/slide_horizontal_grey.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_horizontal_grey_section",
+      "file": "Vector/Grey/slide_horizontal_grey_section.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_horizontal_grey_section_wide",
+      "file": "Vector/Grey/slide_horizontal_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_vertical_color",
+      "file": "Vector/Grey/slide_vertical_color.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_vertical_color_section",
+      "file": "Vector/Grey/slide_vertical_color_section.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_vertical_color_section_wide",
+      "file": "Vector/Grey/slide_vertical_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_vertical_grey",
+      "file": "Vector/Grey/slide_vertical_grey.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_vertical_grey_section",
+      "file": "Vector/Grey/slide_vertical_grey_section.svg"
+    },
+    {
+      "name": "Vector/Grey/slide_vertical_grey_section_wide",
+      "file": "Vector/Grey/slide_vertical_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Grey/star",
+      "file": "Vector/Grey/star.svg"
+    },
+    {
+      "name": "Vector/Grey/star_outline",
+      "file": "Vector/Grey/star_outline.svg"
+    },
+    {
+      "name": "Vector/Grey/star_outline_depth",
+      "file": "Vector/Grey/star_outline_depth.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_e",
+      "file": "Vector/Red/arrow_basic_e.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_e_small",
+      "file": "Vector/Red/arrow_basic_e_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_n",
+      "file": "Vector/Red/arrow_basic_n.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_n_small",
+      "file": "Vector/Red/arrow_basic_n_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_s",
+      "file": "Vector/Red/arrow_basic_s.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_s_small",
+      "file": "Vector/Red/arrow_basic_s_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_w",
+      "file": "Vector/Red/arrow_basic_w.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_basic_w_small",
+      "file": "Vector/Red/arrow_basic_w_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_e",
+      "file": "Vector/Red/arrow_decorative_e.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_e_small",
+      "file": "Vector/Red/arrow_decorative_e_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_n",
+      "file": "Vector/Red/arrow_decorative_n.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_n_small",
+      "file": "Vector/Red/arrow_decorative_n_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_s",
+      "file": "Vector/Red/arrow_decorative_s.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_s_small",
+      "file": "Vector/Red/arrow_decorative_s_small.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_w",
+      "file": "Vector/Red/arrow_decorative_w.svg"
+    },
+    {
+      "name": "Vector/Red/arrow_decorative_w_small",
+      "file": "Vector/Red/arrow_decorative_w_small.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_border",
+      "file": "Vector/Red/button_rectangle_border.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_depth_border",
+      "file": "Vector/Red/button_rectangle_depth_border.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_depth_flat",
+      "file": "Vector/Red/button_rectangle_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_depth_gloss",
+      "file": "Vector/Red/button_rectangle_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_depth_gradient",
+      "file": "Vector/Red/button_rectangle_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_depth_line",
+      "file": "Vector/Red/button_rectangle_depth_line.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_flat",
+      "file": "Vector/Red/button_rectangle_flat.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_gloss",
+      "file": "Vector/Red/button_rectangle_gloss.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_gradient",
+      "file": "Vector/Red/button_rectangle_gradient.svg"
+    },
+    {
+      "name": "Vector/Red/button_rectangle_line",
+      "file": "Vector/Red/button_rectangle_line.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_border",
+      "file": "Vector/Red/button_round_border.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_depth_border",
+      "file": "Vector/Red/button_round_depth_border.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_depth_flat",
+      "file": "Vector/Red/button_round_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_depth_gloss",
+      "file": "Vector/Red/button_round_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_depth_gradient",
+      "file": "Vector/Red/button_round_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_depth_line",
+      "file": "Vector/Red/button_round_depth_line.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_flat",
+      "file": "Vector/Red/button_round_flat.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_gloss",
+      "file": "Vector/Red/button_round_gloss.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_gradient",
+      "file": "Vector/Red/button_round_gradient.svg"
+    },
+    {
+      "name": "Vector/Red/button_round_line",
+      "file": "Vector/Red/button_round_line.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_border",
+      "file": "Vector/Red/button_square_border.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_depth_border",
+      "file": "Vector/Red/button_square_depth_border.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_depth_flat",
+      "file": "Vector/Red/button_square_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_depth_gloss",
+      "file": "Vector/Red/button_square_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_depth_gradient",
+      "file": "Vector/Red/button_square_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_depth_line",
+      "file": "Vector/Red/button_square_depth_line.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_flat",
+      "file": "Vector/Red/button_square_flat.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_gloss",
+      "file": "Vector/Red/button_square_gloss.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_gradient",
+      "file": "Vector/Red/button_square_gradient.svg"
+    },
+    {
+      "name": "Vector/Red/button_square_line",
+      "file": "Vector/Red/button_square_line.svg"
+    },
+    {
+      "name": "Vector/Red/check_round_color",
+      "file": "Vector/Red/check_round_color.svg"
+    },
+    {
+      "name": "Vector/Red/check_round_grey",
+      "file": "Vector/Red/check_round_grey.svg"
+    },
+    {
+      "name": "Vector/Red/check_round_grey_circle",
+      "file": "Vector/Red/check_round_grey_circle.svg"
+    },
+    {
+      "name": "Vector/Red/check_round_round_circle",
+      "file": "Vector/Red/check_round_round_circle.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_color",
+      "file": "Vector/Red/check_square_color.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_color_checkmark",
+      "file": "Vector/Red/check_square_color_checkmark.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_color_cross",
+      "file": "Vector/Red/check_square_color_cross.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_color_square",
+      "file": "Vector/Red/check_square_color_square.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_grey",
+      "file": "Vector/Red/check_square_grey.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_grey_checkmark",
+      "file": "Vector/Red/check_square_grey_checkmark.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_grey_cross",
+      "file": "Vector/Red/check_square_grey_cross.svg"
+    },
+    {
+      "name": "Vector/Red/check_square_grey_square",
+      "file": "Vector/Red/check_square_grey_square.svg"
+    },
+    {
+      "name": "Vector/Red/icon_checkmark",
+      "file": "Vector/Red/icon_checkmark.svg"
+    },
+    {
+      "name": "Vector/Red/icon_circle",
+      "file": "Vector/Red/icon_circle.svg"
+    },
+    {
+      "name": "Vector/Red/icon_cross",
+      "file": "Vector/Red/icon_cross.svg"
+    },
+    {
+      "name": "Vector/Red/icon_outline_checkmark",
+      "file": "Vector/Red/icon_outline_checkmark.svg"
+    },
+    {
+      "name": "Vector/Red/icon_outline_circle",
+      "file": "Vector/Red/icon_outline_circle.svg"
+    },
+    {
+      "name": "Vector/Red/icon_outline_cross",
+      "file": "Vector/Red/icon_outline_cross.svg"
+    },
+    {
+      "name": "Vector/Red/icon_outline_square",
+      "file": "Vector/Red/icon_outline_square.svg"
+    },
+    {
+      "name": "Vector/Red/icon_square",
+      "file": "Vector/Red/icon_square.svg"
+    },
+    {
+      "name": "Vector/Red/slide_hangle",
+      "file": "Vector/Red/slide_hangle.svg"
+    },
+    {
+      "name": "Vector/Red/slide_horizontal_color",
+      "file": "Vector/Red/slide_horizontal_color.svg"
+    },
+    {
+      "name": "Vector/Red/slide_horizontal_color_section",
+      "file": "Vector/Red/slide_horizontal_color_section.svg"
+    },
+    {
+      "name": "Vector/Red/slide_horizontal_color_section_wide",
+      "file": "Vector/Red/slide_horizontal_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Red/slide_horizontal_grey",
+      "file": "Vector/Red/slide_horizontal_grey.svg"
+    },
+    {
+      "name": "Vector/Red/slide_horizontal_grey_section",
+      "file": "Vector/Red/slide_horizontal_grey_section.svg"
+    },
+    {
+      "name": "Vector/Red/slide_horizontal_grey_section_wide",
+      "file": "Vector/Red/slide_horizontal_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Red/slide_vertical_color",
+      "file": "Vector/Red/slide_vertical_color.svg"
+    },
+    {
+      "name": "Vector/Red/slide_vertical_color_section",
+      "file": "Vector/Red/slide_vertical_color_section.svg"
+    },
+    {
+      "name": "Vector/Red/slide_vertical_color_section_wide",
+      "file": "Vector/Red/slide_vertical_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Red/slide_vertical_grey",
+      "file": "Vector/Red/slide_vertical_grey.svg"
+    },
+    {
+      "name": "Vector/Red/slide_vertical_grey_section",
+      "file": "Vector/Red/slide_vertical_grey_section.svg"
+    },
+    {
+      "name": "Vector/Red/slide_vertical_grey_section_wide",
+      "file": "Vector/Red/slide_vertical_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Red/star",
+      "file": "Vector/Red/star.svg"
+    },
+    {
+      "name": "Vector/Red/star_outline",
+      "file": "Vector/Red/star_outline.svg"
+    },
+    {
+      "name": "Vector/Red/star_outline_depth",
+      "file": "Vector/Red/star_outline_depth.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_e",
+      "file": "Vector/Yellow/arrow_basic_e.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_e_small",
+      "file": "Vector/Yellow/arrow_basic_e_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_n",
+      "file": "Vector/Yellow/arrow_basic_n.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_n_small",
+      "file": "Vector/Yellow/arrow_basic_n_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_s",
+      "file": "Vector/Yellow/arrow_basic_s.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_s_small",
+      "file": "Vector/Yellow/arrow_basic_s_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_w",
+      "file": "Vector/Yellow/arrow_basic_w.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_basic_w_small",
+      "file": "Vector/Yellow/arrow_basic_w_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_e",
+      "file": "Vector/Yellow/arrow_decorative_e.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_e_small",
+      "file": "Vector/Yellow/arrow_decorative_e_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_n",
+      "file": "Vector/Yellow/arrow_decorative_n.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_n_small",
+      "file": "Vector/Yellow/arrow_decorative_n_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_s",
+      "file": "Vector/Yellow/arrow_decorative_s.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_s_small",
+      "file": "Vector/Yellow/arrow_decorative_s_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_w",
+      "file": "Vector/Yellow/arrow_decorative_w.svg"
+    },
+    {
+      "name": "Vector/Yellow/arrow_decorative_w_small",
+      "file": "Vector/Yellow/arrow_decorative_w_small.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_border",
+      "file": "Vector/Yellow/button_rectangle_border.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_depth_border",
+      "file": "Vector/Yellow/button_rectangle_depth_border.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_depth_flat",
+      "file": "Vector/Yellow/button_rectangle_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_depth_gloss",
+      "file": "Vector/Yellow/button_rectangle_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_depth_gradient",
+      "file": "Vector/Yellow/button_rectangle_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_depth_line",
+      "file": "Vector/Yellow/button_rectangle_depth_line.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_flat",
+      "file": "Vector/Yellow/button_rectangle_flat.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_gloss",
+      "file": "Vector/Yellow/button_rectangle_gloss.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_gradient",
+      "file": "Vector/Yellow/button_rectangle_gradient.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_rectangle_line",
+      "file": "Vector/Yellow/button_rectangle_line.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_border",
+      "file": "Vector/Yellow/button_round_border.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_depth_border",
+      "file": "Vector/Yellow/button_round_depth_border.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_depth_flat",
+      "file": "Vector/Yellow/button_round_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_depth_gloss",
+      "file": "Vector/Yellow/button_round_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_depth_gradient",
+      "file": "Vector/Yellow/button_round_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_depth_line",
+      "file": "Vector/Yellow/button_round_depth_line.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_flat",
+      "file": "Vector/Yellow/button_round_flat.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_gloss",
+      "file": "Vector/Yellow/button_round_gloss.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_gradient",
+      "file": "Vector/Yellow/button_round_gradient.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_round_line",
+      "file": "Vector/Yellow/button_round_line.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_border",
+      "file": "Vector/Yellow/button_square_border.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_depth_border",
+      "file": "Vector/Yellow/button_square_depth_border.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_depth_flat",
+      "file": "Vector/Yellow/button_square_depth_flat.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_depth_gloss",
+      "file": "Vector/Yellow/button_square_depth_gloss.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_depth_gradient",
+      "file": "Vector/Yellow/button_square_depth_gradient.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_depth_line",
+      "file": "Vector/Yellow/button_square_depth_line.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_flat",
+      "file": "Vector/Yellow/button_square_flat.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_gloss",
+      "file": "Vector/Yellow/button_square_gloss.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_gradient",
+      "file": "Vector/Yellow/button_square_gradient.svg"
+    },
+    {
+      "name": "Vector/Yellow/button_square_line",
+      "file": "Vector/Yellow/button_square_line.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_round_color",
+      "file": "Vector/Yellow/check_round_color.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_round_grey",
+      "file": "Vector/Yellow/check_round_grey.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_round_grey_circle",
+      "file": "Vector/Yellow/check_round_grey_circle.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_round_round_circle",
+      "file": "Vector/Yellow/check_round_round_circle.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_color",
+      "file": "Vector/Yellow/check_square_color.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_color_checkmark",
+      "file": "Vector/Yellow/check_square_color_checkmark.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_color_cross",
+      "file": "Vector/Yellow/check_square_color_cross.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_color_square",
+      "file": "Vector/Yellow/check_square_color_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_grey",
+      "file": "Vector/Yellow/check_square_grey.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_grey_checkmark",
+      "file": "Vector/Yellow/check_square_grey_checkmark.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_grey_cross",
+      "file": "Vector/Yellow/check_square_grey_cross.svg"
+    },
+    {
+      "name": "Vector/Yellow/check_square_grey_square",
+      "file": "Vector/Yellow/check_square_grey_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_checkmark",
+      "file": "Vector/Yellow/icon_checkmark.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_circle",
+      "file": "Vector/Yellow/icon_circle.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_cross",
+      "file": "Vector/Yellow/icon_cross.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_outline_checkmark",
+      "file": "Vector/Yellow/icon_outline_checkmark.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_outline_circle",
+      "file": "Vector/Yellow/icon_outline_circle.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_outline_cross",
+      "file": "Vector/Yellow/icon_outline_cross.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_outline_square",
+      "file": "Vector/Yellow/icon_outline_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/icon_square",
+      "file": "Vector/Yellow/icon_square.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_hangle",
+      "file": "Vector/Yellow/slide_hangle.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_horizontal_color",
+      "file": "Vector/Yellow/slide_horizontal_color.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_horizontal_color_section",
+      "file": "Vector/Yellow/slide_horizontal_color_section.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_horizontal_color_section_wide",
+      "file": "Vector/Yellow/slide_horizontal_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_horizontal_grey",
+      "file": "Vector/Yellow/slide_horizontal_grey.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_horizontal_grey_section",
+      "file": "Vector/Yellow/slide_horizontal_grey_section.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_horizontal_grey_section_wide",
+      "file": "Vector/Yellow/slide_horizontal_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_vertical_color",
+      "file": "Vector/Yellow/slide_vertical_color.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_vertical_color_section",
+      "file": "Vector/Yellow/slide_vertical_color_section.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_vertical_color_section_wide",
+      "file": "Vector/Yellow/slide_vertical_color_section_wide.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_vertical_grey",
+      "file": "Vector/Yellow/slide_vertical_grey.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_vertical_grey_section",
+      "file": "Vector/Yellow/slide_vertical_grey_section.svg"
+    },
+    {
+      "name": "Vector/Yellow/slide_vertical_grey_section_wide",
+      "file": "Vector/Yellow/slide_vertical_grey_section_wide.svg"
+    },
+    {
+      "name": "Vector/Yellow/star",
+      "file": "Vector/Yellow/star.svg"
+    },
+    {
+      "name": "Vector/Yellow/star_outline",
+      "file": "Vector/Yellow/star_outline.svg"
+    },
+    {
+      "name": "Vector/Yellow/star_outline_depth",
+      "file": "Vector/Yellow/star_outline_depth.svg"
+    }
+  ]
+}

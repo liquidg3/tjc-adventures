@@ -1,13 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type KenneyKind = "3d" | "ui";
 
 interface KenneyPack {
   slug: string;
   name: string;
+  kind: KenneyKind;
 }
 interface Meta {
   preview: string;
   zip: string;
 }
+
+const KIND_LABEL: Record<KenneyKind, string> = { "3d": "3D", ui: "UI" };
 
 /**
  * One Kenney pack card. Lazily fetches its preview image + download URL (the dev
@@ -24,7 +29,7 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
 
   const doImport = () => {
     setImp("busy");
-    fetch(`/__kenney/import?slug=${pack.slug}`, { method: "POST" })
+    fetch(`/__kenney/import?slug=${pack.slug}&kind=${pack.kind}`, { method: "POST" })
       .then((r) => r.json())
       .then((d: { count?: number; error?: string }) => {
         if (d.error || d.count == null) setImp("err");
@@ -71,6 +76,7 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
       </div>
       <div className="card-head">
         <span className="card-title">{pack.name}</span>
+        <span className={`badge kind-${pack.kind}`}>{KIND_LABEL[pack.kind]}</span>
         <span className="badge ok">CC0</span>
       </div>
       <div className="card-controls">
@@ -107,21 +113,28 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
   );
 }
 
-/** Live browser of every Kenney CC0 3D pack — preview + one-click download. */
+type Filter = "all" | KenneyKind;
+
+/** Live browser of every Kenney CC0 3D + UI pack — preview + one-click import. */
 export function AssetLibrary() {
   const [packs, setPacks] = useState<KenneyPack[] | null>(null);
   const [err, setErr] = useState(false);
   const [q, setQ] = useState("");
-  // slugs already staged into public/models (so cards show what's imported)
-  const [staged, setStaged] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<Filter>("all");
+  // slugs already staged into public/{models,ui} (so cards show what's imported)
+  const [staged3d, setStaged3d] = useState<Set<string>>(new Set());
+  const [stagedUI, setStagedUI] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetch("/models/index.json")
-      .then((r) => r.json())
-      .then((d: { packs?: string[] }) =>
-        setStaged(new Set((d.packs ?? []).map((p) => p.replace(/^kenney-/, "")))),
-      )
-      .catch(() => {});
+    const loadStaged = (url: string, setter: (s: Set<string>) => void) =>
+      fetch(url)
+        .then((r) => r.json())
+        .then((d: { packs?: string[] }) =>
+          setter(new Set((d.packs ?? []).map((p) => p.replace(/^kenney-/, "")))),
+        )
+        .catch(() => {});
+    loadStaged("/models/index.json", setStaged3d);
+    loadStaged("/ui/index.json", setStagedUI);
   }, []);
 
   useEffect(() => {
@@ -134,18 +147,30 @@ export function AssetLibrary() {
       .catch(() => setErr(true));
   }, []);
 
+  const importedFor = (p: KenneyPack) =>
+    p.kind === "ui" ? stagedUI.has(p.slug) : staged3d.has(p.slug);
+
+  const counts = useMemo(() => {
+    const c = { all: packs?.length ?? 0, "3d": 0, ui: 0 };
+    for (const p of packs ?? []) c[p.kind]++;
+    return c;
+  }, [packs]);
+
   const needle = q.trim().toLowerCase();
-  const list = (packs ?? []).filter((p) => p.name.toLowerCase().includes(needle));
+  const list = (packs ?? []).filter(
+    (p) => (filter === "all" || p.kind === filter) && p.name.toLowerCase().includes(needle),
+  );
 
   return (
     <div className="studio">
       <header>
         <h1>Asset Library — Kenney</h1>
         <p>
-          Every Kenney CC0 3D pack, pulled live from kenney.nl. Hit <b>Import</b> on the
-          ones you want — the dev server downloads, unzips, and stages them straight into
-          committed <code>public/models/</code> (one click, no manual steps). Imported packs
-          show up in <b>Asset Test</b> and the <b>3D Models</b> board.
+          Every Kenney CC0 3D and UI pack, pulled live from kenney.nl. Hit
+          <b> Import</b> on the ones you want — the dev server downloads, unzips
+          and stages them into committed <code>public/models/</code> (3D) or
+          <code> public/ui/</code> (UI). Imported 3D packs show up in
+          <b> Asset Test</b> and the <b>3D Models</b> board.
         </p>
       </header>
 
@@ -163,18 +188,29 @@ export function AssetLibrary() {
 
       {packs && (
         <>
+          <div className="kenney-filters">
+            {(["all", "3d", "ui"] as Filter[]).map((f) => (
+              <button
+                key={f}
+                className={`kenney-filter ${filter === f ? "on" : ""}`}
+                onClick={() => setFilter(f)}
+              >
+                {f === "all" ? "All" : KIND_LABEL[f]} <span className="dim">({counts[f]})</span>
+              </button>
+            ))}
+          </div>
           <input
             className="studio-search"
-            placeholder={`Search ${packs.length} packs…`}
+            placeholder={`Search ${counts[filter]} ${filter === "all" ? "packs" : KIND_LABEL[filter] + " packs"}…`}
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
           <p className="dim" style={{ margin: "2px 0 12px" }}>
-            {staged.size} imported so far.
+            {staged3d.size} 3D + {stagedUI.size} UI imported so far.
           </p>
           <div className="grid">
             {list.map((p) => (
-              <KenneyCard key={p.slug} pack={p} imported={staged.has(p.slug)} />
+              <KenneyCard key={p.slug} pack={p} imported={importedFor(p)} />
             ))}
           </div>
         </>

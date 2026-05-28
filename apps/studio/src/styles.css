@@ -924,3 +924,446 @@ section h2 {
 .synty-tile img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #0b1020; }
 .synty-noimg { width: 100%; aspect-ratio: 1 / 1; background: repeating-linear-gradient(45deg, #0e1430, #0e1430 10px, #111a3a 10px, #111a3a 20px); }
 .synty-title { padding: 7px 9px; font-size: 0.74rem; line-height: 1.3; }
+
+/* ===== Vertical Shooter Level Builder ===================================== */
+.lb-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.4rem 0.6rem;
+  background: #141a2a;
+  border: 1px solid #28324a;
+  border-radius: 6px;
+}
+.lb-tool-group { display: flex; align-items: center; gap: 0.3rem; }
+.lb-tool-label { font-size: 0.75rem; color: #9aa3b5; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 0.15rem; }
+.lb-tool-group button {
+  padding: 0.25rem 0.65rem;
+  background: #1c2438;
+  color: #e6ebf5;
+  border: 1px solid #313c58;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.lb-tool-group button.on { background: #2a4d7a; border-color: #4d7fc0; }
+.lb-reset {
+  margin-left: auto;
+  padding: 0.3rem 0.7rem;
+  background: #3a2222;
+  color: #f0d8d8;
+  border: 1px solid #6b3434;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.lb-layout {
+  display: grid;
+  grid-template-columns: minmax(auto, 1fr) 240px;
+  gap: 1rem;
+  align-items: start;
+}
+.lb-grid {
+  display: grid;
+  gap: 1px;
+  padding: 1px;
+  background: #0b1020;
+  border: 1px solid #1f2a44;
+  border-radius: 3px;
+  user-select: none;
+  width: max-content;
+  touch-action: none;
+}
+.lb-cell {
+  width: 1.2rem;
+  height: 1.2rem;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+.lb-cell:hover { box-shadow: inset 0 0 0 1px #d6c14a; }
+.lb-palette {
+  position: sticky;
+  top: 0.5rem;
+  padding: 0.75rem;
+  background: #141a2a;
+  border: 1px solid #28324a;
+  border-radius: 6px;
+  max-height: 84vh;
+  overflow: auto;
+}
+.lb-palette h3 { margin: 0 0 0.5rem; font-size: 0.95rem; }
+.lb-palette-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  background: transparent;
+  color: #e6ebf5;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 0.15rem;
+  font-size: 0.85rem;
+}
+.lb-palette-item.on { background: #1a2a44; border-color: #4d7fc0; }
+.lb-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid rgba(0,0,0,0.4);
+}
+.lb-palette-hint { margin-top: 0.75rem; font-size: 0.78rem; line-height: 1.35; }
+
+/* ===== Asset Library — kind filter chips + badges ========================= */
+.kenney-filters {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0.75rem;
+  flex-wrap: wrap;
+}
+.kenney-filter {
+  padding: 0.3rem 0.8rem;
+  background: #1c2438;
+  color: #e6ebf5;
+  border: 1px solid #313c58;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.kenney-filter.on { background: #2a4d7a; border-color: #4d7fc0; }
+.badge.kind-3d  { background: #2c4a78; color: #d5e3ff; }
+.badge.kind-ui  { background: #4a2c78; color: #e6d5ff; }
+
+/* ===== KENNEY UI PACK SCI-FI — anatomical restyle =========================
+ *
+ * Asset anatomy (Blue/Default unless noted):
+ *
+ *   bar_round_small   96x16    pill, ~8px caps                  → buttons, slim inputs
+ *   bar_round_large   96x24    pill, ~12px caps                 → bigger buttons, toolbar slabs
+ *   bar_round_gloss_* same + glossy surface                     → hover/active
+ *   button_square_header_large_rectangle   192x64
+ *     ┌──────────────────────────────────┐  blue header strip (~22px tall)
+ *     │██████████████████████████████████│
+ *     ├──────────────────────────────────┤
+ *     │           grey body              │  body fill (~36px tall)
+ *     │·                                ·│  bottom screws (~6px tall)
+ *     └──────────────────────────────────┘  border-image-slice: 26 12 12 12
+ *   button_square_header_small_rectangle  same dims; header strip ~12px tall.
+ *   button_square_header_notch_rectangle  blue strip ~60% width with right
+ *     notch + grey body. Header occupies upper-left ⅔ of card.
+ *   button_square_header_blade_rectangle  blue corner ~40% with diagonal cut.
+ *   *_screws variants — same with visible screw heads on bottom.
+ *
+ * Mapping:
+ *   .studio-card (Home landing)     → large_rectangle (Blue Double for HiDPI)
+ *   .pack-card / .card (slot card)  → blade_rectangle (compact w/ corner title)
+ *   .preview-shell, side panels     → notch_rectangle (Grey for less noise)
+ *   .lb-toolbar, .kenney-filters    → bar_round_large (Grey) — slim chrome
+ *   .lb-palette                     → notch_rectangle (Grey)
+ *   .lb-grid                        → bar_round_large border only (no fill)
+ *   button (default)                → bar_round_small (Blue)
+ *   button.on / .active             → bar_round_gloss_small (Green)
+ *   input, select                   → bar_round_small (Grey)
+ *   cursor (page / interactive)     → cursor_a / cursor_b
+ *
+ * Slice values are calibrated to source images so the header band and screw
+ * row stay sharp at any card size. The fill keyword paints the middle.
+ */
+
+:root {
+  --kui-cursor-arrow: url(/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_a.png) 2 2, default;
+  --kui-cursor-hand:  url(/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_b.png) 8 4, pointer;
+
+  /* --- bars (horizontal pills for buttons/inputs) --- */
+  --kui-bar-sm-blue:        url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_small.png);
+  --kui-bar-sm-blue-gloss:  url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_gloss_small.png);
+  --kui-bar-sm-grey:        url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png);
+  --kui-bar-sm-grey-gloss:  url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_gloss_small.png);
+  --kui-bar-sm-green-gloss: url(/ui/kenney-ui-pack-sci-fi/PNG/Green/Default/bar_round_gloss_small.png);
+  --kui-bar-sm-red-gloss:   url(/ui/kenney-ui-pack-sci-fi/PNG/Red/Default/bar_round_gloss_small.png);
+  --kui-bar-lg-grey:        url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png);
+  --kui-bar-lg-blue:        url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_large.png);
+
+  /* --- composite headered cards --- */
+  --kui-card-large-blue:    url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_large_rectangle.png);
+  --kui-card-large-grey:    url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_large_rectangle.png);
+  --kui-card-large-2x-blue: url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Double/button_square_header_large_rectangle.png);
+  --kui-card-large-2x-grey: url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Double/button_square_header_large_rectangle.png);
+
+  --kui-card-notch-blue:    url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_notch_rectangle.png);
+  --kui-card-notch-grey:    url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_notch_rectangle.png);
+
+  --kui-card-blade-blue:    url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_blade_rectangle.png);
+  --kui-card-blade-grey:    url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_blade_rectangle.png);
+
+  --kui-card-small-blue:    url(/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_small_rectangle.png);
+  --kui-card-small-grey:    url(/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_small_rectangle.png);
+
+  /* Card layout knobs (px values inside the source image) */
+  --kui-card-header-h: 26px;   /* blue header band thickness in `large` card */
+  --kui-card-edge: 12px;       /* corner radius / screw row */
+}
+
+/* --- root cursor + dark backdrop ----------------------------------------- */
+html, body { cursor: var(--kui-cursor-arrow); background: #060912; color: #e6ebf5; }
+a, button, [role="button"], select, .studio-card, .kenney-filter,
+.lb-palette-item, .lb-tool-group button, .panel-save, .kenney-import,
+.pack-link, .preview-toolbar button, .studio-back {
+  cursor: var(--kui-cursor-hand);
+}
+
+/* ========================================================================
+ * Buttons — bar_round_small (Blue), gloss on hover, Green when on, Red dest.
+ * ====================================================================== */
+button, .panel-save, .kenney-import, .kenney-filter,
+.lb-tool-group button, .preview-toolbar button, .studio-back {
+  background: transparent;
+  border: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-bar-sm-blue);
+  border-image-slice: 8 fill;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding: 7px 16px;
+  transition: filter 0.12s;
+  box-shadow: none;
+}
+button:hover, .panel-save:hover, .kenney-import:hover,
+.kenney-filter:hover, .lb-tool-group button:hover, .preview-toolbar button:hover {
+  border-image-source: var(--kui-bar-sm-blue-gloss);
+  filter: brightness(1.12);
+}
+button:active { border-image-source: var(--kui-bar-sm-blue-gloss); filter: brightness(0.92); }
+
+/* on/active state — Green */
+button.on, .kenney-filter.on, .lb-tool-group button.on,
+.kenney-import.done, .draft-state.saved, .confirm-accept {
+  border-image-source: var(--kui-bar-sm-green-gloss) !important;
+  color: #f1ffec;
+}
+
+/* destructive — Red */
+.lb-reset, .kenney-import.err {
+  border-image-source: var(--kui-bar-sm-red-gloss) !important;
+}
+
+/* disabled — Grey */
+button:disabled, .panel-save:disabled, .kenney-import.busy {
+  border-image-source: var(--kui-bar-sm-grey) !important;
+  opacity: 0.55;
+  filter: none;
+  cursor: not-allowed;
+}
+
+/* palette/list items (lb-palette-item) — Grey by default, Green when on */
+.lb-palette-item {
+  border-image-source: var(--kui-bar-sm-grey);
+  border-image-slice: 8 fill;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  border-style: solid;
+  border-color: transparent;
+  padding: 6px 10px;
+  background: transparent;
+}
+.lb-palette-item.on { border-image-source: var(--kui-bar-sm-green-gloss); }
+
+/* ========================================================================
+ * Inputs / selects / search — Grey bar
+ * ====================================================================== */
+input, select, textarea, .studio-search {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-bar-sm-grey);
+  border-image-slice: 8 fill;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  outline: none;
+  color: #e6ebf5;
+  padding: 6px 12px;
+}
+input:focus, select:focus, textarea:focus, .studio-search:focus {
+  border-image-source: var(--kui-bar-sm-blue-gloss);
+  filter: brightness(1.08);
+}
+select option { background: #0e1530; color: #e6ebf5; }
+
+/* native range thumb keeps UA look but track stripped */
+input[type=range] {
+  border: 0 !important;
+  border-image: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  height: 18px;
+  cursor: var(--kui-cursor-hand);
+}
+
+/* ========================================================================
+ * Cards & panels — composite headered images, 9-sliced
+ * ====================================================================== */
+
+/* Slot/pack cards (header + body + screws): blade-cut Blue, content goes BELOW
+ * the blade. Reserve top padding for the header band. */
+.card, .pack-card, .preview-shell, .fixed-preview {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-card-blade-blue);
+  border-image-slice: 28 12 12 12 fill;
+  border-image-width: 28px 12px 12px 12px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: 6px; /* room for blade-cut header */
+}
+
+/* Side panels & modals — Grey notch */
+.preview-sidepanel, .preset-editor, .confirm-box,
+.lb-palette, .asset-stage, .asset-list {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-card-notch-grey);
+  border-image-slice: 28 12 12 12 fill;
+  border-image-width: 28px 12px 12px 12px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: 30px 16px 16px;
+}
+
+/* Confirm / preset editor — blue to draw the eye */
+.confirm-box, .preset-editor {
+  border-image-source: var(--kui-card-notch-blue);
+}
+
+/* Section header strips & toolbars — slim Grey bar (no header) */
+.studio header, .lb-toolbar, .kenney-filters, .summary, .missing-box {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-bar-lg-grey);
+  border-image-slice: 12 fill;
+  border-image-width: 12px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: 14px 20px;
+}
+.studio header { padding: 18px 22px; }
+
+/* Asset-test layout shell holds 2 panels, doesn't need its own frame */
+.asset-test-layout { background: transparent; border: 0; }
+
+/* Level builder grid — outline only, no fill */
+.lb-grid {
+  background: #0a0e1a;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-bar-lg-grey);
+  border-image-slice: 12;          /* no fill — paint stays the dark backdrop */
+  border-image-width: 12px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+}
+
+/* ========================================================================
+ * Home landing cards — the big sci-fi panels with title in header
+ * Match the source image proportions so the blue strip holds the title and
+ * the body holds desc + badge.
+ * ====================================================================== */
+.studio-card {
+  position: relative;
+  background: transparent !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image-source: var(--kui-card-large-2x-blue);
+  border-image-slice: 52 24 24 24 fill;  /* Double = 2x source pixels */
+  border-image-width: 26px 12px 12px 12px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: 6px 18px 18px;
+  min-height: 140px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.studio-card:hover {
+  filter: brightness(1.08);
+}
+.studio-card.status-soon {
+  border-image-source: var(--kui-card-large-2x-grey);
+  filter: none;
+  cursor: not-allowed;
+}
+.studio-card-title {
+  /* sits inside the blue header band */
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  margin-bottom: 22px;             /* push desc out of header band */
+  padding: 0 2px;
+}
+.studio-card-desc {
+  color: #2b3358;                  /* dark grey-blue to read on light grey body */
+  font-size: 0.82rem;
+  line-height: 1.4;
+  flex: 1;
+}
+.studio-card-badge {
+  align-self: flex-end;
+  color: #6c7591;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 2px 0;
+}
+
+/* Badges in card-head pills — keep small Kenney bar style */
+.badge {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image-source: var(--kui-bar-sm-grey);
+  border-image-slice: 8 fill;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  padding: 2px 10px;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+.badge.ok    { border-image-source: var(--kui-bar-sm-green-gloss); color: #e7ffe0; }
+.badge.miss  { border-image-source: var(--kui-bar-sm-red-gloss); color: #ffe7e7; }
+.badge.kind-3d { border-image-source: var(--kui-bar-sm-blue-gloss); color: #d5e3ff; }
+.badge.kind-ui { border-image-source: var(--kui-bar-sm-blue);       color: #c8c0ff; }
+
+/* ========================================================================
+ * Chrome / type
+ * ====================================================================== */
+h1, h2, h3 { color: #d5e3ff; letter-spacing: 0.04em; font-weight: 700; }
+h1 { font-size: 1.4rem; margin-bottom: 8px; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: 0.95rem; }
+
+.studio-section { padding: 18px 24px; }
+
+/* level builder cells: paint cursor */
+.lb-cell, .lb-grid { cursor: crosshair; }
+.lb-cell:hover { box-shadow: inset 0 0 0 1px #d6c14a; }

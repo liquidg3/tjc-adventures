@@ -1,4 +1,11 @@
-export type SectionId = "models" | "assets" | "asset-test" | "vertical" | "side" | "race";
+export type SectionId =
+  | "models"
+  | "assets"
+  | "asset-test"
+  | "vertical"
+  | "level"
+  | "side"
+  | "race";
 
 interface SectionCard {
   id: SectionId;
@@ -25,6 +32,12 @@ const SECTIONS: SectionCard[] = [
     id: "vertical",
     title: "Vertical Scroller",
     desc: "Camera, ship & scene settings for Raiden-style levels.",
+    status: "ready",
+  },
+  {
+    id: "level",
+    title: "Vertical Shooter Level Builder",
+    desc: "Paint scenery + altitude onto a top-down grid (v1: authoring only).",
     status: "ready",
   },
   { id: "side", title: "Side Scroller", desc: "Settings for side-scrolling levels.", status: "soon" },

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AssetLibrary } from "./AssetLibrary";
 import { AssetTest } from "./AssetTest";
 import { Home, type SectionId } from "./Home";
+import { LevelBuilder } from "./LevelBuilder";
 import { ModelsBoard } from "./ModelsBoard";
 import { VerticalScroller } from "./VerticalScroller";
 
@@ -12,6 +13,7 @@ function readSectionFromHash(): SectionId | null {
     section === "assets" ||
     section === "asset-test" ||
     section === "vertical" ||
+    section === "level" ||
     section === "side" ||
     section === "race"
     ? section
@@ -49,6 +51,7 @@ export function App() {
       {section === "assets" && <AssetLibrary />}
       {section === "asset-test" && <AssetTest />}
       {section === "vertical" && <VerticalScroller />}
+      {section === "level" && <LevelBuilder />}
     </div>
   );
 }

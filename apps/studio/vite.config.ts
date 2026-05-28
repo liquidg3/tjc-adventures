@@ -11,6 +11,7 @@ import {
   copyFileSync,
 } from "node:fs";
 import { dirname, resolve, join, basename } from "node:path";
+import type { ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
@@ -20,18 +21,22 @@ const ASSET_MAP_FILE = resolve(here, "asset-map.json");
 const VERTICAL_DEFAULTS_FILE = resolve(here, "vertical-defaults.json");
 const ASSET_NORMALIZATION_PRESETS_FILE = resolve(here, "asset-normalization-presets.json");
 const ASSET_NORMALIZATION_OVERRIDES_FILE = resolve(here, "asset-normalization-overrides.json");
+const LEVEL_BUILDER_FILE = resolve(here, "level-builder.json");
 
-// Dev-only endpoint that persists Studio assignments to a committed JSON file
-// (durable + version-controlled), instead of fragile browser localStorage.
-//   GET  /__asset-map  → current asset-map.json
-//   POST /__asset-map  → overwrite it with the request body
-function assetMapPlugin(): Plugin {
+// Factory for the Studio's dev-only "JSON-mirror" endpoints: each one mirrors
+// a single committed JSON file (durable + version-controlled), instead of using
+// fragile browser localStorage. Every config surface in the Studio (asset map,
+// normalization presets/overrides, vertical-scroller defaults, level builder)
+// rides this same shape:
+//   GET  <route>  → current file contents (or "{}" if absent)
+//   POST <route>  → overwrite the file with the request body
+function jsonFilePlugin(name: string, route: string, file: string): Plugin {
   return {
-    name: "tjc-asset-map",
+    name: `tjc-${name}`,
     configureServer(server) {
-      server.middlewares.use("/__asset-map", (req, res) => {
+      server.middlewares.use(route, (req, res) => {
         if (req.method === "GET") {
-          const data = existsSync(ASSET_MAP_FILE) ? readFileSync(ASSET_MAP_FILE, "utf8") : "{}";
+          const data = existsSync(file) ? readFileSync(file, "utf8") : "{}";
           res.setHeader("content-type", "application/json");
           res.end(data);
           return;
@@ -41,109 +46,7 @@ function assetMapPlugin(): Plugin {
           req.on("data", (chunk) => (body += chunk));
           req.on("end", () => {
             try {
-              writeFileSync(ASSET_MAP_FILE, body || "{}");
-              res.end("ok");
-            } catch (err) {
-              res.statusCode = 500;
-              res.end(String(err));
-            }
-          });
-          return;
-        }
-        res.statusCode = 405;
-        res.end();
-      });
-    },
-  };
-}
-
-function verticalDefaultsPlugin(): Plugin {
-  return {
-    name: "tjc-vertical-defaults",
-    configureServer(server) {
-      server.middlewares.use("/__vertical-defaults", (req, res) => {
-        if (req.method === "GET") {
-          const data = existsSync(VERTICAL_DEFAULTS_FILE)
-            ? readFileSync(VERTICAL_DEFAULTS_FILE, "utf8")
-            : "{}";
-          res.setHeader("content-type", "application/json");
-          res.end(data);
-          return;
-        }
-        if (req.method === "POST") {
-          let body = "";
-          req.on("data", (chunk) => (body += chunk));
-          req.on("end", () => {
-            try {
-              writeFileSync(VERTICAL_DEFAULTS_FILE, body || "{}");
-              res.end("ok");
-            } catch (err) {
-              res.statusCode = 500;
-              res.end(String(err));
-            }
-          });
-          return;
-        }
-        res.statusCode = 405;
-        res.end();
-      });
-    },
-  };
-}
-
-function assetNormalizationPresetsPlugin(): Plugin {
-  return {
-    name: "tjc-asset-normalization-presets",
-    configureServer(server) {
-      server.middlewares.use("/__asset-normalization-presets", (req, res) => {
-        if (req.method === "GET") {
-          const data = existsSync(ASSET_NORMALIZATION_PRESETS_FILE)
-            ? readFileSync(ASSET_NORMALIZATION_PRESETS_FILE, "utf8")
-            : "{}";
-          res.setHeader("content-type", "application/json");
-          res.end(data);
-          return;
-        }
-        if (req.method === "POST") {
-          let body = "";
-          req.on("data", (chunk) => (body += chunk));
-          req.on("end", () => {
-            try {
-              writeFileSync(ASSET_NORMALIZATION_PRESETS_FILE, body || "{}");
-              res.end("ok");
-            } catch (err) {
-              res.statusCode = 500;
-              res.end(String(err));
-            }
-          });
-          return;
-        }
-        res.statusCode = 405;
-        res.end();
-      });
-    },
-  };
-}
-
-function assetNormalizationOverridesPlugin(): Plugin {
-  return {
-    name: "tjc-asset-normalization-overrides",
-    configureServer(server) {
-      server.middlewares.use("/__asset-normalization-overrides", (req, res) => {
-        if (req.method === "GET") {
-          const data = existsSync(ASSET_NORMALIZATION_OVERRIDES_FILE)
-            ? readFileSync(ASSET_NORMALIZATION_OVERRIDES_FILE, "utf8")
-            : "{}";
-          res.setHeader("content-type", "application/json");
-          res.end(data);
-          return;
-        }
-        if (req.method === "POST") {
-          let body = "";
-          req.on("data", (chunk) => (body += chunk));
-          req.on("end", () => {
-            try {
-              writeFileSync(ASSET_NORMALIZATION_OVERRIDES_FILE, body || "{}");
+              writeFileSync(file, body || "{}");
               res.end("ok");
             } catch (err) {
               res.statusCode = 500;
@@ -160,13 +63,15 @@ function assetNormalizationOverridesPlugin(): Plugin {
 }
 
 // Live Kenney catalog: the dev server scrapes kenney.nl (no browser CORS) so the
-// Asset Library can show every CC0 3D pack with a real preview image + a working
-// download link. Results are cached in memory for the session.
-//   GET /__kenney/list            → [{ slug, name }] for all 3D packs
+// Asset Library can show every CC0 3D + UI pack with a real preview image + a
+// working download link. Results are cached in memory for the session.
+//   GET /__kenney/list            → [{ slug, name, kind }] for 3D + UI packs
 //   GET /__kenney/meta?slug=NAME  → { preview, zip } for one pack
+//   POST /__kenney/import?slug=NAME&kind=3d|ui → stage it into public/{models,ui}
+type KenneyKind = "3d" | "ui";
 const KENNEY = "https://kenney.nl";
 const metaCache = new Map<string, { preview: string; zip: string }>();
-let listCache: Array<{ slug: string; name: string }> | null = null;
+const listCacheByKind: Partial<Record<KenneyKind, Array<{ slug: string; name: string; kind: KenneyKind }>>> = {};
 
 async function kenneyFetch(url: string): Promise<string> {
   const r = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (tjc-studio)" } });
@@ -174,17 +79,16 @@ async function kenneyFetch(url: string): Promise<string> {
   return r.text();
 }
 
-async function kenneyList() {
-  if (listCache) return listCache;
-  // nav/filter links to skip
+// Walk every page of a Kenney /assets/<filter> listing until a page yields no
+// new slugs. Kenney paginates via /page:N. DENY filters nav/filter links.
+async function scrapeKenneyList(filter: string, kind: KenneyKind) {
+  if (listCacheByKind[kind]) return listCacheByKind[kind]!;
   const DENY = new Set(["category", "tag", "series", "license", "search", "assets", "page"]);
-  // walk every page of the 3D category (Kenney paginates via /page:N) until a
-  // page yields no new slugs
   const slugs = new Set<string>();
   for (let page = 1; page <= 15; page++) {
     let html: string;
     try {
-      html = await kenneyFetch(`${KENNEY}/assets/category:3D/page:${page}`);
+      html = await kenneyFetch(`${KENNEY}/assets/${filter}/page:${page}`);
     } catch {
       break;
     }
@@ -195,11 +99,25 @@ async function kenneyList() {
     if (slugs.size === before) break; // empty page → end of list
     await new Promise((r) => setTimeout(r, 150)); // be polite to kenney.nl
   }
-  listCache = [...slugs].sort().map((slug) => ({
+  listCacheByKind[kind] = [...slugs].sort().map((slug) => ({
     slug,
     name: slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+    kind,
   }));
-  return listCache;
+  return listCacheByKind[kind]!;
+}
+
+async function kenneyList() {
+  const [d3, ui] = await Promise.all([
+    scrapeKenneyList("category:3D", "3d"),
+    // Kenney's tag system uses "interface" for UI packs; tag:UI returns nothing.
+    scrapeKenneyList("tag:interface", "ui"),
+  ]);
+  // Dedupe across the two lists; if a slug appears in both, prefer the UI tag
+  // (more specific). Sort by display name.
+  const byKind = new Map<string, { slug: string; name: string; kind: KenneyKind }>();
+  for (const pack of [...d3, ...ui]) byKind.set(pack.slug, pack);
+  return [...byKind.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 async function kenneyMeta(slug: string) {
@@ -310,8 +228,71 @@ async function kenneyImport(slug: string) {
   return { pack, count: models.length, format: convert ? "converted" : "glb" };
 }
 
+// Download a Kenney UI pack's zip, unzip it, and stage its 2D assets into
+// committed public/ui/kenney-<slug>. We keep the pack's internal directory
+// layout (Kenney UI packs typically nest into PNG/Default/, PNG/Double/,
+// Vector/, …) and write a flat manifest mapping logical names → file paths.
+async function kenneyImportUI(slug: string) {
+  const meta = await kenneyMeta(slug);
+  if (!meta.zip) throw new Error("no zip url for " + slug);
+  const tmp = join(tmpdir(), "tjc-kenney", slug);
+  rmSync(tmp, { recursive: true, force: true });
+  mkdirSync(tmp, { recursive: true });
+  const zipPath = join(tmp, "pack.zip");
+  const ab = await (await fetch(meta.zip, { headers: { "user-agent": "Mozilla/5.0 (tjc-studio)" } })).arrayBuffer();
+  writeFileSync(zipPath, Buffer.from(ab));
+  const unz = join(tmp, "unz");
+  mkdirSync(unz, { recursive: true });
+  execFileSync("unzip", ["-o", "-q", zipPath, "-d", unz]);
+
+  const pack = `kenney-${slug}`;
+  const uiRoot = resolve(here, "public/ui");
+  const out = join(uiRoot, pack);
+  rmSync(out, { recursive: true, force: true });
+  mkdirSync(out, { recursive: true });
+
+  // Pack PNGs/SVGs/JPGs are the UI assets; skip Kenney's top-level Preview/
+  // marketing PNGs (they live one or two levels deep but always have
+  // "preview"/"sample"/"thumbnail" in the name).
+  const all = walkFiles(unz);
+  const lower = (f: string) => f.toLowerCase();
+  const SKIP_NAME = /(?:preview|sample|screenshot|thumbnail|kenney-banner)/i;
+  const sourceFiles = all.filter((f) => /\.(png|svg|jpg|jpeg)$/i.test(lower(f)) && !SKIP_NAME.test(basename(f)));
+
+  // Strip the unzip dir prefix and an optional top-level kenney_… folder; keep
+  // the rest of the path so PNG/Default/button_red.png stays grouped.
+  const items: Array<{ name: string; file: string }> = [];
+  for (const sp of sourceFiles) {
+    let rel = sp.slice(unz.length + 1);
+    const parts = rel.split(/[/\\]/);
+    if (parts[0] && /^(?:kenney[_-]|Kenney)/.test(parts[0])) rel = parts.slice(1).join("/");
+    const destAbs = join(out, rel);
+    mkdirSync(dirname(destAbs), { recursive: true });
+    try {
+      copyFileSync(sp, destAbs);
+      items.push({ name: rel.replace(/\.[^.]+$/, ""), file: rel });
+    } catch {
+      /* skip a bad asset */
+    }
+  }
+
+  items.sort((a, b) => a.name.localeCompare(b.name));
+  writeFileSync(
+    join(out, "manifest.json"),
+    JSON.stringify({ pack, kind: "ui", items }, null, 2),
+  );
+
+  const indexPath = join(uiRoot, "index.json");
+  const index = existsSync(indexPath) ? JSON.parse(readFileSync(indexPath, "utf8")) : { packs: [] };
+  if (!index.packs.includes(pack)) index.packs.push(pack);
+  writeFileSync(indexPath, JSON.stringify(index, null, 2));
+
+  rmSync(tmp, { recursive: true, force: true });
+  return { pack, count: items.length, kind: "ui" };
+}
+
 function kenneyPlugin(): Plugin {
-  const json = (res: import("node:http").ServerResponse, data: unknown, code = 200) => {
+  const json = (res: ServerResponse, data: unknown, code = 200) => {
     res.statusCode = code;
     res.setHeader("content-type", "application/json");
     res.end(JSON.stringify(data));
@@ -338,9 +319,11 @@ function kenneyPlugin(): Plugin {
       server.middlewares.use("/__kenney/import", async (req, res) => {
         if (req.method !== "POST") return json(res, { error: "POST only" }, 405);
         try {
-          const slug = new URL(req.url ?? "", "http://x").searchParams.get("slug") ?? "";
+          const u = new URL(req.url ?? "", "http://x");
+          const slug = u.searchParams.get("slug") ?? "";
+          const kind = (u.searchParams.get("kind") ?? "3d") as KenneyKind;
           if (!slug) return json(res, { error: "no slug" }, 400);
-          json(res, await kenneyImport(slug));
+          json(res, kind === "ui" ? await kenneyImportUI(slug) : await kenneyImport(slug));
         } catch (e) {
           json(res, { error: String(e) }, 502);
         }
@@ -352,10 +335,11 @@ function kenneyPlugin(): Plugin {
 export default defineConfig({
   plugins: [
     react(),
-    assetMapPlugin(),
-    verticalDefaultsPlugin(),
-    assetNormalizationPresetsPlugin(),
-    assetNormalizationOverridesPlugin(),
+    jsonFilePlugin("asset-map", "/__asset-map", ASSET_MAP_FILE),
+    jsonFilePlugin("vertical-defaults", "/__vertical-defaults", VERTICAL_DEFAULTS_FILE),
+    jsonFilePlugin("asset-normalization-presets", "/__asset-normalization-presets", ASSET_NORMALIZATION_PRESETS_FILE),
+    jsonFilePlugin("asset-normalization-overrides", "/__asset-normalization-overrides", ASSET_NORMALIZATION_OVERRIDES_FILE),
+    jsonFilePlugin("level-builder", "/__level-builder", LEVEL_BUILDER_FILE),
     kenneyPlugin(),
   ],
   server: {
