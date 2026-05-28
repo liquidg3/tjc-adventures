@@ -111,7 +111,7 @@ export function createFlightController(
         dodgeTimer = Math.max(0, dodgeTimer - dt);
         const p = 1 - dodgeTimer / DODGE_DURATION; // 0 → 1 over the roll
         const eased = p * p * (3 - 2 * p); // smoothstep for a snappier spin
-        shipRoll = roll + dodgeDir * Math.PI * 2 * eased; // one full revolution
+        shipRoll = roll - dodgeDir * Math.PI * 2 * eased; // one full revolution, sign matches the bank above so it spins toward the tapped direction
       }
       if (shipPivot) shipPivot.rotation = new Vector3(0, SHIP_YAW, shipRoll);
 
