@@ -15,7 +15,7 @@ and the vessel only succeeds when they work together.
 | Track | State |
 |---|---|
 | **M0 — cross-device spine** | ✅ Done & verified (host QR → phone joins a Colyseus room, input round-trips). **Parked** at `/host` + `/join` while we focus on graphics. |
-| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Current focus: iterate on art, motion, feel. **Art direction = Kenney CC0 low-poly** (imported via the Studio's Asset Library). |
+| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Next: wire the **Level Builder** grid into the scene, then enemies. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + **Kenney UI Pack Sci-Fi** for Studio chrome. |
 
 ---
 
@@ -189,6 +189,17 @@ Scenery, Pixelate. Each panel drives a `SceneHandle` method.
 - **`ArcRotateCamera` vertical singularity.** Don't `setPosition` it perfectly
   overhead — drive top-down views via `alpha`/`beta` with `beta ≈ 0.01`
   (`viewer-scene.ts:applyCameraView`).
+- **Kenney's UI tag is `tag:interface`** (`tag:UI` returns nothing). The
+  Asset Library scraper hits both `category:3D` and `tag:interface` and merges.
+- **Studio JSON endpoints share one factory.** `jsonFilePlugin(name, route,
+  file)` in `vite.config.ts`. Frontend reads/writes via
+  `usePersistedJson<T>(url, initial, parse)` from `use-persisted-json.ts`.
+  Roll a new persisted Studio surface = 1 factory call + 1 hook call.
+- **Kenney UI sci-fi 9-slice values matter.** The `button_square_header_*`
+  card images (192×64) have a fixed ~22–28px blue header band on top + ~6–8px
+  screw row on bottom; use `border-image-slice: 26 12 12 12 fill` so the band
+  stays sharp. `Double` variants (384×128) need 2× slice (52/24/24/24). For
+  pill bars (`bar_round_small/large`, 96×16/24), slice 8 or 12.
 - **Dodge bypasses momentum easing.** A one-shot velocity burst gets bled off
   in ~0.1s by the normal `velX += (target - velX) * accel`. The dodge instead
   *locks* velX to `dodgeDir * SHIP_SPEED * DODGE_DASH` for the whole

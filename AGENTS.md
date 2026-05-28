@@ -36,6 +36,12 @@ next agent doesn't repeat it.
 - **`ArcRotateCamera` vertical singularity.** Don't `setPosition` it perfectly
   overhead — drive top-down views via `alpha`/`beta` with `beta = 0.01`. See
   `viewer-scene.ts:applyCameraView`.
+- **Kenney's UI tag is `tag:interface`** (not `tag:UI`). The catalog scraper
+  paginates `tag:interface` to surface UI packs in the Asset Library.
+- **`usePersistedJson<T>` is the canonical Studio persistence hook** — every
+  new dev-endpoint-backed surface must use it; don't roll a parallel fetch +
+  state dance. See `apps/studio/src/use-persisted-json.ts`. New JSON endpoints
+  ride one `jsonFilePlugin(name, route, file)` factory in `vite.config.ts`.
 - **Pixelation + screen-space math:** `setHardwareScalingLevel` changes render-buffer
   dims; do picking/clamp math in CSS-pixel space (`canvas.clientWidth`), not
   `getRenderWidth()`.
@@ -56,19 +62,23 @@ route `/`). **See `docs/STATE.md`** for exact tunables, the `SceneHandle` contra
 the open punch list, and ordered next steps. The M0 multiplayer spine is built and
 **parked** (`/host` + `/join`).
 
-**Art direction = Kenney CC0 low-poly.** Game art is sourced exclusively from
-Kenney's CC0 3D kits via the Studio's **Asset Library** (live browser + one-click
-Import → committed `apps/studio/public/models`). The earlier Sketchfab library and
-a Synty experiment were removed. The player ship is already a Kenney pick
-(`craft_racer`, faces +Z via `SHIP_MODEL_FORWARD_YAW`, dodge tuned). **The
-current next task is enemies** — `ship-enemy = craft_miner` is assigned in
-`asset-map.json` but never spawns; per `prototype-meadow-run.md`. See
-`docs/STATE.md` for the ordered next-step list.
+**Art direction = Kenney CC0 low-poly** (game) **+ Kenney UI Pack Sci-Fi**
+(Studio chrome). Game art sourced exclusively from Kenney's CC0 3D kits via the
+Studio's **Asset Library** (live browser + one-click Import). 3D packs land in
+committed `apps/studio/public/models/`, UI packs in `apps/studio/public/ui/`.
+Studio chrome (cards/buttons/inputs/cursors) is skinned via `border-image`
+9-slice over Kenney sci-fi assets — see end-of-file block in `styles.css`.
+
+**Vertical Shooter Level Builder** (`#level`): paints a 24×80 grid of
+`{prop?, height?}` cells. Persists only; scene wiring is the immediate next
+task (`STATE.md` → Suggested next steps #1). After that: enemies
+(`ship-enemy = craft_miner` assigned, never spawns), then scenery swap.
 
 ## Where things live
 - **Live scene (Babylon):** `packages/scenes/src/ship-scene.ts` → `@tjc/scenes`
 - **Studio (tuner + Kenney asset tools):** `apps/studio` (:5174) — primary work
-  surface. Asset Library (import) · Asset Test (preview) · 3D Models board (assign)
+  surface. Asset Library (3D + UI import) · Asset Test (preview) · 3D Models
+  board (assign) · Vertical Scroller (tune) · Level Builder (paint grid)
 - **Game client (mounts the scene):** `apps/game-client` (:5173)
 - **Production models (committed, CC0):** `apps/studio/public/models` (Kenney packs
   + `index.json`); `apps/game-client/public/models` is the scene's runtime copy — keep synced

@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-05-28._
+_Last updated: 2026-05-28 (session 2)._
 
 ---
 
@@ -42,6 +42,22 @@ _Last updated: 2026-05-28._
   already in `asset-map.json` but never spawns. The dodge is now built to dodge
   *something* — that something is the natural next step. See "Suggested next
   steps" below.
+- **NEW THIS SESSION → Vertical Shooter Level Builder (v1, authoring only).**
+  Studio section at `#level`. Paints a 24×80 grid of `{prop?, height?}` cells
+  (5 world units per cell), persists to `apps/studio/level-builder.json` via
+  `/__level-builder`. Palette = env/prop/terrain slots that have a model
+  assigned in the 3D Models board. **The scene does NOT read this yet** — that
+  wiring is the next iteration after you verify the editor feels right.
+- **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
+  filter chips: All / 3D / UI. UI uses Kenney's `tag:interface` (not `tag:UI`
+  — that returns nothing). UI imports stage to `apps/studio/public/ui/kenney-<slug>/`
+  preserving the pack's `PNG/Default/`, `Vector/` etc. structure; 3D stays in
+  `public/models/`. Same one-click import.
+- **NEW THIS SESSION → Studio chrome restyled with Kenney UI Pack Sci-Fi.** All
+  cards, buttons, inputs, cursors now use 9-sliced `bar_round_*` and composite
+  `button_square_header_*_rectangle` images via CSS `border-image`. See
+  `apps/studio/src/styles.css` end-of-file block "KENNEY UI PACK SCI-FI" for
+  the anatomy diagram and class mapping.
 
 ## The one thing that changed structurally (don't trip on the old layout)
 
@@ -92,13 +108,16 @@ packages/scenes/
   src/index.ts             re-exports ship-scene
 
 apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary surface
-  src/Home.tsx             launcher cards → models | assets | asset-test | vertical (+ side/race soon)
+  src/Home.tsx             launcher cards → models | assets | asset-test | vertical | level (+ side/race soon)
   src/App.tsx              section router (Home ↔ a section)
-  src/AssetLibrary.tsx     ★ Kenney pack browser: live thumbnails + one-click Import (Assets section below)
-  src/AssetTest.tsx        single shared 3D viewer — simple rotating isometric browse view; auto-applies kit preset
+  src/AssetLibrary.tsx     ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
+  src/AssetTest.tsx        single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
   src/ModelsBoard.tsx      3D Models board: assign a staged model + normalization preset to each game slot → asset-map.json
   src/SlotCard.tsx         one slot: dropdown + preset select + expanded modal draft/save normalization workflow
   src/ModelPreview.tsx     budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
+  src/LevelBuilder.tsx     ★ NEW: paint scenery + height onto a 24×80 grid (v1 authoring only)
+  src/level-builder-state.ts Level types + emptyLevel/mergeLevel/cellIndex helpers
+  src/use-persisted-json.ts ★ shared "mirror a Studio JSON endpoint" hook — used by ModelsBoard, LevelBuilder
   src/asset-normalization.ts preset registry + asset-map parsing/serialization helpers + model overrides
   src/viewer-scene.ts      createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
   src/viewer-budget.ts     caps live WebGL contexts at 6 — leased by ModelPreview (Asset Test uses ONE shared viewer)
@@ -107,12 +126,20 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
                            now reads asset-map + normalization presets so the live ship matches the 3D Models board
   src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
-  public/models/           ★ PRODUCTION assets (committed): kenney-<pack>/*.glb + manifest.json, index.json;
+  src/styles.css           full Studio CSS — ends with a Kenney UI Pack Sci-Fi block that skins every control
+                             (cards/buttons/inputs/cursors) via border-image 9-slice; anatomy diagram inline
+  public/models/           PRODUCTION 3D (committed CC0): kenney-<pack>/*.glb + manifest.json, index.json;
                              plus legacy ships/ + environment/ the scene still loads (pending the swap)
-  vite.config.ts           dev endpoints: /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides}, /__kenney/{list,meta,import}
+  public/ui/               ★ NEW: PRODUCTION UI (committed CC0): kenney-<pack>/PNG/<Color>/Default/*.png +
+                             Vector/*.svg + manifest.json, index.json. Currently has ui-pack + ui-pack-sci-fi
+                             (the latter is what skins the Studio chrome).
+  vite.config.ts           dev endpoints (all five JSON-mirror routes share one jsonFilePlugin factory):
+                             /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides},
+                             /__level-builder; plus /__kenney/{list,meta,import} (Kenney scraper + importer)
   asset-map.json           committed slot→model assignments
   asset-normalization-presets.json   committed shared normalization baselines
   asset-normalization-overrides.json committed per-model normalization overrides
+  level-builder.json       committed level grid (24×80 cells) — written by the Level Builder section
 
 apps/game-client/          Vite + React (port 5173)
   src/GameSandbox.tsx      mounts @tjc/scenes on a canvas (route /)
@@ -388,27 +415,34 @@ Kenney is the next task (below).
 
 ## Suggested next steps (in order)
 
-1. **Enemies — start the gameplay layer.** `asset-map.json` already has
+1. **Wire the Level Builder grid into the scene.** v1 only persists; nothing
+   reads it. Make `prop-field.ts` consult the grid before falling back to its
+   random scatter. Cell-to-world: `worldX = (col - width/2) * cellSize`,
+   `worldZ-from-zone-start = (depth - row) * cellSize`, `worldY = height *
+   HEIGHT_NUDGE`. Slot id → asset-map → URL. Then add a ground-mesh height
+   pass that displaces vertices by interpolated cell height (bilinear). Once
+   wired, the editor becomes a real authoring loop.
+2. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
    simple straight-line enemies streaming down-screen, no shooting yet — give
    the player something to use the freshly-tuned dodge on. Per
    `prototype-meadow-run.md`. (When you spawn enemies, remember they face the
    **opposite** way to the player — they should look toward the player, so do
    NOT apply `SHIP_MODEL_FORWARD_YAW` to them; that constant is player-only.)
-2. **Finish the Kenney scenery swap.** The scene still loads the last legacy
+3. **Finish the Kenney scenery swap.** The scene still loads the last legacy
    `/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` props.
    Pick Kenney nature-kit replacements via the 3D Models board, repoint
    `scene-config.SCENERY_MODELS`, delete the legacy files, sync
    `apps/game-client/public/models`. (Scenery doesn't need a forward-yaw — only
    ships have a front.)
-3. **Shooting** — wire projectiles from the player ship's nose (the Gunner
+4. **Shooting** — wire projectiles from the player ship's nose (the Gunner
    role); enemies become real targets.
-4. Lock the **look**: settle lighting + ground direction; decide if
+5. Lock the **look**: settle lighting + ground direction; decide if
    hardware-scaling pixel stays or the low-res-RT pipeline
    (`architecture.md` §6) is needed; bake into defaults.
-5. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
+6. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
-6. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
+7. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
 
 ---
 
@@ -463,6 +497,28 @@ Kenney is the next task (below).
   duration (see `flight-controller.ts` — `if (dodgeTimer > 0) { velX = … }`
   short-circuits the normal `velX += (target − velX) * accel`). Without that
   lock it reads as "a small nudge," not an emergency juke.
+- **Kenney's UI tag is `tag:interface`, not `tag:UI`.** When scraping
+  kenney.nl for UI packs, `tag:UI` returns nothing — Kenney consistently uses
+  `interface` for the broader UI category. See `vite.config.ts:scrapeKenneyList`.
+- **Kenney sci-fi card anatomy** (`button_square_header_*_rectangle`, 192×64):
+  blue header band (~22–28 px tall) + grey body + screw row (~6–8 px) along the
+  bottom. Use `border-image-slice: 26 12 12 12 fill` (T R B L) so the header
+  height stays sharp while the body stretches. For the `Double` (2×) variants,
+  scale slice values 2× (`52 24 24 24 fill`). `bar_round_*` (96×16/24) is a
+  horizontal pill — slice 8 for small, 12 for large. **Slice values vs source
+  pixels matter** — guessing gives stretched corners.
+- **Level Builder data shape**: 24 wide × 80 deep grid, row-major, row 0 = far
+  end of zone (top of screen at runtime), cellSize = 5 world units. Per cell
+  `{ prop?: slotId, height?: 0..3 }`. See `level-builder-state.ts`. v1 persists
+  only — the scene doesn't read this yet (see Next Steps #1).
+- **Studio JSON endpoints all share one factory** — `jsonFilePlugin(name,
+  route, file)` in `vite.config.ts`. Add a new endpoint with one line +
+  matching file constant. The five Studio JSONs (asset-map, vertical-defaults,
+  both normalization files, level-builder) all ride this.
+- **`usePersistedJson<T>` is the canonical Studio persistence hook** —
+  `apps/studio/src/use-persisted-json.ts`. GET on mount, POST on update,
+  returns `{value, setValue, saved, loaded}`. Use for any new Studio JSON
+  endpoint; don't roll your own fetch+state dance.
 - **No `React.StrictMode`** — double-invoked effects would start Babylon/rooms twice.
 - **Run npm scripts from the repo root.** `dev:studio`, `dev:client`, etc. are root
   scripts; running them inside a workspace dir errors with "Missing script".
