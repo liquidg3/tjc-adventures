@@ -70,16 +70,21 @@ export function createFlightController(
       // momentum: ease velocity toward the held direction, so steering builds
       // speed and releasing coasts to a stop with a little drag
       const accel = Math.min(1, dt * SHIP_ACCEL);
-      velX += (input.vx * speed - velX) * accel;
-      velZ += (input.vz * speed - velZ) * accel;
 
-      // double-tap barrel roll: a one-shot full roll + a quick lateral burst to
-      // juke incoming fire (ignored if already mid-roll)
+      // double-tap barrel roll: start an emergency lateral dash. Detect the
+      // start here, then lock velX to dodge speed below — the normal easing
+      // would otherwise bleed the burst back to held-speed almost instantly,
+      // and the ship needs to actually JUMP for the dodge to feel like one.
       if (input.dodge !== 0 && dodgeTimer <= 0) {
         dodgeDir = input.dodge;
         dodgeTimer = DODGE_DURATION;
-        velX += dodgeDir * SHIP_SPEED * DODGE_DASH;
       }
+      if (dodgeTimer > 0) {
+        velX = dodgeDir * SHIP_SPEED * DODGE_DASH; // hard-set, bypass easing
+      } else {
+        velX += (input.vx * speed - velX) * accel;
+      }
+      velZ += (input.vz * speed - velZ) * accel;
 
       const nearEdge = pointOnFlightPlane(col, h).z;
       const farEdge = pointOnFlightPlane(col, 0).z;

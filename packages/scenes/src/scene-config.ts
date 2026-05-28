@@ -19,8 +19,8 @@ export const SHIP_SIZE = 2.3;
 export const SHIP_START_Z = 50;
 export const SHIP_BANK_MAX = 0.4;
 export const SHIP_ACCEL = 7; // momentum ease rate (per sec): higher = snappier, lower = draggier
-export const DODGE_DURATION = 0.45; // barrel-roll dodge length (sec)
-export const DODGE_DASH = 0.8; // lateral burst on a dodge (fraction of SHIP_SPEED)
+export const DODGE_DURATION = 0.28; // barrel-roll dodge length (sec) — shorter = less distance at the same dash speed, and the 360° spin completes snappier too
+export const DODGE_DASH = 2.5; // dodge speed (× SHIP_SPEED) — velX is locked to this for the whole DODGE_DURATION, bypassing the normal momentum easing so the ship actually JUMPS sideways instead of just nudging
 export const DOUBLE_TAP_MS = 280; // max gap between taps to count as a double-tap
 export const CAMERA_BASE_LOCAL_X = -0.3;
 export const CAMERA_TEST_ROT = 0.35;
