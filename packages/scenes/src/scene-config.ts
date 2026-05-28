@@ -3,6 +3,17 @@ export const BOOST_MULT = 2.2;
 export const SCROLL = 16;
 export const FIELD_DEPTH = 800;
 export const SHIP_YAW = 0;
+/**
+ * Gameplay-forward correction for the player ship's art (radians, about Y).
+ * Models are normalized in the Studio so their nose points along the preview's
+ * gold "forward" arrow — but that arrow points toward the preview camera, i.e.
+ * OPPOSITE the direction the scroller advances (the ship flies away from the game
+ * camera, up the field). So in-game we spin the aligned model 180° so its nose
+ * leads the oncoming field. Applied to the visual model root (not the pivot), so
+ * bank/roll are unaffected. Facing is a runtime/role concern — not baked into the
+ * model data — so enemies can face the opposite way.
+ */
+export const SHIP_MODEL_FORWARD_YAW = Math.PI;
 export const SHIP_HEIGHT = 100;
 export const SHIP_SIZE = 2.3;
 export const SHIP_START_Z = 50;

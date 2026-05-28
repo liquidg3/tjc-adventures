@@ -4,6 +4,7 @@ import {
   DEFAULT_SHIP_LIGHTING,
   DEFAULT_SHIP_MODEL_URL,
   SHIP_HEIGHT,
+  SHIP_MODEL_FORWARD_YAW,
   SHIP_SIZE,
   SHIP_START_Z,
   SHIP_YAW,
@@ -61,7 +62,7 @@ export function createShipController(
     root.scaling.setAll(shipUnitScale * shipSize);
     root.rotation = new Vector3(
       d2r(shipNormalization.orient[0]),
-      d2r(shipNormalization.orient[1]),
+      d2r(shipNormalization.orient[1]) + SHIP_MODEL_FORWARD_YAW,
       d2r(shipNormalization.orient[2]),
     );
     root.position.setAll(0);
