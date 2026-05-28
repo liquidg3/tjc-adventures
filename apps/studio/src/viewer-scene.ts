@@ -161,24 +161,28 @@ export function createViewer(
   }
 
   function applyCameraView() {
-    const target = camera.getTarget().clone();
-    const radius = camera.radius;
+    const target = lockTargetToPivot ? Vector3.Zero() : camera.getTarget().clone();
+    camera.setTarget(target);
+    // Drive the arc camera by alpha/beta (not setPosition) so the straight-down
+    // "top" view doesn't hit ArcRotateCamera's vertical singularity — a perfectly
+    // overhead setPosition throws inside rebuildAnglesAndRadius. radius is already
+    // set by frameToContent; default up works for every angle this way.
+    camera.upVector.copyFromFloats(0, 1, 0);
     switch (view) {
-      case "front":
-        camera.upVector.copyFromFloats(0, 1, 0);
-        camera.setPosition(target.add(new Vector3(0, 0, radius)));
+      case "front": // head-on at the model's +Z face (the gameplay-forward nose)
+        camera.alpha = Math.PI / 2;
+        camera.beta = Math.PI / 2;
         break;
-      case "side":
-        camera.upVector.copyFromFloats(0, 1, 0);
-        camera.setPosition(target.add(new Vector3(radius, 0, 0)));
+      case "side": // profile, looking down -X
+        camera.alpha = 0;
+        camera.beta = Math.PI / 2;
         break;
-      case "top":
-        camera.upVector.copyFromFloats(0, 0, 1);
-        camera.setPosition(target.add(new Vector3(0, radius, 0.001)));
+      case "top": // straight down — beta nudged off 0 to dodge the singularity
+        camera.alpha = -Math.PI / 2;
+        camera.beta = 0.01;
         break;
       case "isometric":
       default:
-        camera.upVector.copyFromFloats(0, 1, 0);
         camera.alpha = -Math.PI / 4;
         camera.beta = Math.PI / 3;
         break;
