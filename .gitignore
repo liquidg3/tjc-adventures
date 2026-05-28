@@ -8,3 +8,8 @@ build/
 *.sqlite
 *.tsbuildinfo
 .vite/
+
+# local agent tooling (caveman skills + per-user Claude Code settings)
+.agents/
+.claude/
+skills-lock.json
