@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-05-28 (session 2)._
+_Last updated: 2026-05-28 (session 3)._
 
 ---
 
@@ -38,10 +38,17 @@ _Last updated: 2026-05-28 (session 2)._
   fetches `asset-map.json` and immediately swaps in the Kenney ship — the legacy
   one only appears for the ~50 ms before that fetch resolves. Scenery is still
   the last legacy holdout (`tree_fur`, `bush`, `rocks_small`, `tree_stylized`).
-- **NEXT: gameplay layer (enemies first).** `ship-enemy = craft_miner` is
-  already in `asset-map.json` but never spawns. The dodge is now built to dodge
-  *something* — that something is the natural next step. See "Suggested next
-  steps" below.
+- **ACTIVE NEXT: Studio UI Builder.** `#ui` maps imported UI-pack images onto
+  semantic chrome roles (buttons, panels, inputs, toolbars, cards, badges,
+  cursors), persists to `apps/studio/ui-theme.json`, and live-applies CSS
+  variables so the Studio can tune its own chrome. It uses a **draft/save**
+  workflow (not autosave): edits apply live for preview, `Save` writes the file,
+  `Revert` returns to last saved, and reset uses the in-app confirmation chrome.
+  The picker intentionally shows **raw assets** on a checkerboard, not assets
+  inside button chrome. The slice preview overlays the source-image cut lines.
+  Card-like roles have separate `padding`, `headerPadding`, and `bodyPadding`
+  because Kenney header cards have shaped header bands that do not line up with
+  one flat content box.
 - **NEW THIS SESSION → Vertical Shooter Level Builder (v1, authoring only).**
   Studio section at `#level`. Paints a 24×80 grid of `{prop?, height?}` cells
   (5 world units per cell), persists to `apps/studio/level-builder.json` via
@@ -108,7 +115,7 @@ packages/scenes/
   src/index.ts             re-exports ship-scene
 
 apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary surface
-  src/Home.tsx             launcher cards → models | assets | asset-test | vertical | level (+ side/race soon)
+  src/Home.tsx             launcher cards → models | assets | asset-test | ui | vertical | level (+ side/race soon)
   src/App.tsx              section router (Home ↔ a section)
   src/AssetLibrary.tsx     ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
   src/AssetTest.tsx        single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
@@ -117,6 +124,9 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/ModelPreview.tsx     budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
   src/LevelBuilder.tsx     ★ NEW: paint scenery + height onto a 24×80 grid (v1 authoring only)
   src/level-builder-state.ts Level types + emptyLevel/mergeLevel/cellIndex helpers
+  src/UiBuilder.tsx        ★ NEW: assign imported UI images to semantic chrome roles → ui-theme.json;
+                             draft/save, raw asset grid, slice preview, card header/body padding
+  src/ui-theme-state.ts    UI theme schema, defaults, asset loader, CSS variable applier
   src/use-persisted-json.ts ★ shared "mirror a Studio JSON endpoint" hook — used by ModelsBoard, LevelBuilder
   src/asset-normalization.ts preset registry + asset-map parsing/serialization helpers + model overrides
   src/viewer-scene.ts      createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
@@ -126,20 +136,21 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
                            now reads asset-map + normalization presets so the live ship matches the 3D Models board
   src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
-  src/styles.css           full Studio CSS — ends with a Kenney UI Pack Sci-Fi block that skins every control
-                             (cards/buttons/inputs/cursors) via border-image 9-slice; anatomy diagram inline
+  src/styles.css           full Studio CSS — ends with a Kenney UI Pack Sci-Fi block that skins controls
+                             via ui-theme CSS variables + border-image 9-slice; anatomy diagram inline
   public/models/           PRODUCTION 3D (committed CC0): kenney-<pack>/*.glb + manifest.json, index.json;
                              plus legacy ships/ + environment/ the scene still loads (pending the swap)
   public/ui/               ★ NEW: PRODUCTION UI (committed CC0): kenney-<pack>/PNG/<Color>/Default/*.png +
                              Vector/*.svg + manifest.json, index.json. Currently has ui-pack + ui-pack-sci-fi
                              (the latter is what skins the Studio chrome).
-  vite.config.ts           dev endpoints (all five JSON-mirror routes share one jsonFilePlugin factory):
+  vite.config.ts           dev endpoints (JSON-mirror routes share one jsonFilePlugin factory):
                              /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides},
-                             /__level-builder; plus /__kenney/{list,meta,import} (Kenney scraper + importer)
+                             /__level-builder, /__ui-theme; plus /__kenney/{list,meta,import}
   asset-map.json           committed slot→model assignments
   asset-normalization-presets.json   committed shared normalization baselines
   asset-normalization-overrides.json committed per-model normalization overrides
   level-builder.json       committed level grid (24×80 cells) — written by the Level Builder section
+  ui-theme.json            committed Studio chrome theme — image role mapping + slices/padding/text
 
 apps/game-client/          Vite + React (port 5173)
   src/GameSandbox.tsx      mounts @tjc/scenes on a canvas (route /)
@@ -415,34 +426,40 @@ Kenney is the next task (below).
 
 ## Suggested next steps (in order)
 
-1. **Wire the Level Builder grid into the scene.** v1 only persists; nothing
+1. **Finish the UI Builder pass.** `#ui` now edits `ui-theme.json` with draft/save,
+   raw asset grid, source slice preview, role presets, card header/body padding,
+   and live CSS variable application. Next polish: add image dimensions/metadata
+   to asset tiles, group/filter assets by kind (chrome vs icon buttons vs parts vs
+   cursors), add per-role presets for Kenney UI families, and migrate any remaining
+   one-off hardcoded chrome selectors into the role map.
+2. **Wire the Level Builder grid into the scene.** v1 only persists; nothing
    reads it. Make `prop-field.ts` consult the grid before falling back to its
    random scatter. Cell-to-world: `worldX = (col - width/2) * cellSize`,
    `worldZ-from-zone-start = (depth - row) * cellSize`, `worldY = height *
    HEIGHT_NUDGE`. Slot id → asset-map → URL. Then add a ground-mesh height
    pass that displaces vertices by interpolated cell height (bilinear). Once
    wired, the editor becomes a real authoring loop.
-2. **Enemies — start the gameplay layer.** `asset-map.json` already has
+3. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
    simple straight-line enemies streaming down-screen, no shooting yet — give
    the player something to use the freshly-tuned dodge on. Per
    `prototype-meadow-run.md`. (When you spawn enemies, remember they face the
    **opposite** way to the player — they should look toward the player, so do
    NOT apply `SHIP_MODEL_FORWARD_YAW` to them; that constant is player-only.)
-3. **Finish the Kenney scenery swap.** The scene still loads the last legacy
+4. **Finish the Kenney scenery swap.** The scene still loads the last legacy
    `/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` props.
    Pick Kenney nature-kit replacements via the 3D Models board, repoint
    `scene-config.SCENERY_MODELS`, delete the legacy files, sync
    `apps/game-client/public/models`. (Scenery doesn't need a forward-yaw — only
    ships have a front.)
-4. **Shooting** — wire projectiles from the player ship's nose (the Gunner
+5. **Shooting** — wire projectiles from the player ship's nose (the Gunner
    role); enemies become real targets.
-5. Lock the **look**: settle lighting + ground direction; decide if
+6. Lock the **look**: settle lighting + ground direction; decide if
    hardware-scaling pixel stays or the low-res-RT pipeline
    (`architecture.md` §6) is needed; bake into defaults.
-6. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
+7. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
-7. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
+8. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
 
 ---
 
@@ -507,18 +524,28 @@ Kenney is the next task (below).
   scale slice values 2× (`52 24 24 24 fill`). `bar_round_*` (96×16/24) is a
   horizontal pill — slice 8 for small, 12 for large. **Slice values vs source
   pixels matter** — guessing gives stretched corners.
+- **UI Builder 9-slice mental model**: `slice` cuts the source image into
+  border/corner/center regions; it does not decide where text goes. `padding`
+  controls generic content inset. Header-card roles additionally use
+  `headerPadding` and `bodyPadding` because a shaped header band and grey body
+  need independent layout. For 16px-high bars, `slice: 8` consumes the full
+  height (8 top + 8 bottom), so the source has no vertical center pixels to
+  fill; use a larger source asset or the role `fillColor` if a solid middle is
+  needed. The asset grid should stay raw/checkerboard so you can see the actual
+  PNG, not a thumbnail nested inside the current theme.
 - **Level Builder data shape**: 24 wide × 80 deep grid, row-major, row 0 = far
   end of zone (top of screen at runtime), cellSize = 5 world units. Per cell
   `{ prop?: slotId, height?: 0..3 }`. See `level-builder-state.ts`. v1 persists
   only — the scene doesn't read this yet (see Next Steps #1).
 - **Studio JSON endpoints all share one factory** — `jsonFilePlugin(name,
   route, file)` in `vite.config.ts`. Add a new endpoint with one line +
-  matching file constant. The five Studio JSONs (asset-map, vertical-defaults,
-  both normalization files, level-builder) all ride this.
-- **`usePersistedJson<T>` is the canonical Studio persistence hook** —
+  matching file constant. The Studio JSONs (asset-map, vertical-defaults,
+  both normalization files, level-builder, ui-theme) all ride this.
+- **`usePersistedJson<T>` is the canonical Studio autosave persistence hook** —
   `apps/studio/src/use-persisted-json.ts`. GET on mount, POST on update,
-  returns `{value, setValue, saved, loaded}`. Use for any new Studio JSON
-  endpoint; don't roll your own fetch+state dance.
+  returns `{value, setValue, saved, loaded}`. Use it for autosaving JSON-backed
+  surfaces. `UiBuilder` intentionally does a local draft + explicit Save/Revert
+  flow so a bad chrome experiment does not immediately overwrite `ui-theme.json`.
 - **No `React.StrictMode`** — double-invoked effects would start Babylon/rooms twice.
 - **Run npm scripts from the repo root.** `dev:studio`, `dev:client`, etc. are root
   scripts; running them inside a workspace dir errors with "Missing script".

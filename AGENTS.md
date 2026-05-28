@@ -69,9 +69,16 @@ committed `apps/studio/public/models/`, UI packs in `apps/studio/public/ui/`.
 Studio chrome (cards/buttons/inputs/cursors) is skinned via `border-image`
 9-slice over Kenney sci-fi assets — see end-of-file block in `styles.css`.
 
+**UI Builder** (`#ui`): maps imported UI-pack images to semantic Studio chrome
+roles (buttons, inputs, toolbars, cards, panels, badges, grid outlines, cursors).
+Persists to `apps/studio/ui-theme.json` through `/__ui-theme` and live-applies CSS
+variables. It is draft/save, not autosave. The picker shows raw assets on a
+checkerboard, and card roles split header/body padding; keep expanding this
+instead of hardcoding new chrome choices in CSS.
+
 **Vertical Shooter Level Builder** (`#level`): paints a 24×80 grid of
-`{prop?, height?}` cells. Persists only; scene wiring is the immediate next
-task (`STATE.md` → Suggested next steps #1). After that: enemies
+`{prop?, height?}` cells. Persists only; scene wiring is queued after the UI
+Builder polish pass (`STATE.md` → Suggested next steps). After that: enemies
 (`ship-enemy = craft_miner` assigned, never spawns), then scenery swap.
 
 ## Where things live

@@ -2,6 +2,7 @@ export type SectionId =
   | "models"
   | "assets"
   | "asset-test"
+  | "ui"
   | "vertical"
   | "level"
   | "side"
@@ -26,6 +27,12 @@ const SECTIONS: SectionCard[] = [
     id: "asset-test",
     title: "Asset Test",
     desc: "Preview imported Kenney packs in one shared 3D viewer — confirm they load clean.",
+    status: "ready",
+  },
+  {
+    id: "ui",
+    title: "UI Builder",
+    desc: "Assign imported UI images to buttons, panels, inputs, cursors & chrome roles.",
     status: "ready",
   },
   {

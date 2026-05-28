@@ -22,6 +22,7 @@ const VERTICAL_DEFAULTS_FILE = resolve(here, "vertical-defaults.json");
 const ASSET_NORMALIZATION_PRESETS_FILE = resolve(here, "asset-normalization-presets.json");
 const ASSET_NORMALIZATION_OVERRIDES_FILE = resolve(here, "asset-normalization-overrides.json");
 const LEVEL_BUILDER_FILE = resolve(here, "level-builder.json");
+const UI_THEME_FILE = resolve(here, "ui-theme.json");
 
 // Factory for the Studio's dev-only "JSON-mirror" endpoints: each one mirrors
 // a single committed JSON file (durable + version-controlled), instead of using
@@ -340,6 +341,7 @@ export default defineConfig({
     jsonFilePlugin("asset-normalization-presets", "/__asset-normalization-presets", ASSET_NORMALIZATION_PRESETS_FILE),
     jsonFilePlugin("asset-normalization-overrides", "/__asset-normalization-overrides", ASSET_NORMALIZATION_OVERRIDES_FILE),
     jsonFilePlugin("level-builder", "/__level-builder", LEVEL_BUILDER_FILE),
+    jsonFilePlugin("ui-theme", "/__ui-theme", UI_THEME_FILE),
     kenneyPlugin(),
   ],
   server: {

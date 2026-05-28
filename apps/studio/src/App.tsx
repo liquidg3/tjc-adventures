@@ -4,7 +4,11 @@ import { AssetTest } from "./AssetTest";
 import { Home, type SectionId } from "./Home";
 import { LevelBuilder } from "./LevelBuilder";
 import { ModelsBoard } from "./ModelsBoard";
+import { UiBuilder } from "./UiBuilder";
 import { VerticalScroller } from "./VerticalScroller";
+import { applyUiTheme, mergeUiTheme } from "./ui-theme-state";
+
+const UI_THEME_URL = "/__ui-theme";
 
 function readSectionFromHash(): SectionId | null {
   const raw = location.hash.replace(/^#/, "");
@@ -12,6 +16,7 @@ function readSectionFromHash(): SectionId | null {
   return section === "models" ||
     section === "assets" ||
     section === "asset-test" ||
+    section === "ui" ||
     section === "vertical" ||
     section === "level" ||
     section === "side" ||
@@ -28,6 +33,13 @@ export function App() {
     const onHashChange = () => setSection(readSectionFromHash());
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  useEffect(() => {
+    fetch(UI_THEME_URL)
+      .then((r) => r.json())
+      .then((data) => applyUiTheme(mergeUiTheme(data)))
+      .catch(() => {});
   }, []);
 
   const openSection = (id: SectionId) => {
@@ -50,6 +62,7 @@ export function App() {
       {section === "models" && <ModelsBoard />}
       {section === "assets" && <AssetLibrary />}
       {section === "asset-test" && <AssetTest />}
+      {section === "ui" && <UiBuilder />}
       {section === "vertical" && <VerticalScroller />}
       {section === "level" && <LevelBuilder />}
     </div>

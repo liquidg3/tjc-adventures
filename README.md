@@ -15,7 +15,7 @@ and the vessel only succeeds when they work together.
 | Track | State |
 |---|---|
 | **M0 — cross-device spine** | ✅ Done & verified (host QR → phone joins a Colyseus room, input round-trips). **Parked** at `/host` + `/join` while we focus on graphics. |
-| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Next: wire the **Level Builder** grid into the scene, then enemies. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + **Kenney UI Pack Sci-Fi** for Studio chrome. |
+| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Current Studio focus: **UI Builder** for assigning imported UI images to chrome roles; after that, wire the **Level Builder** grid into the scene, then enemies. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + Kenney UI packs for Studio chrome. |
 
 ---
 
@@ -111,7 +111,8 @@ scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 ## Studio — the tuner + asset tools (`apps/studio`, :5174)
 
 Opens to a **launcher** of section cards: **3D Models**, **Asset Library**, **Asset
-Test**, **Vertical Scroller** (Side Scroller / Death Race coming soon).
+Test**, **UI Builder**, **Vertical Scroller**, **Vertical Shooter Level Builder**
+(Side Scroller / Death Race coming soon).
 
 ```bash
 npm run dev:studio   # → http://localhost:5174  (run from the repo root)
@@ -131,6 +132,15 @@ scripts/stage-pack.mjs <localDir> <name>` for a pack folder on disk.
 context, so it scales to any pack size) as a simple rotating isometric browse view.
 All kits start collapsed. The viewer auto-applies the matching normalization preset
 based on the selected pack.
+
+**UI Builder** — assign imported UI-pack images to semantic chrome roles
+(`button`, `input`, `toolbar`, cards, panels, badges, grid outline, cursors). The
+mapping persists to `apps/studio/ui-theme.json` through `/__ui-theme` and is
+live-applied as CSS variables, so the current sci-fi skin is now a tunable default
+instead of only hardcoded CSS. Edits are draft-based: changes preview live, then
+`Save` writes the JSON and `Revert` restores the last saved version. The asset
+grid shows raw images on a checkerboard; card roles expose separate header/body
+padding because Kenney header-card assets have shaped header bands.
 
 **3D Models** — assign a real model to every asset slot the game needs (ships,
 environment, …), and choose a **normalization preset** for that assignment:
@@ -192,9 +202,9 @@ Scenery, Pixelate. Each panel drives a `SceneHandle` method.
 - **Kenney's UI tag is `tag:interface`** (`tag:UI` returns nothing). The
   Asset Library scraper hits both `category:3D` and `tag:interface` and merges.
 - **Studio JSON endpoints share one factory.** `jsonFilePlugin(name, route,
-  file)` in `vite.config.ts`. Frontend reads/writes via
+  file)` in `vite.config.ts`. Autosaving surfaces read/write via
   `usePersistedJson<T>(url, initial, parse)` from `use-persisted-json.ts`.
-  Roll a new persisted Studio surface = 1 factory call + 1 hook call.
+  UI Builder intentionally uses explicit Save/Revert instead of autosave.
 - **Kenney UI sci-fi 9-slice values matter.** The `button_square_header_*`
   card images (192×64) have a fixed ~22–28px blue header band on top + ~6–8px
   screw row on bottom; use `border-image-slice: 26 12 12 12 fill` so the band

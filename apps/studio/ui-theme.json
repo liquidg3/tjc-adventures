@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "cursors": {
+    "default": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_a.png",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    "pointer": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_b.png",
+      "hotspot": [
+        8,
+        4
+      ]
+    }
+  },
+  "roles": {
+    "button-default": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_gloss_large.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "7px 16px",
+      "headerPadding": "7px 16px",
+      "bodyPadding": "7px 16px",
+      "textColor": "#ffffff",
+      "fillColor": "transparent",
+      "uppercase": true,
+      "letterSpacing": "0.05em"
+    },
+    "button-hover": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Yellow/Double/bar_round_large.png",
+      "slice": "19 25",
+      "width": "12px",
+      "fill": true,
+      "padding": "15px 16px 7px",
+      "headerPadding": "15px 16px 7px",
+      "bodyPadding": "15px 16px 7px",
+      "textColor": "#ffffff",
+      "fillColor": "transparent",
+      "uppercase": true,
+      "letterSpacing": "0.05em"
+    },
+    "button-active": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Green/Default/bar_round_gloss_large.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "7px 16px",
+      "headerPadding": "7px 16px",
+      "bodyPadding": "7px 16px",
+      "textColor": "#f1ffec",
+      "fillColor": "#22c56f",
+      "uppercase": true,
+      "letterSpacing": "0.05em"
+    },
+    "button-disabled": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "7px 16px",
+      "headerPadding": "7px 16px",
+      "bodyPadding": "7px 16px",
+      "textColor": "#ffffff",
+      "fillColor": "transparent",
+      "uppercase": true,
+      "letterSpacing": "0.05em"
+    },
+    "input": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_square_gloss_large.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "6px 12px",
+      "headerPadding": "6px 12px",
+      "bodyPadding": "6px 12px",
+      "textColor": "#000000",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0"
+    },
+    "toolbar": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "14px 20px",
+      "headerPadding": "14px 20px",
+      "bodyPadding": "14px 20px",
+      "textColor": "#e6ebf5",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0"
+    },
+    "card-home": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Double/button_square_header_large_rectangle.png",
+      "slice": "58 24 27",
+      "width": "26px 12px 12px 12px",
+      "fill": true,
+      "padding": "6px 18px 0px",
+      "headerPadding": "6px 18px 0px",
+      "bodyPadding": "22px 18px 18px",
+      "textColor": "#ffffff",
+      "fillColor": "transparent",
+      "uppercase": true,
+      "letterSpacing": "0.05em"
+    },
+    "card-content": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_blade_rectangle.png",
+      "slice": "36 12 14",
+      "width": "28px 12px 12px 12px",
+      "fill": true,
+      "padding": "2px 16px 10px",
+      "headerPadding": "2px 16px 10px",
+      "bodyPadding": "16px 16px 16px",
+      "textColor": "#e6ebf5",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0"
+    },
+    "panel-side": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_notch_rectangle.png",
+      "slice": "37 12 12",
+      "width": "28px 12px 12px 12px",
+      "fill": true,
+      "padding": "1px 16px 16px",
+      "headerPadding": "1px 16px 16px",
+      "bodyPadding": "30px 16px 16px",
+      "textColor": "#e6ebf5",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0"
+    },
+    "grid-outline": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "12px",
+      "headerPadding": "12px",
+      "bodyPadding": "12px",
+      "textColor": "#e6ebf5",
+      "fillColor": "transparent",
+      "uppercase": true,
+      "letterSpacing": "0"
+    },
+    "badge-default": {
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
+      "slice": "8",
+      "width": "8px",
+      "fill": true,
+      "padding": "2px 10px",
+      "headerPadding": "2px 10px",
+      "bodyPadding": "2px 10px",
+      "textColor": "#e6ebf5",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0.04em"
+    }
+  }
+}
