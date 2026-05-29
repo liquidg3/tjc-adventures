@@ -5,34 +5,31 @@ import {
   DEFAULT_UI_THEME,
   loadUiAssets,
   mergeUiTheme,
+  ROLE_KIND,
   UI_ROLE_LABELS,
   UI_ROLE_ORDER,
+  boxJoin,
+  type BarRole,
+  type BoxValue,
+  type CardRole,
+  type ChromeRole,
+  type OutlineRole,
   type UiAssetEntry,
-  type UiChromeRole,
   type UiChromeRoleId,
   type UiTheme,
 } from "./ui-theme-state";
 
 const UI_THEME_URL = "/__ui-theme";
 
-const SLICE_PRESETS = [
-  { label: "Small bar", slice: "8", width: "8px", fill: true },
-  { label: "Large bar", slice: "12", width: "12px", fill: true },
-  { label: "Header card", slice: "28 12 12 12", width: "28px 12px 12px 12px", fill: true },
-  { label: "Header 2x", slice: "52 24 24 24", width: "26px 12px 12px 12px", fill: true },
-  { label: "Outline", slice: "12", width: "12px", fill: false },
+/** Per-kind presets the user can stamp onto a role. */
+const BAR_PRESETS: Array<{ label: string; slice: number; width: number }> = [
+  { label: "bar_round_small", slice: 8, width: 8 },
+  { label: "bar_round_large", slice: 12, width: 12 },
 ];
-
-const BUTTON_VARIANT_ROLES: UiChromeRoleId[] = [
-  "button-hover",
-  "button-active",
-  "button-disabled",
-];
-
-const HEADER_CARD_ROLES: UiChromeRoleId[] = [
-  "card-home",
-  "card-content",
-  "panel-side",
+const CARD_PRESETS: Array<{ label: string; slice: BoxValue; width: BoxValue }> = [
+  { label: "header (1x)", slice: { top: 28, right: 12, bottom: 12, left: 12 }, width: { top: 28, right: 12, bottom: 12, left: 12 } },
+  { label: "header (2x)", slice: { top: 52, right: 24, bottom: 24, left: 24 }, width: { top: 26, right: 12, bottom: 12, left: 12 } },
+  { label: "blade", slice: { top: 28, right: 12, bottom: 12, left: 12 }, width: { top: 28, right: 12, bottom: 12, left: 12 } },
 ];
 
 export function UiBuilder() {
@@ -72,16 +69,28 @@ export function UiBuilder() {
   }, [assets, assetFilter]);
 
   const role = theme.roles[selectedRole];
+  const kind = ROLE_KIND[selectedRole];
   const selectedAsset = assets.find((asset) => asset.url === role.image);
   const dirty = JSON.stringify(theme) !== JSON.stringify(savedTheme);
 
-  function updateRole(id: UiChromeRoleId, patch: Partial<UiChromeRole>) {
-    setTheme({
-      ...theme,
-      roles: {
-        ...theme.roles,
-        [id]: { ...theme.roles[id], ...patch },
-      },
+  function patchRole(id: UiChromeRoleId, patch: Partial<ChromeRole>) {
+    setTheme((current) => {
+      const role = current.roles[id];
+      const next: ChromeRole = { ...role, ...patch } as ChromeRole;
+      // When the image changes, derive a sane slice from the filename so the
+      // user doesn't immediately hit a "middle = 0×0" garbage state. Only
+      // overrides slice when the patch didn't include one explicitly.
+      if (
+        typeof patch.image === "string" &&
+        patch.image !== role.image &&
+        !("slice" in patch)
+      ) {
+        Object.assign(next, suggestSliceForImage(patch.image, next.kind));
+      }
+      return {
+        ...current,
+        roles: { ...current.roles, [id]: next },
+      };
     });
   }
 
@@ -98,28 +107,6 @@ export function UiBuilder() {
   function resetTheme() {
     setTheme(cloneTheme(DEFAULT_UI_THEME));
     setPendingReset(false);
-  }
-
-  function matchButtonGeometry(id: UiChromeRoleId) {
-    const base = theme.roles["button-default"];
-    updateRole(id, {
-      slice: base.slice,
-      width: base.width,
-      padding: base.padding,
-      headerPadding: base.headerPadding,
-      bodyPadding: base.bodyPadding,
-      uppercase: base.uppercase,
-      letterSpacing: base.letterSpacing,
-    });
-  }
-
-  function setHeaderPaddingFromSlice(id: UiChromeRoleId) {
-    const role = theme.roles[id];
-    const slice = parseBox(role.slice, "");
-    const padding = parseBox(role.headerPadding, "px");
-    updateRole(id, {
-      headerPadding: formatBox({ ...padding, top: Math.max(slice.top, padding.top) }, "px"),
-    });
   }
 
   function discardChanges() {
@@ -145,7 +132,10 @@ export function UiBuilder() {
       <header>
         <h1>UI Builder</h1>
         <p>
-          Map imported UI pack images onto Studio chrome roles.
+          Map Kenney UI assets to Studio chrome roles. Each role has its own
+          kind ({" "}
+          <code>bar</code>, <code>card</code>, <code>outline</code>) — controls
+          shown match the kind so card knobs don't leak onto buttons.
           {" "}
           <span className="dim">
             {assets.length} assets · {dirty ? "unsaved changes" : "saved"}
@@ -162,7 +152,7 @@ export function UiBuilder() {
               className={`ui-role-button ${selectedRole === id ? "on" : ""}`}
               onClick={() => setSelectedRole(id)}
             >
-              {UI_ROLE_LABELS[id]}
+              {UI_ROLE_LABELS[id]} <span className="dim">· {ROLE_KIND[id]}</span>
             </button>
           ))}
           <button className="lb-reset" onClick={() => setPendingReset(true)}>
@@ -178,8 +168,8 @@ export function UiBuilder() {
             <div className="confirm-box ui-confirm-box">
               <div className="confirm-title">Reset Theme</div>
               <p>
-                Replace the current draft with the default sci-fi theme. This
-                will stay local until you hit Save.
+                Replace the current draft with the default sci-fi theme. Stays
+                local until you Save.
               </p>
               <div className="confirm-actions">
                 <button className="panel-save" onClick={() => setPendingReset(false)}>
@@ -197,29 +187,32 @@ export function UiBuilder() {
           <div className="ui-editor-head">
             <div>
               <h2>{UI_ROLE_LABELS[selectedRole]}</h2>
-              <p className="dim">{selectedAsset ? `${selectedAsset.pack}/${selectedAsset.name}` : role.image}</p>
+              <p className="dim">
+                kind: {kind} · {selectedAsset ? `${selectedAsset.pack}/${selectedAsset.name}` : role.image}
+              </p>
             </div>
-            <RolePreview label={UI_ROLE_LABELS[selectedRole]} role={role} />
+            {/* Render the role through the SAME real chrome that the right
+                column shows — no inline styles, no min-height cheats. What
+                you see here is what every other instance looks like. */}
+            <div className="ui-editor-head-preview">
+              {renderExample(selectedRole, UI_ROLE_LABELS[selectedRole])}
+            </div>
           </div>
 
-          {BUTTON_VARIANT_ROLES.includes(selectedRole) && (
-            <div className="ui-role-hint">
-              <span>Button variants should use the same slice and padding as Button.</span>
-              <button onClick={() => matchButtonGeometry(selectedRole)}>
-                Match Button geometry
-              </button>
-            </div>
-          )}
-
-          {HEADER_CARD_ROLES.includes(selectedRole) && (
-            <div className="ui-role-hint">
+          {kind === "card" && (
+            <p className="ui-role-hint">
               <span>
-                Header cards need top padding high enough to move content below the header band.
+                <b>Header band height = slice top</b> ({(role as CardRole).slice.top}px).
+                The title element matches it via <code>min-height</code>; the body sits below.
               </span>
-              <button onClick={() => setHeaderPaddingFromSlice(selectedRole)}>
-                Use slice as header
-              </button>
-            </div>
+            </p>
+          )}
+          {kind === "outline" && (
+            <p className="ui-role-hint">
+              <span>
+                Outline-only: the middle of the source image is not painted. Use <code>fillColor</code> on the caller (e.g. <code>.lb-grid</code>) for a solid background.
+              </span>
+            </p>
           )}
 
           <label className="ui-field">
@@ -227,7 +220,7 @@ export function UiBuilder() {
             <input
               value={assetFilter}
               onChange={(e) => setAssetFilter(e.target.value)}
-              placeholder="button, header, bar, grey..."
+              placeholder="bar, header, blade, grey..."
             />
             <span className="dim">
               Showing {filteredAssets.length} of {assets.length}
@@ -239,7 +232,7 @@ export function UiBuilder() {
               <button
                 key={asset.url}
                 className={`ui-asset-tile raw ${asset.url === role.image ? "selected" : ""}`}
-                onClick={() => updateRole(selectedRole, { image: asset.url })}
+                onClick={() => patchRole(selectedRole, { image: asset.url })}
                 title={`${asset.pack}/${asset.name}`}
               >
                 <img src={asset.url} alt="" />
@@ -249,146 +242,29 @@ export function UiBuilder() {
 
           <SlicePreview role={role} />
 
-          <div className="ui-preset-row">
-            {SLICE_PRESETS.map((preset) => (
-              <button
-                key={preset.label}
-                onClick={() =>
-                  updateRole(selectedRole, {
-                    slice: preset.slice,
-                    width: preset.width,
-                    fill: preset.fill,
-                  })
-                }
-              >
-                {preset.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="ui-control-grid">
-            <BoxNumberEditor
-              label="Slice"
-              value={role.slice}
-              unit=""
-              min={0}
-              max={128}
-              onChange={(slice) => updateRole(selectedRole, { slice })}
-            />
-            <BoxNumberEditor
-              label="Border width"
-              value={role.width}
-              unit="px"
-              min={0}
-              max={80}
-              onChange={(width) => updateRole(selectedRole, { width })}
-            />
-            <BoxNumberEditor
-              label="Padding"
-              value={role.padding}
-              unit="px"
-              min={0}
-              max={80}
-              onChange={(padding) => updateRole(selectedRole, { padding })}
-            />
-            {HEADER_CARD_ROLES.includes(selectedRole) && (
-              <>
-                <BoxNumberEditor
-                  label="Header padding"
-                  value={role.headerPadding}
-                  unit="px"
-                  min={0}
-                  max={120}
-                  onChange={(headerPadding) => updateRole(selectedRole, { headerPadding })}
-                />
-                <BoxNumberEditor
-                  label="Body padding"
-                  value={role.bodyPadding}
-                  unit="px"
-                  min={0}
-                  max={120}
-                  onChange={(bodyPadding) => updateRole(selectedRole, { bodyPadding })}
-                />
-              </>
-            )}
-            <label className="ui-field">
-              <span>Text color</span>
-              <input
-                type="color"
-                value={normalizeColor(role.textColor)}
-                onChange={(e) => updateRole(selectedRole, { textColor: e.target.value })}
-              />
-            </label>
-            <label className="ui-field">
-              <span>Fill color</span>
-              <input
-                type="color"
-                value={normalizeColor(role.fillColor)}
-                onChange={(e) => updateRole(selectedRole, { fillColor: e.target.value })}
-              />
-            </label>
-            <label className="ui-check">
-              <input
-                type="checkbox"
-                checked={role.fill}
-                onChange={(e) => updateRole(selectedRole, { fill: e.target.checked })}
-              />
-              Fill center
-            </label>
-            <label className="ui-check">
-              <input
-                type="checkbox"
-                checked={role.uppercase}
-                onChange={(e) => updateRole(selectedRole, { uppercase: e.target.checked })}
-              />
-              Uppercase
-            </label>
-            <label className="ui-field">
-              <span>Letter spacing</span>
-              <input
-                value={role.letterSpacing}
-                onChange={(e) => updateRole(selectedRole, { letterSpacing: e.target.value })}
-                placeholder="0.05em"
-              />
-            </label>
-          </div>
+          {kind === "bar" && (
+            <BarEditor role={role as BarRole} onPatch={(p) => patchRole(selectedRole, p)} />
+          )}
+          {kind === "card" && (
+            <CardEditor role={role as CardRole} onPatch={(p) => patchRole(selectedRole, p)} />
+          )}
+          {kind === "outline" && (
+            <OutlineEditor role={role as OutlineRole} onPatch={(p) => patchRole(selectedRole, p)} />
+          )}
         </section>
 
         <aside className="ui-preview-panel">
-          <h3>Preview</h3>
+          <h3>Examples</h3>
+          <p className="dim">One per role. Click any to edit; the selected role is outlined here and highlighted in the left list.</p>
           <div className="ui-preview-wall">
-            <button>Default</button>
-            <button className="on">Active</button>
-            <button disabled>Disabled</button>
-            <input value="Input field" readOnly />
-            <div className="ui-preview-badges">
-              <span className="badge">Default</span>
-              <span className="badge ok">Set</span>
-              <span className="badge miss">Missing</span>
-              <span className="badge kind-3d">3D</span>
-              <span className="badge kind-ui">UI</span>
-            </div>
-            <div className="ui-preview-toolbar">Toolbar</div>
-            <div className="ui-preview-card-home">
-              <strong>Vertical Shooter Level Builder</strong>
-              <span>Paint scenery and altitude onto a top-down grid for the scroller.</span>
-              <em>Ready</em>
-            </div>
-            <div className="ui-preview-card-content">
-              <strong>Content Card</strong>
-              <span>
-                Pack, slot, and preview card shell with enough copy to wrap over
-                multiple lines.
-              </span>
-            </div>
-            <div className="ui-preview-side">
-              <strong>Side Panel</strong>
-              <span>
-                Inspector and palette chrome with stacked controls and wrapped
-                helper text.
-              </span>
-            </div>
-            <div className="ui-preview-grid">Grid outline</div>
+            {UI_ROLE_ORDER.map((id) => (
+              <PreviewExample
+                key={id}
+                id={id}
+                selected={selectedRole === id}
+                onClick={() => setSelectedRole(id)}
+              />
+            ))}
           </div>
 
           <h3>Cursors</h3>
@@ -424,25 +300,93 @@ export function UiBuilder() {
   );
 }
 
-function BoxNumberEditor({
-  label,
-  value,
-  unit,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  unit: string;
-  min: number;
-  max: number;
-  onChange: (value: string) => void;
-}) {
-  const box = parseBox(value, unit);
-  const set = (key: keyof BoxValue, next: number) => {
-    onChange(formatBox({ ...box, [key]: clamp(Math.round(next), min, max) }, unit));
-  };
+// ---------------------------------------------------------------------------
+// Per-kind editors
+// ---------------------------------------------------------------------------
+
+function BarEditor({ role, onPatch }: { role: BarRole; onPatch: (p: Partial<BarRole>) => void }) {
+  return (
+    <div className="ui-control-grid">
+      <div className="ui-preset-row">
+        {BAR_PRESETS.map((p) => (
+          <button key={p.label} onClick={() => onPatch({ slice: p.slice, width: p.width })}>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <NumberField label="Slice (px)" value={role.slice} min={0} max={128} onChange={(slice) => onPatch({ slice })} />
+      <NumberField label="Border width (px)" value={role.width} min={0} max={80} onChange={(width) => onPatch({ width })} />
+      <BoxField label="Padding" value={role.padding} min={0} max={80} onChange={(padding) => onPatch({ padding })} />
+      <ColorField label="Text color" value={role.textColor} onChange={(textColor) => onPatch({ textColor })} />
+      <ColorField label="Fill color" value={role.fillColor} onChange={(fillColor) => onPatch({ fillColor })} />
+      <CheckField label="Uppercase" value={role.uppercase} onChange={(uppercase) => onPatch({ uppercase })} />
+      <TextField label="Letter spacing" value={role.letterSpacing} onChange={(letterSpacing) => onPatch({ letterSpacing })} placeholder="0.05em" />
+    </div>
+  );
+}
+
+function CardEditor({ role, onPatch }: { role: CardRole; onPatch: (p: Partial<CardRole>) => void }) {
+  return (
+    <div className="ui-control-grid">
+      <div className="ui-preset-row">
+        {CARD_PRESETS.map((p) => (
+          <button key={p.label} onClick={() => onPatch({ slice: p.slice, width: p.width })}>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <BoxField label="Slice (px)" value={role.slice} min={0} max={128} onChange={(slice) => onPatch({ slice })} />
+      <BoxField label="Border width (px)" value={role.width} min={0} max={128} onChange={(width) => onPatch({ width })} />
+      <BoxField label="Header padding" value={role.padHeader} min={0} max={80} onChange={(padHeader) => onPatch({ padHeader })} />
+      <BoxField label="Body padding" value={role.padBody} min={0} max={120} onChange={(padBody) => onPatch({ padBody })} />
+      <ColorField label="Header text color" value={role.headerTextColor} onChange={(headerTextColor) => onPatch({ headerTextColor })} />
+      <ColorField label="Body text color" value={role.bodyTextColor} onChange={(bodyTextColor) => onPatch({ bodyTextColor })} />
+      <ColorField label="Fill color" value={role.fillColor} onChange={(fillColor) => onPatch({ fillColor })} />
+      <CheckField label="Uppercase title" value={role.headerUppercase} onChange={(headerUppercase) => onPatch({ headerUppercase })} />
+      <TextField label="Letter spacing" value={role.letterSpacing} onChange={(letterSpacing) => onPatch({ letterSpacing })} placeholder="0.05em" />
+    </div>
+  );
+}
+
+function OutlineEditor({ role, onPatch }: { role: OutlineRole; onPatch: (p: Partial<OutlineRole>) => void }) {
+  return (
+    <div className="ui-control-grid">
+      <NumberField label="Slice (px)" value={role.slice} min={0} max={128} onChange={(slice) => onPatch({ slice })} />
+      <NumberField label="Border width (px)" value={role.width} min={0} max={80} onChange={(width) => onPatch({ width })} />
+      <BoxField label="Padding" value={role.padding} min={0} max={80} onChange={(padding) => onPatch({ padding })} />
+      <ColorField label="Text color" value={role.textColor} onChange={(textColor) => onPatch({ textColor })} />
+      <ColorField label="Fill color" value={role.fillColor} onChange={(fillColor) => onPatch({ fillColor })} />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Tiny form fields
+// ---------------------------------------------------------------------------
+
+function NumberField({
+  label, value, min, max, onChange,
+}: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
+  return (
+    <label className="ui-field">
+      <span>{label}</span>
+      <input
+        type="number"
+        min={min}
+        max={max}
+        step={1}
+        value={value}
+        onChange={(e) => onChange(clamp(Number.parseInt(e.target.value || "0", 10), min, max))}
+      />
+    </label>
+  );
+}
+
+function BoxField({
+  label, value, min, max, onChange,
+}: { label: string; value: BoxValue; min: number; max: number; onChange: (b: BoxValue) => void }) {
+  const set = (key: keyof BoxValue, n: number) =>
+    onChange({ ...value, [key]: clamp(Math.round(n), min, max) });
   return (
     <fieldset className="ui-box-editor">
       <legend>{label}</legend>
@@ -454,8 +398,8 @@ function BoxNumberEditor({
             min={min}
             max={max}
             step={1}
-            value={box[key]}
-            onChange={(e) => set(key, Number(e.target.value))}
+            value={value[key]}
+            onChange={(e) => set(key, Number.parseInt(e.target.value || "0", 10))}
           />
         </label>
       ))}
@@ -463,33 +407,143 @@ function BoxNumberEditor({
   );
 }
 
-function RolePreview({ label, role }: { label: string; role: UiChromeRole }) {
+function ColorField({
+  label, value, onChange,
+}: { label: string; value: string; onChange: (v: string) => void }) {
+  const v = normalizeColor(value);
+  return (
+    <label className="ui-field ui-color-field">
+      <span>{label}</span>
+      <span className="ui-color-row">
+        <input
+          type="color"
+          value={v}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <code className="ui-color-hex">{v}</code>
+      </span>
+    </label>
+  );
+}
+
+function CheckField({
+  label, value, onChange,
+}: { label: string; value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="ui-check">
+      <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} />
+      {label}
+    </label>
+  );
+}
+
+function TextField({
+  label, value, onChange, placeholder,
+}: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return (
+    <label className="ui-field">
+      <span>{label}</span>
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+    </label>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Previews
+// ---------------------------------------------------------------------------
+
+/**
+ * One example chrome per role, labelled with the role name so left-side
+ * buttons and right-side examples line up 1:1. Clicking an example also
+ * selects it for editing — bridges the gap between "what does this role do"
+ * and "how do I tweak it".
+ */
+function PreviewExample({
+  id, selected, onClick,
+}: { id: UiChromeRoleId; selected: boolean; onClick: () => void }) {
+  const label = UI_ROLE_LABELS[id];
+  const node = renderExample(id, label);
   return (
     <div
-      className="ui-role-preview"
-      style={{
-        borderImageSource: `url(${role.image})`,
-        borderImageSlice: `${role.slice}${role.fill ? " fill" : ""}`,
-        borderImageWidth: role.width,
-        padding: role.padding,
-        color: role.textColor,
-        backgroundColor: role.fillColor,
-        textTransform: role.uppercase ? "uppercase" : "none",
-        letterSpacing: role.letterSpacing,
-      }}
+      className={`ui-preview-example ${selected ? "is-selected" : ""}`}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
     >
-      {label}
+      <span className="ui-preview-example-label">{label}</span>
+      <div className="ui-preview-example-stage">{node}</div>
     </div>
   );
 }
 
-function SlicePreview({ role }: { role: UiChromeRole }) {
+/** Per-role example chrome — what the role looks like in real Studio markup. */
+function renderExample(id: UiChromeRoleId, label: string) {
+  switch (id) {
+    case "button-default":
+      return <button>{label}</button>;
+    case "button-hover":
+      // Faked: real :hover requires pointer. Show hover-painted via class hook.
+      return <button className="is-hover-preview">{label}</button>;
+    case "button-active":
+      return <button className="on">{label}</button>;
+    case "button-critical":
+      return <button className="critical">{label}</button>;
+    case "button-disabled":
+      return <button disabled>{label}</button>;
+    case "input":
+      return <input value={label} readOnly />;
+    case "toolbar":
+      return <div className="ui-preview-toolbar">{label}</div>;
+    case "badge-default":
+      return <span className="badge">{label}</span>;
+    case "card-home":
+      return (
+        <div className="ui-preview-card-home">
+          <span className="studio-card-title">{label}</span>
+          <div className="studio-card-body">
+            <span className="studio-card-desc">Home-page launcher card.</span>
+            <span className="studio-card-badge">Ready</span>
+          </div>
+        </div>
+      );
+    case "card-content":
+      return (
+        <div className="ui-preview-card-content">
+          <span className="studio-card-title">{label}</span>
+          <div className="studio-card-body">
+            <span className="studio-card-desc">Slot / pack / preview card with copy.</span>
+          </div>
+        </div>
+      );
+    case "panel-side":
+      return (
+        <div className="ui-preview-side">
+          <span className="studio-card-title">{label}</span>
+          <div className="studio-card-body">
+            <span className="studio-card-desc">Inspector / palette chrome.</span>
+          </div>
+        </div>
+      );
+    case "grid-outline":
+      return <div className="ui-preview-grid">{label}</div>;
+    default:
+      return <span>{label}</span>;
+  }
+}
+
+function SlicePreview({ role }: { role: ChromeRole }) {
   const [size, setSize] = useState({ w: 0, h: 0 });
-  const slices = parseSlice(role.slice);
-  const top = size.h ? clampPct((slices.top / size.h) * 100) : 0;
-  const right = size.w ? clampPct(100 - (slices.right / size.w) * 100) : 100;
-  const bottom = size.h ? clampPct(100 - (slices.bottom / size.h) * 100) : 100;
-  const left = size.w ? clampPct((slices.left / size.w) * 100) : 0;
+  const slice: BoxValue =
+    role.kind === "card"
+      ? role.slice
+      : { top: role.slice, right: role.slice, bottom: role.slice, left: role.slice };
+  const top = size.h ? clampPct((slice.top / size.h) * 100) : 0;
+  const right = size.w ? clampPct(100 - (slice.right / size.w) * 100) : 100;
+  const bottom = size.h ? clampPct(100 - (slice.bottom / size.h) * 100) : 100;
+  const left = size.w ? clampPct((slice.left / size.w) * 100) : 0;
+  const middleW = size.w ? size.w - slice.left - slice.right : 0;
+  const middleH = size.h ? size.h - slice.top - slice.bottom : 0;
+  const invalid = size.w > 0 && (middleW <= 0 || middleH <= 0);
   return (
     <div className="ui-slice-preview">
       <div className="ui-slice-stage">
@@ -510,45 +564,60 @@ function SlicePreview({ role }: { role: UiChromeRole }) {
           </>
         )}
       </div>
-      <span className="dim">
-        Source {size.w || "?"}×{size.h || "?"} · slice {role.slice}
-        {role.fill ? " fill" : " outline"}
+      <span className={`dim ui-slice-info ${invalid ? "ui-slice-info-bad" : ""}`}>
+        Source {size.w || "?"}×{size.h || "?"} · slice {boxJoin(slice)}
+        {role.kind === "outline" ? " (outline)" : " fill"}
+        {size.w > 0 && (
+          <>
+            {" · middle "}
+            <b>{middleW}×{middleH}px</b>
+            {invalid &&
+              " — edges overlap, body has no source pixels to stretch. Reduce slice top/bottom or left/right."}
+          </>
+        )}
       </span>
     </div>
   );
 }
 
-function parseSlice(value: string) {
-  const nums = value
-    .split(/\s+/)
-    .map((part) => Number.parseFloat(part))
-    .filter((n) => Number.isFinite(n));
-  const [a = 0, b = a, c = a, d = b] = nums;
-  return { top: a, right: b, bottom: c, left: d };
-}
-
-interface BoxValue {
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
-}
-
-function parseBox(value: string, unit: string): BoxValue {
-  const nums = value
-    .split(/\s+/)
-    .map((part) => Number.parseFloat(unit ? part.replace(unit, "") : part))
-    .filter((n) => Number.isFinite(n));
-  const [a = 0, b = a, c = a, d = b] = nums;
-  return { top: a, right: b, bottom: c, left: d };
-}
-
-function formatBox(box: BoxValue, unit: string) {
-  const values = [box.top, box.right, box.bottom, box.left].map((v) => `${v}${unit}`);
-  if (box.top === box.right && box.top === box.bottom && box.top === box.left) return values[0];
-  if (box.top === box.bottom && box.right === box.left) return `${values[0]} ${values[1]}`;
-  if (box.right === box.left) return `${values[0]} ${values[1]} ${values[2]}`;
-  return values.join(" ");
+/**
+ * Cheap filename-based slice recommendation. Pure heuristic, runs synchronously
+ * the moment the user clicks an asset. Picks values that leave a healthy middle
+ * band for the Kenney sci-fi families we ship — beats letting the user inherit
+ * the previous role's slice and end up with overlapping edges.
+ */
+function suggestSliceForImage(url: string, kind: ChromeRole["kind"]): Partial<ChromeRole> {
+  const name = url.split("/").pop()?.toLowerCase() ?? "";
+  const isDouble = /\/double\//i.test(url) || /_2x\b/i.test(name);
+  const mul = isDouble ? 2 : 1;
+  if (kind === "card") {
+    // Header band height varies by header variant; bottom row is always ~6-8 px
+    // of screw decoration. Source cards are 192×64 (Double = 384×128).
+    let top = 22;
+    if (name.includes("header_large")) top = 24;
+    else if (name.includes("header_notch")) top = 24;
+    else if (name.includes("header_small")) top = 12;
+    else if (name.includes("header_blade")) top = 22;
+    else if (name.includes("panel_glass")) top = 12;
+    const slice = {
+      top: top * mul,
+      right: 12 * mul,
+      bottom: 8 * mul,
+      left: 12 * mul,
+    };
+    return {
+      slice,
+      width: { top: top * mul, right: 12 * mul, bottom: 8 * mul, left: 12 * mul },
+    } as Partial<ChromeRole>;
+  }
+  if (kind === "bar") {
+    // bar_round_small = 96×16 → slice 8; bar_round_large = 96×24 → slice 12
+    const small = name.includes("small");
+    const slice = small ? 8 : 12;
+    return { slice, width: slice } as Partial<ChromeRole>;
+  }
+  // outline: keep current numeric slice; not derived from filename
+  return {};
 }
 
 function clampPct(value: number) {

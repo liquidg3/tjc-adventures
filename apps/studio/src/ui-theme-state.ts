@@ -1,7 +1,32 @@
+/**
+ * UI theme — Studio chrome roles, each typed as a kind-specific recipe.
+ *
+ * The previous flat schema treated every chrome element the same (image, slice,
+ * padding, headerPadding, bodyPadding, …) which forced cards to fight buttons
+ * for the same knobs. This rewrite splits roles into three kinds:
+ *
+ *   • BarRole       — horizontal pill from a bar_* image, single uniform slice
+ *                     (buttons, inputs, toolbars, badges).
+ *   • CardRole      — composite header-band card (button_square_header_* or
+ *                     panel_glass_*). The source image's top slice IS the
+ *                     header-band pixel height; we publish that as
+ *                     --ui-<id>-header-h so the title element can match it via
+ *                     min-height — text naturally lands inside the band.
+ *   • OutlineRole   — same border-image as a bar but `fill` is off; used by the
+ *                     Level Builder grid frame and any "outline only" chrome.
+ *
+ * Cursors stay separate (no border-image, no padding, just url + hotspot).
+ *
+ * Migration: any field can arrive in the old flat shape; the merger detects
+ * legacy entries and folds them into the right kind without losing the user's
+ * image picks.
+ */
+
 export type UiChromeRoleId =
   | "button-default"
   | "button-hover"
   | "button-active"
+  | "button-critical"
   | "button-disabled"
   | "input"
   | "toolbar"
@@ -11,19 +36,60 @@ export type UiChromeRoleId =
   | "grid-outline"
   | "badge-default";
 
-export interface UiChromeRole {
+export type RoleKind = "bar" | "card" | "outline";
+
+/** Canonical 4-tuple for CSS box values (slice, padding). */
+export interface BoxValue {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export interface BarRole {
+  kind: "bar";
   image: string;
-  slice: string;
-  width: string;
-  fill: boolean;
-  padding: string;
-  headerPadding: string;
-  bodyPadding: string;
+  /** Uniform slice in source pixels (border-image-slice = N N N N). */
+  slice: number;
+  /** Border-image-width in pixels (defaults to slice when 0). */
+  width: number;
+  padding: BoxValue;
   textColor: string;
   fillColor: string;
   uppercase: boolean;
   letterSpacing: string;
 }
+
+export interface CardRole {
+  kind: "card";
+  image: string;
+  /** Per-edge slice (top = header band height in source pixels). */
+  slice: BoxValue;
+  /** Border-image-width per edge (defaults to slice when 0). */
+  width: BoxValue;
+  /** Padding INSIDE the header zone (around the title text). */
+  padHeader: BoxValue;
+  /** Padding INSIDE the body zone (around desc/controls). */
+  padBody: BoxValue;
+  headerTextColor: string;
+  bodyTextColor: string;
+  fillColor: string;
+  headerUppercase: boolean;
+  letterSpacing: string;
+}
+
+export interface OutlineRole {
+  kind: "outline";
+  image: string;
+  /** Uniform slice (no `fill` keyword — middle stays transparent). */
+  slice: number;
+  width: number;
+  padding: BoxValue;
+  textColor: string;
+  fillColor: string;
+}
+
+export type ChromeRole = BarRole | CardRole | OutlineRole;
 
 export interface UiCursorRole {
   image: string;
@@ -31,13 +97,46 @@ export interface UiCursorRole {
 }
 
 export interface UiTheme {
-  version: 1;
-  roles: Record<UiChromeRoleId, UiChromeRole>;
+  version: 2;
+  roles: Record<UiChromeRoleId, ChromeRole>;
   cursors: {
     default: UiCursorRole;
     pointer: UiCursorRole;
   };
 }
+
+/** Fixed mapping role-id → kind. Roles never change kind. */
+export const ROLE_KIND: Record<UiChromeRoleId, RoleKind> = {
+  "button-default": "bar",
+  "button-hover": "bar",
+  "button-active": "bar",
+  "button-critical": "bar",
+  "button-disabled": "bar",
+  input: "bar",
+  toolbar: "bar",
+  "card-home": "card",
+  "card-content": "card",
+  "panel-side": "card",
+  "grid-outline": "outline",
+  "badge-default": "bar",
+};
+
+export const UI_ROLE_LABELS: Record<UiChromeRoleId, string> = {
+  "button-default": "Button",
+  "button-hover": "Button hover",
+  "button-active": "Button active",
+  "button-critical": "Button critical",
+  "button-disabled": "Button disabled",
+  input: "Input",
+  toolbar: "Toolbar",
+  "card-home": "Home card",
+  "card-content": "Content card",
+  "panel-side": "Side panel",
+  "grid-outline": "Grid outline",
+  "badge-default": "Badge",
+};
+
+export const UI_ROLE_ORDER = Object.keys(UI_ROLE_LABELS) as UiChromeRoleId[];
 
 export interface UiAssetEntry {
   name: string;
@@ -52,37 +151,59 @@ interface UiPackManifest {
   items: Array<{ name: string; file: string }>;
 }
 
-export const UI_ROLE_LABELS: Record<UiChromeRoleId, string> = {
-  "button-default": "Button",
-  "button-hover": "Button hover",
-  "button-active": "Button active",
-  "button-disabled": "Button disabled",
-  input: "Input",
-  toolbar: "Toolbar",
-  "card-home": "Home card",
-  "card-content": "Content card",
-  "panel-side": "Side panel",
-  "grid-outline": "Grid outline",
-  "badge-default": "Badge",
-};
+// -------------------------------------------------------------------------
+// Defaults
+// -------------------------------------------------------------------------
 
-export const UI_ROLE_ORDER = Object.keys(UI_ROLE_LABELS) as UiChromeRoleId[];
+function box(t: number, r = t, b = t, l = r): BoxValue {
+  return { top: t, right: r, bottom: b, left: l };
+}
 
-const ROLE_DEFAULTS: Omit<UiChromeRole, "image"> = {
-  slice: "8",
-  width: "8px",
-  fill: true,
-  padding: "0",
-  headerPadding: "0",
-  bodyPadding: "0",
-  textColor: "#e6ebf5",
-  fillColor: "transparent",
-  uppercase: false,
-  letterSpacing: "0",
-};
+function bar(image: string, opts: Partial<Omit<BarRole, "kind" | "image">> = {}): BarRole {
+  return {
+    kind: "bar",
+    image,
+    slice: opts.slice ?? 8,
+    width: opts.width ?? opts.slice ?? 8,
+    padding: opts.padding ?? box(7, 16),
+    textColor: opts.textColor ?? "#ffffff",
+    fillColor: opts.fillColor ?? "transparent",
+    uppercase: opts.uppercase ?? true,
+    letterSpacing: opts.letterSpacing ?? "0.05em",
+  };
+}
+
+function card(image: string, opts: Partial<Omit<CardRole, "kind" | "image">> = {}): CardRole {
+  const slice = opts.slice ?? box(28, 12, 12, 12);
+  return {
+    kind: "card",
+    image,
+    slice,
+    width: opts.width ?? slice,
+    padHeader: opts.padHeader ?? box(0, 14, 0, 14),
+    padBody: opts.padBody ?? box(8, 16, 16, 16),
+    headerTextColor: opts.headerTextColor ?? "#ffffff",
+    bodyTextColor: opts.bodyTextColor ?? "#2b3358",
+    fillColor: opts.fillColor ?? "transparent",
+    headerUppercase: opts.headerUppercase ?? true,
+    letterSpacing: opts.letterSpacing ?? "0.05em",
+  };
+}
+
+function outline(image: string, opts: Partial<Omit<OutlineRole, "kind" | "image">> = {}): OutlineRole {
+  return {
+    kind: "outline",
+    image,
+    slice: opts.slice ?? 12,
+    width: opts.width ?? opts.slice ?? 12,
+    padding: opts.padding ?? box(12),
+    textColor: opts.textColor ?? "#e6ebf5",
+    fillColor: opts.fillColor ?? "transparent",
+  };
+}
 
 export const DEFAULT_UI_THEME: UiTheme = {
-  version: 1,
+  version: 2,
   cursors: {
     default: {
       image: "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_a.png",
@@ -94,124 +215,215 @@ export const DEFAULT_UI_THEME: UiTheme = {
     },
   },
   roles: {
-    "button-default": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_small.png",
-      padding: "7px 16px",
-      textColor: "#ffffff",
-      uppercase: true,
-      letterSpacing: "0.05em",
-    }),
-    "button-hover": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_gloss_small.png",
-      padding: "7px 16px",
-      textColor: "#ffffff",
-      uppercase: true,
-      letterSpacing: "0.05em",
-    }),
-    "button-active": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Green/Default/bar_round_gloss_small.png",
-      padding: "7px 16px",
-      textColor: "#f1ffec",
-      fillColor: "#22c56f",
-      uppercase: true,
-      letterSpacing: "0.05em",
-    }),
-    "button-disabled": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
-      padding: "7px 16px",
-      textColor: "#ffffff",
-      uppercase: true,
-      letterSpacing: "0.05em",
-    }),
-    input: role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
-      padding: "6px 12px",
-    }),
-    toolbar: role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png",
-      slice: "12",
-      width: "12px",
-      padding: "14px 20px",
-    }),
-    "card-home": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Double/button_square_header_large_rectangle.png",
-      slice: "52 24 24 24",
-      width: "26px 12px 12px 12px",
-      headerPadding: "6px 18px 0",
-      bodyPadding: "22px 18px 18px",
-      textColor: "#ffffff",
-      uppercase: true,
-      letterSpacing: "0.05em",
-    }),
-    "card-content": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_blade_rectangle.png",
-      slice: "28 12 12 12",
-      width: "28px 12px 12px 12px",
-      headerPadding: "6px 16px 0",
-      bodyPadding: "16px 16px 16px",
-    }),
-    "panel-side": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_notch_rectangle.png",
-      slice: "28 12 12 12",
-      width: "28px 12px 12px 12px",
-      headerPadding: "6px 16px 0",
-      bodyPadding: "30px 16px 16px",
-    }),
-    "grid-outline": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png",
-      slice: "12",
-      width: "12px",
-      fill: false,
-      padding: "12px",
-    }),
-    "badge-default": role({
-      image: "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
-      padding: "2px 10px",
-      letterSpacing: "0.04em",
-    }),
+    "button-default": bar("/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_small.png"),
+    "button-hover": bar("/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_gloss_small.png"),
+    "button-active": bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Green/Default/bar_round_gloss_small.png",
+      { textColor: "#f1ffec" },
+    ),
+    "button-critical": bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Red/Default/bar_round_gloss_small.png",
+      { textColor: "#fff0f0" },
+    ),
+    "button-disabled": bar("/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png"),
+    input: bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
+      { textColor: "#e6ebf5", uppercase: false, padding: box(6, 12) },
+    ),
+    toolbar: bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png",
+      { slice: 12, width: 12, padding: box(14, 20), uppercase: false },
+    ),
+    "card-home": card(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Double/button_square_header_large_rectangle.png",
+      {
+        slice: box(52, 24, 24, 24),
+        width: box(26, 12, 12, 12),
+        padHeader: box(0, 18, 0, 18),
+        padBody: box(14, 18, 18, 18),
+        headerTextColor: "#ffffff",
+        bodyTextColor: "#2b3358",
+      },
+    ),
+    "card-content": card(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_blade_rectangle.png",
+      {
+        slice: box(28, 12, 12, 12),
+        width: box(28, 12, 12, 12),
+        padHeader: box(0, 14, 0, 14),
+        padBody: box(12, 16, 16, 16),
+        headerTextColor: "#ffffff",
+        bodyTextColor: "#2b3358",
+      },
+    ),
+    "panel-side": card(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_notch_rectangle.png",
+      {
+        slice: box(28, 12, 12, 12),
+        width: box(28, 12, 12, 12),
+        padHeader: box(0, 14, 0, 14),
+        padBody: box(12, 16, 16, 16),
+        headerTextColor: "#1a2240",
+        bodyTextColor: "#2b3358",
+      },
+    ),
+    "grid-outline": outline(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_large.png",
+      { slice: 12, width: 12 },
+    ),
+    "badge-default": bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
+      { padding: box(2, 10), letterSpacing: "0.04em", uppercase: false },
+    ),
   },
 };
+
+// -------------------------------------------------------------------------
+// Merge / migrate (handles both v2 native and v1 flat legacy shape)
+// -------------------------------------------------------------------------
 
 export function mergeUiTheme(raw: unknown): UiTheme {
   const base = cloneTheme(DEFAULT_UI_THEME);
   if (!raw || typeof raw !== "object") return base;
-  const obj = raw as Partial<UiTheme>;
+  const obj = raw as Partial<UiTheme> & { roles?: Record<string, unknown> };
   if (obj.cursors && typeof obj.cursors === "object") {
-    base.cursors.default = mergeCursor(base.cursors.default, obj.cursors.default);
-    base.cursors.pointer = mergeCursor(base.cursors.pointer, obj.cursors.pointer);
+    base.cursors.default = mergeCursor(base.cursors.default, (obj.cursors as Record<string, unknown>).default);
+    base.cursors.pointer = mergeCursor(base.cursors.pointer, (obj.cursors as Record<string, unknown>).pointer);
   }
   if (obj.roles && typeof obj.roles === "object") {
     for (const id of UI_ROLE_ORDER) {
-      base.roles[id] = mergeRole(base.roles[id], obj.roles[id]);
+      const incoming = obj.roles[id];
+      if (!incoming) continue;
+      base.roles[id] = mergeRole(base.roles[id], incoming, ROLE_KIND[id]);
     }
   }
   return base;
 }
 
+function mergeRole(base: ChromeRole, raw: unknown, kind: RoleKind): ChromeRole {
+  if (!raw || typeof raw !== "object") return base;
+  const obj = raw as Record<string, unknown>;
+  // If the incoming entry already declares its kind matching ours, hydrate
+  // straight from typed fields. Otherwise treat as legacy flat shape.
+  const isNative = obj.kind === kind;
+  if (kind === "bar") return hydrateBar(base as BarRole, obj, isNative);
+  if (kind === "card") return hydrateCard(base as CardRole, obj, isNative);
+  return hydrateOutline(base as OutlineRole, obj, isNative);
+}
+
+function hydrateBar(base: BarRole, obj: Record<string, unknown>, native: boolean): BarRole {
+  return {
+    kind: "bar",
+    image: str(obj.image, base.image),
+    slice: native
+      ? num(obj.slice, base.slice)
+      : firstNum(obj.slice, base.slice),
+    width: native ? num(obj.width, base.width) : firstNum(obj.width, base.width),
+    padding: parseBoxLegacy(obj.padding, base.padding),
+    textColor: str(obj.textColor, base.textColor),
+    fillColor: str(obj.fillColor, base.fillColor),
+    uppercase: bool(obj.uppercase, base.uppercase),
+    letterSpacing: str(obj.letterSpacing, base.letterSpacing),
+  };
+}
+
+function hydrateCard(base: CardRole, obj: Record<string, unknown>, native: boolean): CardRole {
+  return {
+    kind: "card",
+    image: str(obj.image, base.image),
+    slice: parseBoxLegacy(obj.slice, base.slice),
+    width: parseBoxLegacy(obj.width, base.width),
+    padHeader: native
+      ? parseBoxLegacy(obj.padHeader, base.padHeader)
+      : parseBoxLegacy(obj.headerPadding, base.padHeader),
+    padBody: native
+      ? parseBoxLegacy(obj.padBody, base.padBody)
+      : parseBoxLegacy(obj.bodyPadding, base.padBody),
+    headerTextColor: str(obj.headerTextColor ?? obj.textColor, base.headerTextColor),
+    bodyTextColor: str(obj.bodyTextColor, base.bodyTextColor),
+    fillColor: str(obj.fillColor, base.fillColor),
+    headerUppercase: bool(obj.headerUppercase ?? obj.uppercase, base.headerUppercase),
+    letterSpacing: str(obj.letterSpacing, base.letterSpacing),
+  };
+}
+
+function hydrateOutline(base: OutlineRole, obj: Record<string, unknown>, native: boolean): OutlineRole {
+  return {
+    kind: "outline",
+    image: str(obj.image, base.image),
+    slice: native ? num(obj.slice, base.slice) : firstNum(obj.slice, base.slice),
+    width: native ? num(obj.width, base.width) : firstNum(obj.width, base.width),
+    padding: parseBoxLegacy(obj.padding, base.padding),
+    textColor: str(obj.textColor, base.textColor),
+    fillColor: str(obj.fillColor, base.fillColor),
+  };
+}
+
+function mergeCursor(base: UiCursorRole, raw: unknown): UiCursorRole {
+  if (!raw || typeof raw !== "object") return base;
+  const obj = raw as Record<string, unknown>;
+  return {
+    image: str(obj.image, base.image),
+    hotspot: Array.isArray(obj.hotspot) && obj.hotspot.length === 2
+      ? [num(obj.hotspot[0], base.hotspot[0]), num(obj.hotspot[1], base.hotspot[1])]
+      : [...base.hotspot],
+  };
+}
+
+// -------------------------------------------------------------------------
+// CSS application
+// -------------------------------------------------------------------------
+
 export function applyUiTheme(theme: UiTheme, root: HTMLElement = document.documentElement) {
-  for (const id of UI_ROLE_ORDER) {
-    const role = theme.roles[id];
-    const prefix = `--ui-${id}`;
-    root.style.setProperty(`${prefix}-image`, cssUrl(role.image));
-    root.style.setProperty(`${prefix}-slice`, `${role.slice}${role.fill ? " fill" : ""}`);
-    root.style.setProperty(`${prefix}-width`, role.width);
-    root.style.setProperty(`${prefix}-padding`, role.padding);
-    root.style.setProperty(`${prefix}-header-padding`, role.headerPadding);
-    root.style.setProperty(`${prefix}-body-padding`, role.bodyPadding);
-    root.style.setProperty(`${prefix}-color`, role.textColor);
-    root.style.setProperty(`${prefix}-bg`, role.fillColor);
-    root.style.setProperty(`${prefix}-transform`, role.uppercase ? "uppercase" : "none");
-    root.style.setProperty(`${prefix}-spacing`, role.letterSpacing);
+  for (const id of UI_ROLE_ORDER) applyRole(root, id, theme.roles[id]);
+  setCursor(root, "default", theme.cursors.default, "default");
+  setCursor(root, "pointer", theme.cursors.pointer, "pointer");
+}
+
+function applyRole(root: HTMLElement, id: UiChromeRoleId, role: ChromeRole) {
+  const p = `--ui-${id}`;
+  root.style.setProperty(`${p}-image`, cssUrl(role.image));
+  if (role.kind === "card") {
+    root.style.setProperty(`${p}-slice`, `${boxJoin(role.slice)} fill`);
+    root.style.setProperty(`${p}-width`, boxPx(role.width));
+    root.style.setProperty(`${p}-header-h`, `${role.slice.top}px`);
+    root.style.setProperty(`${p}-pad-header`, boxPx(role.padHeader));
+    root.style.setProperty(`${p}-pad-body`, boxPx(role.padBody));
+    root.style.setProperty(`${p}-header-color`, role.headerTextColor);
+    root.style.setProperty(`${p}-body-color`, role.bodyTextColor);
+    root.style.setProperty(`${p}-bg`, role.fillColor);
+    root.style.setProperty(`${p}-header-transform`, role.headerUppercase ? "uppercase" : "none");
+    root.style.setProperty(`${p}-spacing`, role.letterSpacing);
+    return;
   }
+  if (role.kind === "bar") {
+    root.style.setProperty(`${p}-slice`, `${role.slice} fill`);
+    root.style.setProperty(`${p}-width`, `${role.width}px`);
+    root.style.setProperty(`${p}-padding`, boxPx(role.padding));
+    root.style.setProperty(`${p}-color`, role.textColor);
+    root.style.setProperty(`${p}-bg`, role.fillColor);
+    root.style.setProperty(`${p}-transform`, role.uppercase ? "uppercase" : "none");
+    root.style.setProperty(`${p}-spacing`, role.letterSpacing);
+    return;
+  }
+  // outline
+  root.style.setProperty(`${p}-slice`, `${role.slice}`);
+  root.style.setProperty(`${p}-width`, `${role.width}px`);
+  root.style.setProperty(`${p}-padding`, boxPx(role.padding));
+  root.style.setProperty(`${p}-color`, role.textColor);
+  root.style.setProperty(`${p}-bg`, role.fillColor);
+}
+
+function setCursor(root: HTMLElement, id: "default" | "pointer", cursor: UiCursorRole, fallback: string) {
   root.style.setProperty(
-    "--ui-cursor-default",
-    `${cssUrl(theme.cursors.default.image)} ${theme.cursors.default.hotspot[0]} ${theme.cursors.default.hotspot[1]}, default`,
-  );
-  root.style.setProperty(
-    "--ui-cursor-pointer",
-    `${cssUrl(theme.cursors.pointer.image)} ${theme.cursors.pointer.hotspot[0]} ${theme.cursors.pointer.hotspot[1]}, pointer`,
+    `--ui-cursor-${id}`,
+    `${cssUrl(cursor.image)} ${cursor.hotspot[0]} ${cursor.hotspot[1]}, ${fallback}`,
   );
 }
+
+// -------------------------------------------------------------------------
+// Asset loading + helpers
+// -------------------------------------------------------------------------
 
 export async function loadUiAssets(): Promise<UiAssetEntry[]> {
   const idx = await fetch("/ui/index.json")
@@ -242,63 +454,95 @@ export async function loadUiAssets(): Promise<UiAssetEntry[]> {
 
 export function cloneTheme(theme: UiTheme): UiTheme {
   return {
-    version: 1,
+    version: 2,
     cursors: {
       default: { image: theme.cursors.default.image, hotspot: [...theme.cursors.default.hotspot] },
       pointer: { image: theme.cursors.pointer.image, hotspot: [...theme.cursors.pointer.hotspot] },
     },
     roles: Object.fromEntries(
-      UI_ROLE_ORDER.map((id) => [id, { ...theme.roles[id] }]),
-    ) as Record<UiChromeRoleId, UiChromeRole>,
+      UI_ROLE_ORDER.map((id) => [id, cloneRole(theme.roles[id])]),
+    ) as Record<UiChromeRoleId, ChromeRole>,
   };
 }
 
-function role(config: { image: string } & Partial<Omit<UiChromeRole, "image">>): UiChromeRole {
-  const merged = { ...ROLE_DEFAULTS, ...config };
-  return {
-    ...merged,
-    headerPadding: config.headerPadding ?? config.padding ?? ROLE_DEFAULTS.headerPadding,
-    bodyPadding: config.bodyPadding ?? config.padding ?? ROLE_DEFAULTS.bodyPadding,
-  };
+function cloneRole(role: ChromeRole): ChromeRole {
+  if (role.kind === "card") {
+    return {
+      ...role,
+      slice: { ...role.slice },
+      width: { ...role.width },
+      padHeader: { ...role.padHeader },
+      padBody: { ...role.padBody },
+    };
+  }
+  return { ...role, padding: { ...role.padding } };
 }
 
-function mergeRole(base: UiChromeRole, raw: unknown): UiChromeRole {
-  if (!raw || typeof raw !== "object") return base;
-  const obj = raw as Partial<UiChromeRole>;
-  return {
-    image: str(obj.image, base.image),
-    slice: str(obj.slice, base.slice),
-    width: str(obj.width, base.width),
-    fill: typeof obj.fill === "boolean" ? obj.fill : base.fill,
-    padding: str(obj.padding, base.padding),
-    headerPadding: str(obj.headerPadding, base.headerPadding),
-    bodyPadding: str(obj.bodyPadding, base.bodyPadding),
-    textColor: str(obj.textColor, base.textColor),
-    fillColor: str(obj.fillColor, base.fillColor),
-    uppercase: typeof obj.uppercase === "boolean" ? obj.uppercase : base.uppercase,
-    letterSpacing: str(obj.letterSpacing, base.letterSpacing),
-  };
+// -------------------------------------------------------------------------
+// CSS box / value helpers
+// -------------------------------------------------------------------------
+
+export function boxJoin(b: BoxValue): string {
+  if (b.top === b.right && b.top === b.bottom && b.top === b.left) return `${b.top}`;
+  if (b.top === b.bottom && b.right === b.left) return `${b.top} ${b.right}`;
+  if (b.right === b.left) return `${b.top} ${b.right} ${b.bottom}`;
+  return `${b.top} ${b.right} ${b.bottom} ${b.left}`;
 }
 
-function mergeCursor(base: UiCursorRole, raw: unknown): UiCursorRole {
-  if (!raw || typeof raw !== "object") return base;
-  const obj = raw as Partial<UiCursorRole> & { hotspot?: unknown };
-  return {
-    image: str(obj.image, base.image),
-    hotspot: Array.isArray(obj.hotspot) && obj.hotspot.length === 2
-      ? [num(obj.hotspot[0], base.hotspot[0]), num(obj.hotspot[1], base.hotspot[1])]
-      : [...base.hotspot],
-  };
+export function boxPx(b: BoxValue): string {
+  const j = boxJoin(b);
+  return j.split(" ").map((n) => `${n}px`).join(" ");
 }
 
-function cssUrl(url: string) {
+export function parseBoxLegacy(raw: unknown, fallback: BoxValue): BoxValue {
+  if (typeof raw === "number" && Number.isFinite(raw)) return box(raw);
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const obj = raw as Partial<BoxValue>;
+    return {
+      top: num(obj.top, fallback.top),
+      right: num(obj.right, fallback.right),
+      bottom: num(obj.bottom, fallback.bottom),
+      left: num(obj.left, fallback.left),
+    };
+  }
+  if (typeof raw === "string") {
+    const nums = raw
+      .replace(/[a-z%]/gi, "")
+      .split(/\s+/)
+      .map((part) => Number.parseFloat(part))
+      .filter((n) => Number.isFinite(n));
+    if (nums.length === 0) return { ...fallback };
+    const [a = 0, b = a, c = a, d = b] = nums;
+    return { top: a, right: b, bottom: c, left: d };
+  }
+  return { ...fallback };
+}
+
+// -------------------------------------------------------------------------
+// scalar helpers
+// -------------------------------------------------------------------------
+
+function cssUrl(url: string): string {
   return `url(${JSON.stringify(url).slice(1, -1)})`;
 }
 
-function str(value: unknown, fallback: string) {
+function str(value: unknown, fallback: string): string {
   return typeof value === "string" && value ? value : fallback;
 }
 
-function num(value: unknown, fallback: number) {
+function num(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function bool(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
+}
+
+function firstNum(raw: unknown, fallback: number): number {
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") {
+    const m = raw.match(/-?\d+(\.\d+)?/);
+    return m ? Number.parseFloat(m[0]) : fallback;
+  }
+  return fallback;
 }

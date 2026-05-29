@@ -67,17 +67,19 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
 
   return (
     <div ref={ref} className="card pack-card">
+      {/* Title FIRST so it lands in the content-card header band; thumb +
+          controls live in the body zone below. */}
+      <div className="card-head">
+        <span className="card-title">{pack.name}</span>
+        <span className={`badge kind-${pack.kind}`}>{KIND_LABEL[pack.kind]}</span>
+        <span className="badge ok">CC0</span>
+      </div>
       <div className="kenney-thumb">
         {meta?.preview ? (
           <img src={meta.preview} alt={pack.name} loading="lazy" />
         ) : (
           <div className="kenney-thumb-ph">{err ? "no preview" : "loading…"}</div>
         )}
-      </div>
-      <div className="card-head">
-        <span className="card-title">{pack.name}</span>
-        <span className={`badge kind-${pack.kind}`}>{KIND_LABEL[pack.kind]}</span>
-        <span className="badge ok">CC0</span>
       </div>
       <div className="card-controls">
         <button

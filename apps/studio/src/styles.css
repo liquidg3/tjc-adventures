@@ -193,9 +193,22 @@ section h2 {
 .card-controls button.on { background: #2a6df0; border-color: #2a6df0; color: #fff; }
 
 /* ---- studio landing launcher ---- */
-.studio-home { padding: 48px 24px; max-width: 1000px; margin: 0 auto; }
+.studio-home { padding: 48px 24px; max-width: 1100px; margin: 0 auto; }
 .studio-home header h1 { margin: 0 0 6px; }
 .studio-home header p { margin: 0 0 28px; }
+.studio-group { margin: 0 0 36px; }
+.studio-group-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6affb0;
+  margin: 0 0 4px;
+}
+.studio-group-desc {
+  font-size: 0.82rem;
+  color: #9aa3b5;
+  margin: 0 0 14px;
+}
 .studio-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -220,7 +233,22 @@ section h2 {
 .studio-card:hover:not(:disabled) { transform: translateY(-3px); border-color: #9ad0ff; }
 .studio-card:disabled { opacity: 0.45; cursor: not-allowed; }
 .studio-card-title { font-size: 1.3rem; font-weight: 700; color: #cdd7ff; }
-.studio-card-desc { font-size: 0.82rem; color: #9fb5d3; flex: 1; }
+.studio-card-desc { font-size: 0.82rem; flex: 1; /* color inherits from .studio-card-body so the themed body-color wins */ }
+
+/* Headings INSIDE a side-panel-themed container honor the panel-side
+ * header-color (otherwise the bare h1/h2/h3 #d5e3ff rule wins and the user's
+ * picked header color looks broken). */
+.preview-sidepanel h1, .preview-sidepanel h2, .preview-sidepanel h3,
+.preset-editor h1, .preset-editor h2, .preset-editor h3,
+.confirm-box h1, .confirm-box h2, .confirm-box h3,
+.lb-palette h1, .lb-palette h2, .lb-palette h3,
+.asset-stage h1, .asset-stage h2, .asset-stage h3,
+.asset-list h1, .asset-list h2, .asset-list h3,
+.ui-role-list h1, .ui-role-list h2, .ui-role-list h3,
+.ui-editor-panel h1, .ui-editor-panel h2, .ui-editor-panel h3,
+.ui-preview-panel h1, .ui-preview-panel h2, .ui-preview-panel h3 {
+  color: var(--ui-panel-side-header-color, #d5e3ff);
+}
 .studio-card-badge { font-size: 0.68rem; padding: 3px 10px; border-radius: 999px; background: #16361f; color: #6affb0; }
 .studio-card.status-wip .studio-card-badge { background: #3a3018; color: #ffd76a; }
 .studio-card.status-soon .studio-card-badge { background: #2a2f44; color: #8a96c8; }
@@ -855,7 +883,10 @@ section h2 {
 
 /* ---- kenney pack browser ---- */
 .kenney-thumb {
-  width: 100%;
+  /* Mirror the card-head's -16px sideways pull so the thumb edges line up
+   * with the header band rather than being inset by body padding. */
+  width: calc(100% + 32px);
+  margin: 0 -16px;
   aspect-ratio: 16 / 10;
   background: #0b1020;
   display: flex;
@@ -1122,8 +1153,10 @@ a, button, [role="button"], select, .studio-card, .kenney-filter,
 
 /* ========================================================================
  * Buttons — bar_round_small (Blue), gloss on hover, Green when on, Red dest.
+ * `.studio-card` is technically a <button> too but it gets the headered-card
+ * recipe later in this file — exclude it from every bar-button rule below.
  * ====================================================================== */
-button, .panel-save, .kenney-import, .kenney-filter,
+button:not(.studio-card), .panel-save, .kenney-import, .kenney-filter,
 .lb-tool-group button, .preview-toolbar button, .studio-back {
   background: transparent;
   border: 0;
@@ -1143,18 +1176,19 @@ button, .panel-save, .kenney-import, .kenney-filter,
   transition: filter 0.12s;
   box-shadow: none;
 }
-button:hover, .panel-save:hover, .kenney-import:hover,
+button:not(.studio-card):hover, .panel-save:hover, .kenney-import:hover,
 .kenney-filter:hover, .lb-tool-group button:hover, .preview-toolbar button:hover {
   border-image-source: var(--ui-button-hover-image, var(--kui-bar-sm-blue-gloss));
   border-image-slice: var(--ui-button-hover-slice, 8 fill);
   border-image-width: var(--ui-button-hover-width, 8px);
   background-color: var(--ui-button-hover-bg, transparent);
+  color: var(--ui-button-hover-color, #ffffff);
   filter: brightness(1.12);
 }
-button:active { border-image-source: var(--ui-button-hover-image, var(--kui-bar-sm-blue-gloss)); filter: brightness(0.92); }
+button:not(.studio-card):active { border-image-source: var(--ui-button-hover-image, var(--kui-bar-sm-blue-gloss)); filter: brightness(0.92); }
 
 /* on/active state — Green */
-button.on, .kenney-filter.on, .lb-tool-group button.on,
+button:not(.studio-card).on, .kenney-filter.on, .lb-tool-group button.on,
 .kenney-import.done, .draft-state.saved, .confirm-accept {
   border-image-source: var(--ui-button-active-image, var(--kui-bar-sm-green-gloss)) !important;
   border-image-slice: var(--ui-button-active-slice, 8 fill);
@@ -1165,15 +1199,24 @@ button.on, .kenney-filter.on, .lb-tool-group button.on,
 }
 
 /* destructive — Red */
-.lb-reset, .kenney-import.err {
-  border-image-source: var(--kui-bar-sm-red-gloss) !important;
+/* Critical / destructive — Red bar from the `button-critical` role. Apply
+ * .critical to any <button> (or use .lb-reset / .err shorthand for legacy
+ * call-sites). Color + slice + width all themed; falls back to the bundled
+ * Red gloss bar if the theme didn't load yet. */
+button:not(.studio-card).critical, .critical, .lb-reset, .kenney-import.err {
+  border-image-source: var(--ui-button-critical-image, var(--kui-bar-sm-red-gloss)) !important;
+  border-image-slice: var(--ui-button-critical-slice, 8 fill);
+  border-image-width: var(--ui-button-critical-width, 8px);
+  color: var(--ui-button-critical-color, #fff0f0);
+  background-color: var(--ui-button-critical-bg, transparent);
 }
 
 /* disabled — Grey */
-button:disabled, .panel-save:disabled, .kenney-import.busy {
+button:not(.studio-card):disabled, .panel-save:disabled, .kenney-import.busy {
   border-image-source: var(--ui-button-disabled-image, var(--kui-bar-sm-grey)) !important;
   border-image-slice: var(--ui-button-disabled-slice, 8 fill);
   border-image-width: var(--ui-button-disabled-width, 8px);
+  color: var(--ui-button-disabled-color, #ffffff);
   background-color: var(--ui-button-disabled-bg, transparent);
   opacity: 0.55;
   filter: none;
@@ -1232,7 +1275,9 @@ input[type=range] {
  * ====================================================================== */
 
 /* Slot/pack cards (header + body + screws): blade-cut Blue, content goes BELOW
- * the blade. Reserve top padding for the header band. */
+ * the blade. padBody covers the card's main padding (with enough top to clear
+ * the header band rendered by the image's top slice). card-head sits in the
+ * header zone with its own pad-header. */
 .card, .pack-card, .preview-shell, .fixed-preview {
   background: transparent;
   background-color: var(--ui-card-content-bg, transparent);
@@ -1244,11 +1289,18 @@ input[type=range] {
   border-image-repeat: stretch;
   border-radius: 0;
   box-shadow: none;
-  padding: var(--ui-card-content-padding, 0);
+  padding: var(--ui-card-content-pad-body, 12px 16px 16px);
+  color: var(--ui-card-content-body-color, #2b3358);
 }
-
-.card-head {
-  padding: var(--ui-card-content-header-padding, 8px 12px);
+.card .card-head, .pack-card .card-head {
+  min-height: var(--ui-card-content-header-h, 28px);
+  padding: var(--ui-card-content-pad-header, 0 14px);
+  margin: calc(var(--ui-card-content-header-h, 28px) * -1) -16px 8px;
+  display: flex;
+  align-items: center;
+  color: var(--ui-card-content-header-color, #ffffff);
+  text-transform: var(--ui-card-content-header-transform, uppercase);
+  letter-spacing: var(--ui-card-content-spacing, 0.05em);
 }
 
 /* Side panels & modals — Grey notch */
@@ -1263,7 +1315,8 @@ input[type=range] {
   border-image-width: var(--ui-panel-side-width, 28px 12px 12px 12px);
   border-image-repeat: stretch;
   border-radius: 0;
-  padding: var(--ui-panel-side-body-padding, 30px 16px 16px);
+  padding: var(--ui-panel-side-pad-body, 30px 16px 16px);
+  color: var(--ui-panel-side-body-color, #2b3358);
 }
 
 /* Confirm / preset editor — blue to draw the eye */
@@ -1316,37 +1369,54 @@ input[type=range] {
   border-image-width: var(--ui-card-home-width, 26px 12px 12px 12px);
   border-image-repeat: stretch;
   border-radius: 0;
-  padding: var(--ui-card-home-padding, 0);
+  padding: 0;
   min-height: 140px;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
-.studio-card:hover {
-  filter: brightness(1.08);
+.studio-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.studio-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -12px rgba(106, 255, 176, 0.45);
+}
+.studio-card:active:not(:disabled) {
+  transform: translateY(-1px);
+  transition-duration: 0.06s;
 }
 .studio-card.status-soon {
   border-image-source: var(--kui-card-large-2x-grey);
-  filter: none;
   cursor: not-allowed;
+  opacity: 0.7;
 }
+/* Title element occupies the header band. min-height = the source image's top
+ * slice (--header-h) so it lines up with the painted band exactly. */
 .studio-card-title {
-  /* sits inside the blue header band */
-  color: #ffffff;
+  min-height: var(--ui-card-home-header-h, 26px);
+  padding: var(--ui-card-home-pad-header, 0 18px);
+  color: var(--ui-card-home-header-color, #ffffff);
+  text-transform: var(--ui-card-home-header-transform, uppercase);
+  letter-spacing: var(--ui-card-home-spacing, 0.05em);
   font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   font-size: 0.95rem;
-  margin-bottom: 0;
-  padding: var(--ui-card-home-header-padding, 6px 18px 0);
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+.studio-card-body {
+  padding: var(--ui-card-home-pad-body, 14px 18px 18px);
+  color: var(--ui-card-home-body-color, #2b3358);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .studio-card-desc {
-  color: #2b3358;                  /* dark grey-blue to read on light grey body */
   font-size: 0.82rem;
   line-height: 1.4;
   flex: 1;
-  padding: var(--ui-card-home-body-padding, 22px 18px 18px);
 }
 .studio-card-badge {
   align-self: flex-end;
@@ -1354,8 +1424,6 @@ input[type=range] {
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin: 0 18px 12px;
-  padding: 0 2px 0;
 }
 
 /* Badges in card-head pills — keep small Kenney bar style */
@@ -1395,8 +1463,11 @@ h3 { font-size: 0.95rem; }
   grid-template-columns: minmax(180px, 220px) minmax(420px, 1fr) minmax(280px, 360px);
   gap: 16px;
   align-items: start;
+  margin-top: 18px;
 }
 
+/* UI Builder column shells use the same Side panel role as every other Studio
+ * side panel, so theming changes show up here too. */
 .ui-role-list,
 .ui-editor-panel,
 .ui-preview-panel {
@@ -1407,7 +1478,9 @@ h3 { font-size: 0.95rem; }
   border-image-slice: var(--ui-panel-side-slice, 28 12 12 12 fill);
   border-image-width: var(--ui-panel-side-width, 28px 12px 12px 12px);
   border-image-repeat: stretch;
-  padding: var(--ui-panel-side-padding, 30px 16px 16px);
+  border-radius: 0;
+  padding: var(--ui-panel-side-pad-body, 30px 16px 16px);
+  color: var(--ui-panel-side-body-color, #e6ebf5);
 }
 
 .ui-role-list {
@@ -1427,17 +1500,9 @@ h3 { font-size: 0.95rem; }
   gap: 16px;
   align-items: start;
 }
+.ui-editor-head-preview { display: flex; flex-direction: column; gap: 0; }
+.ui-editor-head-preview > * { width: 100%; box-sizing: border-box; }
 
-.ui-role-preview {
-  min-height: 48px;
-  border-style: solid;
-  border-color: transparent;
-  border-image-repeat: stretch;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  background: transparent;
-}
 
 .ui-role-hint {
   display: flex;
@@ -1463,6 +1528,26 @@ h3 { font-size: 0.95rem; }
   margin: 10px 0;
   font-size: 0.78rem;
   color: #9aa6c4;
+}
+.ui-color-field .ui-color-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.ui-color-field input[type=color] {
+  width: 36px; height: 28px; padding: 0; border-radius: 4px;
+  background: transparent; cursor: pointer;
+}
+.ui-color-swatch {
+  width: 28px; height: 28px; border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: inline-block;
+}
+.ui-color-hex {
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: #cdd7ff;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 3px;
 }
 
 .ui-check {
@@ -1611,6 +1696,11 @@ h3 { font-size: 0.95rem; }
   width: 2px;
 }
 
+.ui-slice-info { display: block; margin-top: 6px; line-height: 1.4; }
+.ui-slice-info b { color: #cdd7ff; font-weight: 700; }
+.ui-slice-info-bad { color: #ff8a8a !important; }
+.ui-slice-info-bad b { color: #ffbcbc; }
+
 .ui-preset-row {
   display: flex;
   flex-wrap: wrap;
@@ -1620,7 +1710,7 @@ h3 { font-size: 0.95rem; }
 
 .ui-preview-wall {
   display: grid;
-  gap: 10px;
+  gap: 14px;
 }
 
 .ui-preview-wall input {
@@ -1628,12 +1718,45 @@ h3 { font-size: 0.95rem; }
   box-sizing: border-box;
 }
 
-.ui-preview-badges {
+/* Each example tile = a labelled rectangle showing one role's chrome. The
+ * selected role gets a left-edge marker + faint outline so the user can match
+ * left-list button → right-pane example. Hover/click selects to edit. */
+.ui-preview-example {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px 10px 14px;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.015);
 }
+.ui-preview-example:hover { background: rgba(255, 255, 255, 0.04); }
+.ui-preview-example.is-selected {
+  border-left-color: #6affb0;
+  background: rgba(106, 255, 176, 0.06);
+}
+.ui-preview-example-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9aa3b5;
+}
+.ui-preview-example.is-selected .ui-preview-example-label { color: #6affb0; }
+.ui-preview-example-stage { display: flex; flex-direction: column; gap: 0; }
+.ui-preview-example-stage > * { width: 100%; box-sizing: border-box; }
+
+/* Faked hover state — real :hover requires pointer; this class hook lets the
+ * hover example show its hover painted persistently. */
+button.is-hover-preview {
+  border-image-source: var(--ui-button-hover-image, var(--kui-bar-sm-blue-gloss));
+  filter: brightness(1.12);
+}
+
+/* Highlight the currently selected role in the left list so list and examples
+ * stay in lockstep. */
+.ui-role-button.on { box-shadow: inset 4px 0 0 #6affb0; }
 
 .ui-preview-toolbar,
 .ui-preview-card-home,
@@ -1653,31 +1776,76 @@ h3 { font-size: 0.95rem; }
   color: var(--ui-toolbar-color, #e6ebf5);
 }
 
+/* Preview cards use the same title/body markup the real Studio uses, so
+ * the new kind=card recipe (header-h on title, padBody on body wrapper) shows
+ * up in the preview pane exactly as it will in real chrome. */
+.ui-preview-card-home,
+.ui-preview-card-content,
+.ui-preview-side {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-height: 140px;
+}
+
 .ui-preview-card-home {
   border-image-source: var(--ui-card-home-image, var(--kui-card-large-2x-blue));
   border-image-slice: var(--ui-card-home-slice, 52 24 24 24 fill);
   border-image-width: var(--ui-card-home-width, 26px 12px 12px 12px);
-  padding: var(--ui-card-home-padding, 0);
-  color: var(--ui-card-home-color, #ffffff);
-  min-height: 140px;
-  text-transform: var(--ui-card-home-transform, uppercase);
+}
+.ui-preview-card-home .studio-card-title {
+  min-height: var(--ui-card-home-header-h, 26px);
+  padding: var(--ui-card-home-pad-header, 0 18px);
+  color: var(--ui-card-home-header-color, #ffffff);
+  text-transform: var(--ui-card-home-header-transform, uppercase);
   letter-spacing: var(--ui-card-home-spacing, 0.05em);
+  font-weight: 700; font-size: 0.95rem;
+  display: flex; align-items: center; box-sizing: border-box;
+}
+.ui-preview-card-home .studio-card-body {
+  padding: var(--ui-card-home-pad-body, 14px 18px 18px);
+  color: var(--ui-card-home-body-color, #2b3358);
+  flex: 1; display: flex; flex-direction: column; gap: 8px;
 }
 
 .ui-preview-card-content {
   border-image-source: var(--ui-card-content-image, var(--kui-card-blade-blue));
   border-image-slice: var(--ui-card-content-slice, 28 12 12 12 fill);
   border-image-width: var(--ui-card-content-width, 28px 12px 12px 12px);
-  padding: var(--ui-card-content-padding, 0);
-  color: var(--ui-card-content-color, #e6ebf5);
+}
+.ui-preview-card-content .studio-card-title {
+  min-height: var(--ui-card-content-header-h, 28px);
+  padding: var(--ui-card-content-pad-header, 0 14px);
+  color: var(--ui-card-content-header-color, #ffffff);
+  text-transform: var(--ui-card-content-header-transform, uppercase);
+  letter-spacing: var(--ui-card-content-spacing, 0.05em);
+  font-weight: 700; font-size: 0.85rem;
+  display: flex; align-items: center; box-sizing: border-box;
+}
+.ui-preview-card-content .studio-card-body {
+  padding: var(--ui-card-content-pad-body, 12px 16px 16px);
+  color: var(--ui-card-content-body-color, #2b3358);
+  flex: 1; display: flex; flex-direction: column; gap: 6px;
 }
 
 .ui-preview-side {
   border-image-source: var(--ui-panel-side-image, var(--kui-card-notch-grey));
   border-image-slice: var(--ui-panel-side-slice, 28 12 12 12 fill);
   border-image-width: var(--ui-panel-side-width, 28px 12px 12px 12px);
-  padding: var(--ui-panel-side-padding, 0);
-  color: var(--ui-panel-side-color, #e6ebf5);
+}
+.ui-preview-side .studio-card-title {
+  min-height: var(--ui-panel-side-header-h, 28px);
+  padding: var(--ui-panel-side-pad-header, 0 14px);
+  color: var(--ui-panel-side-header-color, #1a2240);
+  text-transform: var(--ui-panel-side-header-transform, uppercase);
+  letter-spacing: var(--ui-panel-side-spacing, 0.05em);
+  font-weight: 700; font-size: 0.85rem;
+  display: flex; align-items: center; box-sizing: border-box;
+}
+.ui-preview-side .studio-card-body {
+  padding: var(--ui-panel-side-pad-body, 12px 16px 16px);
+  color: var(--ui-panel-side-body-color, #2b3358);
+  flex: 1;
 }
 
 .ui-preview-grid {
@@ -1686,62 +1854,6 @@ h3 { font-size: 0.95rem; }
   border-image-width: var(--ui-grid-outline-width, 12px);
   padding: var(--ui-grid-outline-padding, 12px);
   background: #0a0e1a;
-}
-
-.ui-preview-card-home,
-.ui-preview-card-content,
-.ui-preview-side {
-  display: grid;
-  gap: 8px;
-}
-
-.ui-preview-card-home {
-  grid-template-rows: auto 1fr auto;
-}
-
-.ui-preview-card-home strong {
-  font-size: 0.95rem;
-  line-height: 1.15;
-  padding: var(--ui-card-home-header-padding, 6px 18px 0);
-}
-
-.ui-preview-card-home span,
-.ui-preview-card-content span,
-.ui-preview-side span {
-  color: #2b3358;
-  line-height: 1.35;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-.ui-preview-card-home span {
-  padding: var(--ui-card-home-body-padding, 22px 18px 18px);
-}
-
-.ui-preview-card-content strong {
-  padding: var(--ui-card-content-header-padding, 6px 16px 0);
-}
-
-.ui-preview-card-content span {
-  padding: var(--ui-card-content-body-padding, 16px 16px 16px);
-}
-
-.ui-preview-side strong {
-  padding: var(--ui-panel-side-header-padding, 6px 16px 0);
-}
-
-.ui-preview-side span {
-  padding: var(--ui-panel-side-body-padding, 30px 16px 16px);
-}
-
-.ui-preview-card-home em {
-  justify-self: end;
-  color: #6c7591;
-  font-style: normal;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 0 18px 12px;
 }
 
 @media (max-width: 1100px) {
