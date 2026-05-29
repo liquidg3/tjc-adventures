@@ -110,9 +110,10 @@ scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 
 ## Studio — the tuner + asset tools (`apps/studio`, :5174)
 
-Opens to a **launcher** of section cards: **3D Models**, **Asset Library**, **Asset
-Test**, **UI Builder**, **Vertical Scroller**, **Vertical Shooter Level Builder**
-(Side Scroller / Death Race coming soon).
+Opens to a **launcher** grouped by Universal Tools (3D Models, Asset Library,
+Asset Test, UI Builder) and per-mode tools — currently the **Vertical Shooter**
+group with **Test Play** + **Level Builder** (Side Scroller and Death Race
+coming soon, each will mirror the same two cards).
 
 ```bash
 npm run dev:studio   # → http://localhost:5174  (run from the repo root)

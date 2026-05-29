@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-05-28 (session 3)._
+_Last updated: 2026-05-29._
 
 ---
 
@@ -38,17 +38,34 @@ _Last updated: 2026-05-28 (session 3)._
   fetches `asset-map.json` and immediately swaps in the Kenney ship — the legacy
   one only appears for the ~50 ms before that fetch resolves. Scenery is still
   the last legacy holdout (`tree_fur`, `bush`, `rocks_small`, `tree_stylized`).
-- **ACTIVE NEXT: Studio UI Builder.** `#ui` maps imported UI-pack images onto
-  semantic chrome roles (buttons, panels, inputs, toolbars, cards, badges,
-  cursors), persists to `apps/studio/ui-theme.json`, and live-applies CSS
-  variables so the Studio can tune its own chrome. It uses a **draft/save**
-  workflow (not autosave): edits apply live for preview, `Save` writes the file,
-  `Revert` returns to last saved, and reset uses the in-app confirmation chrome.
-  The picker intentionally shows **raw assets** on a checkerboard, not assets
-  inside button chrome. The slice preview overlays the source-image cut lines.
-  Card-like roles have separate `padding`, `headerPadding`, and `bodyPadding`
-  because Kenney header cards have shaped header bands that do not line up with
-  one flat content box.
+- **ACTIVE: Studio UI Builder (rewritten this session — v2 schema).** `#ui`
+  maps imported UI-pack images onto semantic chrome roles, persists to
+  `apps/studio/ui-theme.json`, and live-applies CSS variables. The schema is
+  now a **discriminated union by kind**:
+    - `kind: "bar"` — buttons, inputs, toolbars, badges. Single uniform slice,
+      `padding`, `textColor`, `fillColor`, `uppercase`, `letterSpacing`.
+    - `kind: "card"` — Home cards, slot cards, side panels. Per-edge slice
+      (T R B L); **the source image's top slice IS the header band height**,
+      published as `--ui-<role>-header-h` and consumed by `.studio-card-title`
+      `min-height` so titles land in the band exactly. Separate `padHeader`
+      and `padBody`, `headerTextColor` / `bodyTextColor`, `headerUppercase`.
+    - `kind: "outline"` — Level Builder grid frame: same slice but no `fill`,
+      transparent middle.
+  Each role's editor panel only renders the controls for its kind, so card
+  knobs no longer leak onto buttons. Auto-migration from v1 flat shape
+  preserves user picks. Asset picker auto-clamps slice on image change via
+  `suggestSliceForImage(url, kind)` so a new image doesn't immediately yield a
+  "middle = 0×0" garbage state. `SlicePreview` shows source dims + computed
+  middle dims and red-flags overlapping edges. Roles list: 12 entries with the
+  new `button-critical` (red destructive) joining hover / active / disabled.
+  Draft / Save / Revert / Reset confirmation; raw assets shown on a
+  checkerboard (not inside themed chrome) so the user sees the actual source.
+- **Studio landing reorganized this session.** Home now groups cards: Universal
+  Tools (3D Models / Asset Library / Asset Test / UI Builder) and one section
+  per game mode (Vertical Shooter, Side Scroller [coming soon], Death Race
+  [coming soon]). Per-mode each has the same two cards: **Test Play** (was
+  "Vertical Scroller") and **Level Builder**. Adding a new game mode = adding a
+  `SectionGroup` entry in `Home.tsx`.
 - **NEW THIS SESSION → Vertical Shooter Level Builder (v1, authoring only).**
   Studio section at `#level`. Paints a 24×80 grid of `{prop?, height?}` cells
   (5 world units per cell), persists to `apps/studio/level-builder.json` via
@@ -524,15 +541,73 @@ Kenney is the next task (below).
   scale slice values 2× (`52 24 24 24 fill`). `bar_round_*` (96×16/24) is a
   horizontal pill — slice 8 for small, 12 for large. **Slice values vs source
   pixels matter** — guessing gives stretched corners.
-- **UI Builder 9-slice mental model**: `slice` cuts the source image into
-  border/corner/center regions; it does not decide where text goes. `padding`
-  controls generic content inset. Header-card roles additionally use
-  `headerPadding` and `bodyPadding` because a shaped header band and grey body
-  need independent layout. For 16px-high bars, `slice: 8` consumes the full
-  height (8 top + 8 bottom), so the source has no vertical center pixels to
-  fill; use a larger source asset or the role `fillColor` if a solid middle is
-  needed. The asset grid should stay raw/checkerboard so you can see the actual
-  PNG, not a thumbnail nested inside the current theme.
+- **UI Builder kind-aware schema** (v2 this session). Roles are now a
+  discriminated union: `bar | card | outline`. Each kind exposes only the
+  knobs that make sense for it (bar gets single slice + padding; card gets
+  per-edge slice + padHeader/padBody + split header/body text colors; outline
+  gets slice without `fill`). v1 flat themes auto-migrate to v2 in memory at
+  fetch time and persist back as v2 on first Save. **Adding new chrome roles:**
+  extend `UiChromeRoleId` + `ROLE_KIND` + `UI_ROLE_LABELS` + `DEFAULT_UI_THEME`,
+  add a CSS rule consuming the new vars, and (if needed) a `case` in
+  `renderExample(id, label)`.
+- **9-slice math constraints**: `slice.top + slice.bottom ≤ source.height`
+  and `slice.left + slice.right ≤ source.width`. Whatever's left is the body
+  band that stretches. If the sum overshoots, the middle is negative px → the
+  browser paints transparency through it, which reads as a hollow centre on
+  any element bigger than the source. `SlicePreview` now shows source dims +
+  computed middle dims and red-flags overlap. **Picking an image** also runs
+  `suggestSliceForImage(url, kind)` — a filename heuristic that pre-fills
+  reasonable slice values for the Kenney sci-fi families so a fresh image
+  doesn't start broken. For 16px-tall bars at slice 8, the centre is exactly
+  0px tall — use a taller source (`bar_round_large` = 24px) or set `fillColor`
+  on the role to paint a solid behind the transparent band.
+- **`border-image-slice` ≠ `border-image-width`**. Slice is how many SOURCE
+  pixels to cut from each edge. Width is how many RENDER pixels those edges
+  occupy. When `width ≠ slice` the corners scale (compressed or stretched)
+  and look different from the source middle stretching. Visible at any size
+  that isn't exactly the source dimensions. To make a bar look honest at any
+  element size: set `width = slice` so corners render at native source size.
+- **Card title element drives the header band, not padding-top.** The
+  `.studio-card-title` element has `min-height: var(--ui-<role>-header-h)` so
+  its outer box exactly fills the painted header band. The body wrapper
+  (`.studio-card-body`) sits below with its own padding. **Adding a header
+  band to a new component** = wrap its title in `<span class="studio-card-title">`
+  and the rest in `<div class="studio-card-body">`. Without the title
+  element, the header role's `headerTextColor` has nothing to apply to.
+- **`button:not(.studio-card)` selectors.** The Studio's Home landing cards
+  are `<button>` for clickability but they want the headered-card recipe, not
+  the bar-button recipe. Every bar-button rule (`button:hover`, `:active`,
+  `:disabled`, `.on`, `.critical`) excludes `.studio-card` via `:not()` so
+  cards keep their Kenney sci-fi panel. **Adding a new bar-button rule** =
+  include the `:not(.studio-card)` clause.
+- **`textColor` vs `fillColor`**. `textColor` → CSS `color` (foreground text);
+  `fillColor` → CSS `background-color` (the box behind the text, visible
+  wherever the border-image's middle is transparent). Two independent
+  properties; setting one doesn't imply the other. Every button state rule
+  must explicitly set both vars (the `:disabled` and `:hover` rules were
+  missing `color` for a stretch — fixed this session). **Body text colour
+  on side panels also requires removing hardcoded `color:` rules on direct
+  descendants** (e.g. `.studio-card-desc` had a hardcoded `#9fb5d3` that
+  overrode the themed body colour; it's now stripped so the cascade wins).
+- **Headings inside themed panels need an explicit override.** The bare
+  `h1, h2, h3 { color: #d5e3ff; }` rule wins by specificity inside any
+  themed container. The explicit override at the end of `styles.css` lists
+  every panel-side container (`preview-sidepanel`, `preset-editor`,
+  `confirm-box`, `lb-palette`, `asset-stage`, `asset-list`, the three UI
+  Builder columns) and points their headings at
+  `--ui-panel-side-header-color`. **Add new panel-themed surfaces to that
+  list** if you want their headings to honour the role.
+- **UI Builder columns ARE themed by panel-side.** The role list / editor /
+  examples columns ride `panel-side` so tuning that role affects them too.
+  This is meta-chrome (editor styling itself with the role being edited),
+  intentional — the user wants visual consistency. **Don't strip the theming
+  back to flat** unless asked.
+- **Pack-card markup quirk**: Asset Library pack cards reorder to put the
+  title BEFORE the thumb so the title lands in the header band. The thumb
+  uses `width: calc(100% + 32px); margin: 0 -16px` to mirror the card-head's
+  `-16px` sideways pull and align with the card frame. The `-16` is
+  hardcoded to the current `card-content.padBody` left/right; if that
+  changes, the thumb needs a matching var or it'll misalign.
 - **Level Builder data shape**: 24 wide × 80 deep grid, row-major, row 0 = far
   end of zone (top of screen at runtime), cellSize = 5 world units. Per cell
   `{ prop?: slotId, height?: 0..3 }`. See `level-builder-state.ts`. v1 persists

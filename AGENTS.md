@@ -42,6 +42,18 @@ next agent doesn't repeat it.
   new dev-endpoint-backed surface must use it; don't roll a parallel fetch +
   state dance. See `apps/studio/src/use-persisted-json.ts`. New JSON endpoints
   ride one `jsonFilePlugin(name, route, file)` factory in `vite.config.ts`.
+- **9-slice math.** `slice` cuts source pixels; `border-image-width` is render
+  pixels. `slice.top + slice.bottom ≤ source.height` (and same horizontally)
+  or the middle goes negative → hollow centre on any element bigger than the
+  source. Use the UI Builder `SlicePreview` middle-dim readout when picking.
+- **Card-kind roles need `.studio-card-title` + `.studio-card-body` markup**
+  so the title element can `min-height` the painted header band. Without
+  that markup the role's `headerTextColor` has nothing to paint.
+- **Bar-button selectors exclude `.studio-card`** (`button:not(.studio-card)`).
+  Studio's landing cards are `<button>` but want the card recipe. Any new
+  bar-button rule must include the `:not()` clause.
+- **`textColor` ≠ `fillColor`.** Text vs background-color, independent.
+  Every button state CSS rule must set both vars explicitly.
 - **Pixelation + screen-space math:** `setHardwareScalingLevel` changes render-buffer
   dims; do picking/clamp math in CSS-pixel space (`canvas.clientWidth`), not
   `getRenderWidth()`.
@@ -70,11 +82,14 @@ Studio chrome (cards/buttons/inputs/cursors) is skinned via `border-image`
 9-slice over Kenney sci-fi assets — see end-of-file block in `styles.css`.
 
 **UI Builder** (`#ui`): maps imported UI-pack images to semantic Studio chrome
-roles (buttons, inputs, toolbars, cards, panels, badges, grid outlines, cursors).
-Persists to `apps/studio/ui-theme.json` through `/__ui-theme` and live-applies CSS
-variables. It is draft/save, not autosave. The picker shows raw assets on a
-checkerboard, and card roles split header/body padding; keep expanding this
-instead of hardcoding new chrome choices in CSS.
+roles. **Schema v2 — discriminated union by kind** (`bar | card | outline`).
+Each role's editor panel only renders the controls for its kind, so card knobs
+don't leak onto buttons. Card kind publishes `--ui-<role>-header-h` (= source
+slice top) so title elements `min-height` to the band. v1 themes auto-migrate
+on fetch. Persists to `apps/studio/ui-theme.json` via `/__ui-theme`,
+live-applies CSS variables. Draft / Save / Revert / Reset. Picker shows raw
+assets on a checkerboard. Adding a role = `UiChromeRoleId` + `ROLE_KIND` +
+`UI_ROLE_LABELS` + `DEFAULT_UI_THEME` + CSS rule + `renderExample` case.
 
 **Vertical Shooter Level Builder** (`#level`): paints a 24×80 grid of
 `{prop?, height?}` cells. Persists only; scene wiring is queued after the UI
