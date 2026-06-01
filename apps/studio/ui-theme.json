@@ -1,5 +1,21 @@
 {
   "version": 2,
+  "colors": {
+    "textPrimary": "#606060",
+    "textMuted": "#919191",
+    "panelHeading": "#919191",
+    "panelBody": "#2b3358",
+    "controlLabel": "#606060",
+    "controlBorder": "#566481",
+    "controlSurface": "#10172a",
+    "focus": "#9ad0ff",
+    "selection": "#669c35",
+    "success": "#6affb0",
+    "warning": "#ffd76a",
+    "danger": "#ff8a8a",
+    "checkerDark": "#0b1020",
+    "checkerLight": "#1b2437"
+  },
   "cursors": {
     "default": {
       "image": "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_a.png",
@@ -163,39 +179,6 @@
       "letterSpacing": "0.05em"
     },
     "card-content": {
-      "kind": "card",
-      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_blade_rectangle.png",
-      "slice": {
-        "top": 34,
-        "right": 12,
-        "bottom": 14,
-        "left": 12
-      },
-      "width": {
-        "top": 31,
-        "right": 12,
-        "bottom": 12,
-        "left": 12
-      },
-      "padHeader": {
-        "top": 4,
-        "right": 16,
-        "bottom": 15,
-        "left": 16
-      },
-      "padBody": {
-        "top": 16,
-        "right": 16,
-        "bottom": 16,
-        "left": 16
-      },
-      "headerTextColor": "#e6ebf5",
-      "bodyTextColor": "#2b3358",
-      "fillColor": "transparent",
-      "headerUppercase": false,
-      "letterSpacing": "0"
-    },
-    "panel-side": {
       "kind": "card",
       "image": "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Double/panel_glass_screws.png",
       "slice": {

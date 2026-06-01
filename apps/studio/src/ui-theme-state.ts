@@ -32,7 +32,6 @@ export type UiChromeRoleId =
   | "toolbar"
   | "card-home"
   | "card-content"
-  | "panel-side"
   | "grid-outline"
   | "badge-default";
 
@@ -96,9 +95,28 @@ export interface UiCursorRole {
   hotspot: [number, number];
 }
 
+export type UiColorTokenId =
+  | "textPrimary"
+  | "textMuted"
+  | "panelHeading"
+  | "panelBody"
+  | "controlLabel"
+  | "controlBorder"
+  | "controlSurface"
+  | "focus"
+  | "selection"
+  | "success"
+  | "warning"
+  | "danger"
+  | "checkerDark"
+  | "checkerLight";
+
+export type UiColorTokens = Record<UiColorTokenId, string>;
+
 export interface UiTheme {
   version: 2;
   roles: Record<UiChromeRoleId, ChromeRole>;
+  colors: UiColorTokens;
   cursors: {
     default: UiCursorRole;
     pointer: UiCursorRole;
@@ -116,7 +134,6 @@ export const ROLE_KIND: Record<UiChromeRoleId, RoleKind> = {
   toolbar: "bar",
   "card-home": "card",
   "card-content": "card",
-  "panel-side": "card",
   "grid-outline": "outline",
   "badge-default": "bar",
 };
@@ -131,12 +148,30 @@ export const UI_ROLE_LABELS: Record<UiChromeRoleId, string> = {
   toolbar: "Toolbar",
   "card-home": "Home card",
   "card-content": "Content card",
-  "panel-side": "Side panel",
   "grid-outline": "Grid outline",
   "badge-default": "Badge",
 };
 
 export const UI_ROLE_ORDER = Object.keys(UI_ROLE_LABELS) as UiChromeRoleId[];
+
+export const UI_COLOR_LABELS: Record<UiColorTokenId, string> = {
+  textPrimary: "Text primary",
+  textMuted: "Text muted",
+  panelHeading: "Panel heading",
+  panelBody: "Panel body",
+  controlLabel: "Control label",
+  controlBorder: "Control border",
+  controlSurface: "Control surface",
+  focus: "Focus",
+  selection: "Selection",
+  success: "Success",
+  warning: "Warning",
+  danger: "Danger",
+  checkerDark: "Checker dark",
+  checkerLight: "Checker light",
+};
+
+export const UI_COLOR_ORDER = Object.keys(UI_COLOR_LABELS) as UiColorTokenId[];
 
 export interface UiAssetEntry {
   name: string;
@@ -204,6 +239,22 @@ function outline(image: string, opts: Partial<Omit<OutlineRole, "kind" | "image"
 
 export const DEFAULT_UI_THEME: UiTheme = {
   version: 2,
+  colors: {
+    textPrimary: "#e6ebf5",
+    textMuted: "#9aa6c4",
+    panelHeading: "#d5e3ff",
+    panelBody: "#2b3358",
+    controlLabel: "#dbe6ff",
+    controlBorder: "#566481",
+    controlSurface: "#10172a",
+    focus: "#9ad0ff",
+    selection: "#6affb0",
+    success: "#6affb0",
+    warning: "#ffd76a",
+    danger: "#ff8a8a",
+    checkerDark: "#0b1020",
+    checkerLight: "#1b2437",
+  },
   cursors: {
     default: {
       image: "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Default/cursor_a.png",
@@ -246,25 +297,16 @@ export const DEFAULT_UI_THEME: UiTheme = {
       },
     ),
     "card-content": card(
-      "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/button_square_header_blade_rectangle.png",
+      "/ui/kenney-ui-pack-sci-fi/PNG/Extra/Double/panel_glass_screws.png",
       {
         slice: box(28, 12, 12, 12),
-        width: box(28, 12, 12, 12),
-        padHeader: box(0, 14, 0, 14),
-        padBody: box(12, 16, 16, 16),
-        headerTextColor: "#ffffff",
+        width: box(10, 12, 12, 12),
+        padHeader: box(14, 16, 1, 16),
+        padBody: box(6, 16, 15, 16),
+        headerTextColor: "#444444",
         bodyTextColor: "#2b3358",
-      },
-    ),
-    "panel-side": card(
-      "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_notch_rectangle.png",
-      {
-        slice: box(28, 12, 12, 12),
-        width: box(28, 12, 12, 12),
-        padHeader: box(0, 14, 0, 14),
-        padBody: box(12, 16, 16, 16),
-        headerTextColor: "#1a2240",
-        bodyTextColor: "#2b3358",
+        headerUppercase: false,
+        letterSpacing: "0",
       },
     ),
     "grid-outline": outline(
@@ -290,6 +332,9 @@ export function mergeUiTheme(raw: unknown): UiTheme {
     base.cursors.default = mergeCursor(base.cursors.default, (obj.cursors as Record<string, unknown>).default);
     base.cursors.pointer = mergeCursor(base.cursors.pointer, (obj.cursors as Record<string, unknown>).pointer);
   }
+  if (obj.colors && typeof obj.colors === "object") {
+    base.colors = mergeColors(base.colors, obj.colors);
+  }
   if (obj.roles && typeof obj.roles === "object") {
     for (const id of UI_ROLE_ORDER) {
       const incoming = obj.roles[id];
@@ -298,6 +343,14 @@ export function mergeUiTheme(raw: unknown): UiTheme {
     }
   }
   return base;
+}
+
+function mergeColors(base: UiColorTokens, raw: unknown): UiColorTokens {
+  if (!raw || typeof raw !== "object") return base;
+  const obj = raw as Record<string, unknown>;
+  const next = { ...base };
+  for (const id of UI_COLOR_ORDER) next[id] = color(obj[id], base[id]);
+  return next;
 }
 
 function mergeRole(base: ChromeRole, raw: unknown, kind: RoleKind): ChromeRole {
@@ -375,9 +428,16 @@ function mergeCursor(base: UiCursorRole, raw: unknown): UiCursorRole {
 // -------------------------------------------------------------------------
 
 export function applyUiTheme(theme: UiTheme, root: HTMLElement = document.documentElement) {
+  applyColors(root, theme.colors);
   for (const id of UI_ROLE_ORDER) applyRole(root, id, theme.roles[id]);
   setCursor(root, "default", theme.cursors.default, "default");
   setCursor(root, "pointer", theme.cursors.pointer, "pointer");
+}
+
+function applyColors(root: HTMLElement, colors: UiColorTokens) {
+  for (const id of UI_COLOR_ORDER) {
+    root.style.setProperty(`--ui-color-${kebab(id)}`, colors[id]);
+  }
 }
 
 function applyRole(root: HTMLElement, id: UiChromeRoleId, role: ChromeRole) {
@@ -455,6 +515,7 @@ export async function loadUiAssets(): Promise<UiAssetEntry[]> {
 export function cloneTheme(theme: UiTheme): UiTheme {
   return {
     version: 2,
+    colors: { ...theme.colors },
     cursors: {
       default: { image: theme.cursors.default.image, hotspot: [...theme.cursors.default.hotspot] },
       pointer: { image: theme.cursors.pointer.image, hotspot: [...theme.cursors.pointer.hotspot] },
@@ -530,6 +591,12 @@ function str(value: unknown, fallback: string): string {
   return typeof value === "string" && value ? value : fallback;
 }
 
+function color(value: unknown, fallback: string): string {
+  return typeof value === "string" && /^(#[0-9a-f]{6}|transparent)$/i.test(value)
+    ? value
+    : fallback;
+}
+
 function num(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
@@ -545,4 +612,8 @@ function firstNum(raw: unknown, fallback: number): number {
     return m ? Number.parseFloat(m[0]) : fallback;
   }
   return fallback;
+}
+
+function kebab(value: string): string {
+  return value.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 }

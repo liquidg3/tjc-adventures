@@ -6,6 +6,8 @@ import {
   loadUiAssets,
   mergeUiTheme,
   ROLE_KIND,
+  UI_COLOR_LABELS,
+  UI_COLOR_ORDER,
   UI_ROLE_LABELS,
   UI_ROLE_ORDER,
   boxJoin,
@@ -16,10 +18,12 @@ import {
   type OutlineRole,
   type UiAssetEntry,
   type UiChromeRoleId,
+  type UiColorTokens,
   type UiTheme,
 } from "./ui-theme-state";
 
 const UI_THEME_URL = "/__ui-theme";
+type UiBuilderTarget = "colors" | UiChromeRoleId;
 
 /** Per-kind presets the user can stamp onto a role. */
 const BAR_PRESETS: Array<{ label: string; slice: number; width: number }> = [
@@ -39,7 +43,7 @@ export function UiBuilder() {
   const [saving, setSaving] = useState(false);
   const [pendingReset, setPendingReset] = useState(false);
   const [assets, setAssets] = useState<UiAssetEntry[]>([]);
-  const [selectedRole, setSelectedRole] = useState<UiChromeRoleId>("button-default");
+  const [selectedTarget, setSelectedTarget] = useState<UiBuilderTarget>("colors");
   const [assetFilter, setAssetFilter] = useState("");
 
   useEffect(() => {
@@ -68,9 +72,10 @@ export function UiBuilder() {
     return assets.filter((asset) => `${asset.pack}/${asset.name}`.toLowerCase().includes(q));
   }, [assets, assetFilter]);
 
-  const role = theme.roles[selectedRole];
-  const kind = ROLE_KIND[selectedRole];
-  const selectedAsset = assets.find((asset) => asset.url === role.image);
+  const selectedRole = selectedTarget === "colors" ? null : selectedTarget;
+  const role = selectedRole ? theme.roles[selectedRole] : null;
+  const kind = selectedRole ? ROLE_KIND[selectedRole] : null;
+  const selectedAsset = role ? assets.find((asset) => asset.url === role.image) : undefined;
   const dirty = JSON.stringify(theme) !== JSON.stringify(savedTheme);
 
   function patchRole(id: UiChromeRoleId, patch: Partial<ChromeRole>) {
@@ -92,6 +97,13 @@ export function UiBuilder() {
         roles: { ...current.roles, [id]: next },
       };
     });
+  }
+
+  function patchColors(patch: Partial<UiColorTokens>) {
+    setTheme((current) => ({
+      ...current,
+      colors: { ...current.colors, ...patch },
+    }));
   }
 
   function updateCursor(which: "default" | "pointer", patch: Partial<UiTheme["cursors"]["default"]>) {
@@ -145,12 +157,19 @@ export function UiBuilder() {
 
       <div className="ui-builder-layout">
         <aside className="ui-role-list">
+          <h3>Theme</h3>
+          <button
+            className={`ui-role-button ${selectedTarget === "colors" ? "on" : ""}`}
+            onClick={() => setSelectedTarget("colors")}
+          >
+            System colors <span className="dim">· tokens</span>
+          </button>
           <h3>Roles</h3>
           {UI_ROLE_ORDER.map((id) => (
             <button
               key={id}
-              className={`ui-role-button ${selectedRole === id ? "on" : ""}`}
-              onClick={() => setSelectedRole(id)}
+              className={`ui-role-button ${selectedTarget === id ? "on" : ""}`}
+              onClick={() => setSelectedTarget(id)}
             >
               {UI_ROLE_LABELS[id]} <span className="dim">· {ROLE_KIND[id]}</span>
             </button>
@@ -186,20 +205,35 @@ export function UiBuilder() {
         <section className="ui-editor-panel">
           <div className="ui-editor-head">
             <div>
-              <h2>{UI_ROLE_LABELS[selectedRole]}</h2>
+              <h2>{selectedRole ? UI_ROLE_LABELS[selectedRole] : "System colors"}</h2>
               <p className="dim">
-                kind: {kind} · {selectedAsset ? `${selectedAsset.pack}/${selectedAsset.name}` : role.image}
+                {selectedRole
+                  ? `kind: ${kind} · ${selectedAsset ? `${selectedAsset.pack}/${selectedAsset.name}` : role?.image}`
+                  : "Shared semantic colors for builder controls, field labels, focus, selection, and preview checkerboards."}
               </p>
             </div>
             {/* Render the role through the SAME real chrome that the right
                 column shows — no inline styles, no min-height cheats. What
                 you see here is what every other instance looks like. */}
             <div className="ui-editor-head-preview">
-              {renderExample(selectedRole, UI_ROLE_LABELS[selectedRole])}
+              {selectedRole ? renderExample(selectedRole, UI_ROLE_LABELS[selectedRole]) : <SystemColorPreview />}
             </div>
           </div>
 
-          {kind === "card" && (
+          {selectedTarget === "colors" && (
+            <>
+              <p className="ui-role-hint">
+                <span>
+                  These are system-level color decisions. Use them for Studio
+                  chrome and editor controls; keep role editors focused on
+                  image slicing, padding, and per-role text/fill exceptions.
+                </span>
+              </p>
+              <ColorTokensEditor colors={theme.colors} onPatch={patchColors} />
+            </>
+          )}
+
+          {role && kind === "card" && (
             <p className="ui-role-hint">
               <span>
                 <b>Header band height = slice top</b> ({(role as CardRole).slice.top}px).
@@ -207,7 +241,7 @@ export function UiBuilder() {
               </span>
             </p>
           )}
-          {kind === "outline" && (
+          {role && kind === "outline" && (
             <p className="ui-role-hint">
               <span>
                 Outline-only: the middle of the source image is not painted. Use <code>fillColor</code> on the caller (e.g. <code>.lb-grid</code>) for a solid background.
@@ -215,40 +249,44 @@ export function UiBuilder() {
             </p>
           )}
 
-          <label className="ui-field">
-            <span>Asset search</span>
-            <input
-              value={assetFilter}
-              onChange={(e) => setAssetFilter(e.target.value)}
-              placeholder="bar, header, blade, grey..."
-            />
-            <span className="dim">
-              Showing {filteredAssets.length} of {assets.length}
-            </span>
-          </label>
+          {role && selectedRole && (
+            <>
+              <label className="ui-field">
+                <span>Asset search</span>
+                <input
+                  value={assetFilter}
+                  onChange={(e) => setAssetFilter(e.target.value)}
+                  placeholder="bar, header, blade, grey..."
+                />
+                <span className="dim">
+                  Showing {filteredAssets.length} of {assets.length}
+                </span>
+              </label>
 
-          <div className="ui-asset-strip">
-            {filteredAssets.map((asset) => (
-              <button
-                key={asset.url}
-                className={`ui-asset-tile raw ${asset.url === role.image ? "selected" : ""}`}
-                onClick={() => patchRole(selectedRole, { image: asset.url })}
-                title={`${asset.pack}/${asset.name}`}
-              >
-                <img src={asset.url} alt="" />
-              </button>
-            ))}
-          </div>
+              <div className="ui-asset-strip">
+                {filteredAssets.map((asset) => (
+                  <button
+                    key={asset.url}
+                    className={`ui-asset-tile raw ${asset.url === role.image ? "selected" : ""}`}
+                    onClick={() => patchRole(selectedRole, { image: asset.url })}
+                    title={`${asset.pack}/${asset.name}`}
+                  >
+                    <img src={asset.url} alt="" />
+                  </button>
+                ))}
+              </div>
 
-          <SlicePreview role={role} />
+              <SlicePreview role={role} />
+            </>
+          )}
 
-          {kind === "bar" && (
+          {role && selectedRole && kind === "bar" && (
             <BarEditor role={role as BarRole} onPatch={(p) => patchRole(selectedRole, p)} />
           )}
-          {kind === "card" && (
+          {role && selectedRole && kind === "card" && (
             <CardEditor role={role as CardRole} onPatch={(p) => patchRole(selectedRole, p)} />
           )}
-          {kind === "outline" && (
+          {role && selectedRole && kind === "outline" && (
             <OutlineEditor role={role as OutlineRole} onPatch={(p) => patchRole(selectedRole, p)} />
           )}
         </section>
@@ -261,8 +299,8 @@ export function UiBuilder() {
               <PreviewExample
                 key={id}
                 id={id}
-                selected={selectedRole === id}
-                onClick={() => setSelectedRole(id)}
+                selected={selectedTarget === id}
+                onClick={() => setSelectedTarget(id)}
               />
             ))}
           </div>
@@ -356,6 +394,23 @@ function OutlineEditor({ role, onPatch }: { role: OutlineRole; onPatch: (p: Part
       <BoxField label="Padding" value={role.padding} min={0} max={80} onChange={(padding) => onPatch({ padding })} />
       <ColorField label="Text color" value={role.textColor} onChange={(textColor) => onPatch({ textColor })} />
       <ColorField label="Fill color" value={role.fillColor} onChange={(fillColor) => onPatch({ fillColor })} />
+    </div>
+  );
+}
+
+function ColorTokensEditor({
+  colors, onPatch,
+}: { colors: UiColorTokens; onPatch: (p: Partial<UiColorTokens>) => void }) {
+  return (
+    <div className="ui-control-grid ui-color-token-grid">
+      {UI_COLOR_ORDER.map((id) => (
+        <ColorField
+          key={id}
+          label={UI_COLOR_LABELS[id]}
+          value={colors[id]}
+          onChange={(value) => onPatch({ [id]: value } as Partial<UiColorTokens>)}
+        />
+      ))}
     </div>
   );
 }
@@ -515,20 +570,21 @@ function renderExample(id: UiChromeRoleId, label: string) {
           </div>
         </div>
       );
-    case "panel-side":
-      return (
-        <div className="ui-preview-side">
-          <span className="studio-card-title">{label}</span>
-          <div className="studio-card-body">
-            <span className="studio-card-desc">Inspector / palette chrome.</span>
-          </div>
-        </div>
-      );
     case "grid-outline":
       return <div className="ui-preview-grid">{label}</div>;
     default:
       return <span>{label}</span>;
   }
+}
+
+function SystemColorPreview() {
+  return (
+    <div className="ui-system-color-preview">
+      <span className="ui-system-color-title">Controls</span>
+      <span className="ui-system-color-muted">Labels, borders, focus, selection</span>
+      <span className="ui-system-color-pill">Selected</span>
+    </div>
+  );
 }
 
 function SlicePreview({ role }: { role: ChromeRole }) {
