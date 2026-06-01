@@ -135,12 +135,13 @@ All kits start collapsed. The viewer auto-applies the matching normalization pre
 based on the selected pack.
 
 **UI Builder** — assign imported UI-pack images to semantic chrome roles
-(`button`, `input`, `toolbar`, cards, panels, badges, grid outline, cursors). The
-mapping persists to `apps/studio/ui-theme.json` through `/__ui-theme` and is
-live-applied as CSS variables, so the current sci-fi skin is now a tunable default
-instead of only hardcoded CSS. Edits are draft-based: changes preview live, then
-`Save` writes the JSON and `Revert` restores the last saved version. The asset
-grid shows raw images on a checkerboard; card roles expose separate header/body
+(`button`, `input`, `toolbar`, cards, badges, grid outline, cursors) and edit
+semantic system color tokens for shared Studio/editor chrome. The mapping
+persists to `apps/studio/ui-theme.json` through `/__ui-theme` and is live-applied
+as CSS variables, so the current sci-fi skin is now a tunable default instead of
+only hardcoded CSS. Edits are draft-based: changes preview live, then `Save`
+writes the JSON and `Revert` restores the last saved version. The asset grid
+shows raw images on a checkerboard; card roles expose separate header/body
 padding because Kenney header-card assets have shaped header bands.
 
 **3D Models** — assign a real model to every asset slot the game needs (ships,

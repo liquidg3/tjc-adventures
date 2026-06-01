@@ -82,14 +82,17 @@ Studio chrome (cards/buttons/inputs/cursors) is skinned via `border-image`
 9-slice over Kenney sci-fi assets — see end-of-file block in `styles.css`.
 
 **UI Builder** (`#ui`): maps imported UI-pack images to semantic Studio chrome
-roles. **Schema v2 — discriminated union by kind** (`bar | card | outline`).
-Each role's editor panel only renders the controls for its kind, so card knobs
-don't leak onto buttons. Card kind publishes `--ui-<role>-header-h` (= source
-slice top) so title elements `min-height` to the band. v1 themes auto-migrate
-on fetch. Persists to `apps/studio/ui-theme.json` via `/__ui-theme`,
-live-applies CSS variables. Draft / Save / Revert / Reset. Picker shows raw
-assets on a checkerboard. Adding a role = `UiChromeRoleId` + `ROLE_KIND` +
-`UI_ROLE_LABELS` + `DEFAULT_UI_THEME` + CSS rule + `renderExample` case.
+roles plus semantic system color tokens for shared Studio/editor chrome.
+**Schema v2 — `colors` + discriminated role union by kind** (`bar | card |
+outline`). Each role's editor panel only renders the controls for its kind, so
+card knobs don't leak onto buttons. Card kind publishes `--ui-<role>-header-h`
+(= source slice top) so title elements `min-height` to the band. v1 themes
+auto-migrate on fetch. Persists to `apps/studio/ui-theme.json` via
+`/__ui-theme`, live-applies CSS variables. Draft / Save / Revert / Reset.
+Picker shows raw assets on a checkerboard. Broad color fixes belong in
+`UiColorTokens` first; role color fields are for true per-role exceptions.
+Adding a role = `UiChromeRoleId` + `ROLE_KIND` + `UI_ROLE_LABELS` +
+`DEFAULT_UI_THEME` + CSS rule + `renderExample` case.
 
 **Vertical Shooter Level Builder** (`#level`): paints a 24×80 grid of
 `{prop?, height?}` cells. Persists only; scene wiring is queued after the UI

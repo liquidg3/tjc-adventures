@@ -41,7 +41,13 @@ _Last updated: 2026-05-29._
 - **ACTIVE: Studio UI Builder (rewritten this session — v2 schema).** `#ui`
   maps imported UI-pack images onto semantic chrome roles, persists to
   `apps/studio/ui-theme.json`, and live-applies CSS variables. The schema is
-  now a **discriminated union by kind**:
+  now split into **semantic system color tokens** plus a **discriminated union
+  by chrome kind**:
+    - `colors` — shared UI decisions for text, muted text, panel headings/body,
+      editor control labels/borders/surfaces, focus, selection, status, and
+      checkerboard preview colors. Use these for broad Studio/editor color
+      fixes; don't add ad hoc component color knobs unless a role genuinely
+      needs a per-role exception.
     - `kind: "bar"` — buttons, inputs, toolbars, badges. Single uniform slice,
       `padding`, `textColor`, `fillColor`, `uppercase`, `letterSpacing`.
     - `kind: "card"` — Home cards, slot cards, side panels. Per-edge slice
@@ -56,10 +62,12 @@ _Last updated: 2026-05-29._
   preserves user picks. Asset picker auto-clamps slice on image change via
   `suggestSliceForImage(url, kind)` so a new image doesn't immediately yield a
   "middle = 0×0" garbage state. `SlicePreview` shows source dims + computed
-  middle dims and red-flags overlapping edges. Roles list: 12 entries with the
-  new `button-critical` (red destructive) joining hover / active / disabled.
+  middle dims and red-flags overlapping edges. Roles list: 11 entries; `Content
+  card` is the single role for both content cards and side-panel chrome, and
+  `button-critical` covers red destructive buttons.
   Draft / Save / Revert / Reset confirmation; raw assets shown on a
   checkerboard (not inside themed chrome) so the user sees the actual source.
+  The left rail starts with **System colors** before role-specific editors.
 - **Studio landing reorganized this session.** Home now groups cards: Universal
   Tools (3D Models / Asset Library / Asset Test / UI Builder) and one section
   per game mode (Vertical Shooter, Side Scroller [coming soon], Death Race
@@ -586,19 +594,19 @@ Kenney is the next task (below).
   properties; setting one doesn't imply the other. Every button state rule
   must explicitly set both vars (the `:disabled` and `:hover` rules were
   missing `color` for a stretch — fixed this session). **Body text colour
-  on side panels also requires removing hardcoded `color:` rules on direct
+  on content-card themed side panels also requires removing hardcoded `color:` rules on direct
   descendants** (e.g. `.studio-card-desc` had a hardcoded `#9fb5d3` that
   overrode the themed body colour; it's now stripped so the cascade wins).
 - **Headings inside themed panels need an explicit override.** The bare
   `h1, h2, h3 { color: #d5e3ff; }` rule wins by specificity inside any
   themed container. The explicit override at the end of `styles.css` lists
-  every panel-side container (`preview-sidepanel`, `preset-editor`,
+  every content-card themed panel container (`preview-sidepanel`, `preset-editor`,
   `confirm-box`, `lb-palette`, `asset-stage`, `asset-list`, the three UI
   Builder columns) and points their headings at
-  `--ui-panel-side-header-color`. **Add new panel-themed surfaces to that
+  `--ui-card-content-header-color`. **Add new panel-themed surfaces to that
   list** if you want their headings to honour the role.
-- **UI Builder columns ARE themed by panel-side.** The role list / editor /
-  examples columns ride `panel-side` so tuning that role affects them too.
+- **UI Builder columns ARE themed by content-card.** The role list / editor /
+  examples columns ride `card-content` so tuning that role affects them too.
   This is meta-chrome (editor styling itself with the role being edited),
   intentional — the user wants visual consistency. **Don't strip the theming
   back to flat** unless asked.
