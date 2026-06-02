@@ -173,7 +173,7 @@
       "width": {
         "top": 38,
         "right": 12,
-        "bottom": 12,
+        "bottom": 14,
         "left": 12
       },
       "padHeader": {
@@ -185,7 +185,7 @@
       "padBody": {
         "top": 0,
         "right": 18,
-        "bottom": 13,
+        "bottom": 14,
         "left": 18
       },
       "headerTextColor": "#ffffff",
