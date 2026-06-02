@@ -1,9 +1,9 @@
 {
   "version": 2,
   "colors": {
-    "textPrimary": "#606060",
-    "textMuted": "#919191",
-    "panelHeading": "#919191",
+    "textPrimary": "#232323",
+    "textMuted": "#606060",
+    "panelHeading": "#444444",
     "panelBody": "#2b3358",
     "controlLabel": "#232323",
     "controlBorder": "#566481",
