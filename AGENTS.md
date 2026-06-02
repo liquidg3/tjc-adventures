@@ -46,6 +46,8 @@ next agent doesn't repeat it.
   pixels. `slice.top + slice.bottom ≤ source.height` (and same horizontally)
   or the middle goes negative → hollow centre on any element bigger than the
   source. Use the UI Builder `SlicePreview` middle-dim readout when picking.
+  Kenney bars: small 96×16 = slice/width 8; large 96×24 = 12; Double large
+  192×48 = source slice 24, render width 12.
 - **Card-kind roles need `.studio-card-title` + `.studio-card-body` markup**
   so the title element can `min-height` the painted header band. Without
   that markup the role's `headerTextColor` has nothing to paint.
@@ -91,8 +93,26 @@ auto-migrate on fetch. Persists to `apps/studio/ui-theme.json` via
 `/__ui-theme`, live-applies CSS variables. Draft / Save / Revert / Reset.
 Picker shows raw assets on a checkerboard. Broad color fixes belong in
 `UiColorTokens` first; role color fields are for true per-role exceptions.
+Color fields include an explicit `Transparent` toggle because native
+`input[type=color]` cannot select alpha; use it for `fillColor` when 9-slice
+middles should stay clear. System color fields render `UI_COLOR_HELP` usage
+notes and a preview covering control surface/border/label/focus, selection,
+and checkerboard tokens.
 Adding a role = `UiChromeRoleId` + `ROLE_KIND` + `UI_ROLE_LABELS` +
-`DEFAULT_UI_THEME` + CSS rule + `renderExample` case.
+`DEFAULT_UI_THEME` + CSS rule that reads `--ui-<id>-color / -image / -slice /
+-width / -padding` + `renderExample` case. **Every new role CSS rule must
+include `color: var(--ui-<id>-color, …)` — omitting it silently ignores the
+color the user sets in the Builder.**
+**Auto-commit on Save** — every POST to `/__ui-theme` triggers a git commit
+via `gitAutoCommit` in `vite.config.ts`. Requires dev server restart after
+config changes. Recovery: `git log --oneline apps/studio/ui-theme.json`.
+**`btn-sm`** is the utility class for compact buttons. It overrides padding and
+font-size only; image/colors inherit from the active button role. Do NOT add a
+separate UI Builder role for size variants — 9-slice images scale to any size.
+**No `!important` in `styles.css`** — use CSS specificity instead. The pattern
+is `button.classname` (0,1,1) for overrides that need to beat the base
+`button:not(.studio-card)` (0,1,1) rule. Never reach for `!important` when a
+one-word specificity bump solves it.
 
 **Vertical Shooter Level Builder** (`#level`): paints a 24×80 grid of
 `{prop?, height?}` cells. Persists only; scene wiring is queued after the UI

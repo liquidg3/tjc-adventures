@@ -29,6 +29,7 @@ export type UiChromeRoleId =
   | "button-critical"
   | "button-disabled"
   | "input"
+  | "input-focus"
   | "toolbar"
   | "card-home"
   | "card-content"
@@ -131,6 +132,7 @@ export const ROLE_KIND: Record<UiChromeRoleId, RoleKind> = {
   "button-critical": "bar",
   "button-disabled": "bar",
   input: "bar",
+  "input-focus": "bar",
   toolbar: "bar",
   "card-home": "card",
   "card-content": "card",
@@ -145,6 +147,7 @@ export const UI_ROLE_LABELS: Record<UiChromeRoleId, string> = {
   "button-critical": "Button critical",
   "button-disabled": "Button disabled",
   input: "Input",
+  "input-focus": "Input (focused)",
   toolbar: "Toolbar",
   "card-home": "Home card",
   "card-content": "Content card",
@@ -169,6 +172,23 @@ export const UI_COLOR_LABELS: Record<UiColorTokenId, string> = {
   danger: "Danger",
   checkerDark: "Checker dark",
   checkerLight: "Checker light",
+};
+
+export const UI_COLOR_HELP: Record<UiColorTokenId, string> = {
+  textPrimary: "Main readable text on dark Studio surfaces.",
+  textMuted: "Secondary help text, counts, hints, and preview labels.",
+  panelHeading: "Headings inside editor panels and system-color preview.",
+  panelBody: "Dark native dropdown option background.",
+  controlLabel: "Labels above inputs, color fields, checkboxes, and legends.",
+  controlBorder: "Thin outlines around editor hints, fieldsets, asset tiles, and previews.",
+  controlSurface: "Dark fill behind editor hints, fieldsets, preview tiles, and small code chips.",
+  focus: "Focus ring on inputs, selects, and textareas.",
+  selection: "Selected markers: active left rail, selected preview, selected asset, pills.",
+  success: "Positive status color; reserved for saved/ready states.",
+  warning: "Caution status color; reserved for WIP/attention states.",
+  danger: "Error/destructive status color and invalid slice warnings.",
+  checkerDark: "Dark square in transparent-image checkerboards.",
+  checkerLight: "Light square in transparent-image checkerboards.",
 };
 
 export const UI_COLOR_ORDER = Object.keys(UI_COLOR_LABELS) as UiColorTokenId[];
@@ -279,6 +299,10 @@ export const DEFAULT_UI_THEME: UiTheme = {
     "button-disabled": bar("/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png"),
     input: bar(
       "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
+      { textColor: "#e6ebf5", uppercase: false, padding: box(6, 12) },
+    ),
+    "input-focus": bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Default/bar_round_gloss_small.png",
       { textColor: "#e6ebf5", uppercase: false, padding: box(6, 12) },
     ),
     toolbar: bar(

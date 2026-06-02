@@ -6,6 +6,7 @@ import {
   loadUiAssets,
   mergeUiTheme,
   ROLE_KIND,
+  UI_COLOR_HELP,
   UI_COLOR_LABELS,
   UI_COLOR_ORDER,
   UI_ROLE_LABELS,
@@ -187,8 +188,9 @@ export function UiBuilder() {
             <div className="confirm-box ui-confirm-box">
               <div className="confirm-title">Reset Theme</div>
               <p>
-                Replace the current draft with the default sci-fi theme. Stays
-                local until you Save.
+                Replaces your current draft with factory defaults. Your saved{" "}
+                <code>ui-theme.json</code> is untouched — nothing is permanent
+                until you also hit <strong>Save</strong>.
               </p>
               <div className="confirm-actions">
                 <button className="panel-save" onClick={() => setPendingReset(false)}>
@@ -407,6 +409,7 @@ function ColorTokensEditor({
         <ColorField
           key={id}
           label={UI_COLOR_LABELS[id]}
+          help={UI_COLOR_HELP[id]}
           value={colors[id]}
           onChange={(value) => onPatch({ [id]: value } as Partial<UiColorTokens>)}
         />
@@ -463,8 +466,9 @@ function BoxField({
 }
 
 function ColorField({
-  label, value, onChange,
-}: { label: string; value: string; onChange: (v: string) => void }) {
+  label, help, value, onChange,
+}: { label: string; help?: string; value: string; onChange: (v: string) => void }) {
+  const transparent = value === "transparent";
   const v = normalizeColor(value);
   return (
     <label className="ui-field ui-color-field">
@@ -475,8 +479,19 @@ function ColorField({
           value={v}
           onChange={(e) => onChange(e.target.value)}
         />
-        <code className="ui-color-hex">{v}</code>
+        <code className="ui-color-hex">{transparent ? "transparent" : v}</code>
+        <button
+          type="button"
+          className={`btn-sm ${transparent ? "on" : ""}`}
+          onClick={(e) => {
+            e.preventDefault();
+            onChange(transparent ? v : "transparent");
+          }}
+        >
+          Transparent
+        </button>
       </span>
+      {help && <span className="ui-field-help">{help}</span>}
     </label>
   );
 }
@@ -580,9 +595,18 @@ function renderExample(id: UiChromeRoleId, label: string) {
 function SystemColorPreview() {
   return (
     <div className="ui-system-color-preview">
-      <span className="ui-system-color-title">Controls</span>
-      <span className="ui-system-color-muted">Labels, borders, focus, selection</span>
-      <span className="ui-system-color-pill">Selected</span>
+      <div className="ui-system-color-sample-card">
+        <span className="ui-system-color-title">Controls</span>
+        <span className="ui-system-color-muted">Muted hint text</span>
+        <label className="ui-system-color-mini-field">
+          <span>Control label</span>
+          <input value="Focused input" readOnly />
+        </label>
+        <span className="ui-system-color-pill">Selected</span>
+      </div>
+      <div className="ui-system-color-checker">
+        <span>Checkerboard</span>
+      </div>
     </div>
   );
 }
@@ -667,10 +691,12 @@ function suggestSliceForImage(url: string, kind: ChromeRole["kind"]): Partial<Ch
     } as Partial<ChromeRole>;
   }
   if (kind === "bar") {
-    // bar_round_small = 96×16 → slice 8; bar_round_large = 96×24 → slice 12
+    // bar_round_small = 96×16 → source slice 8; bar_round_large = 96×24
+    // → source slice 12. Double assets are 2× source pixels, but should keep
+    // the same CSS border width so they render at the same visual thickness.
     const small = name.includes("small");
-    const slice = small ? 8 : 12;
-    return { slice, width: slice } as Partial<ChromeRole>;
+    const width = small ? 8 : 12;
+    return { slice: width * mul, width } as Partial<ChromeRole>;
   }
   // outline: keep current numeric slice; not derived from filename
   return {};

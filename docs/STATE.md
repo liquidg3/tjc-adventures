@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-05-29._
+_Last updated: 2026-06-02._
 
 ---
 
@@ -68,6 +68,40 @@ _Last updated: 2026-05-29._
   Draft / Save / Revert / Reset confirmation; raw assets shown on a
   checkerboard (not inside themed chrome) so the user sees the actual source.
   The left rail starts with **System colors** before role-specific editors.
+  Color fields support an explicit `transparent` toggle because native
+  `<input type="color">` cannot select transparency; this matters most for
+  `fillColor`, which paints behind transparent 9-slice middles. Each system
+  color field shows a plain-language "where this appears" note, and the
+  System colors preview demonstrates control surface/border/label/focus,
+  selection, and checkerboard tokens.
+- **NEW THIS SESSION → UI Builder chrome polish pass.** Several gaps closed:
+  - **`input-focus` role** added (12th role, `bar` kind) — controls the 9-slice
+    border shown on focused `<input>`, `<select>`, and `<textarea>` elements.
+    Previously hardcoded to blue gloss; now fully themeable image/slice/width/color.
+  - **`select` elements** now strip native OS appearance (`appearance: none`) and
+    show a CSS inline-SVG triangle on the right. They match input height exactly.
+  - **`btn-sm` utility class** replaces `.ui-transparent-toggle`. Add `btn-sm` to
+    any `<button>` for a compact size; the role image/colors inherit automatically.
+  - **All `!important` removed** from `styles.css` (was 11 instances). Fixed by
+    raising specificity on the low-specificity selectors (`.confirm-accept`,
+    `.critical`, `.lb-reset` → `button.` prefix) and removing ones that were
+    genuinely unnecessary (`.studio-card` is already excluded by
+    `:not(.studio-card)`; `input[type=range]` already wins on specificity;
+    `.ui-asset-tile.raw` already wins; `.ui-slice-info-bad` wins by file order).
+  - **Missing `color:` vars wired** — `.badge`, `.lb-grid`, `.ui-preview-grid`,
+    `input:focus` all now read their role's `--ui-*-color` CSS variable. Previously
+    the UI Builder let you change these text colors but nothing consumed them.
+  - **`header h1 / p / code`** wired to `--ui-color-focus`, `--ui-color-text-muted`,
+    `--ui-color-warning` tokens so the UI Builder title and `bar`/`card`/`outline`
+    code spans respond to the system color editor.
+  - **Auto-commit on Save** — `jsonFilePlugin` accepts an optional `onWrite`
+    callback; the `ui-theme` endpoint passes one that runs
+    `git add … && git commit` immediately after writing. Every Save = one git
+    commit (`chore(studio): auto-save ui-theme.json`). Restart dev:studio to
+    pick up Vite config changes.
+  - **Preview panel overflow fixed** — cursor `<select>` dropdowns in the right
+    column no longer bleed outside the card boundary (`overflow: hidden` +
+    `min-width: 0` on `.ui-preview-panel`; `width: 100%` on child selects/inputs).
 - **Studio landing reorganized this session.** Home now groups cards: Universal
   Tools (3D Models / Asset Library / Asset Test / UI Builder) and one section
   per game mode (Vertical Shooter, Side Scroller [coming soon], Death Race
@@ -547,8 +581,9 @@ Kenney is the next task (below).
   bottom. Use `border-image-slice: 26 12 12 12 fill` (T R B L) so the header
   height stays sharp while the body stretches. For the `Double` (2×) variants,
   scale slice values 2× (`52 24 24 24 fill`). `bar_round_*` (96×16/24) is a
-  horizontal pill — slice 8 for small, 12 for large. **Slice values vs source
-  pixels matter** — guessing gives stretched corners.
+  horizontal pill — slice/width 8 for small, 12 for large; Double large
+  (192×48) uses source slice 24 with render width 12. **Slice values vs source
+  pixels matter** — guessing gives stretched corners and edge seams.
 - **UI Builder kind-aware schema** (v2 this session). Roles are now a
   discriminated union: `bar | card | outline`. Each kind exposes only the
   knobs that make sense for it (bar gets single slice + padding; card gets
@@ -568,7 +603,9 @@ Kenney is the next task (below).
   reasonable slice values for the Kenney sci-fi families so a fresh image
   doesn't start broken. For 16px-tall bars at slice 8, the centre is exactly
   0px tall — use a taller source (`bar_round_large` = 24px) or set `fillColor`
-  on the role to paint a solid behind the transparent band.
+  on the role to paint a solid behind the transparent band. If a 24px-tall
+  large bar shows thin edge seams, check for a stale small-bar slice (`8`);
+  large bars need `12`, and Double large bars need source slice `24`.
 - **`border-image-slice` ≠ `border-image-width`**. Slice is how many SOURCE
   pixels to cut from each edge. Width is how many RENDER pixels those edges
   occupy. When `width ≠ slice` the corners scale (compressed or stretched)
@@ -597,6 +634,8 @@ Kenney is the next task (below).
   on content-card themed side panels also requires removing hardcoded `color:` rules on direct
   descendants** (e.g. `.studio-card-desc` had a hardcoded `#9fb5d3` that
   overrode the themed body colour; it's now stripped so the cascade wins).
+  If a button shows a squared-off color block, check that role's `fillColor`;
+  set it to `transparent` unless the source image truly needs a solid middle.
 - **Headings inside themed panels need an explicit override.** The bare
   `h1, h2, h3 { color: #d5e3ff; }` rule wins by specificity inside any
   themed container. The explicit override at the end of `styles.css` lists

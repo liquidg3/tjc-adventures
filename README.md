@@ -142,7 +142,14 @@ as CSS variables, so the current sci-fi skin is now a tunable default instead of
 only hardcoded CSS. Edits are draft-based: changes preview live, then `Save`
 writes the JSON and `Revert` restores the last saved version. The asset grid
 shows raw images on a checkerboard; card roles expose separate header/body
-padding because Kenney header-card assets have shaped header bands.
+padding because Kenney header-card assets have shaped header bands. Color fields
+include a `Transparent` toggle for values like role `fillColor`, since native
+browser color pickers cannot choose transparency. System color fields include
+short usage notes and a preview that shows control, selection, focus, and
+checkerboard examples. **12 roles** including `input-focus` (the focused-state
+border image for inputs/selects/textareas). Every Save auto-commits
+`ui-theme.json` to git. `select` elements strip native OS appearance and render
+a CSS triangle arrow; use `.btn-sm` on any `<button>` for a compact size.
 
 **3D Models** — assign a real model to every asset slot the game needs (ships,
 environment, …), and choose a **normalization preset** for that assignment:
@@ -211,7 +218,8 @@ Scenery, Pixelate. Each panel drives a `SceneHandle` method.
   card images (192×64) have a fixed ~22–28px blue header band on top + ~6–8px
   screw row on bottom; use `border-image-slice: 26 12 12 12 fill` so the band
   stays sharp. `Double` variants (384×128) need 2× slice (52/24/24/24). For
-  pill bars (`bar_round_small/large`, 96×16/24), slice 8 or 12.
+  pill bars (`bar_round_small/large`, 96×16/24), slice/width 8 or 12; Double
+  large bars (192×48) use source slice 24 with render width 12.
 - **Dodge bypasses momentum easing.** A one-shot velocity burst gets bled off
   in ~0.1s by the normal `velX += (target - velX) * accel`. The dodge instead
   *locks* velX to `dodgeDir * SHIP_SPEED * DODGE_DASH` for the whole

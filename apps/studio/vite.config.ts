@@ -31,7 +31,12 @@ const UI_THEME_FILE = resolve(here, "ui-theme.json");
 // rides this same shape:
 //   GET  <route>  → current file contents (or "{}" if absent)
 //   POST <route>  → overwrite the file with the request body
-function jsonFilePlugin(name: string, route: string, file: string): Plugin {
+function jsonFilePlugin(
+  name: string,
+  route: string,
+  file: string,
+  onWrite?: (file: string) => void,
+): Plugin {
   return {
     name: `tjc-${name}`,
     configureServer(server) {
@@ -48,6 +53,7 @@ function jsonFilePlugin(name: string, route: string, file: string): Plugin {
           req.on("end", () => {
             try {
               writeFileSync(file, body || "{}");
+              onWrite?.(file);
               res.end("ok");
             } catch (err) {
               res.statusCode = 500;
@@ -61,6 +67,20 @@ function jsonFilePlugin(name: string, route: string, file: string): Plugin {
       });
     },
   };
+}
+
+// Repo root is two levels up from apps/studio
+const REPO_ROOT = resolve(here, "../..");
+
+function gitAutoCommit(file: string, message: string) {
+  try {
+    const rel = file.replace(REPO_ROOT + "/", "");
+    execFileSync("git", ["add", rel], { cwd: REPO_ROOT });
+    execFileSync("git", ["commit", "--no-verify", "-m", message], { cwd: REPO_ROOT, stdio: "pipe" });
+    console.log(`[studio] auto-committed: ${rel}`);
+  } catch {
+    // Nothing to commit (file unchanged) — that's fine, swallow silently
+  }
 }
 
 // Live Kenney catalog: the dev server scrapes kenney.nl (no browser CORS) so the
@@ -341,7 +361,8 @@ export default defineConfig({
     jsonFilePlugin("asset-normalization-presets", "/__asset-normalization-presets", ASSET_NORMALIZATION_PRESETS_FILE),
     jsonFilePlugin("asset-normalization-overrides", "/__asset-normalization-overrides", ASSET_NORMALIZATION_OVERRIDES_FILE),
     jsonFilePlugin("level-builder", "/__level-builder", LEVEL_BUILDER_FILE),
-    jsonFilePlugin("ui-theme", "/__ui-theme", UI_THEME_FILE),
+    jsonFilePlugin("ui-theme", "/__ui-theme", UI_THEME_FILE, (f) =>
+      gitAutoCommit(f, "chore(studio): auto-save ui-theme.json")),
     kenneyPlugin(),
   ],
   server: {
