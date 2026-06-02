@@ -5,12 +5,12 @@
     "textMuted": "#919191",
     "panelHeading": "#919191",
     "panelBody": "#2b3358",
-    "controlLabel": "#606060",
+    "controlLabel": "#232323",
     "controlBorder": "#566481",
-    "controlSurface": "#10172a",
+    "controlSurface": "transparent",
     "focus": "#9ad0ff",
     "selection": "#669c35",
-    "success": "#6affb0",
+    "success": "#669c35",
     "warning": "#ffd76a",
     "danger": "#ff8a8a",
     "checkerDark": "#0b1020",
@@ -77,15 +77,15 @@
         "left": 16
       },
       "textColor": "#f1ffec",
-      "fillColor": "#22c56f",
+      "fillColor": "transparent",
       "uppercase": true,
       "letterSpacing": "0.05em"
     },
     "button-critical": {
       "kind": "bar",
       "image": "/ui/kenney-ui-pack-sci-fi/PNG/Red/Double/bar_square_gloss_large.png",
-      "slice": 12,
-      "width": 12,
+      "slice": 8,
+      "width": 8,
       "padding": {
         "top": 7,
         "right": 16,
@@ -99,9 +99,9 @@
     },
     "button-disabled": {
       "kind": "bar",
-      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Double/bar_round_gloss_large.png",
-      "slice": 21,
-      "width": 12,
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_gloss_large.png",
+      "slice": 8,
+      "width": 8,
       "padding": {
         "top": 7,
         "right": 16,
@@ -119,12 +119,28 @@
       "slice": 8,
       "width": 8,
       "padding": {
+        "top": 8,
+        "right": 12,
+        "bottom": 8,
+        "left": 12
+      },
+      "textColor": "#000000",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0"
+    },
+    "input-focus": {
+      "kind": "bar",
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_square_large.png",
+      "slice": 8,
+      "width": 8,
+      "padding": {
         "top": 6,
         "right": 12,
         "bottom": 6,
         "left": 12
       },
-      "textColor": "#000000",
+      "textColor": "#e6ebf5",
       "fillColor": "transparent",
       "uppercase": false,
       "letterSpacing": "0"
@@ -140,8 +156,8 @@
         "bottom": 14,
         "left": 20
       },
-      "textColor": "#e6ebf5",
-      "fillColor": "transparent",
+      "textColor": "#444444",
+      "fillColor": "#ffffff",
       "uppercase": false,
       "letterSpacing": "0"
     },
@@ -149,13 +165,13 @@
       "kind": "card",
       "image": "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Double/button_square_header_large_rectangle.png",
       "slice": {
-        "top": 68,
+        "top": 67,
         "right": 24,
         "bottom": 27,
         "left": 24
       },
       "width": {
-        "top": 35,
+        "top": 38,
         "right": 12,
         "bottom": 12,
         "left": 12
@@ -163,7 +179,7 @@
       "padHeader": {
         "top": 0,
         "right": 18,
-        "bottom": 35,
+        "bottom": 33,
         "left": 18
       },
       "padBody": {
@@ -188,10 +204,10 @@
         "left": 24
       },
       "width": {
-        "top": 10,
+        "top": 11,
         "right": 12,
-        "bottom": 12,
-        "left": 12
+        "bottom": 13,
+        "left": 10
       },
       "padHeader": {
         "top": 14,
@@ -214,10 +230,10 @@
     "grid-outline": {
       "kind": "outline",
       "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/button_square_header_small_square.png",
-      "slice": 8,
+      "slice": 19,
       "width": 8,
       "padding": {
-        "top": 12,
+        "top": 13,
         "right": 12,
         "bottom": 12,
         "left": 12
@@ -227,18 +243,18 @@
     },
     "badge-default": {
       "kind": "bar",
-      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_square_gloss_large.png",
       "slice": 8,
       "width": 8,
       "padding": {
-        "top": 2,
+        "top": 6,
         "right": 10,
-        "bottom": 2,
+        "bottom": 7,
         "left": 10
       },
-      "textColor": "#e6ebf5",
+      "textColor": "#232323",
       "fillColor": "transparent",
-      "uppercase": false,
+      "uppercase": true,
       "letterSpacing": "0.04em"
     }
   }
