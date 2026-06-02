@@ -157,7 +157,7 @@
         "left": 20
       },
       "textColor": "#444444",
-      "fillColor": "#ffffff",
+      "fillColor": "transparent",
       "uppercase": false,
       "letterSpacing": "0"
     },
