@@ -165,9 +165,9 @@
       "kind": "card",
       "image": "/ui/kenney-ui-pack-sci-fi/PNG/Blue/Double/button_square_header_large_rectangle.png",
       "slice": {
-        "top": 67,
+        "top": 69,
         "right": 24,
-        "bottom": 27,
+        "bottom": 29,
         "left": 24
       },
       "width": {
