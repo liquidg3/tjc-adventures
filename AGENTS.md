@@ -51,6 +51,16 @@ next agent doesn't repeat it.
 - **Card-kind roles need `.studio-card-title` + `.studio-card-body` markup**
   so the title element can `min-height` the painted header band. Without
   that markup the role's `headerTextColor` has nothing to paint.
+- **Bar-button selectors exclude `.studio-card` AND `.lb-cell`** — the base button rule
+  is `button:not(.studio-card):not(.lb-cell)`. Grid paint cells are bespoke `<button>`
+  elements that must never receive button chrome. Any new non-UI button must be added
+  to the `:not()` chain or given an explicit exclusion.
+- **`.btn-sm` works on `<a>` too** — the selector is `.btn-sm`, not `button.btn-sm`.
+  Use it for compact buttons AND `<a>` links that should look like buttons (e.g. `.pack-link`).
+  The design system is button-first: bare `<a>` links should pick up button chrome via
+  being added to the base button rule (`.pack-link` is already there).
+- **`assetValueToUrl(value)` is the canonical helper** in `asset-normalization.ts` —
+  converts `"model:pack/name"` → `"/models/pack/name.glb"`. Do not re-implement inline.
 - **Bar-button selectors exclude `.studio-card`** (`button:not(.studio-card)`).
   Studio's landing cards are `<button>` but want the card recipe. Any new
   bar-button rule must include the `:not()` clause.

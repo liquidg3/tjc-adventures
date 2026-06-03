@@ -198,7 +198,7 @@ export function SlotCard({
     <div className={`card slot ${assigned ? "" : "is-missing"}`}>
       <div className="card-head">
         <span className="card-title">{label}</span>
-        <span className={assigned ? "badge ok" : "badge miss"}>{assigned ? "✓ set" : "missing"}</span>
+        <span className={assigned ? "badge ok" : "badge error"}>{assigned ? "✓ set" : "missing"}</span>
       </div>
       <select value={value} onChange={(e) => onChange(e.target.value)}>
         <option value="">— choose a model —</option>

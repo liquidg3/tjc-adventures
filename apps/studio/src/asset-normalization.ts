@@ -149,6 +149,12 @@ export function getAssignedModelValue(raw: unknown): string {
   return parseAssetAssignment(raw).model;
 }
 
+/** Convert a "model:pack/name" assignment value to its public GLB URL. */
+export function assetValueToUrl(value: string | undefined): string | null {
+  if (!value?.startsWith("model:")) return null;
+  return `/models/${value.slice("model:".length)}.glb`;
+}
+
 export function serializeAssetAssignments(assignments: Record<string, AssetAssignment>) {
   return Object.fromEntries(
     Object.entries(assignments).map(([key, value]) => [

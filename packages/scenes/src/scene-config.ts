@@ -47,6 +47,12 @@ export interface ShipModelNormalization {
   anchor: ShipNormalizationAnchor;
 }
 
+/** A single painted cell from the Level Builder grid. */
+export interface LevelGridCell {
+  prop?: string;   // slot id (e.g. "animal-sloth")
+  height?: number; // 0..MAX_HEIGHT
+}
+
 export interface SceneHandle {
   dispose: () => void;
   setCameraRotationMode: (mode: CameraRotationMode) => void;
@@ -89,6 +95,18 @@ export interface SceneHandle {
   /** Load an auto-scrolling level plan (zones + blend), or null to return to
    *  manual control (the scene shows whatever ground/lighting was last set). */
   setLevelPlan: (plan: LevelPlan | null) => void;
+  /** Place the painted level grid as 3D props. Pass null assetUrlMap to clear. */
+  setLevelCells: (
+    cells: LevelGridCell[],
+    width: number,
+    depth: number,
+    cellSize: number,
+    assetUrlMap: Record<string, string>,
+  ) => void;
+  setLevelScrollZ: (z: number) => void;
+  setLevelScrollPaused: (paused: boolean) => void;
+  getLevelScrollZ: () => number;
+  getLevelTotalDepth: () => number;
   /** Current zone while a plan is playing, or null when not sequencing. */
   getZoneStatus: () => { index: number; name: string; progress: number } | null;
 }

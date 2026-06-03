@@ -4,330 +4,827 @@
   "depth": 80,
   "cellSize": 5,
   "cells": [
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {},
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {},
+    {},
+    {},
+    {
+      "prop": "terrain-a"
+    },
+    {
+      "prop": "terrain-a"
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b",
+      "height": 2
+    },
+    {
+      "prop": "terrain-b",
+      "height": 2
+    },
+    {
+      "prop": "terrain-b",
+      "height": 2
+    },
+    {
+      "prop": "env-bushes"
+    },
+    {
+      "prop": "prop-box"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "height": 3
+    },
+    {
+      "prop": "terrain-b",
+      "height": 2
+    },
+    {
+      "prop": "terrain-b",
+      "height": 2
+    },
+    {
+      "height": 2
+    },
+    {
+      "height": 2
+    },
+    {
+      "height": 2,
+      "prop": "prop-box"
+    },
+    {
+      "prop": "prop-box"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "prop": "terrain-b",
+      "height": 3
+    },
+    {
+      "height": 2
+    },
+    {
+      "height": 2,
+      "prop": "prop-box"
+    },
+    {
+      "prop": "prop-box",
+      "height": 2
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 2
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {
+      "height": 3
+    },
+    {},
+    {
+      "prop": "terrain-b"
+    },
+    {
+      "prop": "terrain-b"
+    },
     {},
     {},
     {},

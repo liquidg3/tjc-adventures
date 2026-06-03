@@ -16,6 +16,7 @@ import { createGroundLayer } from "./ground-layer";
 import { createInputController } from "./input-controller";
 import { createLightingController } from "./lighting-controller";
 import { createPropFieldController } from "./prop-field";
+import { createLevelPropLayer } from "./level-prop-layer";
 import {
   CAMERA_BASE_LOCAL_X,
   SCROLL,
@@ -23,6 +24,7 @@ import {
   SHIP_START_Z,
   type CameraRotationMode,
   type GroundStyle,
+  type LevelGridCell,
   type LevelPlan,
   type LightingPreset,
   type PipelineMode,
@@ -42,6 +44,7 @@ export {
   SHIP_SIZE,
   type CameraRotationMode,
   type GroundStyle,
+  type LevelGridCell,
   type LevelPlan,
   type LightingPreset,
   type PipelineMode,
@@ -218,6 +221,8 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   shipController.loadInitialShip();
   void propField.loadScenery(24);
 
+  const levelLayer = createLevelPropLayer(scene);
+
   // ── render pipeline (pixel-art spike) ────────────────────────────────────
   // Two knobs decide the look:
   //   pipelineMode  — direct (no pixelation) / low-res-nearest / low-res-bilinear
@@ -294,6 +299,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     groundA.scroll(dt * SCROLL);
     if (bShown) groundB.scroll(dt * SCROLL);
     propField.update(dt);
+    levelLayer.step(dt);
 
     scene.render();
   });
@@ -405,13 +411,29 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     setLevelPlan(plan) {
       currentPlan = plan;
       sequencer.setPlan(plan);
-      if (!plan) hideTransition(); // back to manual: drop the incoming layer
+      if (!plan) hideTransition();
     },
     getZoneStatus() {
       return sequencer.getStatus();
     },
+    setLevelCells(cells: LevelGridCell[], width, depth, cellSize, assetUrlMap) {
+      void levelLayer.setLevelCells(cells, width, depth, cellSize, assetUrlMap);
+    },
+    setLevelScrollZ(z) {
+      levelLayer.setScrollZ(z);
+    },
+    setLevelScrollPaused(paused) {
+      levelLayer.setPaused(paused);
+    },
+    getLevelScrollZ() {
+      return levelLayer.getScrollZ();
+    },
+    getLevelTotalDepth() {
+      return levelLayer.getTotalDepth();
+    },
     dispose() {
       input.dispose();
+      levelLayer.dispose();
       window.removeEventListener("resize", onResize);
       engine.stopRenderLoop();
       scene.dispose();

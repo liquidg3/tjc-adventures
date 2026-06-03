@@ -142,26 +142,15 @@ export function ModelsBoard() {
           Kenney packs you import in the <b>Asset Library</b> ({modelCount} models
           available) — import more there and they appear here.
         </p>
-        <div className="summary">
-          <b>
-            {filled}/{allSlots.length}
-          </b>{" "}
-          slots filled
-          {missing.length > 0 && <span className="miss-list"> · still missing: {missing.join(", ")}</span>}
-          <span className="dim">
-            {" "}
-            · saved to asset-map.json {saved ? "✓" : "…"}
-          </span>
-          <span className="dim">
-            {" "}
-            · presets {presets.saved ? "✓" : "…"}
-          </span>
-          <span className="dim">
-            {" "}
-            · overrides {overrides.saved ? "✓" : "…"}
-          </span>
-        </div>
       </header>
+      <div className="summary">
+        <b>{filled}/{allSlots.length}</b>{" "}
+        slots filled
+        {missing.length > 0 && <span className="miss-list"> · still missing: {missing.join(", ")}</span>}
+        <span className="dim"> · saved to asset-map.json {saved ? "✓" : "…"}</span>
+        <span className="dim"> · presets {presets.saved ? "✓" : "…"}</span>
+        <span className="dim"> · overrides {overrides.saved ? "✓" : "…"}</span>
+      </div>
 
       {SLOTS.map((cat) => (
         <section key={cat.category}>

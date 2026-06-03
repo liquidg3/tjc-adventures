@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-02._
+_Last updated: 2026-06-02 (session 2)._
 
 ---
 
@@ -62,9 +62,11 @@ _Last updated: 2026-06-02._
   preserves user picks. Asset picker auto-clamps slice on image change via
   `suggestSliceForImage(url, kind)` so a new image doesn't immediately yield a
   "middle = 0×0" garbage state. `SlicePreview` shows source dims + computed
-  middle dims and red-flags overlapping edges. Roles list: 11 entries; `Content
-  card` is the single role for both content cards and side-panel chrome, and
-  `button-critical` covers red destructive buttons.
+  middle dims and red-flags overlapping edges. **Roles list: 14** — buttons
+  (default/hover/active/critical/disabled), input, input-focus, toolbar, cards
+  (home/content), grid-outline, badge (default/ok/error). `header-h` is now
+  published from `width.top` (rendered pixels), not `slice.top` (source pixels)
+  — keeps the card-head negative-margin positioning correct when slice ≠ width.
   Draft / Save / Revert / Reset confirmation; raw assets shown on a
   checkerboard (not inside themed chrome) so the user sees the actual source.
   The left rail starts with **System colors** before role-specific editors.
@@ -108,12 +110,14 @@ _Last updated: 2026-06-02._
   [coming soon]). Per-mode each has the same two cards: **Test Play** (was
   "Vertical Scroller") and **Level Builder**. Adding a new game mode = adding a
   `SectionGroup` entry in `Home.tsx`.
-- **NEW THIS SESSION → Vertical Shooter Level Builder (v1, authoring only).**
-  Studio section at `#level`. Paints a 24×80 grid of `{prop?, height?}` cells
-  (5 world units per cell), persists to `apps/studio/level-builder.json` via
-  `/__level-builder`. Palette = env/prop/terrain slots that have a model
-  assigned in the 3D Models board. **The scene does NOT read this yet** — that
-  wiring is the next iteration after you verify the editor feels right.
+- **Level Builder now has a live 3D preview.** The vertical-scroller scene runs
+  full-screen behind the controls; props are placed at their exact grid world
+  positions via `createLevelPropLayer` in `packages/scenes/src/level-prop-layer.ts`.
+  The sidebar has Play/Pause and a scrub slider (0 → level depth in world units).
+  **Layout**: `lb-page` = fixed full-viewport div; canvas fills the right; `.lb-sidebar`
+  is a 320px dark panel on the left. Controls: `LevelBuilder.tsx`.
+  **Known issue**: the 3D preview is functional but the layout still needs polish
+  — this is the next agent's starting point (see handoff prompt in docs/).
 - **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
   filter chips: All / 3D / UI. UI uses Kenney's `tag:interface` (not `tag:UI`
   — that returns nothing). UI imports stage to `apps/studio/public/ui/kenney-<slug>/`

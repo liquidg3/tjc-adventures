@@ -25,6 +25,7 @@ import {
 } from "./vertical-scroller-state";
 import {
   mergeNormalizationOverrides,
+  assetValueToUrl,
   getNormalizationPreset,
   resolveAssetNormalization,
   mergeNormalizationPresets,
@@ -38,11 +39,6 @@ const ASSET_MAP_URL = "/__asset-map";
 const ASSET_NORMALIZATION_PRESETS_URL = "/__asset-normalization-presets";
 const ASSET_NORMALIZATION_OVERRIDES_URL = "/__asset-normalization-overrides";
 
-function assetValueToPublicModelUrl(value: string | undefined): string | null {
-  if (!value?.startsWith("model:")) return null;
-  const rel = value.slice("model:".length);
-  return `/models/${rel}.glb`;
-}
 
 /** Collapsible control panel — click the header to fold it away and fit more. */
 function Panel({
@@ -159,7 +155,7 @@ export function VerticalScroller() {
     ])
       .then(([assetMapData, presetData, overrideData]: [Record<string, unknown>, unknown, unknown]) => {
         const assignment = parseAssetAssignment(assetMapData?.["ship-player"]);
-        const playerShip = assetValueToPublicModelUrl(assignment.model);
+        const playerShip = assetValueToUrl(assignment.model);
         const presets = mergeNormalizationPresets(presetData);
         const overrides = mergeNormalizationOverrides(overrideData);
         if (playerShip) {

@@ -566,6 +566,10 @@ function renderExample(id: UiChromeRoleId, label: string) {
       return <div className="ui-preview-toolbar">{label}</div>;
     case "badge-default":
       return <span className="badge">{label}</span>;
+    case "badge-ok":
+      return <span className="badge ok">{label}</span>;
+    case "badge-error":
+      return <span className="badge error">{label}</span>;
     case "card-home":
       return (
         <div className="ui-preview-card-home">

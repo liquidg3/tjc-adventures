@@ -34,7 +34,9 @@ export type UiChromeRoleId =
   | "card-home"
   | "card-content"
   | "grid-outline"
-  | "badge-default";
+  | "badge-default"
+  | "badge-ok"
+  | "badge-error";
 
 export type RoleKind = "bar" | "card" | "outline";
 
@@ -138,6 +140,8 @@ export const ROLE_KIND: Record<UiChromeRoleId, RoleKind> = {
   "card-content": "card",
   "grid-outline": "outline",
   "badge-default": "bar",
+  "badge-ok": "bar",
+  "badge-error": "bar",
 };
 
 export const UI_ROLE_LABELS: Record<UiChromeRoleId, string> = {
@@ -153,6 +157,8 @@ export const UI_ROLE_LABELS: Record<UiChromeRoleId, string> = {
   "card-content": "Content card",
   "grid-outline": "Grid outline",
   "badge-default": "Badge",
+  "badge-ok": "Badge (ok)",
+  "badge-error": "Badge (error)",
 };
 
 export const UI_ROLE_ORDER = Object.keys(UI_ROLE_LABELS) as UiChromeRoleId[];
@@ -341,6 +347,14 @@ export const DEFAULT_UI_THEME: UiTheme = {
       "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_round_small.png",
       { padding: box(2, 10), letterSpacing: "0.04em", uppercase: false },
     ),
+    "badge-ok": bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Green/Default/bar_round_gloss_small.png",
+      { textColor: "#e7ffe0", fillColor: "transparent", padding: box(2, 10), uppercase: false, letterSpacing: "0.04em" },
+    ),
+    "badge-error": bar(
+      "/ui/kenney-ui-pack-sci-fi/PNG/Red/Default/bar_round_gloss_small.png",
+      { textColor: "#ffe7e7", fillColor: "transparent", padding: box(2, 10), uppercase: false, letterSpacing: "0.04em" },
+    ),
   },
 };
 
@@ -470,7 +484,7 @@ function applyRole(root: HTMLElement, id: UiChromeRoleId, role: ChromeRole) {
   if (role.kind === "card") {
     root.style.setProperty(`${p}-slice`, `${boxJoin(role.slice)} fill`);
     root.style.setProperty(`${p}-width`, boxPx(role.width));
-    root.style.setProperty(`${p}-header-h`, `${role.slice.top}px`);
+    root.style.setProperty(`${p}-header-h`, `${role.width.top}px`);
     root.style.setProperty(`${p}-pad-header`, boxPx(role.padHeader));
     root.style.setProperty(`${p}-pad-body`, boxPx(role.padBody));
     root.style.setProperty(`${p}-header-color`, role.headerTextColor);
