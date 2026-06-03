@@ -177,9 +177,9 @@
         "left": 12
       },
       "padHeader": {
-        "top": 0,
+        "top": 9,
         "right": 18,
-        "bottom": 33,
+        "bottom": 41,
         "left": 18
       },
       "padBody": {
