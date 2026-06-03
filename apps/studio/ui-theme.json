@@ -256,6 +256,38 @@
       "fillColor": "transparent",
       "uppercase": true,
       "letterSpacing": "0.04em"
+    },
+    "badge-ok": {
+      "kind": "bar",
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Green/Default/bar_round_gloss_small.png",
+      "slice": 8,
+      "width": 12,
+      "padding": {
+        "top": 2,
+        "right": 10,
+        "bottom": 2,
+        "left": 10
+      },
+      "textColor": "#e7ffe0",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0.04em"
+    },
+    "badge-error": {
+      "kind": "bar",
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Red/Default/bar_round_gloss_small.png",
+      "slice": 8,
+      "width": 12,
+      "padding": {
+        "top": 2,
+        "right": 10,
+        "bottom": 2,
+        "left": 10
+      },
+      "textColor": "#ffe7e7",
+      "fillColor": "transparent",
+      "uppercase": false,
+      "letterSpacing": "0.04em"
     }
   }
 }
