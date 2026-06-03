@@ -23,6 +23,8 @@ export interface GroundLayer {
   mesh: Mesh;
   /** advance the scroll by a world distance (matches prop speed) */
   scroll: (dist: number) => void;
+  /** set the scroll phase from an absolute world distance */
+  setScrollDistance: (dist: number) => void;
   setStyle: (style: GroundStyle) => void;
   setTile: (url: string | null, repeatPerSide: number, sampling?: TileSampling) => void;
   applyLook: (entry: ZonePlanEntry) => void;
@@ -129,6 +131,11 @@ export function createGroundLayer(
     scroll(dist) {
       const tex = active();
       tex.vOffset = (tex.vOffset + (dist * tex.vScale) / opts.depth) % 1;
+    },
+    setScrollDistance(dist) {
+      const tex = active();
+      const phase = (dist * tex.vScale) / opts.depth;
+      tex.vOffset = ((phase % 1) + 1) % 1;
     },
     setStyle,
     setTile,

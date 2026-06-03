@@ -1,85 +1,262 @@
 /**
  * Vertical Shooter Level Builder data model.
  *
- * A level is a fixed-dimension grid of cells, each carrying optional prop +
- * height data. The grid is authored top-down in the Studio and persisted as
- * JSON via the /__level-builder dev endpoint. Cells are row-major, indexed by
- * (col, row) where row 0 = far end of the zone (top of screen) and the last
- * row = near edge (bottom of screen).
- *
- * Cell-to-world mapping at runtime (when the scene reads this later):
- *   world X = (col - width/2) * cellSize
- *   world Z (offset from a zone's start) = (depth - row) * cellSize
- *   world Y = height-nudge (cell.height ?? 0) scaled by some max-altitude const
+ * v2 separates terrain, height, and object placement. Storage remains row-major:
+ * row 0 = far end of the run, last row = start/near edge.
  */
 
-export interface LevelCell {
-  /** Asset-map slot id (e.g. "env-trees", "prop-cage"); empty = no prop. */
-  prop?: string;
-  /** 0..3, optional. Higher = taller ground swell at this cell. */
+export interface TerrainCell {
+  /** Terrain slot id, e.g. "terrain-a". */
+  terrain?: string;
+}
+
+export interface HeightCell {
+  /** 0..MAX_HEIGHT, darker in the editor = taller. */
   height?: number;
 }
 
-export interface Level {
-  version: 1;
-  width: number; // columns across the field
-  depth: number; // rows along the scroll direction
-  cellSize: number; // world units per cell side
-  cells: LevelCell[]; // length === width * depth, row-major
+export interface PlacedObject {
+  /** Stable enough for diffing later; first pass derives from cell + slot. */
+  id: string;
+  /** Asset-map slot id, e.g. "env-trees" or "prop-box". */
+  slot: string;
+  offset?: [number, number];
+  rotation?: number;
+  scale?: number;
 }
 
-export const DEFAULT_LEVEL_WIDTH = 24;
-export const DEFAULT_LEVEL_DEPTH = 80;
-export const DEFAULT_LEVEL_CELL_SIZE = 5;
-export const MAX_HEIGHT = 3;
+export interface ObjectCell {
+  objects?: PlacedObject[];
+}
 
-export function emptyLevel(
-  width = DEFAULT_LEVEL_WIDTH,
-  depth = DEFAULT_LEVEL_DEPTH,
-  cellSize = DEFAULT_LEVEL_CELL_SIZE,
-): Level {
+export interface LevelLayers {
+  terrain: TerrainCell[];
+  height: HeightCell[];
+  objects: ObjectCell[];
+}
+
+export interface Level {
+  version: 2;
+  durationSec: number;
+  scrollSpeed: number;
+  fieldWidth: number;
+  columns: number;
+  rows: number;
+  cellSize: number;
+  layers: LevelLayers;
+}
+
+/** Legacy shape persisted by v1 builders. */
+interface LevelV1 {
+  version: 1;
+  width: number;
+  depth: number;
+  cellSize: number;
+  cells: Array<{ prop?: string; height?: number }>;
+}
+
+export interface LegacyLevelGridCell {
+  prop?: string;
+  height?: number;
+}
+
+export const DEFAULT_LEVEL_DURATION_SEC = 300;
+export const DEFAULT_LEVEL_SCROLL_SPEED = 16;
+export const DEFAULT_FIELD_WIDTH = 120;
+export const DEFAULT_LEVEL_COLUMNS = 12;
+export const MAX_HEIGHT = 8;
+
+export const COLUMN_OPTIONS = [10, 12, 16, 24, 32] as const;
+
+export function deriveCellSize(fieldWidth: number, columns: number): number {
+  return fieldWidth / Math.max(1, columns);
+}
+
+export function deriveRows(durationSec: number, scrollSpeed: number, cellSize: number): number {
+  return Math.ceil((durationSec * scrollSpeed) / Math.max(0.001, cellSize));
+}
+
+export function emptyLevel(opts: Partial<Pick<Level, "columns" | "durationSec" | "fieldWidth" | "scrollSpeed">> = {}): Level {
+  const durationSec = saneNumber(opts.durationSec, DEFAULT_LEVEL_DURATION_SEC);
+  const scrollSpeed = saneNumber(opts.scrollSpeed, DEFAULT_LEVEL_SCROLL_SPEED);
+  const fieldWidth = saneNumber(opts.fieldWidth, DEFAULT_FIELD_WIDTH);
+  const columns = Math.max(1, Math.round(saneNumber(opts.columns, DEFAULT_LEVEL_COLUMNS)));
+  const cellSize = deriveCellSize(fieldWidth, columns);
+  const rows = deriveRows(durationSec, scrollSpeed, cellSize);
   return {
-    version: 1,
-    width,
-    depth,
+    version: 2,
+    durationSec,
+    scrollSpeed,
+    fieldWidth,
+    columns,
+    rows,
     cellSize,
-    cells: Array.from({ length: width * depth }, () => ({})),
+    layers: emptyLayers(columns * rows),
   };
 }
 
 export function cellIndex(level: Level, col: number, row: number): number {
-  if (col < 0 || col >= level.width || row < 0 || row >= level.depth) return -1;
-  return row * level.width + col;
+  if (col < 0 || col >= level.columns || row < 0 || row >= level.rows) return -1;
+  return row * level.columns + col;
 }
 
-/**
- * Validate + merge persisted JSON into a Level. Tolerates malformed/missing
- * fields by falling back to defaults, so a corrupted file doesn't brick the
- * editor.
- */
 export function mergeLevel(raw: unknown): Level {
   if (!raw || typeof raw !== "object") return emptyLevel();
-  const obj = raw as Partial<Level>;
-  const width = num(obj.width, DEFAULT_LEVEL_WIDTH);
-  const depth = num(obj.depth, DEFAULT_LEVEL_DEPTH);
-  const cellSize = num(obj.cellSize, DEFAULT_LEVEL_CELL_SIZE);
-  const expected = width * depth;
-  const rawCells = Array.isArray(obj.cells) ? obj.cells : [];
-  const cells: LevelCell[] = Array.from({ length: expected }, (_, i) => {
-    const c = rawCells[i];
-    if (!c || typeof c !== "object") return {};
-    const co = c as LevelCell;
-    const cell: LevelCell = {};
-    if (typeof co.prop === "string" && co.prop) cell.prop = co.prop;
-    if (typeof co.height === "number" && Number.isFinite(co.height)) {
-      cell.height = clamp(Math.round(co.height), 0, MAX_HEIGHT);
-    }
-    return cell;
-  });
-  return { version: 1, width, depth, cellSize, cells };
+  const obj = raw as Record<string, unknown>;
+  if (obj.version === 1 || Array.isArray(obj.cells)) return migrateV1(obj as unknown as Partial<LevelV1>);
+  return mergeV2(obj);
 }
 
-function num(v: unknown, fallback: number): number {
+export function projectObjectsToLegacyCells(level: Level): LegacyLevelGridCell[] {
+  const count = level.columns * level.rows;
+  return Array.from({ length: count }, (_, i) => {
+    const prop = level.layers.objects[i]?.objects?.[0]?.slot;
+    const height = level.layers.height[i]?.height;
+    const cell: LegacyLevelGridCell = {};
+    if (prop) cell.prop = prop;
+    if (typeof height === "number" && height > 0) cell.height = height;
+    return cell;
+  });
+}
+
+export function countPaintedCells(level: Level): number {
+  const count = level.columns * level.rows;
+  let filled = 0;
+  for (let i = 0; i < count; i++) {
+    if (
+      level.layers.terrain[i]?.terrain ||
+      level.layers.height[i]?.height ||
+      level.layers.objects[i]?.objects?.length
+    ) filled++;
+  }
+  return filled;
+}
+
+export function makePlacementId(col: number, row: number, slot: string): string {
+  return `${row}:${col}:${slot}`;
+}
+
+function mergeV2(obj: Record<string, unknown>): Level {
+  const durationSec = saneNumber(obj.durationSec, DEFAULT_LEVEL_DURATION_SEC);
+  const scrollSpeed = saneNumber(obj.scrollSpeed, DEFAULT_LEVEL_SCROLL_SPEED);
+  const fieldWidth = saneNumber(obj.fieldWidth, DEFAULT_FIELD_WIDTH);
+  const columns = Math.max(1, Math.round(saneNumber(obj.columns, DEFAULT_LEVEL_COLUMNS)));
+  const cellSize = deriveCellSize(fieldWidth, columns);
+  const rows = deriveRows(durationSec, scrollSpeed, cellSize);
+  const expected = columns * rows;
+  const rawLayers = obj.layers && typeof obj.layers === "object"
+    ? obj.layers as Partial<Record<keyof LevelLayers, unknown>>
+    : {};
+  return {
+    version: 2,
+    durationSec,
+    scrollSpeed,
+    fieldWidth,
+    columns,
+    rows,
+    cellSize,
+    layers: {
+      terrain: mergeTerrainLayer(rawLayers.terrain, expected),
+      height: mergeHeightLayer(rawLayers.height, expected),
+      objects: mergeObjectLayer(rawLayers.objects, expected),
+    },
+  };
+}
+
+function migrateV1(raw: Partial<LevelV1>): Level {
+  const base = emptyLevel();
+  const oldWidth = Math.max(1, Math.round(saneNumber(raw.width, DEFAULT_LEVEL_COLUMNS)));
+  const oldDepth = Math.max(1, Math.round(saneNumber(raw.depth, 80)));
+  const oldCells = Array.isArray(raw.cells) ? raw.cells : [];
+
+  for (let oldRow = 0; oldRow < oldDepth; oldRow++) {
+    for (let oldCol = 0; oldCol < oldWidth; oldCol++) {
+      const oldCell = oldCells[oldRow * oldWidth + oldCol];
+      if (!oldCell || typeof oldCell !== "object") continue;
+      const newCol = Math.min(base.columns - 1, Math.floor((oldCol / oldWidth) * base.columns));
+      const newRow = Math.min(base.rows - 1, Math.floor((oldRow / oldDepth) * base.rows));
+      const i = cellIndex(base, newCol, newRow);
+      if (i < 0) continue;
+      if (typeof oldCell.prop === "string" && oldCell.prop) {
+        base.layers.objects[i] = {
+          objects: [{ id: makePlacementId(newCol, newRow, oldCell.prop), slot: oldCell.prop }],
+        };
+      }
+      if (typeof oldCell.height === "number" && Number.isFinite(oldCell.height)) {
+        base.layers.height[i] = { height: clamp(Math.round(oldCell.height), 0, MAX_HEIGHT) };
+      }
+    }
+  }
+
+  return base;
+}
+
+function emptyLayers(count: number): LevelLayers {
+  return {
+    terrain: Array.from({ length: count }, () => ({})),
+    height: Array.from({ length: count }, () => ({})),
+    objects: Array.from({ length: count }, () => ({})),
+  };
+}
+
+function mergeTerrainLayer(raw: unknown, count: number): TerrainCell[] {
+  const arr = Array.isArray(raw) ? raw : [];
+  return Array.from({ length: count }, (_, i) => {
+    const cell = arr[i];
+    if (!cell || typeof cell !== "object") return {};
+    const terrain = (cell as TerrainCell).terrain;
+    return typeof terrain === "string" && terrain ? { terrain } : {};
+  });
+}
+
+function mergeHeightLayer(raw: unknown, count: number): HeightCell[] {
+  const arr = Array.isArray(raw) ? raw : [];
+  return Array.from({ length: count }, (_, i) => {
+    const cell = arr[i];
+    if (!cell || typeof cell !== "object") return {};
+    const height = (cell as HeightCell).height;
+    return typeof height === "number" && Number.isFinite(height)
+      ? { height: clamp(Math.round(height), 0, MAX_HEIGHT) }
+      : {};
+  });
+}
+
+function mergeObjectLayer(raw: unknown, count: number): ObjectCell[] {
+  const arr = Array.isArray(raw) ? raw : [];
+  return Array.from({ length: count }, (_, i) => {
+    const cell = arr[i];
+    if (!cell || typeof cell !== "object") return {};
+    const objects = Array.isArray((cell as ObjectCell).objects)
+      ? (cell as ObjectCell).objects ?? []
+      : [];
+    const next = objects
+      .map((obj) => sanitizeObject(obj))
+      .filter((obj): obj is PlacedObject => Boolean(obj));
+    return next.length ? { objects: next } : {};
+  });
+}
+
+function sanitizeObject(raw: unknown): PlacedObject | null {
+  if (!raw || typeof raw !== "object") return null;
+  const obj = raw as Partial<PlacedObject>;
+  if (typeof obj.slot !== "string" || !obj.slot) return null;
+  return {
+    id: typeof obj.id === "string" && obj.id ? obj.id : obj.slot,
+    slot: obj.slot,
+    offset: tuple2(obj.offset),
+    rotation: typeof obj.rotation === "number" && Number.isFinite(obj.rotation) ? obj.rotation : undefined,
+    scale: typeof obj.scale === "number" && Number.isFinite(obj.scale) ? obj.scale : undefined,
+  };
+}
+
+function tuple2(raw: unknown): [number, number] | undefined {
+  if (!Array.isArray(raw) || raw.length !== 2) return undefined;
+  const x = saneNumber(raw[0], 0);
+  const z = saneNumber(raw[1], 0);
+  return [x, z];
+}
+
+function saneNumber(v: unknown, fallback: number): number {
   return typeof v === "number" && Number.isFinite(v) ? v : fallback;
 }
 

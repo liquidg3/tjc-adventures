@@ -22,6 +22,7 @@ import {
 export interface ShipController {
   loadInitialShip: () => void;
   setModelUrl: (url: string, normalization?: ShipModelNormalization) => void;
+  setVisible: (visible: boolean) => void;
   setShipSize: (size: number) => void;
   setShipLighting: (mutate: (state: ShipLightingState) => void) => void;
   getShipLightingState: () => ShipLightingState;
@@ -53,6 +54,7 @@ export function createShipController(
   let ship: TransformNode | null = null;
   let shipPivot: TransformNode | null = null;
   let shipVisual: AbstractMesh | null = null;
+  let shipVisible = true;
   let shipMaterials: ShipMaterialEntry[] = [];
   const shipLighting: ShipLightingState = { ...DEFAULT_SHIP_LIGHTING };
 
@@ -100,7 +102,9 @@ export function createShipController(
       ship = box;
       shipPivot = box;
       shipVisual = box;
+      box.setEnabled(shipVisible);
       if (oldVisual) shadows.removeCaster(oldVisual);
+      if (shipVisible) shadows.addCaster(box);
       oldShip?.dispose();
       return;
     }
@@ -113,11 +117,12 @@ export function createShipController(
     ship = pivot;
     shipPivot = pivot;
     shipVisual = root;
+    pivot.setEnabled(shipVisible);
     shipMaterials = collectShipMaterials(root);
     applyShipLighting(shipMaterials, shipLighting);
     root.receiveShadows = true;
     for (const mesh of root.getChildMeshes(false)) mesh.receiveShadows = true;
-    shadows.addCaster(root);
+    if (shipVisible) shadows.addCaster(root);
     if (oldVisual && oldVisual !== root) {
       shadows.removeCaster(oldVisual);
     }
@@ -144,6 +149,14 @@ export function createShipController(
       shipModelUrl = url;
       shipNormalization = nextNormalization;
       void loadShip();
+    },
+    setVisible(visible) {
+      if (shipVisible === visible) return;
+      shipVisible = visible;
+      ship?.setEnabled(visible);
+      if (!shipVisual) return;
+      if (visible) shadows.addCaster(shipVisual);
+      else shadows.removeCaster(shipVisual);
     },
     setShipSize(size) {
       shipSize = size;

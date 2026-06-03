@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-02 (session 2)._
+_Last updated: 2026-06-03._
 
 ---
 
@@ -113,11 +113,37 @@ _Last updated: 2026-06-02 (session 2)._
 - **Level Builder now has a live 3D preview.** The vertical-scroller scene runs
   full-screen behind the controls; props are placed at their exact grid world
   positions via `createLevelPropLayer` in `packages/scenes/src/level-prop-layer.ts`.
-  The sidebar has Play/Pause and a scrub slider (0 → level depth in world units).
-  **Layout**: `lb-page` = fixed full-viewport div; canvas fills the right; `.lb-sidebar`
-  is a 320px dark panel on the left. Controls: `LevelBuilder.tsx`.
-  **Known issue**: the 3D preview is functional but the layout still needs polish
-  — this is the next agent's starting point (see handoff prompt in docs/).
+  Play/Pause and the scrub slider cover 0 → level depth in world units; slider
+  changes now drive both the painted prop layer and the ground texture scroll
+  phase so scrubbing moves the visible 3D preview through the authored run.
+  Loading grid cells also hides the legacy random scenery field so the preview
+  reflects the authored grid instead of mixed authored + procedural props.
+  Level Builder calls `setPlayerShipVisible(false)` so the builder preview is
+  level-only; Test Play still shows and controls the ship.
+  **Layout**: `lb-page` = fixed full-viewport div; the scene canvas fills the page,
+  the left panel holds paint tools + palette, and the right panel holds preview
+  controls + an independently scrolling mode-aware grid with a current-row gutter.
+  The grid display is inverted relative to storage: the start row is shown at the
+  bottom, the far end at the top, and the current-row marker moves upward as the
+  preview flies forward.
+  Controls: `LevelBuilder.tsx`. **v2 pass landed**: `level-builder-state.ts`
+  now migrates old v1 `{prop?, height?}` JSON into a v2 schema with separate
+  terrain/height/object layers. Default new levels are five minutes
+  (`12×480`, `10wu` cells, `4800wu` total depth at `SCROLL = 16`). Paint modes
+  are Terrain / Objects / Height / Erase with filtered palettes; the grid draws
+  terrain color, dark height overlay, and object dots. The scene still receives
+  a legacy object/height projection until the runtime terrain layer is built.
+  `level-prop-layer.ts` now applies slot-specific target heights and raises
+  objects by painted height, so trees are no longer fit to tiny cell height.
+  Cleanup pass: `LevelBuilder.tsx` is split into explicit panel/cell helper
+  components, grid column changes use the custom Studio confirmation box because
+  they rebuild painted layers, and stale Level Builder CSS/layout rules were
+  removed. Grass/bushes are object-mode placements; Terrain mode only shows
+  `terrain-*`.
+  **Plan forward**: `docs/level-builder-plan.md` remains the handoff plan.
+  **Known issue**: painted terrain is editor-visible only; it does not yet create
+  authored terrain in the 3D preview. Object updates still rebuild the full prop
+  layer and do not yet use saved asset-normalization presets/overrides.
 - **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
   filter chips: All / 3D / UI. UI uses Kenney's `tag:interface` (not `tag:UI`
   — that returns nothing). UI imports stage to `apps/studio/public/ui/kenney-<slug>/`
@@ -185,8 +211,8 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/ModelsBoard.tsx      3D Models board: assign a staged model + normalization preset to each game slot → asset-map.json
   src/SlotCard.tsx         one slot: dropdown + preset select + expanded modal draft/save normalization workflow
   src/ModelPreview.tsx     budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
-  src/LevelBuilder.tsx     ★ NEW: paint scenery + height onto a 24×80 grid (v1 authoring only)
-  src/level-builder-state.ts Level types + emptyLevel/mergeLevel/cellIndex helpers
+  src/LevelBuilder.tsx     ★ NEW: layered five-minute level authoring surface (terrain / objects / height)
+  src/level-builder-state.ts Level v2 types + migration/projection + emptyLevel/mergeLevel/cellIndex helpers
   src/UiBuilder.tsx        ★ NEW: assign imported UI images to semantic chrome roles → ui-theme.json;
                              draft/save, raw asset grid, slice preview, card header/body padding
   src/ui-theme-state.ts    UI theme schema, defaults, asset loader, CSS variable applier
@@ -212,7 +238,7 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   asset-map.json           committed slot→model assignments
   asset-normalization-presets.json   committed shared normalization baselines
   asset-normalization-overrides.json committed per-model normalization overrides
-  level-builder.json       committed level grid (24×80 cells) — written by the Level Builder section
+  level-builder.json       committed layered Level Builder JSON — written by the Level Builder section
   ui-theme.json            committed Studio chrome theme — image role mapping + slices/padding/text
 
 apps/game-client/          Vite + React (port 5173)
@@ -495,13 +521,11 @@ Kenney is the next task (below).
    to asset tiles, group/filter assets by kind (chrome vs icon buttons vs parts vs
    cursors), add per-role presets for Kenney UI families, and migrate any remaining
    one-off hardcoded chrome selectors into the role map.
-2. **Wire the Level Builder grid into the scene.** v1 only persists; nothing
-   reads it. Make `prop-field.ts` consult the grid before falling back to its
-   random scatter. Cell-to-world: `worldX = (col - width/2) * cellSize`,
-   `worldZ-from-zone-start = (depth - row) * cellSize`, `worldY = height *
-   HEIGHT_NUDGE`. Slot id → asset-map → URL. Then add a ground-mesh height
-   pass that displaces vertices by interpolated cell height (bilinear). Once
-   wired, the editor becomes a real authoring loop.
+2. **Level Builder runtime terrain + efficient object updates.** Follow
+   `docs/level-builder-plan.md`. The v2 schema/editor modes/five-minute defaults
+   are in; next pass should build the runtime terrain layer from painted terrain
+   cells, add terrain height/displacement, make `level-prop-layer.ts` diff-based,
+   and apply saved asset-normalization presets/overrides to placed objects.
 3. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
    simple straight-line enemies streaming down-screen, no shooting yet — give
@@ -659,10 +683,13 @@ Kenney is the next task (below).
   `-16px` sideways pull and align with the card frame. The `-16` is
   hardcoded to the current `card-content.padBody` left/right; if that
   changes, the thumb needs a matching var or it'll misalign.
-- **Level Builder data shape**: 24 wide × 80 deep grid, row-major, row 0 = far
-  end of zone (top of screen at runtime), cellSize = 5 world units. Per cell
-  `{ prop?: slotId, height?: 0..3 }`. See `level-builder-state.ts`. v1 persists
-  only — the scene doesn't read this yet (see Next Steps #1).
+- **Level Builder data shape**: v2 layered JSON with `terrain`, `height`, and
+  `objects` layers. Default new levels are five minutes: `12` columns,
+  `480` rows, `10wu` cells, `4800wu` world depth at `SCROLL = 16`. Storage is
+  row-major with row 0 = far end/top of runtime view; the editor displays the
+  grid inverted so the start row is at the bottom. Old v1 `{prop?, height?}`
+  JSON migrates on load. The scene currently receives a legacy object/height
+  projection until the runtime terrain layer is built.
 - **Studio JSON endpoints all share one factory** — `jsonFilePlugin(name,
   route, file)` in `vite.config.ts`. Add a new endpoint with one line +
   matching file constant. The Studio JSONs (asset-map, vertical-defaults,

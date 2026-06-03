@@ -57,6 +57,7 @@ export interface SceneHandle {
   dispose: () => void;
   setCameraRotationMode: (mode: CameraRotationMode) => void;
   setPlayerShipModel: (url: string, normalization?: ShipModelNormalization) => void;
+  setPlayerShipVisible: (visible: boolean) => void;
   setShipHeight: (height: number) => void;
   setShipSize: (size: number) => void;
   getShipPosition: () => { x: number; y: number; z: number } | null;

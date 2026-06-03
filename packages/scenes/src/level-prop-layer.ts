@@ -2,6 +2,19 @@ import { type AbstractMesh, type Scene, type TransformNode } from "@babylonjs/co
 import { fitScale, loadModel } from "./ship-materials";
 import { SCROLL } from "./scene-config";
 
+const HEIGHT_STEP_WU = 1.25;
+const DEFAULT_PLACEMENT_SCALE = { min: 4, cell: 0.75 };
+const SLOT_PLACEMENT_SCALE: Record<string, { min: number; cell: number }> = {
+  "env-trees": { min: 22, cell: 2.4 },
+  "env-tree-2": { min: 22, cell: 2.4 },
+  "env-bushes": { min: 4, cell: 0.45 },
+  "env-grass": { min: 4, cell: 0.45 },
+  "env-rocks": { min: 4, cell: 0.5 },
+  "prop-cage": { min: 7, cell: 0.85 },
+  "prop-box": { min: 7, cell: 0.85 },
+  "prop-berries": { min: 2.5, cell: 0.3 },
+};
+
 export interface LevelGridCell {
   prop?: string;
   height?: number;
@@ -94,9 +107,10 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       const node = inst as TransformNode;
       const meshes = node.getChildMeshes();
       const rootMesh = meshes[0];
-      const s = rootMesh ? fitScale(rootMesh as AbstractMesh, cellSize * 0.75) : 1;
+      const targetH = targetHeightForSlot(cell.prop, cellSize);
+      const s = rootMesh ? fitScale(rootMesh as AbstractMesh, targetH) : 1;
       node.scaling.setAll(s);
-      node.position.set(baseX, 0, baseZ - scrollZ);
+      node.position.set(baseX, (cell.height ?? 0) * HEIGHT_STEP_WU, baseZ - scrollZ);
       placed.push({ node, baseZ });
     }
   }
@@ -123,4 +137,15 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       modelCache.clear();
     },
   };
+}
+
+function targetHeightForSlot(slot: string, cellSize: number): number {
+  const scale =
+    SLOT_PLACEMENT_SCALE[slot] ??
+    (slot.startsWith("animal-")
+      ? { min: 5, cell: 0.65 }
+      : slot.startsWith("prop-fruit")
+        ? { min: 2.5, cell: 0.3 }
+        : DEFAULT_PLACEMENT_SCALE);
+  return Math.max(scale.min, cellSize * scale.cell);
 }

@@ -265,6 +265,12 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   }
   const input = createInputController(togglePixel);
 
+  function syncLevelPreviewScroll() {
+    const z = levelLayer.getScrollZ();
+    groundA.setScrollDistance(z);
+    if (bShown) groundB.setScrollDistance(z);
+  }
+
   const onResize = () => {
     engine.resize();
     applyPipeline(); // rtHeight is relative to canvas height — recompute scale
@@ -296,10 +302,16 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
 
     // scroll the meadow + stream scenery toward the camera (both layers scroll
     // so the incoming biome moves with the field during a transition)
-    groundA.scroll(dt * SCROLL);
-    if (bShown) groundB.scroll(dt * SCROLL);
+    const levelTotalDepth = levelLayer.getTotalDepth();
+    if (levelTotalDepth > 0) {
+      syncLevelPreviewScroll();
+    } else {
+      groundA.scroll(dt * SCROLL);
+      if (bShown) groundB.scroll(dt * SCROLL);
+    }
     propField.update(dt);
     levelLayer.step(dt);
+    if (levelTotalDepth > 0) syncLevelPreviewScroll();
 
     scene.render();
   });
@@ -312,6 +324,9 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     },
     setPlayerShipModel(url, normalization) {
       shipController.setModelUrl(url, normalization);
+    },
+    setPlayerShipVisible(visible) {
+      shipController.setVisible(visible);
     },
     setShipHeight(height) {
       shipHeight = height;
@@ -417,10 +432,12 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
       return sequencer.getStatus();
     },
     setLevelCells(cells: LevelGridCell[], width, depth, cellSize, assetUrlMap) {
+      propField.setVisible(cells.length === 0);
       void levelLayer.setLevelCells(cells, width, depth, cellSize, assetUrlMap);
     },
     setLevelScrollZ(z) {
       levelLayer.setScrollZ(z);
+      syncLevelPreviewScroll();
     },
     setLevelScrollPaused(paused) {
       levelLayer.setPaused(paused);

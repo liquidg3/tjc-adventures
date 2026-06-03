@@ -24,12 +24,12 @@
     "preset": "none"
   },
   "env-trees": {
-    "model": "model:environment/tree_fur",
-    "preset": "none"
+    "model": "model:kenney-nature-kit/tree_default",
+    "preset": "kenney-nature-kit"
   },
   "env-tree-2": {
-    "model": "model:environment/tree_stylized",
-    "preset": "none"
+    "model": "model:kenney-nature-kit/tree_detailed",
+    "preset": "kenney-nature-kit"
   },
   "env-grass": {
     "model": "model:environment/bush",
@@ -44,16 +44,16 @@
     "preset": "none"
   },
   "terrain-a": {
-    "model": "model:terrain/hill_chapel_ruin",
-    "preset": "none"
+    "model": "model:kenney-nature-kit/ground_grass",
+    "preset": "kenney-nature-kit"
   },
   "terrain-b": {
-    "model": "model:terrain/hill_recycle_park",
-    "preset": "none"
+    "model": "model:kenney-nature-kit/grass_leafsLarge",
+    "preset": "kenney-nature-kit"
   },
   "terrain-c": {
-    "model": "model:terrain/hill_wood_folly",
-    "preset": "none"
+    "model": "model:kenney-nature-kit/grass_large",
+    "preset": "kenney-nature-kit"
   },
   "prop-cage": {
     "model": "model:props/cage",

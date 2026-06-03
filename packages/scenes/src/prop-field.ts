@@ -27,12 +27,14 @@ interface Prop {
 export interface PropFieldController {
   loadScenery: (perModel: number) => Promise<void>;
   setDensityProvider: (fn: (z: number) => SceneryDensities) => void;
+  setVisible: (visible: boolean) => void;
   update: (dt: number) => void;
 }
 
 export function createPropFieldController(scene: Scene): PropFieldController {
   const props: Prop[] = [];
   let densityAt: (z: number) => SceneryDensities = () => ({});
+  let visible = true;
 
   function place(node: TransformNode) {
     node.position.set((Math.random() * 2 - 1) * 70, 0, Math.random() * FIELD_DEPTH);
@@ -43,7 +45,7 @@ export function createPropFieldController(scene: Scene): PropFieldController {
     const d = densityAt(p.node.position.z)[p.key] ?? 0;
     const on = p.rank < d;
     if (on !== p.enabled) {
-      p.node.setEnabled(on);
+      p.node.setEnabled(visible && on);
       p.enabled = on;
     }
   }
@@ -81,6 +83,7 @@ export function createPropFieldController(scene: Scene): PropFieldController {
   }
 
   function update(dt: number) {
+    if (!visible) return;
     const move = SCROLL * dt;
     for (const p of props) {
       p.node.position.z -= move;
@@ -93,5 +96,12 @@ export function createPropFieldController(scene: Scene): PropFieldController {
     }
   }
 
-  return { loadScenery, setDensityProvider, update };
+  function setVisible(nextVisible: boolean) {
+    visible = nextVisible;
+    for (const p of props) {
+      p.node.setEnabled(visible && p.enabled);
+    }
+  }
+
+  return { loadScenery, setDensityProvider, setVisible, update };
 }
