@@ -115,7 +115,7 @@
     },
     "input": {
       "kind": "bar",
-      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_square_gloss_large.png",
+      "image": "/ui/kenney-ui-pack-sci-fi/PNG/Grey/Default/bar_square_large.png",
       "slice": 8,
       "width": 8,
       "padding": {
