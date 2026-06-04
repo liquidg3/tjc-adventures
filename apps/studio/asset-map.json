@@ -48,12 +48,12 @@
     "preset": "kenney-nature-kit"
   },
   "terrain-b": {
-    "model": "model:kenney-nature-kit/grass_leafsLarge",
-    "preset": "kenney-nature-kit"
+    "model": "model:kenney-space-kit/terrain",
+    "preset": "kenney-space-kit"
   },
   "terrain-c": {
-    "model": "model:kenney-nature-kit/grass_large",
-    "preset": "kenney-nature-kit"
+    "model": "model:kenney-space-kit/terrain_roadCross",
+    "preset": "kenney-space-kit"
   },
   "prop-cage": {
     "model": "model:props/cage",

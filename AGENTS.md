@@ -23,6 +23,25 @@ next agent doesn't repeat it.
 - **Update the docs when you change things** so they never drift from reality.
 
 ## Gotchas that will bite you (full list in docs/STATE.md → Gotchas)
+- **Level Builder DOM grid must stay virtualized.** The 2D grid uses row virtualization
+  (`VIRTUAL_ROW_H = 20px`; only visible rows rendered). At 32 columns the current
+  5-minute grid has 400 rows = 12,800 cells. Without virtualization, React reconciles
+  all of them on every RAF tick. Keep `GridPanel` virtualized; any new grid-like
+  surface must do the same.
+- **Level Builder terrain texture should stay one texture.** The 3D authoring grid is
+  repainted into one `DynamicTexture` with `uScale=vScale=1`; avoid GPU texture tiling
+  for the grid because minified tiled dynamic textures tanked FPS in earlier passes.
+  See `level-terrain-layer.ts`.
+- **Async model-placement race — use generation counters.** `level-prop-layer.ts`
+  uses fire-and-forget async placement (`void loadAndPlace(...)`).
+  Without a generation counter, rapid calls produce orphan meshes in the scene that are
+  never disposed. Pattern: `let generation = 0;` → `const gen = ++generation;` at call
+  start → check `gen !== generation` before and after every `await`.
+- **In-flight promise map prevents duplicate model loads.** `SceneLoader.ImportMeshAsync`
+  adds ALL meshes to the scene permanently. If two concurrent calls both see
+  `!modelCache.has(url)` before either adds to the cache, the model loads twice and the
+  first load's meshes leak forever. Fix: a `loadingPromises: Map<string, Promise<void>>`
+  sentinel — check it before starting a load, set it immediately, delete it on resolve.
 - **WebGL context cap (~16/page).** Each Babylon `Engine` = one WebGL context;
   exceeding the cap kills the oldest and corrupts every engine on the page. Never
   create unbounded engines — see `apps/studio/src/viewer-budget.ts`.
@@ -124,10 +143,12 @@ is `button.classname` (0,1,1) for overrides that need to beat the base
 `button:not(.studio-card)` (0,1,1) rule. Never reach for `!important` when a
 one-word specificity bump solves it.
 
-**Vertical Shooter Level Builder** (`#level`): paints a 24×80 grid of
-`{prop?, height?}` cells. Persists only; scene wiring is queued after the UI
-Builder polish pass (`STATE.md` → Suggested next steps). After that: enemies
-(`ship-enemy = craft_miner` assigned, never spawns), then scenery swap.
+**Vertical Shooter Level Builder** (`#level`): layered five-minute authoring
+surface for terrain, objects, and height. It uses a v2 JSON schema, a virtualized
+2D grid, live 3D preview, and filtered Terrain / Objects / Height / Erase modes.
+Important current truth: runtime terrain preview is **in progress, not ready**.
+Do not assume painted terrain is correctly becoming the authored ground until
+Phase 4 in `docs/level-builder-plan.md` is actually complete.
 
 ## Where things live
 - **Live scene (Babylon):** `packages/scenes/src/ship-scene.ts` → `@tjc/scenes`

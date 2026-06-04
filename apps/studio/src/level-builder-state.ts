@@ -62,7 +62,7 @@ export interface LegacyLevelGridCell {
 
 export const DEFAULT_LEVEL_DURATION_SEC = 300;
 export const DEFAULT_LEVEL_SCROLL_SPEED = 16;
-export const DEFAULT_FIELD_WIDTH = 120;
+export const DEFAULT_FIELD_WIDTH = 384;
 export const DEFAULT_LEVEL_COLUMNS = 12;
 export const MAX_HEIGHT = 8;
 
@@ -139,7 +139,7 @@ export function makePlacementId(col: number, row: number, slot: string): string 
 function mergeV2(obj: Record<string, unknown>): Level {
   const durationSec = saneNumber(obj.durationSec, DEFAULT_LEVEL_DURATION_SEC);
   const scrollSpeed = saneNumber(obj.scrollSpeed, DEFAULT_LEVEL_SCROLL_SPEED);
-  const fieldWidth = saneNumber(obj.fieldWidth, DEFAULT_FIELD_WIDTH);
+  const fieldWidth = migrateFieldWidth(saneNumber(obj.fieldWidth, DEFAULT_FIELD_WIDTH));
   const columns = Math.max(1, Math.round(saneNumber(obj.columns, DEFAULT_LEVEL_COLUMNS)));
   const cellSize = deriveCellSize(fieldWidth, columns);
   const rows = deriveRows(durationSec, scrollSpeed, cellSize);
@@ -161,6 +161,15 @@ function mergeV2(obj: Record<string, unknown>): Level {
       objects: mergeObjectLayer(rawLayers.objects, expected),
     },
   };
+}
+
+function migrateFieldWidth(fieldWidth: number): number {
+  // Early terrain-preview passes used bad field widths:
+  // - 120wu: too narrow, a center runway that did not reach the visible edges.
+  // - 1200wu: too wide, only a fraction of the selected columns fit on screen.
+  // 384wu fits the current Level Builder camera so all 32 columns are visible
+  // across the far/top edge of the preview.
+  return fieldWidth < 300 || fieldWidth > 600 ? DEFAULT_FIELD_WIDTH : fieldWidth;
 }
 
 function migrateV1(raw: Partial<LevelV1>): Level {

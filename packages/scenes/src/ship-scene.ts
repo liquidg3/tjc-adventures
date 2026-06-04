@@ -17,6 +17,7 @@ import { createInputController } from "./input-controller";
 import { createLightingController } from "./lighting-controller";
 import { createPropFieldController } from "./prop-field";
 import { createLevelPropLayer } from "./level-prop-layer";
+import { createLevelTerrainLayer } from "./level-terrain-layer";
 import {
   CAMERA_BASE_LOCAL_X,
   SCROLL,
@@ -25,6 +26,7 @@ import {
   type CameraRotationMode,
   type GroundStyle,
   type LevelGridCell,
+  type LevelTerrainCell,
   type LevelPlan,
   type LightingPreset,
   type PipelineMode,
@@ -45,6 +47,7 @@ export {
   type CameraRotationMode,
   type GroundStyle,
   type LevelGridCell,
+  type LevelTerrainCell,
   type LevelPlan,
   type LightingPreset,
   type PipelineMode,
@@ -222,6 +225,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   void propField.loadScenery(24);
 
   const levelLayer = createLevelPropLayer(scene);
+  const terrainLayer = createLevelTerrainLayer(scene);
 
   // ── render pipeline (pixel-art spike) ────────────────────────────────────
   // Two knobs decide the look:
@@ -269,6 +273,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     const z = levelLayer.getScrollZ();
     groundA.setScrollDistance(z);
     if (bShown) groundB.setScrollDistance(z);
+    terrainLayer.setScrollZ(z);
   }
 
   const onResize = () => {
@@ -300,18 +305,18 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     // a level plan (when playing) drives ground + lighting by scrolled time
     sequencer.update(dt);
 
-    // scroll the meadow + stream scenery toward the camera (both layers scroll
-    // so the incoming biome moves with the field during a transition)
+    // Advance the prop layer, then sync ground + terrain to the new scroll position.
+    // The ground scrolls freely when no level is loaded; when a level is loaded the
+    // prop layer owns the scroll position and ground/terrain follow it.
     const levelTotalDepth = levelLayer.getTotalDepth();
+    propField.update(dt);
+    levelLayer.step(dt);
     if (levelTotalDepth > 0) {
       syncLevelPreviewScroll();
     } else {
       groundA.scroll(dt * SCROLL);
       if (bShown) groundB.scroll(dt * SCROLL);
     }
-    propField.update(dt);
-    levelLayer.step(dt);
-    if (levelTotalDepth > 0) syncLevelPreviewScroll();
 
     scene.render();
   });
@@ -433,7 +438,10 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     },
     setLevelCells(cells: LevelGridCell[], width, depth, cellSize, assetUrlMap) {
       propField.setVisible(cells.length === 0);
-      void levelLayer.setLevelCells(cells, width, depth, cellSize, assetUrlMap);
+      levelLayer.setLevelCells(cells, width, depth, cellSize, assetUrlMap);
+    },
+    setLevelTerrainCells(cells: LevelTerrainCell[], width, depth, cellSize, colorMap) {
+      terrainLayer.setTerrainCells(cells, width, depth, cellSize, colorMap);
     },
     setLevelScrollZ(z) {
       levelLayer.setScrollZ(z);
@@ -448,9 +456,13 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     getLevelTotalDepth() {
       return levelLayer.getTotalDepth();
     },
+    getFps() {
+      return engine.getFps();
+    },
     dispose() {
       input.dispose();
       levelLayer.dispose();
+      terrainLayer.dispose();
       window.removeEventListener("resize", onResize);
       engine.stopRenderLoop();
       scene.dispose();

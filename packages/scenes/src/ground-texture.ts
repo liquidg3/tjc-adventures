@@ -14,6 +14,9 @@ export function drawGround(
   style: GroundStyle
 ): { u: number; v: number } {
   switch (style) {
+    case "white":
+      drawWhite(ctx, size);
+      return { u: 1, v: 1 };
     case "flat":
       drawFlat(ctx, size);
       return { u: 6, v: 8 };
@@ -28,6 +31,12 @@ export function drawGround(
       drawPainterly(ctx, size);
       return { u: 6, v: 8 };
   }
+}
+
+// u=1, v=1 is correct: a solid fill tiles identically at any repeat count.
+function drawWhite(ctx: GroundPainterContext, size: number) {
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, size, size);
 }
 
 function speckle(ctx: GroundPainterContext, size: number, n: number, tones: string[], w = 1.5, h = 2.5) {

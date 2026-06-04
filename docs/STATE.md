@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-03._
+_Last updated: 2026-06-03 (session 2)._
 
 ---
 
@@ -129,10 +129,10 @@ _Last updated: 2026-06-03._
   Controls: `LevelBuilder.tsx`. **v2 pass landed**: `level-builder-state.ts`
   now migrates old v1 `{prop?, height?}` JSON into a v2 schema with separate
   terrain/height/object layers. Default new levels are five minutes
-  (`12×480`, `10wu` cells, `4800wu` total depth at `SCROLL = 16`). Paint modes
+  (`12×150`, `32wu` cells, `4800wu` total depth at `SCROLL = 16`). Paint modes
   are Terrain / Objects / Height / Erase with filtered palettes; the grid draws
-  terrain color, dark height overlay, and object dots. The scene still receives
-  a legacy object/height projection until the runtime terrain layer is built.
+  terrain color, dark height overlay, and object dots. Runtime preview receives
+  both a terrain layer and a legacy object/height projection.
   `level-prop-layer.ts` now applies slot-specific target heights and raises
   objects by painted height, so trees are no longer fit to tiny cell height.
   Cleanup pass: `LevelBuilder.tsx` is split into explicit panel/cell helper
@@ -140,10 +140,14 @@ _Last updated: 2026-06-03._
   they rebuild painted layers, and stale Level Builder CSS/layout rules were
   removed. Grass/bushes are object-mode placements; Terrain mode only shows
   `terrain-*`.
-  **Plan forward**: `docs/level-builder-plan.md` remains the handoff plan.
-  **Known issue**: painted terrain is editor-visible only; it does not yet create
-  authored terrain in the 3D preview. Object updates still rebuild the full prop
-  layer and do not yet use saved asset-normalization presets/overrides.
+  **Plan forward**: `docs/level-builder-plan.md` is the handoff plan.
+  **Terrain preview is in progress.** `packages/scenes/src/level-terrain-layer.ts`
+  renders a scrolling authored-ground grid aligned to the object-placement field;
+  painted terrain cells instantiate their assigned terrain GLB in the 3D preview
+  while the 2D editor grid stays solid-swatch for readability. Terrain GLBs use
+  the raw loader so their materials match the 3D Models board. Phase 4 is not
+  closed yet: terrain updates still full-rebuild, height does not displace terrain,
+  and the terrain-vs-object visual contract still needs more validation.
 - **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
   filter chips: All / 3D / UI. UI uses Kenney's `tag:interface` (not `tag:UI`
   — that returns nothing). UI imports stage to `apps/studio/public/ui/kenney-<slug>/`
@@ -521,11 +525,12 @@ Kenney is the next task (below).
    to asset tiles, group/filter assets by kind (chrome vs icon buttons vs parts vs
    cursors), add per-role presets for Kenney UI families, and migrate any remaining
    one-off hardcoded chrome selectors into the role map.
-2. **Level Builder runtime terrain + efficient object updates.** Follow
-   `docs/level-builder-plan.md`. The v2 schema/editor modes/five-minute defaults
-   are in; next pass should build the runtime terrain layer from painted terrain
-   cells, add terrain height/displacement, make `level-prop-layer.ts` diff-based,
-   and apply saved asset-normalization presets/overrides to placed objects.
+2. **Level Builder — fix runtime terrain before moving on.** Phases 1–3 are
+   usable; Phase 4 is in progress, not complete. A terrain-layer prototype exists
+   and the DOM grid is virtualized, but painted terrain does not yet read as the
+   actual authored ground in the 3D preview. Next pass should make terrain
+   painting visibly and spatially correct first, then continue with height runtime
+   and diff-based object/terrain updates.
 3. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
    simple straight-line enemies streaming down-screen, no shooting yet — give
@@ -685,11 +690,11 @@ Kenney is the next task (below).
   changes, the thumb needs a matching var or it'll misalign.
 - **Level Builder data shape**: v2 layered JSON with `terrain`, `height`, and
   `objects` layers. Default new levels are five minutes: `12` columns,
-  `480` rows, `10wu` cells, `4800wu` world depth at `SCROLL = 16`. Storage is
+  `150` rows, `32wu` cells, `4800wu` world depth at `SCROLL = 16`. Storage is
   row-major with row 0 = far end/top of runtime view; the editor displays the
   grid inverted so the start row is at the bottom. Old v1 `{prop?, height?}`
-  JSON migrates on load. The scene currently receives a legacy object/height
-  projection until the runtime terrain layer is built.
+  JSON migrates on load. The scene receives a model-backed terrain layer plus
+  a legacy object/height projection for placed props.
 - **Studio JSON endpoints all share one factory** — `jsonFilePlugin(name,
   route, file)` in `vite.config.ts`. Add a new endpoint with one line +
   matching file constant. The Studio JSONs (asset-map, vertical-defaults,

@@ -1,8 +1,18 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
+  type PointerEvent,
+} from "react";
 import {
   createShipScene,
   SCROLL,
   type LevelGridCell,
+  type LevelTerrainCell,
   type SceneHandle,
 } from "@tjc/scenes";
 import {
@@ -57,10 +67,12 @@ export function LevelBuilder() {
   const [assetUrlMap, setAssetUrlMap] = useState<Record<string, string>>({});
   const [paused, setPaused] = useState(false);
   const [scrollZ, setScrollZ] = useState(0);
+  const [fps, setFps] = useState(0);
   const [pendingClear, setPendingClear] = useState(false);
   const [pendingColumns, setPendingColumns] = useState<number | null>(null);
 
   const pointerDown = useRef(false);
+  const pausedBeforeScrub = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handleRef = useRef<SceneHandle | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -94,35 +106,10 @@ export function LevelBuilder() {
     handleRef.current = handle;
     handle.setPlayerShipVisible(false);
     handle.setLevelScrollPaused(false);
+    handle.setGroundStyle("white");
     return () => {
       handle.dispose();
       handleRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!loaded || !handleRef.current) return;
-    handleRef.current.setLevelCells(
-      projectObjectsToLegacyCells(level) as LevelGridCell[],
-      level.columns,
-      level.rows,
-      level.cellSize,
-      assetUrlMap,
-    );
-  }, [level, assetUrlMap, loaded]);
-
-  useEffect(() => {
-    handleRef.current?.setLevelScrollPaused(paused);
-  }, [paused]);
-
-  useEffect(() => {
-    function tick() {
-      setScrollZ(handleRef.current?.getLevelScrollZ() ?? 0);
-      rafRef.current = requestAnimationFrame(tick);
-    }
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
@@ -134,6 +121,45 @@ export function LevelBuilder() {
     return colors;
   }, [assignedSlots]);
 
+  useEffect(() => {
+    if (!loaded || !handleRef.current) return;
+    handleRef.current.setLevelCells(
+      projectObjectsToLegacyCells(level) as LevelGridCell[],
+      level.columns,
+      level.rows,
+      level.cellSize,
+      assetUrlMap,
+    );
+    const terrainPreviewCells = level.layers.terrain.map((cell) => ({
+      terrain: cell.terrain,
+      color: cell.terrain ? slotColor[cell.terrain] : undefined,
+    }));
+    handleRef.current.setLevelTerrainCells(
+      terrainPreviewCells as LevelTerrainCell[],
+      level.columns,
+      level.rows,
+      level.cellSize,
+      assetUrlMap,
+    );
+  }, [level, assetUrlMap, loaded, slotColor]);
+
+  useEffect(() => {
+    handleRef.current?.setLevelScrollPaused(paused);
+  }, [paused]);
+
+  useEffect(() => {
+    function tick() {
+      const h = handleRef.current;
+      setScrollZ(h?.getLevelScrollZ() ?? 0);
+      setFps(Math.round(h?.getFps() ?? 0));
+      rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   const terrainSlots = useMemo(() => assignedSlots.filter(isTerrainSlot), [assignedSlots]);
   const objectSlots = useMemo(() => assignedSlots.filter(isObjectSlot), [assignedSlots]);
   const paletteSlots = mode === "terrain" ? terrainSlots : mode === "object" ? objectSlots : [];
@@ -141,8 +167,8 @@ export function LevelBuilder() {
   const progressRow = Math.min(level.rows - 1, Math.floor(scrollZ / level.cellSize));
   const currentGridRow = level.rows - 1 - progressRow;
   const progressPct = totalDepth > 0 ? (scrollZ / totalDepth) * 100 : 0;
-  const rows = useMemo(() => Array.from({ length: level.rows }, (_, i) => i), [level.rows]);
   const cols = useMemo(() => Array.from({ length: level.columns }, (_, i) => i), [level.columns]);
+  const filledCount = useMemo(() => countPaintedCells(level), [level]);
   const selectedLabel = labelForSelection(mode, selectedTerrain, selectedObject, selectedHeight);
 
   function paintCell(col: number, row: number) {
@@ -218,13 +244,25 @@ export function LevelBuilder() {
     handleRef.current?.setLevelScrollZ(z);
   }
 
+  function startScrub() {
+    pausedBeforeScrub.current = paused;
+    setPaused(true);
+    handleRef.current?.setLevelScrollPaused(true);
+  }
+
+  function endScrub() {
+    const nextPaused = pausedBeforeScrub.current;
+    setPaused(nextPaused);
+    handleRef.current?.setLevelScrollPaused(nextPaused);
+  }
+
   return (
     <div className="lb-page">
       <canvas ref={canvasRef} className="lb-bg-canvas" />
       <div className="lb-preview-shade" />
 
       <aside className="lb-panel lb-panel-left">
-        <HeaderPanel level={level} filled={countPaintedCells(level)} saved={saved} />
+        <HeaderPanel level={level} filled={filledCount} saved={saved} fps={fps} />
         <LevelSettings
           level={level}
           totalDepth={totalDepth}
@@ -272,12 +310,13 @@ export function LevelBuilder() {
           totalDepth={totalDepth}
           scrollZ={scrollZ}
           onPausedChange={setPaused}
+          onScrubStart={startScrub}
           onScrub={scrubTo}
+          onScrubEnd={endScrub}
         />
         <GridPanel
           mode={mode}
           level={level}
-          rows={rows}
           cols={cols}
           currentGridRow={currentGridRow}
           slotColor={slotColor}
@@ -289,13 +328,18 @@ export function LevelBuilder() {
   );
 }
 
-function HeaderPanel({ level, filled, saved }: { level: Level; filled: number; saved: boolean }) {
+function HeaderPanel({ level, filled, saved, fps }: { level: Level; filled: number; saved: boolean; fps: number }) {
   return (
     <header className="lb-sidebar-head">
       <h1>Level Builder</h1>
       <p className="dim">
         {level.columns}×{level.rows} grid · {level.cellSize.toFixed(1)}wu/cell ·{" "}
         {filled}/{level.columns * level.rows} filled · {saved ? "✓" : "saving…"}
+      </p>
+      <p className="dim">
+        <b className={`lb-fps ${fps < 30 ? "lb-fps-bad" : fps < 50 ? "lb-fps-warn" : "lb-fps-good"}`}>
+          {fps} fps
+        </b>
       </p>
     </header>
   );
@@ -505,7 +549,9 @@ function PreviewPanel({
   totalDepth,
   scrollZ,
   onPausedChange,
+  onScrubStart,
   onScrub,
+  onScrubEnd,
 }: {
   paused: boolean;
   progressPct: number;
@@ -514,10 +560,44 @@ function PreviewPanel({
   totalDepth: number;
   scrollZ: number;
   onPausedChange: (paused: boolean) => void;
+  onScrubStart: () => void;
   onScrub: (z: number) => void;
+  onScrubEnd: () => void;
 }) {
   const elapsedSeconds = scrollZ / SCROLL;
   const levelSeconds = totalDepth / SCROLL;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+
+  function scrollFromClientX(clientX: number) {
+    const track = trackRef.current;
+    if (!track || totalDepth <= 0) return;
+    const rect = track.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / Math.max(1, rect.width)));
+    onScrub(pct * totalDepth);
+  }
+
+  function handleTrackPointerDown(e: PointerEvent<HTMLDivElement>) {
+    draggingRef.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    onScrubStart();
+    scrollFromClientX(e.clientX);
+  }
+
+  function handleTrackPointerMove(e: PointerEvent<HTMLDivElement>) {
+    if (!draggingRef.current) return;
+    scrollFromClientX(e.clientX);
+  }
+
+  function handleTrackPointerEnd(e: PointerEvent<HTMLDivElement>) {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    onScrubEnd();
+  }
+
   return (
     <section className="lb-section lb-preview-section">
       <h2>Preview</h2>
@@ -527,16 +607,24 @@ function PreviewPanel({
         </button>
         <span className="dim lb-row-label">{Math.round(progressPct)}%</span>
       </div>
-      <input
-        type="range"
-        className="lb-scroll-slider"
-        min={0}
-        max={totalDepth}
-        step={level.cellSize}
-        value={scrollZ}
-        onInput={(e) => onScrub(Number(e.currentTarget.value))}
-        onChange={(e) => onScrub(Number(e.currentTarget.value))}
-      />
+      <div
+        ref={trackRef}
+        className="lb-scrub-track"
+        role="slider"
+        tabIndex={0}
+        aria-label="Preview scroll"
+        aria-valuemin={0}
+        aria-valuemax={Math.round(totalDepth)}
+        aria-valuenow={Math.round(scrollZ)}
+        onPointerDown={handleTrackPointerDown}
+        onPointerMove={handleTrackPointerMove}
+        onPointerUp={handleTrackPointerEnd}
+        onPointerCancel={handleTrackPointerEnd}
+        onLostPointerCapture={handleTrackPointerEnd}
+      >
+        <span className="lb-scrub-fill" style={{ width: `${progressPct}%` }} />
+        <span className="lb-scrub-thumb" style={{ left: `${progressPct}%` }} />
+      </div>
       <div className="lb-preview-readout">
         <span><b>Row</b> {progressRow + 1}/{level.rows}</span>
         <span><b>Distance</b> {Math.round(scrollZ)}/{Math.round(totalDepth)}wu</span>
@@ -546,10 +634,13 @@ function PreviewPanel({
   );
 }
 
+// Row height must match --lb-cell-h in styles.css.
+const VIRTUAL_ROW_H = 20;
+const VIRTUAL_OVERSCAN = 4;
+
 function GridPanel({
   mode,
   level,
-  rows,
   cols,
   currentGridRow,
   slotColor,
@@ -558,48 +649,83 @@ function GridPanel({
 }: {
   mode: PaintMode;
   level: Level;
-  rows: number[];
   cols: number[];
   currentGridRow: number;
   slotColor: Record<string, string>;
   pointerDown: MutableRefObject<boolean>;
   onPaintCell: (col: number, row: number) => void;
 }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [firstRow, setFirstRow] = useState(0);
+  const [lastRow, setLastRow] = useState(60);
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+
+    function update() {
+      const el = wrapRef.current;
+      if (!el) return;
+      const first = Math.max(0, Math.floor(el.scrollTop / VIRTUAL_ROW_H) - VIRTUAL_OVERSCAN);
+      const last = Math.min(level.rows, Math.ceil((el.scrollTop + el.clientHeight) / VIRTUAL_ROW_H) + VIRTUAL_OVERSCAN);
+      setFirstRow(first);
+      setLastRow(last);
+    }
+
+    update();
+    wrap.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(wrap);
+    return () => { wrap.removeEventListener("scroll", update); ro.disconnect(); };
+  }, [level.rows]);
+
+  const totalH = level.rows * VIRTUAL_ROW_H;
+  const offsetTop = firstRow * VIRTUAL_ROW_H;
+  const templateCols = `var(--lb-row-gutter) repeat(${level.columns}, minmax(0, 1fr))`;
+
   return (
     <section className="lb-section lb-grid-section">
       <div className="lb-grid-title">
         <h2>Grid</h2>
-        <span className="dim">{level.columns} columns · {level.rows} rows</span>
+        <span className="dim">{level.columns}×{level.rows}</span>
       </div>
-      <div className="lb-grid-wrap">
-        <div
-          className="lb-grid"
-          style={{
-            gridTemplateColumns: `var(--lb-row-gutter) repeat(${level.columns}, minmax(0, 1fr))`,
-          }}
-          onPointerUp={() => { pointerDown.current = false; }}
-          onPointerLeave={() => { pointerDown.current = false; }}
-        >
-          {rows.map((row) => (
-            <Fragment key={`row-${row}`}>
-              <div className={`lb-row-gutter${row === currentGridRow ? " lb-row-gutter-current" : ""}`}>
-                {row === currentGridRow ? "▲" : level.rows - row}
-              </div>
-              {cols.map((col) => (
-                <GridCell
-                  key={`${col}-${row}`}
-                  col={col}
-                  row={row}
-                  mode={mode}
-                  level={level}
-                  current={row === currentGridRow}
-                  slotColor={slotColor}
-                  pointerDown={pointerDown}
-                  onPaintCell={onPaintCell}
-                />
-              ))}
-            </Fragment>
-          ))}
+      <div ref={wrapRef} className="lb-grid-wrap">
+        {/* Full-height spacer so the scrollbar reflects the total level height */}
+        <div style={{ height: totalH, position: "relative" }}>
+          {/* Only the visible window of rows, absolutely positioned */}
+          <div
+            className="lb-grid"
+            style={{
+              position: "absolute",
+              top: offsetTop,
+              left: 0,
+              right: 0,
+              gridTemplateColumns: templateCols,
+            }}
+            onPointerUp={() => { pointerDown.current = false; }}
+            onPointerLeave={() => { pointerDown.current = false; }}
+          >
+            {Array.from({ length: lastRow - firstRow }, (_, i) => firstRow + i).map((row) => (
+              <Fragment key={`row-${row}`}>
+                <div className={`lb-row-gutter${row === currentGridRow ? " lb-row-gutter-current" : ""}`}>
+                  {row === currentGridRow ? "▲" : level.rows - row}
+                </div>
+                {cols.map((col) => (
+                  <GridCell
+                    key={`${col}-${row}`}
+                    col={col}
+                    row={row}
+                    mode={mode}
+                    level={level}
+                    current={row === currentGridRow}
+                    slotColor={slotColor}
+                    pointerDown={pointerDown}
+                    onPaintCell={onPaintCell}
+                  />
+                ))}
+              </Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </section>

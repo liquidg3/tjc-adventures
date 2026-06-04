@@ -53,6 +53,12 @@ export interface LevelGridCell {
   height?: number; // 0..MAX_HEIGHT
 }
 
+/** A painted terrain cell from the Level Builder terrain layer. */
+export interface LevelTerrainCell {
+  terrain?: string; // slot id, e.g. "terrain-a"
+  color?: string;   // editor swatch color used by the terrain preview surface
+}
+
 export interface SceneHandle {
   dispose: () => void;
   setCameraRotationMode: (mode: CameraRotationMode) => void;
@@ -104,10 +110,19 @@ export interface SceneHandle {
     cellSize: number,
     assetUrlMap: Record<string, string>,
   ) => void;
+  /** Place the terrain layer cells as actual assigned models in the 3D preview. */
+  setLevelTerrainCells: (
+    cells: LevelTerrainCell[],
+    width: number,
+    depth: number,
+    cellSize: number,
+    assetUrlMap: Record<string, string>,
+  ) => void;
   setLevelScrollZ: (z: number) => void;
   setLevelScrollPaused: (paused: boolean) => void;
   getLevelScrollZ: () => number;
   getLevelTotalDepth: () => number;
+  getFps: () => number;
   /** Current zone while a plan is playing, or null when not sequencing. */
   getZoneStatus: () => { index: number; name: string; progress: number } | null;
 }
@@ -148,7 +163,7 @@ export type CameraRotationMode =
   | "rig-y"
   | "rig-z";
 
-export type GroundStyle = "painterly" | "flat" | "stripes" | "checker";
+export type GroundStyle = "painterly" | "flat" | "stripes" | "checker" | "white";
 
 /**
  * How the ground tile texture is sampled.

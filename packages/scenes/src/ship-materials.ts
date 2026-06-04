@@ -49,6 +49,17 @@ export async function loadModel(url: string, scene: Scene): Promise<AbstractMesh
   }
 }
 
+export async function loadRawModel(url: string, scene: Scene): Promise<AbstractMesh | null> {
+  try {
+    const res = await SceneLoader.ImportMeshAsync("", "", url, scene);
+    const root = (res.meshes.find((mesh) => !mesh.parent) ?? res.meshes[0]) as AbstractMesh;
+    return root ?? null;
+  } catch (err) {
+    dbgError("model load failed", url, err);
+    return null;
+  }
+}
+
 export function fitScale(root: AbstractMesh, targetHeight: number): number {
   const { min, max } = root.getHierarchyBoundingVectors(true);
   const h = max.y - min.y || 1;

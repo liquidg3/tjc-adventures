@@ -37,7 +37,7 @@ Implemented in the first v2 pass:
   `objects` layers.
 - Legacy v1 `{prop?, height?}` JSON migrates into v2 on load.
 - Default new level target is five minutes: `300s`, `16wu/s`, `4800wu`.
-- Default grid is `12` columns, `120wu` field width, `10wu` cells, `480` rows.
+- Default grid is `12` columns, `384wu` field width, `32wu` cells, `150` rows.
 - Level Builder modes are now `Terrain`, `Objects`, `Height`, `Erase`.
 - Palette filters by mode:
   - Terrain shows only `terrain-*`.
@@ -70,8 +70,8 @@ Not implemented yet:
 Current behavior:
 
 - Data model is v2: separate terrain/height/object layers.
-- Grid defaults to `12×480`, `cellSize = 10`.
-- Total current level length is `480 * 10 = 4800wu`.
+- Grid defaults to `12×150`, `cellSize = 32`.
+- Total current level length is `150 * 32 = 4800wu`.
 - Runtime scroll speed is `SCROLL = 16wu/s`.
 - Current level duration is `4800 / 16 = 300s`.
 - Five minutes requires `300s * 16wu/s = 4800wu`.
@@ -101,17 +101,17 @@ depthRows = ceil(targetWorldDepth / cellSize)
 
 Examples:
 
-| Columns | Cell size if field is 120wu wide | Rows for 4800wu | Notes |
+| Columns | Cell size if field is 384wu wide | Rows for 4800wu | Notes |
 |---:|---:|---:|---|
-| 10 | 12wu | 400 | coarse, good for large landmarks |
-| 12 | 10wu | 480 | likely practical first target |
-| 24 | 5wu | 960 | current density, too many visible rows without virtualization |
-| 40 | 3wu | 1600 | detailed, requires strong editor virtualization |
-| 80 | 1.5wu | 3200 | micro-editing, not a good default |
+| 10 | 38.4wu | 125 | coarse, good for large landmarks |
+| 12 | 32wu | 150 | likely practical first target |
+| 24 | 16wu | 300 | detailed terrain painting |
+| 32 | 12wu | 400 | current high-detail option; all columns should fit across top of preview |
+| 80 | 4.8wu | 1000 | micro-editing, needs stronger grid UX |
 
 Default recommendation:
 
-- Use **12 columns**, **10wu cells**, **480 rows** for the first five-minute
+- Use **12 columns**, **32wu cells**, **150 rows** for the first five-minute
   builder pass.
 - Keep width configurable, but treat it as a level-wide setting that resamples or
   rebuilds the grid only after confirmation.
@@ -132,8 +132,8 @@ This makes model placement understandable:
 
 Open implementation detail:
 
-- Confirm the exact authored field width. Use `120wu` as the planning baseline
-  until the scene camera/field contract says otherwise.
+- Current authored field width is `384wu` so 32 selected columns fit across the
+  visible far/top edge of the Level Builder preview.
 
 ### Separate Layers
 
@@ -146,7 +146,7 @@ interface LevelV2 {
   version: 2;
   durationSec: number;       // default 300
   scrollSpeed: number;       // copy of runtime speed at author time, default 16
-  fieldWidth: number;        // world units across, planning baseline 120
+  fieldWidth: number;        // world units across, default 384
   columns: number;           // default 12
   cellSize: number;          // fieldWidth / columns
   rows: number;              // ceil(durationSec * scrollSpeed / cellSize)
@@ -285,7 +285,7 @@ interact with it as a simple full DOM grid long-term.
 
 First practical target:
 
-- `12×480` is okay with DOM buttons if optimized carefully.
+- `12×150` is okay with DOM buttons if optimized carefully.
 - Anything above that should move to virtualization or canvas.
 
 Controls:
@@ -431,7 +431,7 @@ Exit criteria:
 - Add level settings panel:
   - duration: default `5:00`.
   - columns: default `12`.
-  - field width: default planning value `120wu`.
+  - field width: default camera-fit value `384wu`.
   - derived cell size/rows/depth.
 - Changing settings requires custom confirmation.
 - First implementation may rebuild empty level.
@@ -443,17 +443,70 @@ Exit criteria:
 - Preview slider range is `4800wu`.
 - Grid row count matches selected columns/cell size.
 
-### Phase 4: Runtime Terrain Layer
+### Phase 4: Runtime Terrain Layer In Progress
 
-- Add a runtime terrain layer that reads terrain cells.
-- Start with chunked/row-based flat terrain.
-- Keep slider/playback coupled to preview scroll.
-- Hide random scenery in builder mode.
+Session 2 started a terrain-layer prototype. The current pass made terrain cells
+model-backed and materially faithful to the 3D Models board, but Phase 4 remains
+open until terrain editing is efficient and height/terrain interactions are clear.
+
+Current prototype pieces:
+
+**Authored ground texture** (`level-terrain-layer.ts`):
+- The visible terrain field is one `DynamicTexture` on a ground plane.
+- Unpainted cells show the white authoring surface and grid lines.
+- Painted cells with missing model assignments fall back to the editor palette
+  swatch color so missing assets are still visible.
+- The plane width is `columns * cellSize`, which is `384wu` by default. This is
+  tuned so 32 selected columns fit across the wider far/top edge of the preview.
+- Rows are mapped with the same row-major convention as objects: row 0 = far end,
+  last row = start. `setScrollZ` repaints the visible window so scrubbing/playback
+  moves over authored terrain.
+
+**Assigned terrain models** (`level-terrain-layer.ts`):
+- Painted terrain cells with an assigned model instantiate that GLB in the 3D
+  preview. The 2D editor grid still uses solid swatches for readability.
+- Terrain GLBs use the raw loader so their materials match the 3D Models board;
+  they do not receive the gameplay-object material tuning used by props/ships.
+- Model placement uses the same `columns`, `rows`, `cellSize`, row order, and
+  scroll value as the authored grid.
+- Current implementation is full-rebuild on terrain edits; diffing remains a
+  later performance task.
+
+**2D grid virtualization** (`LevelBuilder.tsx:GridPanel`):
+- At 32 columns the current 384wu-wide five-minute level has 400 rows = 12,800
+  DOM cells. Without virtualization, React reconciles the whole grid on every
+  RAF tick; with virtualization it only renders visible rows.
+- `VIRTUAL_ROW_H=20px` (matches `--lb-cell-h` CSS variable on `.lb-cell`).
+- `VIRTUAL_OVERSCAN=4` rows above and below the scroll viewport.
+- A full-height spacer div creates the correct scrollbar; only visible rows are
+  absolutely positioned inside it. `ResizeObserver` keeps the window accurate on resize.
+
+**SceneHandle additions already made**:
+- `setLevelTerrainCells(cells, width, depth, cellSize, assetUrlMap)` — sets the terrain layer.
+- `getFps()` — returns `engine.getFps()` for build-time performance monitoring.
+
+**Performance fixes already applied**:
+- `level-prop-layer.ts` received the same generation counter + in-flight promise map fixes.
+- `syncLevelPreviewScroll` was previously called twice per frame (once before, once after
+  `levelLayer.step(dt)`). The first call was redundant — its results were always overwritten.
+  Removed the first call; only the post-step sync remains.
+- `countPaintedCells(level)` memoized in the parent component (was running 60×/sec).
+
+Known gaps before Phase 4 can be called done:
+
+- Terrain placement should become diff-based instead of full-rebuild on every edit.
+- Terrain model scale/origin assumptions need more coverage across terrain assets.
+- Painted terrain should support height displacement.
+- Terrain should eventually support smoother joins/blends where assets permit it.
+- Height can remain later, but the terrain layer should not block or hide future height
+  displacement.
 
 Exit criteria:
 
-- Painting terrain changes the visible ground in 3D preview.
-- Terrain scrolls/scrubs with the slider.
+- Painting terrain changes the visible ground in the 3D preview in the painted cell.
+- Scrubbing/playback moves over the painted terrain in sync with the grid marker.
+- Terrain columns and rows line up with the 2D editor grid well enough for authoring.
+- Level Builder remains responsive with the virtualized DOM grid.
 
 ### Phase 5: Height Runtime
 
@@ -480,11 +533,12 @@ Exit criteria:
 - Trees are tall, bushes short, rocks/crates readable.
 - Preview remains responsive while painting.
 
-### Phase 7: Long-Level Editing Performance
+### Phase 7: Long-Level Editing Performance Partially Done
 
-- If DOM grid performance suffers, virtualize rows or move the grid to canvas.
-- Add minimap/current-position indicator.
-- Add jump-to-current-row control.
+- Row virtualization shipped as part of Phase 4 — DOM grid is now `O(visible rows)`.
+- Remaining: minimap / current-position indicator for long levels.
+- Remaining: jump-to-current-row control.
+- Remaining: diff-based prop + terrain placement (currently full rebuild on every paint).
 
 Exit criteria:
 
@@ -492,14 +546,17 @@ Exit criteria:
 
 ## Open Questions
 
-- What is the authoritative field width in world units? Use `120wu` as a
-  planning baseline until confirmed.
-- Should terrain slots be model assignments, material/texture assignments, or
-  both?
-- Should object cells allow multiple objects immediately, or one object first?
+- **Field width** — `fieldWidth = 384wu` is now the Level Builder baseline.
+  Old `120wu` v2 saves were too narrow; the temporary `1200wu` pass was too wide.
+  Both are treated as prototype data and migrated to `384wu` on load.
+- Should terrain slots be model assignments or material/texture assignments? Currently
+  they're model assignments (same pipeline as object slots). Works for 3D ground-cover
+  models; may need a second path for flat texture swaps later.
+- Should object cells allow multiple objects per cell? Currently first-object-only.
 - What height range feels right: `0..8`, `0..15`, or continuous brush strength?
 - Should changing columns resample existing data or always require rebuilding?
-- Do we need separate enemy/spawner layer soon, or can it follow objects later?
+  (Currently always rebuilds after confirmation.)
+- Do we need a separate enemy/spawner layer soon, or can it follow objects later?
 
 ## Non-Goals For The Next Pass
 

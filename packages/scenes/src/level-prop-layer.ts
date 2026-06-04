@@ -27,7 +27,7 @@ export interface LevelPropLayerController {
     depth: number,
     cellSize: number,
     assetUrlMap: Record<string, string>,
-  ): Promise<void>;
+  ): void;
   setScrollZ(z: number): void;
   step(dt: number): void;
   getScrollZ(): number;
@@ -42,11 +42,14 @@ interface PlacedProp {
 }
 
 export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
-  const modelCache = new Map<string, TransformNode | null>();
+  const modelCache = new Map<string, AbstractMesh | null>();
+  const loadingPromises = new Map<string, Promise<void>>();
   const placed: PlacedProp[] = [];
   let scrollZ = 0;
   let totalDepth = 0;
   let paused = false;
+  // Incremented on every setLevelCells call so stale async completions self-abort.
+  let generation = 0;
 
   function clearPlaced() {
     for (const p of placed) p.node.dispose();
@@ -61,34 +64,42 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
     }
   }
 
-  async function setLevelCells(
+  async function loadAndPlace(
     cells: LevelGridCell[],
     width: number,
     depth: number,
     cellSize: number,
     assetUrlMap: Record<string, string>,
+    gen: number,
   ) {
     clearPlaced();
     totalDepth = depth * cellSize;
 
     const uniqueUrls = new Set<string>();
     for (const cell of cells) {
-      if (cell.prop) {
-        const url = assetUrlMap[cell.prop];
-        if (url) uniqueUrls.add(url);
-      }
+      const url = cell.prop ? assetUrlMap[cell.prop] : undefined;
+      if (url) uniqueUrls.add(url);
     }
 
-    await Promise.all(
-      [...uniqueUrls]
-        .filter((url) => !modelCache.has(url))
-        .map(async (url) => {
-          const template = await loadModel(url, scene);
-          modelCache.set(url, template ?? null);
-        }),
-    );
+    // Load any URL not yet cached, deduplicated via in-flight promise map so
+    // concurrent calls for the same URL never trigger duplicate SceneLoader loads.
+    await Promise.all([...uniqueUrls].map((url) => {
+      if (modelCache.has(url)) return;
+      if (loadingPromises.has(url)) return loadingPromises.get(url);
+      const p = loadModel(url, scene).then((root) => {
+        modelCache.set(url, root ?? null);
+        loadingPromises.delete(url);
+      });
+      loadingPromises.set(url, p);
+      return p;
+    }));
+
+    // Bail if a newer setLevelCells call has already taken over.
+    if (gen !== generation) return;
 
     for (let i = 0; i < cells.length; i++) {
+      if (gen !== generation) break;
+
       const cell = cells[i];
       if (!cell.prop) continue;
       const url = assetUrlMap[cell.prop];
@@ -116,7 +127,9 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
   }
 
   return {
-    setLevelCells,
+    setLevelCells(cells, width, depth, cellSize, assetUrlMap) {
+      void loadAndPlace(cells, width, depth, cellSize, assetUrlMap, ++generation);
+    },
     setScrollZ(z) {
       scrollZ = Math.max(0, Math.min(z, totalDepth || z));
       syncPositions();
@@ -135,6 +148,7 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       clearPlaced();
       for (const t of modelCache.values()) t?.dispose();
       modelCache.clear();
+      loadingPromises.clear();
     },
   };
 }
