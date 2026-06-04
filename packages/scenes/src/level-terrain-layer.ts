@@ -45,6 +45,15 @@ const TERRAIN_FALLBACKS: Record<string, string> = {
 interface PlacedTerrain {
   node: TransformNode;
   baseZ: number;
+  zOffset: number;
+}
+
+interface TerrainBounds {
+  minX: number;
+  maxX: number;
+  minY: number;
+  minZ: number;
+  maxZ: number;
 }
 
 export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerController {
@@ -158,10 +167,37 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
 
   function syncPositions() {
     for (const p of placed) {
-      const z = p.baseZ - scrollZ;
+      const z = p.baseZ - scrollZ + p.zOffset;
       p.node.position.z = z;
       p.node.setEnabled(z > PLANE_NEAR_Z - cellSize && z < PLANE_FAR_Z + cellSize);
     }
+  }
+
+  function getTerrainBounds(meshes: AbstractMesh[]): TerrainBounds | null {
+    let bounds: TerrainBounds | null = null;
+    for (const m of meshes) {
+      if (m.getTotalVertices() <= 0) continue;
+      m.computeWorldMatrix(true);
+      const box = m.getBoundingInfo().boundingBox;
+      const min = box.minimumWorld;
+      const max = box.maximumWorld;
+      if (!bounds) {
+        bounds = {
+          minX: min.x,
+          maxX: max.x,
+          minY: min.y,
+          minZ: min.z,
+          maxZ: max.z,
+        };
+        continue;
+      }
+      bounds.minX = Math.min(bounds.minX, min.x);
+      bounds.maxX = Math.max(bounds.maxX, max.x);
+      bounds.minY = Math.min(bounds.minY, min.y);
+      bounds.minZ = Math.min(bounds.minZ, min.z);
+      bounds.maxZ = Math.max(bounds.maxZ, max.z);
+    }
+    return bounds;
   }
 
   async function loadAndPlaceTerrain(gen: number) {
@@ -208,19 +244,19 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
       node.setEnabled(true);
       for (const mesh of node.getChildMeshes()) mesh.setEnabled(true);
       const meshes = node.getChildMeshes();
-      const rootMesh = meshes[0] as AbstractMesh | undefined;
-      if (rootMesh) {
-        const { min, max } = rootMesh.getHierarchyBoundingVectors(true);
-        const footprint = Math.max(max.x - min.x, max.z - min.z) || 1;
-        node.scaling.setAll((cellSize * 1.04) / footprint);
+      const bounds = getTerrainBounds(meshes);
+      if (bounds) {
+        const footprint = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) || 1;
+        node.scaling.setAll(cellSize / footprint);
       }
 
-      node.position.set(baseX, PLANE_Y + 0.08, baseZ - scrollZ);
-      if (rootMesh) {
-        const { min } = rootMesh.getHierarchyBoundingVectors(true);
-        node.position.y += (PLANE_Y + 0.08) - min.y;
-      }
-      placed.push({ node, baseZ });
+      const scaledBounds = getTerrainBounds(meshes);
+      const centerX = scaledBounds ? (scaledBounds.minX + scaledBounds.maxX) / 2 : 0;
+      const centerZ = scaledBounds ? (scaledBounds.minZ + scaledBounds.maxZ) / 2 : 0;
+      const minY = scaledBounds?.minY ?? 0;
+      const zOffset = -centerZ;
+      node.position.set(baseX - centerX, PLANE_Y + 0.08 - minY, baseZ - scrollZ + zOffset);
+      placed.push({ node, baseZ, zOffset });
     }
 
     syncPositions();

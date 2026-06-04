@@ -469,6 +469,9 @@ Current prototype pieces:
   they do not receive the gameplay-object material tuning used by props/ships.
 - Model placement uses the same `columns`, `rows`, `cellSize`, row order, and
   scroll value as the authored grid.
+- Terrain cells are exclusive. Painting terrain B over terrain A replaces that
+  cell's terrain value, and model-backed tiles are scaled to the exact cell
+  footprint so unlike terrain types do not overlap or z-fight at boundaries.
 - Current implementation is full-rebuild on terrain edits; diffing remains a
   later performance task.
 

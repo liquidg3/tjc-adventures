@@ -144,10 +144,13 @@ _Last updated: 2026-06-03 (session 2)._
   **Terrain preview is in progress.** `packages/scenes/src/level-terrain-layer.ts`
   renders a scrolling authored-ground grid aligned to the object-placement field;
   painted terrain cells instantiate their assigned terrain GLB in the 3D preview
-  while the 2D editor grid stays solid-swatch for readability. Terrain GLBs use
-  the raw loader so their materials match the 3D Models board. Phase 4 is not
-  closed yet: terrain updates still full-rebuild, height does not displace terrain,
-  and the terrain-vs-object visual contract still needs more validation.
+  while the 2D editor grid stays solid-swatch for readability. Terrain cells are
+  exclusive: painting a terrain slot replaces the prior terrain value for that
+  cell, and rendered terrain tiles fit the exact cell footprint to avoid
+  different terrain types overlapping at boundaries. Terrain GLBs use the raw
+  loader so their materials match the 3D Models board. Phase 4 is not closed yet:
+  terrain updates still full-rebuild, height does not displace terrain, and the
+  terrain-vs-object visual contract still needs more validation.
 - **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
   filter chips: All / 3D / UI. UI uses Kenney's `tag:interface` (not `tag:UI`
   — that returns nothing). UI imports stage to `apps/studio/public/ui/kenney-<slug>/`
