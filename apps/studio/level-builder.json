@@ -6722,11 +6722,20 @@
       {
         "terrain": "terrain-c"
       },
-      {},
-      {},
-      {},
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
       },
       {},
       {},
@@ -6746,37 +6755,21 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
       {},
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
       },
       {},
       {},
@@ -6792,61 +6785,30 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
-        "terrain": "terrain-c"
-      },
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
+      },
+      {},
+      {
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-c"
-      },
-      {
-        "terrain": "terrain-c"
-      },
-      {
-        "terrain": "terrain-c"
+        "terrain": "terrain-b"
       },
       {},
       {},
@@ -6896,6 +6858,12 @@
       {
         "terrain": "terrain-b"
       },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
       {},
       {},
       {},
@@ -6908,46 +6876,150 @@
       {},
       {},
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
+      },
+      {
+        "terrain": "terrain-b"
       },
       {
         "terrain": "terrain-a"
