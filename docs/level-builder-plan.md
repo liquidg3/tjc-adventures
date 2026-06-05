@@ -31,7 +31,7 @@ Current files:
 - `packages/scenes/src/level-prop-layer.ts`
 - `packages/scenes/src/ship-scene.ts`
 
-Implemented in the first v2 pass:
+Completed:
 
 - Level data now parses to schema v2 with separate `terrain`, `height`, and
   `objects` layers.
@@ -67,7 +67,7 @@ Implemented in the first v2 pass:
   filters, usage checkboxes, and one selected-model normalization preview. The
   old fixed-slot assignment UI is intentionally hidden.
 
-Not implemented yet:
+Open:
 
 - Terrain mesh height/displacement.
 - Diff-based object updates.
@@ -77,6 +77,20 @@ Not implemented yet:
 - Smart terrain brushes for connected rivers/paths. Current catalog inference
   captures `family` + `shape` to prepare for this, but neighbor-mask painting is
   not implemented yet.
+
+## Phase Status
+
+| Phase | Status | Notes |
+|---|---|---|
+| 1. Plan + Schema | Done | v2 layer schema, migration, helpers. |
+| 2. Editor Modes + Palettes | Done | Terrain/Object/Height/Erase, catalog-only visible palette. |
+| 3. Five-Minute Grid Settings | Done | 300s/4800wu level target, column settings, rebuild confirmation. |
+| 4. Runtime Terrain Layer | Partial | Terrain renders in preview; efficient updates and height displacement remain. |
+| 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette. |
+| 6. Smart Terrain Painting | Next | Connected river/path brushes using catalog `family` + `shape`. |
+| 7. Height Runtime | Later | Terrain displacement and better elevation preview. |
+| 8. Object Placement Quality | Later | Diffed prop updates, normalization in runtime placement, transform controls. |
+| 9. Long-Level Editing Performance | Partial | DOM virtualization done; minimap/jump/diffed scene updates remain. |
 
 Current behavior:
 
@@ -162,14 +176,14 @@ interface LevelV2 {
   cellSize: number;          // fieldWidth / columns
   rows: number;              // ceil(durationSec * scrollSpeed / cellSize)
   layers: {
-    terrain: TerrainCell[];  // one terrain material/slot per cell
+    terrain: TerrainCell[];  // one catalog terrain model per cell
     height: HeightCell[];    // elevation per cell
     objects: ObjectCell[];   // placed models per cell
   };
 }
 
 interface TerrainCell {
-  terrain?: string;          // slot id, e.g. terrain-a
+  terrain?: string;          // catalog model value, e.g. model:kenney-nature-kit/ground_grass
 }
 
 interface HeightCell {
@@ -182,7 +196,7 @@ interface ObjectCell {
 
 interface PlacedObject {
   id: string;                // stable placement id
-  slot: string;              // slot id, e.g. env-trees, prop-box
+  slot: string;              // catalog model value, kept as "slot" for storage compatibility
   offset?: [number, number]; // local cell x/z nudge, future
   rotation?: number;         // yaw, future
   scale?: number;            // multiplier, future
@@ -191,7 +205,7 @@ interface PlacedObject {
 
 Migration from v1:
 
-- `cell.prop` migrates to `objects.objects[0].slot`.
+- `cell.prop` migrates to `objects.objects[0].slot` as legacy data.
 - `cell.height` migrates to `height.height`.
 - `terrain` starts empty or default-filled.
 
@@ -216,10 +230,9 @@ Purpose:
 
 Palette:
 
-- Show only terrain-relevant slots:
-  - `terrain-*`
-  - Grass, bushes, trees, buildings, landmarks, and props are object placements,
-    not terrain.
+- Show curated catalog models marked with `usage.terrain`.
+- Grass, bushes, trees, buildings, landmarks, and props are object placements,
+  not terrain.
 
 Behavior:
 
@@ -236,14 +249,9 @@ Purpose:
 
 Palette:
 
-- Show model/object slots, not terrain:
-  - `env-trees`
-  - `env-tree-2`
-  - `env-grass`
-  - `env-bushes`
-  - `env-rocks`
-  - `prop-*`
-  - future enemy/spawner slots
+- Show curated catalog models marked with `usage.object`.
+- Object category tabs should include Nature, Animals, Buildings, Props, and
+  later Gameplay/Enemies.
 
 Behavior:
 
@@ -261,7 +269,7 @@ Purpose:
 
 Palette/control:
 
-- Use a small height ramp control instead of asset slots.
+- Use a small height ramp control instead of model choices.
 - Values should be visually ordered light-to-dark or dark-to-light.
 - User expectation from feedback: **darker grid color = taller**.
 
@@ -373,7 +381,8 @@ Current object placement issues:
 Target behavior:
 
 - Diff by cell/object id and update only changed placements.
-- Resolve slot to asset-map assignment.
+- Resolve catalog model values directly to imported model URLs.
+- Keep legacy slot-to-asset-map resolution only for old saved level data.
 - Apply `resolveAssetNormalization` exactly like the 3D Models board/scene ship
   path.
 - Base scale should consider:
@@ -391,7 +400,7 @@ Scale rules:
 
 Recommendation:
 
-- Add per-slot placement defaults:
+- Add per-category/family placement defaults:
 
 ```ts
 interface PlacementDefaults {
@@ -405,7 +414,7 @@ Use these defaults before adding per-placement scale controls.
 
 ## Implementation Phases
 
-### Phase 1: Plan + Schema
+### Phase 1: Plan + Schema — Done
 
 - Add this plan doc.
 - Define `LevelV2` types in `level-builder-state.ts`.
@@ -421,13 +430,13 @@ Exit criteria:
 - Existing saved level loads into v2 shape.
 - UI still renders current grid.
 
-### Phase 2: Editor Modes + Filtered Palettes
+### Phase 2: Editor Modes + Filtered Palettes — Done
 
 - Replace current `Tool = "prop" | "height" | "erase"` with layer-aware modes:
   `terrain | objects | height | erase`.
-- Categorize slots into terrain/object/height palettes.
+- Categorize model catalog items into terrain/object/height palettes.
 - Terrain mode shows terrain palette only.
-- Objects mode shows object slots only.
+- Objects mode shows object catalog items only.
 - Height mode shows height ramp only.
 - Erase mode acts on selected/current layer.
 
@@ -437,7 +446,7 @@ Exit criteria:
 - Painting one layer does not destroy other layers.
 - Grid visual shows terrain base + height overlay + object mark.
 
-### Phase 3: Five-Minute Grid Settings
+### Phase 3: Five-Minute Grid Settings — Done
 
 - Add level settings panel:
   - duration: default `5:00`.
@@ -454,7 +463,7 @@ Exit criteria:
 - Preview slider range is `4800wu`.
 - Grid row count matches selected columns/cell size.
 
-### Phase 4: Runtime Terrain Layer In Progress
+### Phase 4: Runtime Terrain Layer — Partial
 
 Session 2 started a terrain-layer prototype. The current pass made terrain cells
 model-backed and materially faithful to the 3D Models board, but Phase 4 remains
@@ -506,7 +515,7 @@ Current prototype pieces:
   Removed the first call; only the post-step sync remains.
 - `countPaintedCells(level)` memoized in the parent component (was running 60×/sec).
 
-Known gaps before Phase 4 can be called done:
+Remaining gaps before Phase 4 can be called done:
 
 - Terrain placement should become diff-based instead of full-rebuild on every edit.
 - Terrain model scale/origin assumptions need more coverage across terrain assets.
@@ -522,7 +531,96 @@ Exit criteria:
 - Terrain columns and rows line up with the 2D editor grid well enough for authoring.
 - Level Builder remains responsive with the virtualized DOM grid.
 
-### Phase 5: Height Runtime
+### Phase 5: Model Catalog — Done
+
+The Studio model flow moved from fixed asset slots to imported-model catalog
+curation.
+
+Completed:
+
+- `apps/studio/src/model-catalog.ts` derives:
+  - pack theme from Kenney pack name/slug.
+  - model category from imported model filename.
+  - model family (`river`, `path`, `tree`, `animal`, etc.).
+  - terrain shape (`straight`, `corner`, `end`, `split`, `cross`, `tile`).
+  - default usage flags (`terrain`, `object`, `rescueAnimal`, etc.).
+- `apps/studio/model-catalog-overrides.json` persists only designer overrides.
+- `#assets` shows one Kenney Pack Catalog section:
+  - real Kenney pack names.
+  - inferred theme filter.
+  - kind filter.
+  - imported/not-imported filter.
+  - one summary bar.
+- `#models` is catalog-only:
+  - no legacy fixed-slot assignment UI.
+  - kit/theme/category/search filters.
+  - usage checkboxes.
+  - one selected-model normalization preview/editor.
+- `#level` visible palette reads curated catalog items only.
+- Legacy slot IDs and `asset-map.json` are still read internally only for
+  existing saved levels and runtime holdouts.
+
+Exit criteria:
+
+- Imported models can be found by kit/theme/category.
+- Designer can mark models for Level Builder terrain/object usage.
+- Level Builder palette reflects catalog curation.
+- Old slot-management UI is not shown.
+
+### Phase 6: Smart Terrain Painting — Next
+
+Goal: make terrain painting express intent rather than forcing the designer to
+manually choose every road/river tile variant.
+
+Core idea:
+
+- Designer chooses a terrain feature brush: `river`, `path`, `road`.
+- Designer paints or drags cells.
+- Builder computes neighbor connectivity for each affected cell.
+- Connectivity resolves to `shape + rotation`.
+- `shape + family` resolves to the catalog model, e.g.:
+  - `river + straight` → `ground_riverStraight`
+  - `river + corner` → `ground_riverCorner`
+  - `path + split` → `ground_pathSplit`
+
+Data needed:
+
+```ts
+type TerrainFeatureFamily = "river" | "path" | "road";
+type TerrainShape = "straight" | "corner" | "end" | "split" | "cross" | "tile";
+
+interface TerrainFeatureCell {
+  family: TerrainFeatureFamily;
+  shape: TerrainShape;
+  rotation: 0 | 90 | 180 | 270;
+  modelId: string;
+}
+```
+
+Implementation steps:
+
+- Add a terrain brush mode inside Terrain:
+  - Manual tile.
+  - Connected feature.
+- Build a catalog lookup:
+  - family → shape → available models.
+- Store a feature layer or feature metadata per terrain cell.
+- On paint:
+  - update the target cell.
+  - recompute the target cell and its four neighbors.
+  - preserve manual overrides when explicitly set.
+- Add drag painting for connected features.
+- Add a "Rebuild terrain connections" command for repairing imported/edited data.
+- Keep manual tile override available for art-directed exceptions.
+
+Exit criteria:
+
+- Dragging a river/path line chooses straight/corner/end tiles automatically.
+- Adjacent cells update when a connection changes.
+- Designer can still pick a specific tile manually.
+- 3D preview updates to the resolved model IDs.
+
+### Phase 7: Height Runtime — Later
 
 - Apply height values to object placement Y.
 - Add height displacement to terrain mesh.
@@ -533,12 +631,12 @@ Exit criteria:
 - Painting height changes grid overlay and 3D preview elevation.
 - Objects placed on raised cells sit higher.
 
-### Phase 6: Object Placement Quality
+### Phase 8: Object Placement Quality — Later
 
 - Make `level-prop-layer.ts` diff-based.
 - Apply asset normalization and placement defaults.
 - Replace one-size-fits-all `cellSize * 0.75` scaling.
-- Add enough per-slot defaults that trees, bushes, rocks, and crates read
+- Add enough per-category/family defaults that trees, bushes, rocks, and crates read
   correctly.
 
 Exit criteria:
@@ -547,7 +645,7 @@ Exit criteria:
 - Trees are tall, bushes short, rocks/crates readable.
 - Preview remains responsive while painting.
 
-### Phase 7: Long-Level Editing Performance Partially Done
+### Phase 9: Long-Level Editing Performance — Partial
 
 - Row virtualization shipped as part of Phase 4 — DOM grid is now `O(visible rows)`.
 - Remaining: minimap / current-position indicator for long levels.
@@ -563,9 +661,8 @@ Exit criteria:
 - **Field width** — `fieldWidth = 384wu` is now the Level Builder baseline.
   Old `120wu` v2 saves were too narrow; the temporary `1200wu` pass was too wide.
   Both are treated as prototype data and migrated to `384wu` on load.
-- Should terrain slots be model assignments or material/texture assignments? Currently
-  they're model assignments (same pipeline as object slots). Works for 3D ground-cover
-  models; may need a second path for flat texture swaps later.
+- Should terrain catalog entries remain model assignments only, or do we need a
+  second material/texture terrain path for flat texture swaps later?
 - Should object cells allow multiple objects per cell? Currently first-object-only.
 - What height range feels right: `0..8`, `0..15`, or continuous brush strength?
 - Should changing columns resample existing data or always require rebuilding?
