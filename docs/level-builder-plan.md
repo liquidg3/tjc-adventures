@@ -572,6 +572,8 @@ Exit criteria:
 Goal: make terrain painting express intent rather than forcing the designer to
 manually choose every road/river tile variant.
 
+Detailed plan: `docs/smart-terrain-painting-plan.md`.
+
 Core idea:
 
 - Designer chooses a terrain feature brush: `river`, `path`, `road`.
