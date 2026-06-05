@@ -20,6 +20,8 @@ export interface TerrainFeatureCell {
   modelId: string;
   /** When true, the connectivity resolver leaves this cell alone. */
   manual?: boolean;
+  /** When true, the resolved model is a fallback (exact shape was missing in the catalog). */
+  fallback?: boolean;
 }
 
 export interface TerrainCell {
@@ -259,6 +261,7 @@ function parseFeatureCell(raw: unknown): TerrainFeatureCell | undefined {
     rotation: f.rotation,
     modelId: f.modelId,
     ...(f.manual === true ? { manual: true } : {}),
+    ...(f.fallback === true ? { fallback: true } : {}),
   };
 }
 

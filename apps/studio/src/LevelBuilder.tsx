@@ -248,6 +248,10 @@ export function LevelBuilder() {
   const progressPct = totalDepth > 0 ? (scrollZ / totalDepth) * 100 : 0;
   const cols = useMemo(() => Array.from({ length: level.columns }, (_, i) => i), [level.columns]);
   const filledCount = useMemo(() => countPaintedCells(level), [level]);
+  const fallbackCount = useMemo(
+    () => level.layers.terrain.filter((c) => c.feature?.fallback).length,
+    [level],
+  );
   const selectedLabel = labelForSelection(
     mode,
     terrainBrushMode,
@@ -262,118 +266,40 @@ export function LevelBuilder() {
     if (i < 0) return;
     if (mode === "terrain") {
       if (terrainBrushMode === "connected") paintConnectedFeature(col, row);
-      else paintTerrainManual(i);
-    } else if (mode === "object") paintObject(i, col, row);
-    else if (mode === "height") paintHeight(i);
+      else paintTerrainManual(col, row);
+    } else if (mode === "object") paintObject(col, row);
+    else if (mode === "height") paintHeight(col, row);
     else eraseCell(col, row);
   }
 
-  function paintTerrainManual(i: number) {
-    if (!selectedTerrain || level.layers.terrain[i]?.terrain === selectedTerrain) return;
-    const terrain = [...level.layers.terrain];
-    // Manual paint clears any connected-feature metadata on the cell.
-    terrain[i] = { terrain: selectedTerrain };
-    setLevel({ ...level, layers: { ...level.layers, terrain } });
+  function paintTerrainManual(col: number, row: number) {
+    if (!selectedTerrain) return;
+    setLevel((prev) => {
+      const i = cellIndex(prev, col, row);
+      if (i < 0 || prev.layers.terrain[i]?.terrain === selectedTerrain) return prev;
+      const terrain = [...prev.layers.terrain];
+      // Manual paint clears any connected-feature metadata on the cell.
+      terrain[i] = { terrain: selectedTerrain };
+      return { ...prev, layers: { ...prev.layers, terrain } };
+    });
   }
 
   function paintConnectedFeature(col: number, row: number) {
     const family = connectedFamily;
-    const i = cellIndex(level, col, row);
-    if (i < 0) return;
+    setLevel((prev) => {
+      const i = cellIndex(prev, col, row);
+      if (i < 0) return prev;
 
-    // No-op if this cell already belongs to the same non-manual family.
-    const existing = level.layers.terrain[i];
-    if (existing?.feature?.family === family && !existing.feature.manual) return;
+      // No-op if this cell already belongs to the same non-manual family.
+      const existing = prev.layers.terrain[i];
+      if (existing?.feature?.family === family && !existing.feature.manual) return prev;
 
-    // Clone and mark target as family member (placeholder shape resolved below).
-    const terrain = [...level.layers.terrain];
-    terrain[i] = { ...terrain[i], feature: { family, shape: "tile", rotation: 0, modelId: "" } };
+      // Clone and mark target as family member (placeholder shape resolved below).
+      const terrain = [...prev.layers.terrain];
+      terrain[i] = { ...terrain[i], feature: { family, shape: "tile", rotation: 0, modelId: "" } };
 
-    // Collect target + same-family neighbors for shape recompute.
-    const toRecompute: Array<{ col: number; row: number }> = [{ col, row }];
-    const offsets = [
-      { dc: 0, dr: -1 }, { dc: 1, dr: 0 },
-      { dc: 0, dr: 1 },  { dc: -1, dr: 0 },
-    ];
-    for (const { dc, dr } of offsets) {
-      const nc = col + dc;
-      const nr = row + dr;
-      const ni = cellIndex(level, nc, nr);
-      if (ni >= 0 && terrain[ni]?.feature?.family === family) {
-        toRecompute.push({ col: nc, row: nr });
-      }
-    }
-
-    for (const { col: rc, row: rr } of toRecompute) {
-      recomputeFeatureCell(cellIndex(level, rc, rr), rc, rr, terrain, family, terrainFeatureLookup);
-    }
-    setLevel({ ...level, layers: { ...level.layers, terrain } });
-  }
-
-  function recomputeFeatureCell(
-    i: number,
-    col: number,
-    row: number,
-    terrain: TerrainCell[],
-    family: TerrainFeatureFamily,
-    lookup: TerrainModelLookup,
-  ) {
-    if (i < 0) return;
-    const cell = terrain[i];
-    if (!cell?.feature || cell.feature.manual) return;
-
-    const mask = terrainMaskForCell(terrain, level.columns, level.rows, col, row, family);
-    const { shape, rotation } = terrainShapeForMask(mask);
-    const result = resolveTerrainFeatureFallback(lookup, family, shape);
-    const modelId = result?.model.modelValue ?? "";
-
-    if (!modelId) {
-      console.warn(`[TJC] terrain-feature: no model for ${family}+${shape} (col=${col} row=${row})`);
-    }
-
-    terrain[i] = {
-      ...terrain[i],
-      terrain: modelId || terrain[i]?.terrain,
-      feature: { family, shape, rotation, modelId, ...(cell.feature.manual ? { manual: true } : {}) },
-    };
-  }
-
-  function paintObject(i: number, col: number, row: number) {
-    if (!selectedObject || level.layers.objects[i]?.objects?.[0]?.slot === selectedObject) return;
-    const objects = [...level.layers.objects];
-    objects[i] = {
-      objects: [{ id: makePlacementId(col, row, selectedObject), slot: selectedObject }],
-    };
-    setLevel({ ...level, layers: { ...level.layers, objects } });
-  }
-
-  function paintHeight(i: number) {
-    if (level.layers.height[i]?.height === selectedHeight) return;
-    const height = [...level.layers.height];
-    height[i] = selectedHeight > 0 ? { height: selectedHeight } : {};
-    setLevel({ ...level, layers: { ...level.layers, height } });
-  }
-
-  function eraseCell(col: number, row: number) {
-    const i = cellIndex(level, col, row);
-    if (i < 0) return;
-    if (
-      !level.layers.terrain[i]?.terrain &&
-      !level.layers.terrain[i]?.feature &&
-      !level.layers.height[i]?.height &&
-      !level.layers.objects[i]?.objects?.length
-    ) return;
-
-    const oldFamily = level.layers.terrain[i]?.feature?.family;
-    const terrain = [...level.layers.terrain];
-    const height = [...level.layers.height];
-    const objects = [...level.layers.objects];
-    terrain[i] = {};
-    height[i] = {};
-    objects[i] = {};
-
-    // Recompute connected-feature neighbors that lost a connection.
-    if (oldFamily) {
+      // Collect target + same-family neighbors for shape recompute.
+      const toRecompute: Array<{ col: number; row: number }> = [{ col, row }];
       const offsets = [
         { dc: 0, dr: -1 }, { dc: 1, dr: 0 },
         { dc: 0, dr: 1 },  { dc: -1, dr: 0 },
@@ -381,14 +307,140 @@ export function LevelBuilder() {
       for (const { dc, dr } of offsets) {
         const nc = col + dc;
         const nr = row + dr;
-        const ni = cellIndex(level, nc, nr);
-        if (ni >= 0 && terrain[ni]?.feature?.family === oldFamily && !terrain[ni]?.feature?.manual) {
-          recomputeFeatureCell(ni, nc, nr, terrain, oldFamily, terrainFeatureLookup);
+        const ni = cellIndex(prev, nc, nr);
+        if (ni >= 0 && terrain[ni]?.feature?.family === family) {
+          toRecompute.push({ col: nc, row: nr });
         }
       }
+
+      for (const { col: rc, row: rr } of toRecompute) {
+        recomputeFeatureCell(
+          cellIndex(prev, rc, rr),
+          rc,
+          rr,
+          terrain,
+          prev.columns,
+          prev.rows,
+          family,
+          terrainFeatureLookup,
+        );
+      }
+      return { ...prev, layers: { ...prev.layers, terrain } };
+    });
+  }
+
+  function recomputeFeatureCell(
+    i: number,
+    col: number,
+    row: number,
+    terrain: TerrainCell[],
+    columns: number,
+    rows: number,
+    family: TerrainFeatureFamily,
+    lookup: TerrainModelLookup,
+  ) {
+    if (i < 0) return;
+    const cell = terrain[i];
+    if (!cell?.feature || cell.feature.manual) return;
+
+    const mask = terrainMaskForCell(terrain, columns, rows, col, row, family);
+    const { shape, rotation } = terrainShapeForMask(mask);
+    const result = resolveTerrainFeatureFallback(lookup, family, shape);
+    const modelId = result?.model.modelValue ?? "";
+    const isFallback = result !== null && result.usedShape !== shape;
+
+    if (!modelId) {
+      console.warn(`[TJC] terrain-feature: no model for ${family}+${shape} (col=${col} row=${row})`);
     }
 
-    setLevel({ ...level, layers: { terrain, height, objects } });
+    terrain[i] = {
+      ...terrain[i],
+      terrain: modelId || undefined,
+      feature: {
+        family, shape, rotation, modelId,
+        ...(cell.feature.manual ? { manual: true } : {}),
+        ...(isFallback ? { fallback: true } : {}),
+      },
+    };
+  }
+
+  function paintObject(col: number, row: number) {
+    if (!selectedObject) return;
+    setLevel((prev) => {
+      const i = cellIndex(prev, col, row);
+      if (i < 0 || prev.layers.objects[i]?.objects?.[0]?.slot === selectedObject) return prev;
+      const objects = [...prev.layers.objects];
+      objects[i] = {
+        objects: [{ id: makePlacementId(col, row, selectedObject), slot: selectedObject }],
+      };
+      return { ...prev, layers: { ...prev.layers, objects } };
+    });
+  }
+
+  function paintHeight(col: number, row: number) {
+    setLevel((prev) => {
+      const i = cellIndex(prev, col, row);
+      if (i < 0 || prev.layers.height[i]?.height === selectedHeight) return prev;
+      const height = [...prev.layers.height];
+      height[i] = selectedHeight > 0 ? { height: selectedHeight } : {};
+      return { ...prev, layers: { ...prev.layers, height } };
+    });
+  }
+
+  function eraseCell(col: number, row: number) {
+    setLevel((prev) => {
+      const i = cellIndex(prev, col, row);
+      if (i < 0) return prev;
+      if (
+        !prev.layers.terrain[i]?.terrain &&
+        !prev.layers.terrain[i]?.feature &&
+        !prev.layers.height[i]?.height &&
+        !prev.layers.objects[i]?.objects?.length
+      ) return prev;
+
+      const oldFamily = prev.layers.terrain[i]?.feature?.family;
+      const terrain = [...prev.layers.terrain];
+      const height = [...prev.layers.height];
+      const objects = [...prev.layers.objects];
+      terrain[i] = {};
+      height[i] = {};
+      objects[i] = {};
+
+      // Recompute connected-feature neighbors that lost a connection.
+      if (oldFamily) {
+        const offsets = [
+          { dc: 0, dr: -1 }, { dc: 1, dr: 0 },
+          { dc: 0, dr: 1 },  { dc: -1, dr: 0 },
+        ];
+        for (const { dc, dr } of offsets) {
+          const nc = col + dc;
+          const nr = row + dr;
+          const ni = cellIndex(prev, nc, nr);
+          if (ni >= 0 && terrain[ni]?.feature?.family === oldFamily && !terrain[ni]?.feature?.manual) {
+            recomputeFeatureCell(ni, nc, nr, terrain, prev.columns, prev.rows, oldFamily, terrainFeatureLookup);
+          }
+        }
+      }
+
+      return { ...prev, layers: { terrain, height, objects } };
+    });
+  }
+
+  function rebuildConnections() {
+    setLevel((prev) => {
+      const terrain = [...prev.layers.terrain];
+      let hasFeature = false;
+      for (let i = 0; i < terrain.length; i++) {
+        const cell = terrain[i];
+        if (!cell?.feature || cell.feature.manual) continue;
+        hasFeature = true;
+        const col = i % prev.columns;
+        const row = Math.floor(i / prev.columns);
+        recomputeFeatureCell(i, col, row, terrain, prev.columns, prev.rows, cell.feature.family, terrainFeatureLookup);
+      }
+      if (!hasFeature) return prev;
+      return { ...prev, layers: { ...prev.layers, terrain } };
+    });
   }
 
   function resetLevel() {
@@ -471,12 +523,14 @@ export function LevelBuilder() {
           terrainBrushMode={terrainBrushMode}
           connectedFamily={connectedFamily}
           featureFamilies={featureFamilies}
+          fallbackCount={fallbackCount}
           onModeChange={setMode}
           onTerrainSelect={setSelectedTerrain}
           onObjectSelect={setSelectedObject}
           onHeightSelect={setSelectedHeight}
           onTerrainBrushModeChange={setTerrainBrushMode}
           onConnectedFamilyChange={setConnectedFamily}
+          onRebuildConnections={rebuildConnections}
         />
       </aside>
 
@@ -659,12 +713,14 @@ function PalettePanel({
   terrainBrushMode,
   connectedFamily,
   featureFamilies,
+  fallbackCount,
   onModeChange,
   onTerrainSelect,
   onObjectSelect,
   onHeightSelect,
   onTerrainBrushModeChange,
   onConnectedFamilyChange,
+  onRebuildConnections,
 }: {
   loaded: boolean;
   mode: PaintMode;
@@ -677,12 +733,14 @@ function PalettePanel({
   terrainBrushMode: "manual" | "connected";
   connectedFamily: TerrainFeatureFamily;
   featureFamilies: TerrainFeatureFamily[];
+  fallbackCount: number;
   onModeChange: (mode: PaintMode) => void;
   onTerrainSelect: (id: string) => void;
   onObjectSelect: (id: string) => void;
   onHeightSelect: (height: number) => void;
   onTerrainBrushModeChange: (mode: "manual" | "connected") => void;
   onConnectedFamilyChange: (family: TerrainFeatureFamily) => void;
+  onRebuildConnections: () => void;
 }) {
   return (
     <section className="lb-palette lb-section">
@@ -710,21 +768,33 @@ function PalettePanel({
       )}
 
       {loaded && mode === "terrain" && terrainBrushMode === "connected" && (
-        <div className="lb-tool-group lb-family-group">
-          <span className="lb-tool-label">Family</span>
-          {featureFamilies.map((f) => (
-            <button
-              key={f}
-              className={connectedFamily === f ? "on" : ""}
-              onClick={() => onConnectedFamilyChange(f)}
-            >
-              {FAMILY_LABELS[f]}
+        <>
+          <div className="lb-tool-group lb-family-group">
+            <span className="lb-tool-label">Family</span>
+            {featureFamilies.map((f) => (
+              <button
+                key={f}
+                className={connectedFamily === f ? "on" : ""}
+                onClick={() => onConnectedFamilyChange(f)}
+              >
+                {FAMILY_LABELS[f]}
+              </button>
+            ))}
+            {featureFamilies.length === 0 && (
+              <p className="dim">No connected families curated. Go to <b>3D Models</b>.</p>
+            )}
+          </div>
+          <div className="lb-rebuild-row">
+            <button className="btn-sm lb-rebuild-btn" onClick={onRebuildConnections}>
+              Rebuild Connections
             </button>
-          ))}
-          {featureFamilies.length === 0 && (
-            <p className="dim">No connected families curated. Go to <b>3D Models</b>.</p>
-          )}
-        </div>
+            {fallbackCount > 0 && (
+              <span className="lb-fallback-badge" title={`${fallbackCount} cell${fallbackCount !== 1 ? "s" : ""} using a fallback shape — missing models in the active kit`}>
+                {fallbackCount} fallback{fallbackCount !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+        </>
       )}
 
       {loaded && mode === "height" && (
@@ -999,7 +1069,7 @@ function GridCell({
 
   return (
     <button
-      className={`lb-cell lb-cell-${mode}${current ? " lb-cell-current-row" : ""}${terrainCell?.feature ? " lb-cell-feature" : ""}`}
+      className={`lb-cell lb-cell-${mode}${current ? " lb-cell-current-row" : ""}${terrainCell?.feature ? (terrainCell.feature.fallback ? " lb-cell-feature-fallback" : " lb-cell-feature") : ""}`}
       type="button"
       style={{ background }}
       title={cellTitle(col, row, terrainCell, object, height)}
