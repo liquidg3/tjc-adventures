@@ -55,8 +55,9 @@ export interface LevelGridCell {
 
 /** A painted terrain cell from the Level Builder terrain layer. */
 export interface LevelTerrainCell {
-  terrain?: string; // slot id, e.g. "terrain-a"
-  color?: string;   // editor swatch color used by the terrain preview surface
+  terrain?: string;   // slot id, e.g. "terrain-a"
+  color?: string;     // editor swatch color used by the terrain preview surface
+  rotation?: number;  // degrees CW from above; renderer applies −rotation×π/180 on Y axis
 }
 
 export interface SceneHandle {

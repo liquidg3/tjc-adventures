@@ -30,7 +30,19 @@ import {
   mergeLevel,
   projectObjectsToLegacyCells,
   type Level,
+  type TerrainCell,
+  type TerrainFeatureFamily,
 } from "./level-builder-state";
+import {
+  buildTerrainFeatureLookup,
+  resolveTerrainFeatureFallback,
+  availableFeatureFamilies,
+  type TerrainModelLookup,
+} from "./terrain-feature-resolver";
+import {
+  terrainMaskForCell,
+  terrainShapeForMask,
+} from "./terrain-connectivity";
 import { SLOTS } from "./slots";
 import { loadStagedModels, type ModelEntry } from "./models";
 import {
@@ -73,6 +85,8 @@ export function LevelBuilder() {
   const [selectedTerrain, setSelectedTerrain] = useState("");
   const [selectedObject, setSelectedObject] = useState("");
   const [selectedHeight, setSelectedHeight] = useState(1);
+  const [terrainBrushMode, setTerrainBrushMode] = useState<"manual" | "connected">("manual");
+  const [connectedFamily, setConnectedFamily] = useState<TerrainFeatureFamily>("river");
   const [assignedSlots, setAssignedSlots] = useState<string[]>([]);
   const [legacyAssetUrlMap, setLegacyAssetUrlMap] = useState<Record<string, string>>({});
   const [modelEntries, setModelEntries] = useState<ModelEntry[]>([]);
@@ -143,6 +157,14 @@ export function LevelBuilder() {
     () => catalog.filter((m) => m.usage.showInLevelBuilder && m.usage.object),
     [catalog],
   );
+  const terrainFeatureLookup = useMemo(
+    () => buildTerrainFeatureLookup(catalog),
+    [catalog],
+  );
+  const featureFamilies = useMemo(
+    () => availableFeatureFamilies(terrainFeatureLookup),
+    [terrainFeatureLookup],
+  );
   const assetUrlMap = useMemo(() => {
     const urls: Record<string, string> = { ...legacyAssetUrlMap };
     for (const model of catalog) urls[model.modelValue] = model.url;
@@ -182,6 +204,7 @@ export function LevelBuilder() {
     const terrainPreviewCells = level.layers.terrain.map((cell) => ({
       terrain: cell.terrain,
       color: cell.terrain ? slotColor[cell.terrain] : undefined,
+      rotation: cell.feature?.rotation,
     }));
     handleRef.current.setLevelTerrainCells(
       terrainPreviewCells as LevelTerrainCell[],
@@ -227,6 +250,8 @@ export function LevelBuilder() {
   const filledCount = useMemo(() => countPaintedCells(level), [level]);
   const selectedLabel = labelForSelection(
     mode,
+    terrainBrushMode,
+    connectedFamily,
     catalogLabelMap[selectedTerrain] ?? selectedTerrain,
     catalogLabelMap[selectedObject] ?? selectedObject,
     selectedHeight,
@@ -235,17 +260,82 @@ export function LevelBuilder() {
   function paintCell(col: number, row: number) {
     const i = cellIndex(level, col, row);
     if (i < 0) return;
-    if (mode === "terrain") paintTerrain(i);
-    else if (mode === "object") paintObject(i, col, row);
+    if (mode === "terrain") {
+      if (terrainBrushMode === "connected") paintConnectedFeature(col, row);
+      else paintTerrainManual(i);
+    } else if (mode === "object") paintObject(i, col, row);
     else if (mode === "height") paintHeight(i);
-    else eraseCell(i);
+    else eraseCell(col, row);
   }
 
-  function paintTerrain(i: number) {
+  function paintTerrainManual(i: number) {
     if (!selectedTerrain || level.layers.terrain[i]?.terrain === selectedTerrain) return;
     const terrain = [...level.layers.terrain];
+    // Manual paint clears any connected-feature metadata on the cell.
     terrain[i] = { terrain: selectedTerrain };
     setLevel({ ...level, layers: { ...level.layers, terrain } });
+  }
+
+  function paintConnectedFeature(col: number, row: number) {
+    const family = connectedFamily;
+    const i = cellIndex(level, col, row);
+    if (i < 0) return;
+
+    // No-op if this cell already belongs to the same non-manual family.
+    const existing = level.layers.terrain[i];
+    if (existing?.feature?.family === family && !existing.feature.manual) return;
+
+    // Clone and mark target as family member (placeholder shape resolved below).
+    const terrain = [...level.layers.terrain];
+    terrain[i] = { ...terrain[i], feature: { family, shape: "tile", rotation: 0, modelId: "" } };
+
+    // Collect target + same-family neighbors for shape recompute.
+    const toRecompute: Array<{ col: number; row: number }> = [{ col, row }];
+    const offsets = [
+      { dc: 0, dr: -1 }, { dc: 1, dr: 0 },
+      { dc: 0, dr: 1 },  { dc: -1, dr: 0 },
+    ];
+    for (const { dc, dr } of offsets) {
+      const nc = col + dc;
+      const nr = row + dr;
+      const ni = cellIndex(level, nc, nr);
+      if (ni >= 0 && terrain[ni]?.feature?.family === family) {
+        toRecompute.push({ col: nc, row: nr });
+      }
+    }
+
+    for (const { col: rc, row: rr } of toRecompute) {
+      recomputeFeatureCell(cellIndex(level, rc, rr), rc, rr, terrain, family, terrainFeatureLookup);
+    }
+    setLevel({ ...level, layers: { ...level.layers, terrain } });
+  }
+
+  function recomputeFeatureCell(
+    i: number,
+    col: number,
+    row: number,
+    terrain: TerrainCell[],
+    family: TerrainFeatureFamily,
+    lookup: TerrainModelLookup,
+  ) {
+    if (i < 0) return;
+    const cell = terrain[i];
+    if (!cell?.feature || cell.feature.manual) return;
+
+    const mask = terrainMaskForCell(terrain, level.columns, level.rows, col, row, family);
+    const { shape, rotation } = terrainShapeForMask(mask);
+    const result = resolveTerrainFeatureFallback(lookup, family, shape);
+    const modelId = result?.model.modelValue ?? "";
+
+    if (!modelId) {
+      console.warn(`[TJC] terrain-feature: no model for ${family}+${shape} (col=${col} row=${row})`);
+    }
+
+    terrain[i] = {
+      ...terrain[i],
+      terrain: modelId || terrain[i]?.terrain,
+      feature: { family, shape, rotation, modelId, ...(cell.feature.manual ? { manual: true } : {}) },
+    };
   }
 
   function paintObject(i: number, col: number, row: number) {
@@ -264,18 +354,40 @@ export function LevelBuilder() {
     setLevel({ ...level, layers: { ...level.layers, height } });
   }
 
-  function eraseCell(i: number) {
+  function eraseCell(col: number, row: number) {
+    const i = cellIndex(level, col, row);
+    if (i < 0) return;
     if (
       !level.layers.terrain[i]?.terrain &&
+      !level.layers.terrain[i]?.feature &&
       !level.layers.height[i]?.height &&
       !level.layers.objects[i]?.objects?.length
     ) return;
+
+    const oldFamily = level.layers.terrain[i]?.feature?.family;
     const terrain = [...level.layers.terrain];
     const height = [...level.layers.height];
     const objects = [...level.layers.objects];
     terrain[i] = {};
     height[i] = {};
     objects[i] = {};
+
+    // Recompute connected-feature neighbors that lost a connection.
+    if (oldFamily) {
+      const offsets = [
+        { dc: 0, dr: -1 }, { dc: 1, dr: 0 },
+        { dc: 0, dr: 1 },  { dc: -1, dr: 0 },
+      ];
+      for (const { dc, dr } of offsets) {
+        const nc = col + dc;
+        const nr = row + dr;
+        const ni = cellIndex(level, nc, nr);
+        if (ni >= 0 && terrain[ni]?.feature?.family === oldFamily && !terrain[ni]?.feature?.manual) {
+          recomputeFeatureCell(ni, nc, nr, terrain, oldFamily, terrainFeatureLookup);
+        }
+      }
+    }
+
     setLevel({ ...level, layers: { terrain, height, objects } });
   }
 
@@ -356,10 +468,15 @@ export function LevelBuilder() {
           selectedObject={selectedObject}
           selectedHeight={selectedHeight}
           catalogLabelMap={catalogLabelMap}
+          terrainBrushMode={terrainBrushMode}
+          connectedFamily={connectedFamily}
+          featureFamilies={featureFamilies}
           onModeChange={setMode}
           onTerrainSelect={setSelectedTerrain}
           onObjectSelect={setSelectedObject}
           onHeightSelect={setSelectedHeight}
+          onTerrainBrushModeChange={setTerrainBrushMode}
+          onConnectedFamilyChange={setConnectedFamily}
         />
       </aside>
 
@@ -524,6 +641,12 @@ function PaintPanel({
   );
 }
 
+const FAMILY_LABELS: Record<TerrainFeatureFamily, string> = {
+  river: "River",
+  path: "Path",
+  road: "Road",
+};
+
 function PalettePanel({
   loaded,
   mode,
@@ -533,10 +656,15 @@ function PalettePanel({
   selectedObject,
   selectedHeight,
   catalogLabelMap,
+  terrainBrushMode,
+  connectedFamily,
+  featureFamilies,
   onModeChange,
   onTerrainSelect,
   onObjectSelect,
   onHeightSelect,
+  onTerrainBrushModeChange,
+  onConnectedFamilyChange,
 }: {
   loaded: boolean;
   mode: PaintMode;
@@ -546,15 +674,59 @@ function PalettePanel({
   selectedObject: string;
   selectedHeight: number;
   catalogLabelMap: Record<string, string>;
+  terrainBrushMode: "manual" | "connected";
+  connectedFamily: TerrainFeatureFamily;
+  featureFamilies: TerrainFeatureFamily[];
   onModeChange: (mode: PaintMode) => void;
   onTerrainSelect: (id: string) => void;
   onObjectSelect: (id: string) => void;
   onHeightSelect: (height: number) => void;
+  onTerrainBrushModeChange: (mode: "manual" | "connected") => void;
+  onConnectedFamilyChange: (family: TerrainFeatureFamily) => void;
 }) {
   return (
     <section className="lb-palette lb-section">
       <h2>Palette</h2>
       {!loaded && <p className="dim">Loading…</p>}
+
+      {loaded && mode === "terrain" && (
+        <div className="lb-tool-group lb-brush-mode">
+          <span className="lb-tool-label">Brush</span>
+          <button
+            className={terrainBrushMode === "manual" ? "on" : ""}
+            onClick={() => onTerrainBrushModeChange("manual")}
+          >
+            Manual
+          </button>
+          <button
+            className={terrainBrushMode === "connected" ? "on" : ""}
+            onClick={() => onTerrainBrushModeChange("connected")}
+            disabled={featureFamilies.length === 0}
+            title={featureFamilies.length === 0 ? "No connected terrain models curated yet" : undefined}
+          >
+            Connected
+          </button>
+        </div>
+      )}
+
+      {loaded && mode === "terrain" && terrainBrushMode === "connected" && (
+        <div className="lb-tool-group lb-family-group">
+          <span className="lb-tool-label">Family</span>
+          {featureFamilies.map((f) => (
+            <button
+              key={f}
+              className={connectedFamily === f ? "on" : ""}
+              onClick={() => onConnectedFamilyChange(f)}
+            >
+              {FAMILY_LABELS[f]}
+            </button>
+          ))}
+          {featureFamilies.length === 0 && (
+            <p className="dim">No connected families curated. Go to <b>3D Models</b>.</p>
+          )}
+        </div>
+      )}
+
       {loaded && mode === "height" && (
         <div className="lb-height-palette">
           {HEIGHT_LEVELS.map((h) => (
@@ -572,10 +744,13 @@ function PalettePanel({
           ))}
         </div>
       )}
-      {loaded && mode !== "height" && paletteSlots.length === 0 && (
-        <p className="dim">No matching curated models yet. Go to <b>3D Models</b> first.</p>
-      )}
-      {mode !== "height" && (
+
+      {loaded && mode !== "height" && !(mode === "terrain" && terrainBrushMode === "connected") &&
+        paletteSlots.length === 0 && (
+          <p className="dim">No matching curated models yet. Go to <b>3D Models</b> first.</p>
+        )}
+
+      {mode !== "height" && !(mode === "terrain" && terrainBrushMode === "connected") && (
         <div className="lb-palette-list">
           {paletteSlots.map((id) => {
             const selected = mode === "terrain" ? selectedTerrain === id : selectedObject === id;
@@ -816,17 +991,18 @@ function GridCell({
   onPaintCell: (col: number, row: number) => void;
 }) {
   const i = cellIndex(level, col, row);
-  const terrain = level.layers.terrain[i]?.terrain;
+  const terrainCell = level.layers.terrain[i];
+  const terrain = terrainCell?.terrain;
   const object = level.layers.objects[i]?.objects?.[0]?.slot;
   const height = level.layers.height[i]?.height ?? 0;
   const background = cellBackgroundForMode(mode, terrain, object, height, slotColor);
 
   return (
     <button
-      className={`lb-cell lb-cell-${mode}${current ? " lb-cell-current-row" : ""}`}
+      className={`lb-cell lb-cell-${mode}${current ? " lb-cell-current-row" : ""}${terrainCell?.feature ? " lb-cell-feature" : ""}`}
       type="button"
       style={{ background }}
-      title={cellTitle(col, row, terrain, object, height)}
+      title={cellTitle(col, row, terrainCell, object, height)}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.preventDefault();
@@ -845,11 +1021,16 @@ function GridCell({
 
 function labelForSelection(
   mode: PaintMode,
+  terrainBrushMode: "manual" | "connected",
+  connectedFamily: TerrainFeatureFamily,
   terrain: string,
   object: string,
   height: number,
 ): string {
-  if (mode === "terrain") return terrain || "No terrain selected";
+  if (mode === "terrain") {
+    if (terrainBrushMode === "connected") return `Connected: ${FAMILY_LABELS[connectedFamily]}`;
+    return terrain || "No terrain selected";
+  }
   if (mode === "object") return object || "No object selected";
   if (mode === "height") return `Height ${height}`;
   return "Erase all layers";
@@ -884,12 +1065,17 @@ function heightColor(height: number, maxAlpha = 0.88): string {
 function cellTitle(
   col: number,
   row: number,
-  terrain: string | undefined,
+  cell: import("./level-builder-state").TerrainCell | undefined,
   object: string | undefined,
   height: number,
 ): string {
   const parts = [`[${col},${row}]`];
-  if (terrain) parts.push(`terrain=${terrain}`);
+  if (cell?.feature) {
+    const f = cell.feature;
+    parts.push(`${f.family} ${f.shape} ${f.rotation}°${f.manual ? " [manual]" : ""}`);
+  } else if (cell?.terrain) {
+    parts.push(`terrain=${cell.terrain}`);
+  }
   if (object) parts.push(`object=${object}`);
   if (height) parts.push(`h=${height}`);
   return parts.join(" · ");

@@ -5,9 +5,28 @@
  * row 0 = far end of the run, last row = start/near edge.
  */
 
+import type { TerrainShape } from "./model-catalog";
+
+export type { TerrainShape };
+
+export type TerrainFeatureFamily = "river" | "path" | "road";
+export type TerrainRotation = 0 | 90 | 180 | 270;
+
+export interface TerrainFeatureCell {
+  family: TerrainFeatureFamily;
+  shape: TerrainShape;
+  rotation: TerrainRotation;
+  /** Resolved catalog model value, e.g. "model:kenney-nature-kit/ground_riverCorner". */
+  modelId: string;
+  /** When true, the connectivity resolver leaves this cell alone. */
+  manual?: boolean;
+}
+
 export interface TerrainCell {
-  /** Legacy terrain slot id or catalog model value, e.g. "terrain-a" or "model:kenney-nature-kit/ground_grass". */
+  /** Resolved model value kept for renderer compatibility; always mirrors feature.modelId when feature is present. */
   terrain?: string;
+  /** Connected-feature intent. When present, shape/rotation were computed from neighbors. */
+  feature?: TerrainFeatureCell;
 }
 
 export interface HeightCell {
@@ -125,6 +144,7 @@ export function countPaintedCells(level: Level): number {
   for (let i = 0; i < count; i++) {
     if (
       level.layers.terrain[i]?.terrain ||
+      level.layers.terrain[i]?.feature ||
       level.layers.height[i]?.height ||
       level.layers.objects[i]?.objects?.length
     ) filled++;
@@ -213,9 +233,42 @@ function mergeTerrainLayer(raw: unknown, count: number): TerrainCell[] {
   return Array.from({ length: count }, (_, i) => {
     const cell = arr[i];
     if (!cell || typeof cell !== "object") return {};
-    const terrain = (cell as TerrainCell).terrain;
-    return typeof terrain === "string" && terrain ? { terrain } : {};
+    const c = cell as TerrainCell;
+    const out: TerrainCell = {};
+    if (typeof c.terrain === "string" && c.terrain) out.terrain = c.terrain;
+    const feature = parseFeatureCell(c.feature);
+    if (feature) out.feature = feature;
+    return out;
   });
+}
+
+function parseFeatureCell(raw: unknown): TerrainFeatureCell | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const f = raw as Partial<TerrainFeatureCell>;
+  if (!isTerrainFeatureFamily(f.family)) return undefined;
+  if (!isTerrainShape(f.shape)) return undefined;
+  if (!isTerrainRotation(f.rotation)) return undefined;
+  if (typeof f.modelId !== "string") return undefined;
+  return {
+    family: f.family,
+    shape: f.shape,
+    rotation: f.rotation,
+    modelId: f.modelId,
+    ...(f.manual === true ? { manual: true } : {}),
+  };
+}
+
+function isTerrainFeatureFamily(v: unknown): v is TerrainFeatureFamily {
+  return v === "river" || v === "path" || v === "road";
+}
+
+function isTerrainShape(v: unknown): v is TerrainShape {
+  return typeof v === "string" &&
+    ["straight", "corner", "end", "split", "cross", "tile"].includes(v);
+}
+
+function isTerrainRotation(v: unknown): v is TerrainRotation {
+  return v === 0 || v === 90 || v === 180 || v === 270;
 }
 
 function mergeHeightLayer(raw: unknown, count: number): HeightCell[] {

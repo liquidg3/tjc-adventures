@@ -12,6 +12,7 @@ import { loadRawModel } from "./ship-materials";
 export interface LevelTerrainCell {
   terrain?: string;
   color?: string;
+  rotation?: number; // degrees CW from above; renderer applies −rotation×π/180 on Y axis
 }
 
 export interface LevelTerrainLayerController {
@@ -256,6 +257,8 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
       const minY = scaledBounds?.minY ?? 0;
       const zOffset = -centerZ;
       node.position.set(baseX - centerX, PLANE_Y + 0.08 - minY, baseZ - scrollZ + zOffset);
+      const rotDeg = cells[i]?.rotation ?? 0;
+      if (rotDeg) node.rotation.y = -rotDeg * Math.PI / 180;
       placed.push({ node, baseZ, zOffset });
     }
 
