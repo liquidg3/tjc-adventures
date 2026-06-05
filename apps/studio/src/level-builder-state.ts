@@ -6,7 +6,7 @@
  */
 
 export interface TerrainCell {
-  /** Terrain slot id, e.g. "terrain-a". */
+  /** Legacy terrain slot id or catalog model value, e.g. "terrain-a" or "model:kenney-nature-kit/ground_grass". */
   terrain?: string;
 }
 
@@ -18,7 +18,7 @@ export interface HeightCell {
 export interface PlacedObject {
   /** Stable enough for diffing later; first pass derives from cell + slot. */
   id: string;
-  /** Asset-map slot id, e.g. "env-trees" or "prop-box". */
+  /** Legacy asset-map slot id or catalog model value. */
   slot: string;
   offset?: [number, number];
   rotation?: number;

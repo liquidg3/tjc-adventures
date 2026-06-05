@@ -1,19 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   mergeNormalizationOverrides,
   getDefaultNormalizationPresets,
   mergeNormalizationPresets,
-  parseAssetAssignments,
-  serializeAssetAssignments,
-  suggestPresetForModel,
   type AssetNormalizationOverride,
   type AssetNormalizationOverrideMap,
-  type AssetAssignment,
   type NormalizationPresetMap,
   type NormalizationPresetId,
 } from "./asset-normalization";
-import { SLOTS, type AssetOption } from "./slots";
+import type { AssetOption } from "./slots";
 import { loadStagedModels } from "./models";
+import type { ModelEntry } from "./models";
+import {
+  buildModelCatalog,
+  EMPTY_MODEL_CATALOG_OVERRIDES,
+  MODEL_CATEGORY_LABELS,
+  MODEL_USAGE_LABELS,
+  PACK_THEME_LABELS,
+  parseModelCatalogOverrides,
+  type ModelCatalogItem,
+  type ModelCatalogOverride,
+  type ModelCatalogOverrides,
+  type ModelCategory,
+  type PackTheme,
+} from "./model-catalog";
 import { SlotCard } from "./SlotCard";
 import { usePersistedJson } from "./use-persisted-json";
 
@@ -25,29 +35,20 @@ const BUILTINS: AssetOption[] = [
   { value: "builtin:scout", label: "Scout (built-in)", variant: "scout" },
 ];
 
-// Assignments persist to a committed file (apps/studio/asset-map.json) via the
-// dev server's /__asset-map endpoint — durable, in the repo, and readable by the
-// game later. localStorage is just a fast offline fallback.
-const ASSET_MAP_URL = "/__asset-map";
 const ASSET_NORMALIZATION_PRESETS_URL = "/__asset-normalization-presets";
 const ASSET_NORMALIZATION_OVERRIDES_URL = "/__asset-normalization-overrides";
-const STORAGE_KEY = "tjc-asset-slots";
+const MODEL_CATALOG_OVERRIDES_URL = "/__model-catalog-overrides";
 
-const loadLocal = (): Record<string, AssetAssignment> => {
-  try {
-    return parseAssetAssignments(JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
-  } catch {
-    return {};
-  }
-};
-
-/** The 3D Models section: assign a model to each game asset slot. */
+/** The 3D Models section: curate imported models and tune normalization. */
 export function ModelsBoard() {
-  const [assign, setAssign] = useState<Record<string, AssetAssignment>>(loadLocal);
-  const [saved, setSaved] = useState(true);
   const [options, setOptions] = useState<AssetOption[]>(BUILTINS);
-  // presets and overrides ride a generic hook; assignments stay bespoke because
-  // they cache to localStorage as an offline fallback (and serialize differently)
+  const [modelEntries, setModelEntries] = useState<ModelEntry[]>([]);
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const [catalogTheme, setCatalogTheme] = useState<"all" | PackTheme>("all");
+  const [catalogCategory, setCatalogCategory] = useState<"all" | ModelCategory>("all");
+  const [catalogKit, setCatalogKit] = useState("all");
+  const [selectedCatalogValue, setSelectedCatalogValue] = useState("");
+  const [selectedCatalogPreset, setSelectedCatalogPreset] = useState<NormalizationPresetId>("none");
   const presets = usePersistedJson<NormalizationPresetMap>(
     ASSET_NORMALIZATION_PRESETS_URL,
     getDefaultNormalizationPresets(),
@@ -58,10 +59,16 @@ export function ModelsBoard() {
     {},
     mergeNormalizationOverrides,
   );
+  const catalogOverrides = usePersistedJson<ModelCatalogOverrides>(
+    MODEL_CATALOG_OVERRIDES_URL,
+    EMPTY_MODEL_CATALOG_OVERRIDES,
+    parseModelCatalogOverrides,
+  );
 
   // model options come from the imported (staged) packs
   useEffect(() => {
-    loadStagedModels().then((models) =>
+    loadStagedModels().then((models) => {
+      setModelEntries(models);
       setOptions([
         ...BUILTINS,
         ...models.map((m) => ({
@@ -70,52 +77,18 @@ export function ModelsBoard() {
           url: m.url,
           atlas: m.atlas,
         })),
-      ]),
-    );
+      ]);
+    });
   }, []);
 
-  // load the durable file as the source of truth (falls back to localStorage)
+  const catalog = useMemo(
+    () => buildModelCatalog(modelEntries, catalogOverrides.value),
+    [modelEntries, catalogOverrides.value],
+  );
+
   useEffect(() => {
-    fetch(ASSET_MAP_URL)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && typeof data === "object") setAssign(parseAssetAssignments(data));
-      })
-      .catch(() => {
-        /* keep the localStorage fallback */
-      });
-  }, []);
-
-  const persist = (next: Record<string, AssetAssignment>) => {
-    const serialized = serializeAssetAssignments(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
-    setSaved(false);
-    fetch(ASSET_MAP_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(serialized, null, 2),
-    })
-      .then(() => setSaved(true))
-      .catch(() => setSaved(false));
-  };
-
-  const setModel = (id: string, value: string) =>
-    setAssign((prev) => {
-      const next = {
-        ...prev,
-        [id]: { model: value, preset: suggestPresetForModel(value) },
-      };
-      persist(next);
-      return next;
-    });
-
-  const setPreset = (id: string, preset: NormalizationPresetId) =>
-    setAssign((prev) => {
-      const curr = prev[id] ?? { model: "", preset: "none" };
-      const next = { ...prev, [id]: { ...curr, preset } };
-      persist(next);
-      return next;
-    });
+    setSelectedCatalogValue((current) => current || catalog[0]?.modelValue || "");
+  }, [catalog]);
 
   const savePresetValues = (preset: NormalizationPresetId, nextValue: NormalizationPresetMap[NormalizationPresetId]) => {
     presets.setValue({ ...presets.value, [preset]: nextValue });
@@ -128,52 +101,226 @@ export function ModelsBoard() {
     overrides.setValue(next);
   };
 
-  const allSlots = SLOTS.flatMap((c) => c.slots);
-  const filled = allSlots.filter((s) => assign[s.id]?.model).length;
-  const missing = allSlots.filter((s) => !assign[s.id]?.model).map((s) => s.label);
+  const saveCatalogOverride = (id: string, patch: ModelCatalogOverride) => {
+    const curr = catalogOverrides.value.models[id] ?? {};
+    const nextModel = {
+      ...curr,
+      ...patch,
+      usage: patch.usage ? { ...(curr.usage ?? {}), ...patch.usage } : curr.usage,
+    };
+    catalogOverrides.setValue({
+      schemaVersion: 1,
+      models: {
+        ...catalogOverrides.value.models,
+        [id]: nextModel,
+      },
+    });
+  };
+
   const modelCount = options.length - BUILTINS.length;
+  const kits = useMemo(() => [...new Set(catalog.map((m) => m.packId))].sort(), [catalog]);
+  const catalogNeedle = catalogQuery.trim().toLowerCase();
+  const filteredCatalog = catalog.filter((m) =>
+    (catalogTheme === "all" || m.theme === catalogTheme) &&
+    (catalogCategory === "all" || m.categoryKind === catalogCategory) &&
+    (catalogKit === "all" || m.packId === catalogKit) &&
+    `${m.packName} ${m.name} ${m.family} ${m.shape}`.toLowerCase().includes(catalogNeedle),
+  );
 
   return (
     <div className="studio">
       <header>
         <h1>3D Models</h1>
         <p>
-          Assign a model to each asset slot the game needs. Options come from the
-          Kenney packs you import in the <b>Asset Library</b> ({modelCount} models
-          available) — import more there and they appear here.
+          Curate imported Kenney models for builders and gameplay. Options come
+          from packs imported in the <b>Asset Library</b> ({modelCount} models
+          available). Tag where each model appears, then tune its center,
+          forward direction, scale, and ground contact.
         </p>
       </header>
+      <CatalogBrowser
+        catalog={catalog}
+        filteredCatalog={filteredCatalog}
+        kits={kits}
+        options={options}
+        query={catalogQuery}
+        theme={catalogTheme}
+        category={catalogCategory}
+        kit={catalogKit}
+        selectedValue={selectedCatalogValue}
+        selectedPreset={selectedCatalogPreset}
+        saved={{
+          presets: presets.saved,
+          overrides: overrides.saved,
+          catalog: catalogOverrides.saved,
+        }}
+        presetValues={presets.value}
+        overrideValues={overrides.value}
+        onQueryChange={setCatalogQuery}
+        onThemeChange={setCatalogTheme}
+        onCategoryChange={setCatalogCategory}
+        onKitChange={setCatalogKit}
+        onSelectedValueChange={setSelectedCatalogValue}
+        onSelectedPresetChange={setSelectedCatalogPreset}
+        onSavePreset={savePresetValues}
+        onSaveOverride={saveOverrideValues}
+        onCatalogOverride={saveCatalogOverride}
+      />
+    </div>
+  );
+}
+
+function CatalogBrowser({
+  catalog,
+  filteredCatalog,
+  kits,
+  options,
+  query,
+  theme,
+  category,
+  kit,
+  selectedValue,
+  selectedPreset,
+  saved,
+  presetValues,
+  overrideValues,
+  onQueryChange,
+  onThemeChange,
+  onCategoryChange,
+  onKitChange,
+  onSelectedValueChange,
+  onSelectedPresetChange,
+  onSavePreset,
+  onSaveOverride,
+  onCatalogOverride,
+}: {
+  catalog: ModelCatalogItem[];
+  filteredCatalog: ModelCatalogItem[];
+  kits: string[];
+  options: AssetOption[];
+  query: string;
+  theme: "all" | PackTheme;
+  category: "all" | ModelCategory;
+  kit: string;
+  selectedValue: string;
+  selectedPreset: NormalizationPresetId;
+  saved: { presets: boolean; overrides: boolean; catalog: boolean };
+  presetValues: NormalizationPresetMap;
+  overrideValues: AssetNormalizationOverrideMap;
+  onQueryChange: (value: string) => void;
+  onThemeChange: (value: "all" | PackTheme) => void;
+  onCategoryChange: (value: "all" | ModelCategory) => void;
+  onKitChange: (value: string) => void;
+  onSelectedValueChange: (value: string) => void;
+  onSelectedPresetChange: (value: NormalizationPresetId) => void;
+  onSavePreset: (preset: NormalizationPresetId, next: NormalizationPresetMap[NormalizationPresetId]) => void;
+  onSaveOverride: (modelValue: string, next: AssetNormalizationOverride | null) => void;
+  onCatalogOverride: (id: string, patch: ModelCatalogOverride) => void;
+}) {
+  const selected = catalog.find((m) => m.modelValue === selectedValue);
+
+  return (
+    <section>
+      <h2>Imported Model Catalog</h2>
       <div className="summary">
-        <b>{filled}/{allSlots.length}</b>{" "}
-        slots filled
-        {missing.length > 0 && <span className="miss-list"> · still missing: {missing.join(", ")}</span>}
-        <span className="dim"> · saved to asset-map.json {saved ? "✓" : "…"}</span>
-        <span className="dim"> · presets {presets.saved ? "✓" : "…"}</span>
-        <span className="dim"> · overrides {overrides.saved ? "✓" : "…"}</span>
+        <b>{filteredCatalog.length}/{catalog.length}</b> models shown · inferred from imported pack manifests
+        <span className="dim"> · presets {saved.presets ? "✓" : "…"}</span>
+        <span className="dim"> · overrides {saved.overrides ? "✓" : "…"}</span>
+        <span className="dim"> · catalog {saved.catalog ? "✓" : "…"}</span>
+      </div>
+      <div className="model-catalog-filters">
+        <input
+          className="studio-search"
+          value={query}
+          onChange={(e) => onQueryChange(e.target.value)}
+          placeholder="Search imported models..."
+        />
+        <select value={theme} onChange={(e) => onThemeChange(e.target.value as "all" | PackTheme)}>
+          <option value="all">All themes</option>
+          {Object.entries(PACK_THEME_LABELS).map(([id, label]) => (
+            <option key={id} value={id}>{label}</option>
+          ))}
+        </select>
+        <select value={category} onChange={(e) => onCategoryChange(e.target.value as "all" | ModelCategory)}>
+          <option value="all">All categories</option>
+          {Object.entries(MODEL_CATEGORY_LABELS).map(([id, label]) => (
+            <option key={id} value={id}>{label}</option>
+          ))}
+        </select>
+        <select value={kit} onChange={(e) => onKitChange(e.target.value)}>
+          <option value="all">All kits</option>
+          {kits.map((packId) => (
+            <option key={packId} value={packId}>{packId}</option>
+          ))}
+        </select>
       </div>
 
-      {SLOTS.map((cat) => (
-        <section key={cat.category}>
-          <h2>{cat.category}</h2>
-          <div className="grid">
-            {cat.slots.map((s) => (
+      <div className="model-catalog-layout">
+        <div className="model-catalog-list">
+          {filteredCatalog.map((model) => (
+            <button
+              type="button"
+              key={model.id}
+              className={`model-catalog-row ${selectedValue === model.modelValue ? "on" : ""}`}
+              onClick={() => onSelectedValueChange(model.modelValue)}
+            >
+              <span>
+                <b>{model.name}</b>
+                <span className="dim">{model.packName}</span>
+              </span>
+              <span className="badge">{PACK_THEME_LABELS[model.theme]}</span>
+              <span className="badge">{MODEL_CATEGORY_LABELS[model.categoryKind]}</span>
+              {model.family && <span className="badge">{model.family}</span>}
+              {model.shape && <span className="badge">{model.shape}</span>}
+            </button>
+          ))}
+        </div>
+
+        <div className="model-catalog-detail">
+          {selected ? (
+            <>
+              <div className="card model-catalog-card">
+                <div className="card-head">
+                  <span className="card-title">{selected.name}</span>
+                  <span className="badge">{selected.packName}</span>
+                </div>
+                <div className="model-catalog-tags">
+                  <span className="badge">{PACK_THEME_LABELS[selected.theme]}</span>
+                  <span className="badge">{MODEL_CATEGORY_LABELS[selected.categoryKind]}</span>
+                  {selected.family && <span className="badge">{selected.family}</span>}
+                  {selected.shape && <span className="badge">{selected.shape}</span>}
+                </div>
+                <div className="model-catalog-usage">
+                  {MODEL_USAGE_LABELS.map(({ key, label }) => (
+                    <label key={key}>
+                      <input
+                        type="checkbox"
+                        checked={selected.usage[key]}
+                        onChange={(e) => onCatalogOverride(selected.id, { usage: { [key]: e.target.checked } })}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
               <SlotCard
-                key={s.id}
-                label={s.label}
-                value={assign[s.id]?.model || ""}
-                preset={assign[s.id]?.preset || "none"}
-                presetValues={presets.value}
-                overrideValues={overrides.value}
+                label="Catalog model normalization"
+                value={selectedValue}
+                preset={selectedPreset}
+                presetValues={presetValues}
+                overrideValues={overrideValues}
                 options={options}
-                onChange={(v) => setModel(s.id, v)}
-                onPresetChange={(preset) => setPreset(s.id, preset)}
-                onSavePreset={savePresetValues}
-                onSaveOverride={saveOverrideValues}
+                onChange={onSelectedValueChange}
+                onPresetChange={onSelectedPresetChange}
+                onSavePreset={onSavePreset}
+                onSaveOverride={onSaveOverride}
               />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+            </>
+          ) : (
+            <div className="missing-box">No imported model selected.</div>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }

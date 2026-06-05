@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "models": {
+    "kenney-space-kit/craft_speederD": {
+      "usage": {
+        "goodGuyShip": true
+      }
+    },
+    "kenney-space-kit/craft_speederA": {
+      "usage": {
+        "badGuyShip": true
+      }
+    },
+    "kenney-space-kit/craft_racer": {
+      "usage": {
+        "badGuyShip": true
+      }
+    },
+    "kenney-space-kit/craft_cargoB": {
+      "usage": {
+        "badGuyShip": true
+      }
+    },
+    "kenney-space-kit/craft_cargoA": {
+      "usage": {
+        "badGuyShip": true
+      }
+    }
+  }
+}

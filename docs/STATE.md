@@ -138,8 +138,9 @@ _Last updated: 2026-06-03 (session 2)._
   Cleanup pass: `LevelBuilder.tsx` is split into explicit panel/cell helper
   components, grid column changes use the custom Studio confirmation box because
   they rebuild painted layers, and stale Level Builder CSS/layout rules were
-  removed. Grass/bushes are object-mode placements; Terrain mode only shows
-  `terrain-*`.
+  removed. Grass/bushes are object-mode placements. The visible palette now
+  reads curated imported model-catalog items; legacy fixed-slot IDs remain
+  readable under the hood only for existing saved levels/runtime holdouts.
   **Plan forward**: `docs/level-builder-plan.md` is the handoff plan.
   **Terrain preview is in progress.** `packages/scenes/src/level-terrain-layer.ts`
   renders a scrolling authored-ground grid aligned to the object-placement field;
@@ -152,10 +153,13 @@ _Last updated: 2026-06-03 (session 2)._
   terrain updates still full-rebuild, height does not displace terrain, and the
   terrain-vs-object visual contract still needs more validation.
 - **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
-  filter chips: All / 3D / UI. UI uses Kenney's `tag:interface` (not `tag:UI`
-  — that returns nothing). UI imports stage to `apps/studio/public/ui/kenney-<slug>/`
-  preserving the pack's `PNG/Default/`, `Vector/` etc. structure; 3D stays in
-  `public/models/`. Same one-click import.
+  filter chips: All / 3D / UI plus inferred pack theme and import-state filters.
+  Pack themes are derived from Kenney pack names returned by `#__kenney/list`;
+  imported runtime models still come only from staged `public/models/*/manifest.json`
+  files. UI uses Kenney's `tag:interface` (not `tag:UI` — that returns nothing).
+  UI imports stage to `apps/studio/public/ui/kenney-<slug>/` preserving the
+  pack's `PNG/Default/`, `Vector/` etc. structure; 3D stays in `public/models/`.
+  Same one-click import.
 - **NEW THIS SESSION → Studio chrome restyled with Kenney UI Pack Sci-Fi.** All
   cards, buttons, inputs, cursors now use 9-sliced `bar_round_*` and composite
   `button_square_header_*_rectangle` images via CSS `border-image`. See
@@ -215,8 +219,8 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/App.tsx              section router (Home ↔ a section)
   src/AssetLibrary.tsx     ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
   src/AssetTest.tsx        single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
-  src/ModelsBoard.tsx      3D Models board: assign a staged model + normalization preset to each game slot → asset-map.json
-  src/SlotCard.tsx         one slot: dropdown + preset select + expanded modal draft/save normalization workflow
+  src/ModelsBoard.tsx      3D Models catalog: curate imported models, usage tags, and normalization
+  src/SlotCard.tsx         selected-model normalization editor reused by the catalog detail panel
   src/ModelPreview.tsx     budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
   src/LevelBuilder.tsx     ★ NEW: layered five-minute level authoring surface (terrain / objects / height)
   src/level-builder-state.ts Level v2 types + migration/projection + emptyLevel/mergeLevel/cellIndex helpers
@@ -228,7 +232,7 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/viewer-scene.ts      createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
   src/viewer-budget.ts     caps live WebGL contexts at 6 — leased by ModelPreview (Asset Test uses ONE shared viewer)
   src/models.ts            loadStagedModels(): reads imported packs from public/models (index.json + manifests)
-  src/slots.ts             the game asset slots (Ships/Animals/Environment/…)
+  src/slots.ts             legacy game asset slots, still read for compatibility/runtime holdouts
   src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
                            now reads asset-map + normalization presets so the live ship matches the 3D Models board
   src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
@@ -242,7 +246,8 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   vite.config.ts           dev endpoints (JSON-mirror routes share one jsonFilePlugin factory):
                              /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides},
                              /__level-builder, /__ui-theme; plus /__kenney/{list,meta,import}
-  asset-map.json           committed slot→model assignments
+  model-catalog-overrides.json committed catalog curation overrides (usage/category/family/shape)
+  asset-map.json           legacy committed slot→model assignments, still read for old/runtime paths
   asset-normalization-presets.json   committed shared normalization baselines
   asset-normalization-overrides.json committed per-model normalization overrides
   level-builder.json       committed layered Level Builder JSON — written by the Level Builder section
@@ -382,16 +387,21 @@ reports good coordinates back; that's why `getShipPosition`/`resetShip` exist.
 
 ## The 3D Models board — `apps/studio/src/ModelsBoard.tsx`
 
-Assign a real model to each game asset slot. **Assignments persist to the committed
-`apps/studio/asset-map.json`** via the dev server's `/__asset-map` GET/POST endpoint
-(`assetMapPlugin` in `vite.config.ts`); localStorage is a fast fallback. The game
-will read this map later. Dropdown options come from `loadStagedModels()` — every
-model in the imported Kenney packs under `public/models` (the old `src/models`
-`import.meta.glob` is gone). Import packs from the **Asset Library** first.
+Curate every imported model from `public/models/*/manifest.json`. The old
+slot-assignment UI is gone from this page; fixed game slots in `asset-map.json`
+are now treated as legacy compatibility/runtime data, not the model-management
+surface. Import packs from the **Asset Library** first, then use this page to
+filter by kit/theme/category, tag model usage, and tune normalization.
 
-**Normalization now lives here too.** Each slot assignment also carries a
-**normalization preset** so the chosen model can be made game-ready at selection
-time, not later in Asset Test. Current presets:
+**Catalog curation persists to `apps/studio/model-catalog-overrides.json`.**
+Derived model data comes from imported manifests + inference in
+`apps/studio/src/model-catalog.ts`; the override file stores only designer
+edits such as usage flags (`terrain`, `object`, `rescueAnimal`, ships) and
+category/family/shape corrections.
+
+**Normalization lives here too.** The selected catalog model uses the same
+normalization preset/override system as before, so any imported model can be
+made game-ready at selection time. Current presets:
 
 - `none`
 - `kenney-space-kit`
@@ -465,7 +475,12 @@ if we want more variety or a complementary style):
 2. **Asset Test** (`/asset-test`) — one shared 3D viewer (single WebGL context) to
    preview any staged model as a rotating isometric browse view. Kits start
    collapsed. The viewer auto-applies the matching preset by kit.
-3. **3D Models board** (`/models`) — assign a staged model to each game slot → `asset-map.json`.
+3. **3D Models board** (`/models`) — catalog-only imported-model management:
+   kit/theme/category filters, usage checkboxes, and one selected-model
+   normalization preview. Legacy slot assignment is intentionally not shown.
+   Catalog overrides persist to
+   `apps/studio/model-catalog-overrides.json`; derived data stays generated from
+   pack manifests + inference.
 4. **`scripts/stage-pack.mjs`** — manual equivalent of Import for a local pack folder;
    assimp-converts OBJ/FBX if a pack ships those instead of GLB.
 

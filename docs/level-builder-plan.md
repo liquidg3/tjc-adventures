@@ -40,9 +40,9 @@ Implemented in the first v2 pass:
 - Default grid is `12` columns, `384wu` field width, `32wu` cells, `150` rows.
 - Level Builder modes are now `Terrain`, `Objects`, `Height`, `Erase`.
 - Palette filters by mode:
-  - Terrain shows only `terrain-*`.
-  - Objects shows the remaining non-ship assigned slots, including grass,
-    bushes, trees, buildings/landmarks, props, etc.
+  - Terrain shows curated imported catalog models marked for Level Builder terrain.
+  - Objects shows curated imported catalog models marked as Level Builder objects,
+    including grass, bushes, trees, buildings/landmarks, props, rescue animals, etc.
   - Height shows a numeric height ramp.
 - Grid visuals combine terrain base color, dark height overlay, and object dot.
 - Existing scene preview receives a legacy object/height projection for now.
@@ -57,15 +57,26 @@ Implemented in the first v2 pass:
   rebuilds/clears painted layers.
 - CSS cleanup removed stale Level Builder layout rules and keeps Level Builder
   panels on the shared `card-content` chrome role.
+- `apps/studio/src/model-catalog.ts` now derives pack themes from Kenney pack
+  names and model category/family/shape metadata from imported model names.
+- `apps/studio/model-catalog-overrides.json` stores only designer curation
+  overrides. Derived catalog data is rebuilt from imported manifests.
+- Asset Library has inferred theme and import-state filters over the full live
+  Kenney pack list, not just imported runtime folders.
+- 3D Models is now catalog-only: imported-model browser with kit/theme/category
+  filters, usage checkboxes, and one selected-model normalization preview. The
+  old fixed-slot assignment UI is intentionally hidden.
 
 Not implemented yet:
 
-- Runtime terrain layer that changes the visible ground based on terrain cells.
 - Terrain mesh height/displacement.
 - Diff-based object updates.
 - Asset-normalization presets/overrides in `level-prop-layer.ts`.
 - Confirmation/resampling workflow for changing columns without rebuilding.
   Rebuild confirmation exists; non-destructive resampling does not.
+- Smart terrain brushes for connected rivers/paths. Current catalog inference
+  captures `family` + `shape` to prepare for this, but neighbor-mask painting is
+  not implemented yet.
 
 Current behavior:
 

@@ -6622,44 +6622,8 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
-        "terrain": "terrain-c"
-      },
-      {},
-      {},
-      {},
-      {},
-      {
-        "terrain": "terrain-c"
-      },
-      {
-        "terrain": "terrain-c"
-      },
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {
-        "terrain": "terrain-c"
+        "terrain": "terrain-a"
       },
       {},
       {},
@@ -6671,28 +6635,6 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {
-        "terrain": "terrain-c"
-      },
-      {},
-      {
-        "terrain": "terrain-c"
-      },
       {},
       {
         "terrain": "terrain-c"
@@ -6714,7 +6656,73 @@
       {},
       {},
       {},
+      {
+        "terrain": "terrain-a"
+      },
       {},
+      {},
+      {},
+      {
+        "terrain": "terrain-c"
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-c"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-a"
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-c"
+      },
+      {},
+      {
+        "terrain": "terrain-c"
+      },
+      {},
+      {
+        "terrain": "terrain-c"
+      },
+      {
+        "terrain": "terrain-c"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-a"
+      },
       {},
       {},
       {},
@@ -6772,43 +6780,8 @@
         "terrain": "terrain-b"
       },
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
-      },
-      {},
-      {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {},
       {},
@@ -6820,10 +6793,9 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
+      {
+        "terrain": "terrain-a"
+      },
       {},
       {
         "terrain": "terrain-b"
@@ -6841,7 +6813,7 @@
         "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-b"
+        "terrain": "terrain-c"
       },
       {
         "terrain": "terrain-b"
@@ -6852,17 +6824,15 @@
       {
         "terrain": "terrain-b"
       },
+      {},
       {
-        "terrain": "terrain-b"
+        "terrain": "model:kenney-nature-kit/ground_pathBendBank"
       },
       {
-        "terrain": "terrain-b"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-b"
-      },
-      {
-        "terrain": "terrain-b"
+        "terrain": "model:kenney-nature-kit/ground_pathBendBank"
       },
       {},
       {},
@@ -6888,6 +6858,9 @@
         "terrain": "terrain-b"
       },
       {
+        "terrain": "terrain-a"
+      },
+      {
         "terrain": "terrain-b"
       },
       {
@@ -6903,6 +6876,32 @@
         "terrain": "terrain-b"
       },
       {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_pathBendBank"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "terrain": "terrain-a"
+      },
+      {
+        "terrain": "terrain-a"
+      },
+      {
         "terrain": "terrain-b"
       },
       {
@@ -6912,21 +6911,17 @@
         "terrain": "terrain-b"
       },
       {
-        "terrain": "terrain-b"
+        "terrain": "terrain-a"
+      },
+      {
+        "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-b"
       },
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
         "terrain": "terrain-a"
       },
@@ -6940,38 +6935,21 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_pathBendBank"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
-      },
-      {
-        "terrain": "terrain-a"
-      },
-      {
-        "terrain": "terrain-a"
-      },
-      {
-        "terrain": "terrain-a"
-      },
-      {
-        "terrain": "terrain-a"
-      },
-      {
-        "terrain": "terrain-a"
-      },
-      {
-        "terrain": "terrain-a"
+        "terrain": "terrain-b"
       },
       {
         "terrain": "terrain-a"
       },
       {},
-      {},
-      {},
+      {
+        "terrain": "terrain-a"
+      },
       {},
       {},
       {
@@ -7005,7 +6983,7 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7014,13 +6992,13 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7031,6 +7009,11 @@
       {
         "terrain": "terrain-a"
       },
+      {},
+      {},
+      {},
+      {},
+      {},
       {
         "terrain": "terrain-a"
       },
@@ -7059,22 +7042,22 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7125,28 +7108,28 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7200,31 +7183,31 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
         "terrain": "terrain-a"
@@ -7272,37 +7255,37 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
         "terrain": "terrain-a"
@@ -7347,19 +7330,19 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7419,16 +7402,22 @@
         "terrain": "terrain-a"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
-        "terrain": "terrain-a"
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
         "terrain": "terrain-a"
@@ -7483,11 +7472,20 @@
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/path_woodEnd"
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
         "terrain": "terrain-a"
       },
       {
@@ -7500,6 +7498,9 @@
         "terrain": "terrain-a"
       },
       {
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
+      },
+      {
         "terrain": "terrain-a"
       },
       {
@@ -7546,6 +7547,15 @@
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7614,6 +7624,12 @@
         "terrain": "terrain-a"
       },
       {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
         "terrain": "terrain-a"
       },
       {
@@ -7630,6 +7646,12 @@
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_riverSplit"
       },
       {
         "terrain": "terrain-a"
@@ -7672,11 +7694,20 @@
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
         "terrain": "terrain-a"
       },
       {
+        "terrain": "model:kenney-nature-kit/ground_grass"
+      },
+      {
         "terrain": "terrain-a"
       },
       {
@@ -7738,9 +7769,15 @@
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -7882,6 +7919,9 @@
       },
       {
         "terrain": "terrain-a"
+      },
+      {
+        "terrain": "model:kenney-nature-kit/ground_grass"
       },
       {
         "terrain": "terrain-a"
@@ -22156,114 +22196,68 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
         "objects": [
           {
-            "id": "288:9:env-trees",
-            "slot": "env-trees"
+            "id": "284:10:env-tree-2",
+            "slot": "env-tree-2"
           }
         ]
       },
+      {},
+      {},
+      {},
       {
         "objects": [
           {
-            "id": "288:10:env-trees",
-            "slot": "env-trees"
+            "id": "284:14:env-tree-2",
+            "slot": "env-tree-2"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "285:9:env-tree-2",
+            "slot": "env-tree-2"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "285:13:env-tree-2",
+            "slot": "env-tree-2"
+          }
+        ]
+      },
+      {},
+      {
+        "objects": [
+          {
+            "id": "285:15:env-tree-2",
+            "slot": "env-tree-2"
           }
         ]
       },
@@ -22287,10 +22281,168 @@
       {},
       {},
       {},
+      {
+        "objects": [
+          {
+            "id": "286:12:model:kenney-nature-kit/cliff_stepsCorner_rock",
+            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock"
+          }
+        ]
+      },
       {},
       {},
       {},
       {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "287:7:env-tree-2",
+            "slot": "env-tree-2"
+          }
+        ]
+      },
+      {},
+      {
+        "objects": [
+          {
+            "id": "287:9:env-tree-2",
+            "slot": "env-tree-2"
+          }
+        ]
+      },
+      {},
+      {
+        "objects": [
+          {
+            "id": "287:11:model:kenney-nature-kit/cliff_stepsCorner_rock",
+            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "287:12:model:kenney-nature-kit/cliff_stepsCorner_rock",
+            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "287:17:env-tree-2",
+            "slot": "env-tree-2"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "288:9:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "288:10:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "288:11:model:kenney-nature-kit/cliff_stepsCorner_rock",
+            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock"
+          }
+        ]
+      },
+      {},
+      {
+        "objects": [
+          {
+            "id": "288:13:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "289:8:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:9:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:10:model:kenney-nature-kit/cliff_stepsCorner_rock",
+            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock"
+          }
+        ]
+      },
       {},
       {
         "objects": [
@@ -22318,10 +22470,24 @@
       {},
       {},
       {},
+      {
+        "objects": [
+          {
+            "id": "290:7:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
       {},
       {},
-      {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "290:10:model:kenney-nature-kit/cliff_stepsCorner_rock",
+            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock"
+          }
+        ]
+      },
       {
         "objects": [
           {
@@ -22330,12 +22496,19 @@
           }
         ]
       },
-      {},
       {
         "objects": [
           {
-            "id": "290:13:env-trees",
-            "slot": "env-trees"
+            "id": "290:12:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "290:13:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
           }
         ]
       },
@@ -22356,9 +22529,23 @@
       {},
       {},
       {},
+      {
+        "objects": [
+          {
+            "id": "291:7:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
       {},
-      {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "291:9:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
+          }
+        ]
+      },
       {},
       {
         "objects": [
@@ -22371,16 +22558,60 @@
       {
         "objects": [
           {
-            "id": "291:12:env-trees",
-            "slot": "env-trees"
+            "id": "291:12:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
           }
         ]
       },
       {
         "objects": [
           {
-            "id": "291:13:env-trees",
-            "slot": "env-trees"
+            "id": "291:13:model:kenney-nature-kit/cliff_stepsCornerInner_stone",
+            "slot": "model:kenney-nature-kit/cliff_stepsCornerInner_stone"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "292:7:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "292:11:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "292:12:env-grass",
+            "slot": "env-grass"
           }
         ]
       },
@@ -22404,32 +22635,30 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "293:9:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "293:10:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "293:11:env-grass",
+            "slot": "env-grass"
+          }
+        ]
+      },
       {},
       {},
       {},

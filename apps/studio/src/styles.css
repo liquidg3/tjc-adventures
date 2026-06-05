@@ -1300,25 +1300,96 @@ section h2 {
 }
 .lb-palette-hint { margin-top: 0.75rem; font-size: 0.78rem; line-height: 1.35; }
 
-/* ===== Asset Library — kind filter chips + badges ========================= */
-.kenney-filters {
-  display: flex;
-  gap: 0.4rem;
-  margin: 0.5rem 0 0.75rem;
-  flex-wrap: wrap;
-}
-.kenney-filter {
-  padding: 0.3rem 0.8rem;
-  background: #1c2438;
-  color: #e6ebf5;
-  border: 1px solid #313c58;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.kenney-filter.on { background: #2a4d7a; border-color: #4d7fc0; }
+/* ===== Asset Library + model catalog controls ============================ */
 .badge.kind-3d  { background: #2c4a78; color: #d5e3ff; }
 .badge.kind-ui  { background: #4a2c78; color: #e6d5ff; }
+
+.asset-catalog-controls {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) repeat(3, minmax(150px, 210px));
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+
+.asset-catalog-controls .studio-search {
+  width: 100%;
+  margin: 0;
+}
+
+.model-catalog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+
+.model-catalog-filters .studio-search {
+  flex: 1 1 260px;
+  margin: 0;
+}
+
+.model-catalog-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(360px, 440px);
+  gap: 16px;
+  align-items: start;
+}
+
+.model-catalog-list {
+  display: grid;
+  gap: 8px;
+  max-height: 720px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.model-catalog-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 42px;
+  text-align: left;
+}
+
+.model-catalog-row > span:first-child {
+  display: grid;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.model-catalog-row b,
+.model-catalog-row .dim {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-catalog-detail {
+  position: sticky;
+  top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.model-catalog-card {
+  min-height: 0;
+}
+
+.model-catalog-tags,
+.model-catalog-usage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.model-catalog-usage label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ui-color-text-primary);
+}
 
 /* ===== KENNEY UI PACK SCI-FI — anatomical restyle =========================
  *
@@ -1344,7 +1415,7 @@ section h2 {
  *   .studio-card (Home landing)     → large_rectangle (Blue Double for HiDPI)
  *   .pack-card / .card (slot card)  → blade_rectangle (compact w/ corner title)
  *   .preview-shell, side panels     → notch_rectangle (Grey for less noise)
- *   .kenney-filters, .summary       → bar_round_large (Grey) — slim chrome
+ *   .summary                        → bar_round_large (Grey) — slim chrome
  *   .lb-palette                     → notch_rectangle (Grey)
  *   .lb-grid                        → bar_round_large border only (no fill)
  *   button (default)                → bar_round_small (Blue)
@@ -1396,7 +1467,7 @@ html, body {
   background: #060912;
   color: var(--ui-color-text-primary, #e6ebf5);
 }
-a, button, [role="button"], select, .studio-card, .kenney-filter,
+a, button, [role="button"], select, .studio-card,
 .lb-palette-item, .lb-tool-group button, .panel-save, .kenney-import,
 .pack-link, .preview-toolbar button, .studio-back {
   cursor: var(--ui-cursor-pointer, var(--kui-cursor-hand));
@@ -1407,7 +1478,7 @@ a, button, [role="button"], select, .studio-card, .kenney-filter,
  * `.studio-card` is technically a <button> too but it gets the headered-card
  * recipe later in this file — exclude it from every bar-button rule below.
  * ====================================================================== */
-button:not(.studio-card):not(.lb-cell), .panel-save, .kenney-import, .kenney-filter,
+button:not(.studio-card):not(.lb-cell), .panel-save, .kenney-import,
 .lb-tool-group button, .preview-toolbar button, .studio-back, .pack-link {
   background: transparent;
   border: 0;
@@ -1428,7 +1499,7 @@ button:not(.studio-card):not(.lb-cell), .panel-save, .kenney-import, .kenney-fil
   box-shadow: none;
 }
 button:not(.studio-card):not(.lb-cell):hover, .panel-save:hover, .kenney-import:hover,
-.kenney-filter:hover, .lb-tool-group button:hover, .preview-toolbar button:hover {
+.lb-tool-group button:hover, .preview-toolbar button:hover {
   border-image-source: var(--ui-button-hover-image, var(--kui-bar-sm-blue-gloss));
   border-image-slice: var(--ui-button-hover-slice, 8 fill);
   border-image-width: var(--ui-button-hover-width, 8px);
@@ -1439,7 +1510,7 @@ button:not(.studio-card):not(.lb-cell):hover, .panel-save:hover, .kenney-import:
 button:not(.studio-card):not(.lb-cell):active { border-image-source: var(--ui-button-hover-image, var(--kui-bar-sm-blue-gloss)); filter: brightness(0.92); }
 
 /* on/active state — Green */
-button:not(.studio-card).on, .kenney-filter.on, .lb-tool-group button.on,
+button:not(.studio-card).on, .lb-tool-group button.on,
 .kenney-import.done, .draft-state.saved, button.confirm-accept {
   border-image-source: var(--ui-button-active-image, var(--kui-bar-sm-green-gloss));
   border-image-slice: var(--ui-button-active-slice, 8 fill);
@@ -1586,7 +1657,7 @@ input[type=range] {
 }
 
 /* Section header strips & toolbars — slim Grey bar (no header) */
-.studio header, .kenney-filters, .summary, .missing-box {
+.studio header, .summary, .missing-box {
   background: transparent;
   border-style: solid;
   border-color: transparent;

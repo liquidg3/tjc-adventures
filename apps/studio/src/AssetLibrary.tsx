@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  buildPackCatalog,
+  PACK_THEME_LABELS,
+  packIdFromSlug,
+  type KenneyKind,
+  type KenneyPack,
+  type PackCatalogItem,
+  type PackTheme,
+} from "./model-catalog";
 
-type KenneyKind = "3d" | "ui";
-
-interface KenneyPack {
-  slug: string;
-  name: string;
-  kind: KenneyKind;
-}
 interface Meta {
   preview: string;
   zip: string;
@@ -19,7 +21,7 @@ const KIND_LABEL: Record<KenneyKind, string> = { "3d": "3D", ui: "UI" };
  * server scrapes kenney.nl) when scrolled into view, so the grid doesn't hammer
  * Kenney with dozens of requests at once.
  */
-function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean }) {
+function KenneyCard({ pack }: { pack: PackCatalogItem }) {
   const ref = useRef<HTMLDivElement>(null);
   const [meta, setMeta] = useState<Meta | null>(null);
   const [err, setErr] = useState(false);
@@ -72,6 +74,8 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
       <div className="card-head">
         <span className="card-title">{pack.name}</span>
         <span className={`badge kind-${pack.kind}`}>{KIND_LABEL[pack.kind]}</span>
+        <span className="badge">{PACK_THEME_LABELS[pack.theme]}</span>
+        {pack.imported && <span className="badge ok">imported</span>}
         <span className="badge ok">CC0</span>
       </div>
       <div className="kenney-thumb">
@@ -83,7 +87,7 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
       </div>
       <div className="card-controls">
         <button
-          className={`kenney-import ${imp === "idle" && imported ? "done" : imp}`}
+          className={`kenney-import ${imp === "idle" && pack.imported ? "done" : imp}`}
           disabled={imp === "busy"}
           onClick={doImport}
         >
@@ -93,7 +97,7 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
               ? `✓ ${count} staged`
               : imp === "err"
                 ? "failed — retry"
-                : imported
+                : pack.imported
                   ? "✓ imported · re-import"
                   : "↧ Import"}
         </button>
@@ -116,6 +120,8 @@ function KenneyCard({ pack, imported }: { pack: KenneyPack; imported: boolean })
 }
 
 type Filter = "all" | KenneyKind;
+type ImportFilter = "all" | "imported" | "available";
+type ThemeFilter = "all" | PackTheme;
 
 /** Live browser of every Kenney CC0 3D + UI pack — preview + one-click import. */
 export function AssetLibrary() {
@@ -123,6 +129,8 @@ export function AssetLibrary() {
   const [err, setErr] = useState(false);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [themeFilter, setThemeFilter] = useState<ThemeFilter>("all");
+  const [importFilter, setImportFilter] = useState<ImportFilter>("all");
   // slugs already staged into public/{models,ui} (so cards show what's imported)
   const [staged3d, setStaged3d] = useState<Set<string>>(new Set());
   const [stagedUI, setStagedUI] = useState<Set<string>>(new Set());
@@ -132,7 +140,7 @@ export function AssetLibrary() {
       fetch(url)
         .then((r) => r.json())
         .then((d: { packs?: string[] }) =>
-          setter(new Set((d.packs ?? []).map((p) => p.replace(/^kenney-/, "")))),
+          setter(new Set(d.packs ?? [])),
         )
         .catch(() => {});
     loadStaged("/models/index.json", setStaged3d);
@@ -149,18 +157,30 @@ export function AssetLibrary() {
       .catch(() => setErr(true));
   }, []);
 
-  const importedFor = (p: KenneyPack) =>
-    p.kind === "ui" ? stagedUI.has(p.slug) : staged3d.has(p.slug);
+  const catalog = useMemo(() => {
+    const imported = new Set([...staged3d, ...stagedUI]);
+    return buildPackCatalog(packs ?? [], imported);
+  }, [packs, staged3d, stagedUI]);
 
   const counts = useMemo(() => {
-    const c = { all: packs?.length ?? 0, "3d": 0, ui: 0 };
-    for (const p of packs ?? []) c[p.kind]++;
+    const c = { all: catalog.length, "3d": 0, ui: 0 };
+    for (const p of catalog) c[p.kind]++;
     return c;
-  }, [packs]);
+  }, [catalog]);
+
+  const themeCounts = useMemo(() => {
+    const c: Partial<Record<ThemeFilter, number>> = { all: catalog.length };
+    for (const p of catalog) c[p.theme] = (c[p.theme] ?? 0) + 1;
+    return c;
+  }, [catalog]);
 
   const needle = q.trim().toLowerCase();
-  const list = (packs ?? []).filter(
-    (p) => (filter === "all" || p.kind === filter) && p.name.toLowerCase().includes(needle),
+  const list = catalog.filter(
+    (p) =>
+      (filter === "all" || p.kind === filter) &&
+      (themeFilter === "all" || p.theme === themeFilter) &&
+      (importFilter === "all" || (importFilter === "imported" ? p.imported : !p.imported)) &&
+      p.name.toLowerCase().includes(needle),
   );
 
   return (
@@ -189,33 +209,48 @@ export function AssetLibrary() {
       {!err && !packs && <p className="dim">Loading Kenney catalog…</p>}
 
       {packs && (
-        <>
-          <div className="kenney-filters">
-            {(["all", "3d", "ui"] as Filter[]).map((f) => (
-              <button
-                key={f}
-                className={`kenney-filter ${filter === f ? "on" : ""}`}
-                onClick={() => setFilter(f)}
-              >
-                {f === "all" ? "All" : KIND_LABEL[f]} <span className="dim">({counts[f]})</span>
-              </button>
-            ))}
+        <section>
+          <h2>Kenney Pack Catalog</h2>
+          <div className="summary">
+            <b>{list.length}/{catalog.length}</b> packs shown
+            <span className="dim"> · {staged3d.size} 3D imported</span>
+            <span className="dim"> · {stagedUI.size} UI imported</span>
           </div>
-          <input
-            className="studio-search"
-            placeholder={`Search ${counts[filter]} ${filter === "all" ? "packs" : KIND_LABEL[filter] + " packs"}…`}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          <p className="dim" style={{ margin: "2px 0 12px" }}>
-            {staged3d.size} 3D + {stagedUI.size} UI imported so far.
-          </p>
+          <div className="asset-catalog-controls">
+            <input
+              className="studio-search"
+              placeholder={`Search ${counts[filter]} ${filter === "all" ? "packs" : KIND_LABEL[filter] + " packs"}...`}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+            <select value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>
+              {(["all", "3d", "ui"] as Filter[]).map((f) => (
+                <option key={f} value={f}>
+                  {f === "all" ? "All kinds" : KIND_LABEL[f]} ({counts[f]})
+                </option>
+              ))}
+            </select>
+            <select value={themeFilter} onChange={(e) => setThemeFilter(e.target.value as ThemeFilter)}>
+              {(["all", ...Object.keys(PACK_THEME_LABELS)] as ThemeFilter[]).map((theme) => (
+                <option key={theme} value={theme}>
+                  {theme === "all" ? "All themes" : PACK_THEME_LABELS[theme]} ({themeCounts[theme] ?? 0})
+                </option>
+              ))}
+            </select>
+            <select value={importFilter} onChange={(e) => setImportFilter(e.target.value as ImportFilter)}>
+              {(["all", "imported", "available"] as ImportFilter[]).map((f) => (
+                <option key={f} value={f}>
+                  {f === "all" ? "All packs" : f === "imported" ? "Imported" : "Not imported"}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="grid">
             {list.map((p) => (
-              <KenneyCard key={p.slug} pack={p} imported={importedFor(p)} />
+              <KenneyCard key={packIdFromSlug(p.slug)} pack={p} />
             ))}
           </div>
-        </>
+        </section>
       )}
     </div>
   );

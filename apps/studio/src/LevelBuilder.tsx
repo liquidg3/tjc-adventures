@@ -32,10 +32,20 @@ import {
   type Level,
 } from "./level-builder-state";
 import { SLOTS } from "./slots";
+import { loadStagedModels, type ModelEntry } from "./models";
+import {
+  buildModelCatalog,
+  EMPTY_MODEL_CATALOG_OVERRIDES,
+  MODEL_CATEGORY_LABELS,
+  parseModelCatalogOverrides,
+  type ModelCatalogItem,
+  type ModelCatalogOverrides,
+} from "./model-catalog";
 import { usePersistedJson } from "./use-persisted-json";
 
 const LEVEL_URL = "/__level-builder";
 const ASSET_MAP_URL = "/__asset-map";
+const MODEL_CATALOG_OVERRIDES_URL = "/__model-catalog-overrides";
 
 type PaintMode = "terrain" | "object" | "height" | "erase";
 
@@ -64,8 +74,9 @@ export function LevelBuilder() {
   const [selectedObject, setSelectedObject] = useState("");
   const [selectedHeight, setSelectedHeight] = useState(1);
   const [assignedSlots, setAssignedSlots] = useState<string[]>([]);
-  const [assetUrlMap, setAssetUrlMap] = useState<Record<string, string>>({});
-  const [paused, setPaused] = useState(false);
+  const [legacyAssetUrlMap, setLegacyAssetUrlMap] = useState<Record<string, string>>({});
+  const [modelEntries, setModelEntries] = useState<ModelEntry[]>([]);
+  const [paused, setPaused] = useState(true);
   const [scrollZ, setScrollZ] = useState(0);
   const [fps, setFps] = useState(0);
   const [pendingClear, setPendingClear] = useState(false);
@@ -76,6 +87,11 @@ export function LevelBuilder() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handleRef = useRef<SceneHandle | null>(null);
   const rafRef = useRef<number | null>(null);
+  const catalogOverrides = usePersistedJson<ModelCatalogOverrides>(
+    MODEL_CATALOG_OVERRIDES_URL,
+    EMPTY_MODEL_CATALOG_OVERRIDES,
+    parseModelCatalogOverrides,
+  );
 
   useEffect(() => {
     fetch(ASSET_MAP_URL)
@@ -87,17 +103,19 @@ export function LevelBuilder() {
           .filter((id) => getAssignedModelValue(assignments[id]) && !id.startsWith("ship-"));
 
         setAssignedSlots(slots);
-        setSelectedTerrain((current) => current || slots.find(isTerrainSlot) || "");
-        setSelectedObject((current) => current || slots.find(isObjectSlot) || "");
 
         const urls: Record<string, string> = {};
         for (const id of slots) {
           const url = assetValueToUrl(getAssignedModelValue(assignments[id]));
           if (url) urls[id] = url;
         }
-        setAssetUrlMap(urls);
+        setLegacyAssetUrlMap(urls);
       })
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    loadStagedModels().then(setModelEntries).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -105,7 +123,7 @@ export function LevelBuilder() {
     const handle = createShipScene(canvasRef.current);
     handleRef.current = handle;
     handle.setPlayerShipVisible(false);
-    handle.setLevelScrollPaused(false);
+    handle.setLevelScrollPaused(true);
     handle.setGroundStyle("white");
     return () => {
       handle.dispose();
@@ -113,13 +131,44 @@ export function LevelBuilder() {
     };
   }, []);
 
+  const catalog = useMemo(
+    () => buildModelCatalog(modelEntries, catalogOverrides.value),
+    [modelEntries, catalogOverrides.value],
+  );
+  const catalogTerrainItems = useMemo(
+    () => catalog.filter((m) => m.usage.showInLevelBuilder && m.usage.terrain),
+    [catalog],
+  );
+  const catalogObjectItems = useMemo(
+    () => catalog.filter((m) => m.usage.showInLevelBuilder && m.usage.object),
+    [catalog],
+  );
+  const assetUrlMap = useMemo(() => {
+    const urls: Record<string, string> = { ...legacyAssetUrlMap };
+    for (const model of catalog) urls[model.modelValue] = model.url;
+    return urls;
+  }, [legacyAssetUrlMap, catalog]);
+
+  const paletteIds = useMemo(
+    () => [
+      ...catalogTerrainItems.map((m) => m.modelValue),
+      ...catalogObjectItems.map((m) => m.modelValue),
+    ],
+    [catalogTerrainItems, catalogObjectItems],
+  );
+
   const slotColor = useMemo(() => {
     const colors: Record<string, string> = {};
-    assignedSlots.forEach((id, i) => {
+    paletteIds.forEach((id, i) => {
       colors[id] = SLOT_COLORS[i % SLOT_COLORS.length];
     });
     return colors;
-  }, [assignedSlots]);
+  }, [paletteIds]);
+
+  useEffect(() => {
+    setSelectedTerrain((current) => current || catalogTerrainItems[0]?.modelValue || "");
+    setSelectedObject((current) => current || catalogObjectItems[0]?.modelValue || "");
+  }, [catalogTerrainItems, catalogObjectItems]);
 
   useEffect(() => {
     if (!loaded || !handleRef.current) return;
@@ -160,16 +209,28 @@ export function LevelBuilder() {
     };
   }, []);
 
-  const terrainSlots = useMemo(() => assignedSlots.filter(isTerrainSlot), [assignedSlots]);
-  const objectSlots = useMemo(() => assignedSlots.filter(isObjectSlot), [assignedSlots]);
-  const paletteSlots = mode === "terrain" ? terrainSlots : mode === "object" ? objectSlots : [];
+  const catalogLabelMap = useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const model of catalog) labels[model.modelValue] = `${model.name} · ${MODEL_CATEGORY_LABELS[model.categoryKind]}`;
+    return labels;
+  }, [catalog]);
+  const paletteSlots = mode === "terrain"
+    ? catalogTerrainItems.map((m) => m.modelValue)
+    : mode === "object"
+      ? catalogObjectItems.map((m) => m.modelValue)
+      : [];
   const totalDepth = level.rows * level.cellSize;
   const progressRow = Math.min(level.rows - 1, Math.floor(scrollZ / level.cellSize));
   const currentGridRow = level.rows - 1 - progressRow;
   const progressPct = totalDepth > 0 ? (scrollZ / totalDepth) * 100 : 0;
   const cols = useMemo(() => Array.from({ length: level.columns }, (_, i) => i), [level.columns]);
   const filledCount = useMemo(() => countPaintedCells(level), [level]);
-  const selectedLabel = labelForSelection(mode, selectedTerrain, selectedObject, selectedHeight);
+  const selectedLabel = labelForSelection(
+    mode,
+    catalogLabelMap[selectedTerrain] ?? selectedTerrain,
+    catalogLabelMap[selectedObject] ?? selectedObject,
+    selectedHeight,
+  );
 
   function paintCell(col: number, row: number) {
     const i = cellIndex(level, col, row);
@@ -294,6 +355,7 @@ export function LevelBuilder() {
           selectedTerrain={selectedTerrain}
           selectedObject={selectedObject}
           selectedHeight={selectedHeight}
+          catalogLabelMap={catalogLabelMap}
           onModeChange={setMode}
           onTerrainSelect={setSelectedTerrain}
           onObjectSelect={setSelectedObject}
@@ -470,6 +532,7 @@ function PalettePanel({
   selectedTerrain,
   selectedObject,
   selectedHeight,
+  catalogLabelMap,
   onModeChange,
   onTerrainSelect,
   onObjectSelect,
@@ -482,6 +545,7 @@ function PalettePanel({
   selectedTerrain: string;
   selectedObject: string;
   selectedHeight: number;
+  catalogLabelMap: Record<string, string>;
   onModeChange: (mode: PaintMode) => void;
   onTerrainSelect: (id: string) => void;
   onObjectSelect: (id: string) => void;
@@ -509,7 +573,7 @@ function PalettePanel({
         </div>
       )}
       {loaded && mode !== "height" && paletteSlots.length === 0 && (
-        <p className="dim">No matching assigned slots yet. Go to <b>3D Models</b> first.</p>
+        <p className="dim">No matching curated models yet. Go to <b>3D Models</b> first.</p>
       )}
       {mode !== "height" && (
         <div className="lb-palette-list">
@@ -520,7 +584,7 @@ function PalettePanel({
                 key={id}
                 className={`lb-palette-item ${selected ? "on" : ""}`}
                 onClick={() => {
-                  if (isTerrainSlot(id)) {
+                  if (mode === "terrain") {
                     onModeChange("terrain");
                     onTerrainSelect(id);
                   } else {
@@ -531,7 +595,7 @@ function PalettePanel({
                 title={id}
               >
                 <span className="lb-swatch" style={{ background: slotColor[id] }} />
-                {id}
+                {catalogLabelMap[id] ?? id}
               </button>
             );
           })}
@@ -777,14 +841,6 @@ function GridCell({
       {mode === "terrain" && object && <span className="lb-object-ghost" />}
     </button>
   );
-}
-
-function isTerrainSlot(id: string): boolean {
-  return id.startsWith("terrain-");
-}
-
-function isObjectSlot(id: string): boolean {
-  return !isTerrainSlot(id);
 }
 
 function labelForSelection(

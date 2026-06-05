@@ -21,6 +21,7 @@ const ASSET_MAP_FILE = resolve(here, "asset-map.json");
 const VERTICAL_DEFAULTS_FILE = resolve(here, "vertical-defaults.json");
 const ASSET_NORMALIZATION_PRESETS_FILE = resolve(here, "asset-normalization-presets.json");
 const ASSET_NORMALIZATION_OVERRIDES_FILE = resolve(here, "asset-normalization-overrides.json");
+const MODEL_CATALOG_OVERRIDES_FILE = resolve(here, "model-catalog-overrides.json");
 const LEVEL_BUILDER_FILE = resolve(here, "level-builder.json");
 const UI_THEME_FILE = resolve(here, "ui-theme.json");
 
@@ -360,6 +361,7 @@ export default defineConfig({
     jsonFilePlugin("vertical-defaults", "/__vertical-defaults", VERTICAL_DEFAULTS_FILE),
     jsonFilePlugin("asset-normalization-presets", "/__asset-normalization-presets", ASSET_NORMALIZATION_PRESETS_FILE),
     jsonFilePlugin("asset-normalization-overrides", "/__asset-normalization-overrides", ASSET_NORMALIZATION_OVERRIDES_FILE),
+    jsonFilePlugin("model-catalog-overrides", "/__model-catalog-overrides", MODEL_CATALOG_OVERRIDES_FILE),
     jsonFilePlugin("level-builder", "/__level-builder", LEVEL_BUILDER_FILE),
     jsonFilePlugin("ui-theme", "/__ui-theme", UI_THEME_FILE, (f) =>
       gitAutoCommit(f, "chore(studio): auto-save ui-theme.json")),
