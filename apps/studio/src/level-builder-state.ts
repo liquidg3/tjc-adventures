@@ -234,11 +234,13 @@ function mergeTerrainLayer(raw: unknown, count: number): TerrainCell[] {
     const cell = arr[i];
     if (!cell || typeof cell !== "object") return {};
     const c = cell as TerrainCell;
-    const out: TerrainCell = {};
-    if (typeof c.terrain === "string" && c.terrain) out.terrain = c.terrain;
     const feature = parseFeatureCell(c.feature);
-    if (feature) out.feature = feature;
-    return out;
+    if (feature) {
+      // Feature-backed cell: terrain always mirrors the resolved modelId.
+      return { terrain: feature.modelId, feature };
+    }
+    const terrain = typeof c.terrain === "string" && c.terrain ? c.terrain : undefined;
+    return terrain ? { terrain } : {};
   });
 }
 
@@ -248,7 +250,9 @@ function parseFeatureCell(raw: unknown): TerrainFeatureCell | undefined {
   if (!isTerrainFeatureFamily(f.family)) return undefined;
   if (!isTerrainShape(f.shape)) return undefined;
   if (!isTerrainRotation(f.rotation)) return undefined;
-  if (typeof f.modelId !== "string") return undefined;
+  // Reject empty modelId: unresolved placeholders are transient and should not
+  // survive a save/load cycle. They get dropped here and the cell reloads clean.
+  if (typeof f.modelId !== "string" || !f.modelId) return undefined;
   return {
     family: f.family,
     shape: f.shape,

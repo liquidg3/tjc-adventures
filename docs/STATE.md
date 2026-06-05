@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-03 (session 2)._
+_Last updated: 2026-06-05 (session 3)._
 
 ---
 
@@ -152,6 +152,20 @@ _Last updated: 2026-06-03 (session 2)._
   loader so their materials match the 3D Models board. Phase 4 is not closed yet:
   terrain updates still full-rebuild, height does not displace terrain, and the
   terrain-vs-object visual contract still needs more validation.
+  **NEW SESSION 3 → Phase 6: Smart Terrain Painting (first slice) is in.** The
+  Terrain mode now has a Manual / Connected brush sub-mode. Connected mode lets the
+  designer paint a feature family (River for now; Path/Road once curated) and the
+  editor automatically resolves shape + rotation from 4-directional neighbor
+  connectivity. New files: `terrain-connectivity.ts` (16-mask table),
+  `terrain-feature-resolver.ts` (catalog lookup + fallback chains + camelCase-aware
+  tiebreaker). `TerrainCell` gained an optional `feature` field that stores family,
+  shape, rotation, and resolved modelId. The renderer now applies Y-axis rotation to
+  placed terrain tiles. All paint operations use functional `setLevel(prev => ...)`
+  updaters so rapid drag never drops intermediate writes.
+  **One open item:** the rotation table in `terrain-connectivity.ts` assumes Kenney
+  river/path models are authored N-S-straight at rotation=0, N+E-corner at rotation=0.
+  Load the five base models in Asset Test and update the table if wrong. See the
+  `VISUAL INSPECTION REQUIRED` comment in that file.
 - **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
   filter chips: All / 3D / UI plus inferred pack theme and import-state filters.
   Pack themes are derived from Kenney pack names returned by `#__kenney/list`;
@@ -537,18 +551,26 @@ Kenney is the next task (below).
 
 ## Suggested next steps (in order)
 
-1. **Finish the UI Builder pass.** `#ui` now edits `ui-theme.json` with draft/save,
+1. **Level Builder — verify and finish Phase 6 smart terrain painting.**
+   The Connected Feature brush is in and typechecks clean. Before calling it done:
+   - Open `#level`, switch to Terrain → Connected → River, paint a line and a
+     corner, and confirm the 3D preview shows the right shapes facing the right way.
+   - If shapes are rotated wrong: update the `SHAPE_TABLE` in
+     `apps/studio/src/terrain-connectivity.ts` (the `VISUAL INSPECTION REQUIRED`
+     comment lists exactly which five models to check in Asset Test).
+   - Then continue with Phase 6 second slice: Rebuild Connections command,
+     `path` family (models are already cataloged; just needs curation), and a
+     fallback badge so the designer sees when a shape fell back.
+2. **Level Builder — fix runtime terrain (Phase 4 remaining gaps).**
+   Terrain still full-rebuilds on every edit; height does not displace terrain.
+   These were open before Phase 6 and remain open. Once Phase 6 is visually
+   verified, tackle diff-based terrain updates and height displacement.
+3. **Finish the UI Builder pass.** `#ui` now edits `ui-theme.json` with draft/save,
    raw asset grid, source slice preview, role presets, card header/body padding,
    and live CSS variable application. Next polish: add image dimensions/metadata
    to asset tiles, group/filter assets by kind (chrome vs icon buttons vs parts vs
    cursors), add per-role presets for Kenney UI families, and migrate any remaining
    one-off hardcoded chrome selectors into the role map.
-2. **Level Builder — fix runtime terrain before moving on.** Phases 1–3 are
-   usable; Phase 4 is in progress, not complete. A terrain-layer prototype exists
-   and the DOM grid is virtualized, but painted terrain does not yet read as the
-   actual authored ground in the 3D preview. Next pass should make terrain
-   painting visibly and spatially correct first, then continue with height runtime
-   and diff-based object/terrain updates.
 3. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
    simple straight-line enemies streaming down-screen, no shooting yet — give

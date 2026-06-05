@@ -87,7 +87,7 @@ Open:
 | 3. Five-Minute Grid Settings | Done | 300s/4800wu level target, column settings, rebuild confirmation. |
 | 4. Runtime Terrain Layer | Partial | Terrain renders in preview; efficient updates and height displacement remain. |
 | 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette. |
-| 6. Smart Terrain Painting | Next | Connected river/path brushes using catalog `family` + `shape`. |
+| 6. Smart Terrain Painting | Partial | Connected Feature brush, 16-mask resolver, catalog lookup, renderer rotation. River-only first pass. Path/road, Rebuild Connections, and rotation visual verification remain. |
 | 7. Height Runtime | Later | Terrain displacement and better elevation preview. |
 | 8. Object Placement Quality | Later | Diffed prop updates, normalization in runtime placement, transform controls. |
 | 9. Long-Level Editing Performance | Partial | DOM virtualization done; minimap/jump/diffed scene updates remain. |
@@ -567,53 +567,42 @@ Exit criteria:
 - Level Builder palette reflects catalog curation.
 - Old slot-management UI is not shown.
 
-### Phase 6: Smart Terrain Painting — Next
+### Phase 6: Smart Terrain Painting — Partial
 
 Goal: make terrain painting express intent rather than forcing the designer to
 manually choose every road/river tile variant.
 
 Detailed plan: `docs/smart-terrain-painting-plan.md`.
 
-Core idea:
+Completed (first slice):
 
-- Designer chooses a terrain feature brush: `river`, `path`, `road`.
-- Designer paints or drags cells.
-- Builder computes neighbor connectivity for each affected cell.
-- Connectivity resolves to `shape + rotation`.
-- `shape + family` resolves to the catalog model, e.g.:
-  - `river + straight` → `ground_riverStraight`
-  - `river + corner` → `ground_riverCorner`
-  - `path + split` → `ground_pathSplit`
+- `TerrainFeatureFamily`, `TerrainShape`, `TerrainRotation`, `TerrainFeatureCell`
+  types added to `level-builder-state.ts`. `TerrainCell` gains optional `feature`.
+- `mergeTerrainLayer` preserves feature data across save/load; unresolved
+  placeholders (empty `modelId`) are dropped at parse time so they never leak.
+- `packages/scenes/src/level-terrain-layer.ts`: `LevelTerrainCell` gains
+  `rotation?: number`; `loadAndPlaceTerrain` applies Y-axis rotation so
+  corner/end/split tiles face the right direction in the 3D preview.
+- `apps/studio/src/terrain-connectivity.ts` (new): `terrainMaskForCell` +
+  `terrainShapeForMask`; full 16-mask → shape/rotation table.
+- `apps/studio/src/terrain-feature-resolver.ts` (new): `buildTerrainFeatureLookup`,
+  `resolveTerrainFeatureModel` (camelCase-tokenized tiebreaker picks base model
+  names correctly), `resolveTerrainFeatureFallback` (plan fallback chains).
+- Connected Feature brush in `LevelBuilder.tsx`: Manual/Connected segmented
+  control, family selector (shows only curated families), `paintConnectedFeature`
+  with functional-updater pattern for correct rapid-drag behavior, `eraseCell`
+  recomputes same-family neighbors.
 
-Data needed:
+Remaining for second slice:
 
-```ts
-type TerrainFeatureFamily = "river" | "path" | "road";
-type TerrainShape = "straight" | "corner" | "end" | "split" | "cross" | "tile";
-
-interface TerrainFeatureCell {
-  family: TerrainFeatureFamily;
-  shape: TerrainShape;
-  rotation: 0 | 90 | 180 | 270;
-  modelId: string;
-}
-```
-
-Implementation steps:
-
-- Add a terrain brush mode inside Terrain:
-  - Manual tile.
-  - Connected feature.
-- Build a catalog lookup:
-  - family → shape → available models.
-- Store a feature layer or feature metadata per terrain cell.
-- On paint:
-  - update the target cell.
-  - recompute the target cell and its four neighbors.
-  - preserve manual overrides when explicitly set.
-- Add drag painting for connected features.
-- Add a "Rebuild terrain connections" command for repairing imported/edited data.
-- Keep manual tile override available for art-directed exceptions.
+- `path` and `road` family support (types and lookup are ready; needs curation).
+- Rebuild Connections command (iterate all non-manual feature cells and recompute).
+- Active kit/theme selector when multiple packs have the same family.
+- Rotation visual verification: inspect `ground_riverStraight`, `ground_riverCorner`,
+  `ground_riverEnd`, `ground_riverSplit`, `ground_riverCross` in Asset Test and
+  update the table in `terrain-connectivity.ts` if orientations differ from the
+  current assumptions.
+- Fallback badge/readout so the designer sees when a shape fell back.
 
 Exit criteria:
 
