@@ -1194,6 +1194,8 @@ section h2 {
 /* Connected-feature cells: blue border = resolved, orange = fallback shape */
 .lb-cell-feature         { box-shadow: inset 0 -2px 0 rgba(0,180,255,0.55); }
 .lb-cell-feature-fallback{ box-shadow: inset 0 -2px 0 rgba(255,140,0,0.75); }
+/* Rect-fill preview: bright outline shows the pending fill area */
+.lb-cell-rect-preview    { box-shadow: inset 0 0 0 2px rgba(255,220,0,0.9); }
 /* Brush-mode and family selector rows inside the palette */
 .lb-brush-mode, .lb-family-group { margin-bottom: 0.5rem; }
 /* Rebuild Connections row */

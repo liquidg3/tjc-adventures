@@ -5,7 +5,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type MutableRefObject,
   type PointerEvent,
 } from "react";
 import {
@@ -87,6 +86,9 @@ export function LevelBuilder() {
   const [selectedHeight, setSelectedHeight] = useState(1);
   const [terrainBrushMode, setTerrainBrushMode] = useState<"manual" | "connected">("manual");
   const [connectedFamily, setConnectedFamily] = useState<TerrainFeatureFamily>("river");
+  const [brushShape, setBrushShape] = useState<"free" | "rect">("free");
+  const rectAnchorRef = useRef<{ col: number; row: number } | null>(null);
+  const [rectPreview, setRectPreview] = useState<{ minCol: number; maxCol: number; minRow: number; maxRow: number } | null>(null);
   const [assignedSlots, setAssignedSlots] = useState<string[]>([]);
   const [legacyAssetUrlMap, setLegacyAssetUrlMap] = useState<Record<string, string>>({});
   const [modelEntries, setModelEntries] = useState<ModelEntry[]>([]);
@@ -443,6 +445,179 @@ export function LevelBuilder() {
     });
   }
 
+  function changeBrushShape(shape: "free" | "rect") {
+    pointerDown.current = false;
+    rectAnchorRef.current = null;
+    setRectPreview(null);
+    setBrushShape(shape);
+  }
+
+  function handleCellDown(col: number, row: number) {
+    pointerDown.current = true;
+    if (brushShape === "rect") {
+      rectAnchorRef.current = { col, row };
+      setRectPreview({ minCol: col, maxCol: col, minRow: row, maxRow: row });
+    } else {
+      paintCell(col, row);
+    }
+  }
+
+  function handleCellEnter(col: number, row: number) {
+    if (!pointerDown.current) return;
+    if (brushShape === "rect" && rectAnchorRef.current) {
+      const a = rectAnchorRef.current;
+      setRectPreview({
+        minCol: Math.min(a.col, col), maxCol: Math.max(a.col, col),
+        minRow: Math.min(a.row, row), maxRow: Math.max(a.row, row),
+      });
+    } else if (brushShape === "free") {
+      paintCell(col, row);
+    }
+  }
+
+  function handleGridUp() {
+    if (brushShape === "rect" && pointerDown.current && rectPreview) {
+      commitRect(rectPreview);
+    }
+    pointerDown.current = false;
+    rectAnchorRef.current = null;
+    setRectPreview(null);
+  }
+
+  function handleGridLeave() {
+    pointerDown.current = false;
+    rectAnchorRef.current = null;
+    setRectPreview(null);
+  }
+
+  function commitRect(rect: { minCol: number; maxCol: number; minRow: number; maxRow: number }) {
+    const cells: Array<{ col: number; row: number }> = [];
+    for (let r = rect.minRow; r <= rect.maxRow; r++) {
+      for (let c = rect.minCol; c <= rect.maxCol; c++) cells.push({ col: c, row: r });
+    }
+    if (cells.length === 0) return;
+    if (mode === "terrain") {
+      if (terrainBrushMode === "connected") paintConnectedFeatureRect(cells);
+      else paintTerrainManualRect(cells);
+    } else if (mode === "object") paintObjectRect(cells);
+    else if (mode === "height") paintHeightRect(cells);
+    else eraseRect(cells);
+  }
+
+  function paintTerrainManualRect(cells: Array<{ col: number; row: number }>) {
+    if (!selectedTerrain) return;
+    setLevel((prev) => {
+      const terrain = [...prev.layers.terrain];
+      let changed = false;
+      for (const { col, row } of cells) {
+        const i = cellIndex(prev, col, row);
+        if (i < 0 || terrain[i]?.terrain === selectedTerrain) continue;
+        terrain[i] = { terrain: selectedTerrain };
+        changed = true;
+      }
+      return changed ? { ...prev, layers: { ...prev.layers, terrain } } : prev;
+    });
+  }
+
+  function paintObjectRect(cells: Array<{ col: number; row: number }>) {
+    if (!selectedObject) return;
+    setLevel((prev) => {
+      const objects = [...prev.layers.objects];
+      let changed = false;
+      for (const { col, row } of cells) {
+        const i = cellIndex(prev, col, row);
+        if (i < 0 || objects[i]?.objects?.[0]?.slot === selectedObject) continue;
+        objects[i] = { objects: [{ id: makePlacementId(col, row, selectedObject), slot: selectedObject }] };
+        changed = true;
+      }
+      return changed ? { ...prev, layers: { ...prev.layers, objects } } : prev;
+    });
+  }
+
+  function paintHeightRect(cells: Array<{ col: number; row: number }>) {
+    setLevel((prev) => {
+      const height = [...prev.layers.height];
+      let changed = false;
+      for (const { col, row } of cells) {
+        const i = cellIndex(prev, col, row);
+        if (i < 0 || height[i]?.height === selectedHeight) continue;
+        height[i] = selectedHeight > 0 ? { height: selectedHeight } : {};
+        changed = true;
+      }
+      return changed ? { ...prev, layers: { ...prev.layers, height } } : prev;
+    });
+  }
+
+  function eraseRect(cells: Array<{ col: number; row: number }>) {
+    setLevel((prev) => {
+      const terrain = [...prev.layers.terrain];
+      const height = [...prev.layers.height];
+      const objects = [...prev.layers.objects];
+      const erasedSet = new Set(cells.map(({ col, row }) => cellIndex(prev, col, row)).filter((i) => i >= 0));
+      let changed = false;
+      const erasedFeatures: Array<{ col: number; row: number; family: TerrainFeatureFamily }> = [];
+
+      for (const { col, row } of cells) {
+        const i = cellIndex(prev, col, row);
+        if (i < 0) continue;
+        if (!terrain[i]?.terrain && !terrain[i]?.feature && !height[i]?.height && !objects[i]?.objects?.length) continue;
+        if (terrain[i]?.feature?.family) erasedFeatures.push({ col, row, family: terrain[i].feature!.family });
+        terrain[i] = {};
+        height[i] = {};
+        objects[i] = {};
+        changed = true;
+      }
+
+      if (!changed) return prev;
+
+      const offsets = [{ dc: 0, dr: -1 }, { dc: 1, dr: 0 }, { dc: 0, dr: 1 }, { dc: -1, dr: 0 }];
+      for (const { col, row, family } of erasedFeatures) {
+        for (const { dc, dr } of offsets) {
+          const ni = cellIndex(prev, col + dc, row + dr);
+          if (ni >= 0 && !erasedSet.has(ni) && terrain[ni]?.feature?.family === family && !terrain[ni]?.feature?.manual) {
+            recomputeFeatureCell(ni, col + dc, row + dr, terrain, prev.columns, prev.rows, family, terrainFeatureLookup);
+          }
+        }
+      }
+
+      return { ...prev, layers: { terrain, height, objects } };
+    });
+  }
+
+  function paintConnectedFeatureRect(cells: Array<{ col: number; row: number }>) {
+    const family = connectedFamily;
+    setLevel((prev) => {
+      const terrain = [...prev.layers.terrain];
+
+      for (const { col, row } of cells) {
+        const i = cellIndex(prev, col, row);
+        if (i < 0) continue;
+        const existing = terrain[i];
+        if (existing?.feature?.family === family && !existing.feature.manual) continue;
+        terrain[i] = { ...terrain[i], feature: { family, shape: "tile", rotation: 0, modelId: "" } };
+      }
+
+      const toRecompute = new Set<number>();
+      const offsets = [{ dc: 0, dr: -1 }, { dc: 1, dr: 0 }, { dc: 0, dr: 1 }, { dc: -1, dr: 0 }];
+      for (const { col, row } of cells) {
+        const i = cellIndex(prev, col, row);
+        if (i >= 0 && terrain[i]?.feature?.family === family) toRecompute.add(i);
+        for (const { dc, dr } of offsets) {
+          const ni = cellIndex(prev, col + dc, row + dr);
+          if (ni >= 0 && terrain[ni]?.feature?.family === family) toRecompute.add(ni);
+        }
+      }
+
+      for (const i of toRecompute) {
+        const col = i % prev.columns;
+        const row = Math.floor(i / prev.columns);
+        recomputeFeatureCell(i, col, row, terrain, prev.columns, prev.rows, family, terrainFeatureLookup);
+      }
+
+      return { ...prev, layers: { ...prev.layers, terrain } };
+    });
+  }
+
   function resetLevel() {
     setLevel(emptyLevel({
       columns: level.columns,
@@ -504,9 +679,11 @@ export function LevelBuilder() {
         )}
         <PaintPanel
           mode={mode}
+          brushShape={brushShape}
           selectedLabel={selectedLabel}
           pendingClear={pendingClear}
           onModeChange={setMode}
+          onBrushShapeChange={changeBrushShape}
           onRequestClear={() => setPendingClear(true)}
           onCancelClear={() => setPendingClear(false)}
           onConfirmClear={resetLevel}
@@ -553,8 +730,11 @@ export function LevelBuilder() {
           cols={cols}
           currentGridRow={currentGridRow}
           slotColor={slotColor}
-          pointerDown={pointerDown}
-          onPaintCell={paintCell}
+          rectPreview={rectPreview}
+          onCellDown={handleCellDown}
+          onCellEnter={handleCellEnter}
+          onGridUp={handleGridUp}
+          onGridLeave={handleGridLeave}
         />
       </aside>
     </div>
@@ -644,17 +824,21 @@ function Readout({ label, value }: { label: string; value: string }) {
 
 function PaintPanel({
   mode,
+  brushShape,
   selectedLabel,
   pendingClear,
   onModeChange,
+  onBrushShapeChange,
   onRequestClear,
   onCancelClear,
   onConfirmClear,
 }: {
   mode: PaintMode;
+  brushShape: "free" | "rect";
   selectedLabel: string;
   pendingClear: boolean;
   onModeChange: (mode: PaintMode) => void;
+  onBrushShapeChange: (shape: "free" | "rect") => void;
   onRequestClear: () => void;
   onCancelClear: () => void;
   onConfirmClear: () => void;
@@ -674,6 +858,23 @@ function PaintPanel({
               {item.label}
             </button>
           ))}
+        </div>
+        <div className="lb-tool-group">
+          <span className="lb-tool-label">Brush</span>
+          <button
+            className={brushShape === "free" ? "on" : ""}
+            onClick={() => onBrushShapeChange("free")}
+            title="Paint cell by cell while dragging"
+          >
+            Free
+          </button>
+          <button
+            className={brushShape === "rect" ? "on" : ""}
+            onClick={() => onBrushShapeChange("rect")}
+            title="Click and drag to fill a rectangle"
+          >
+            Rect
+          </button>
         </div>
       </div>
       <div className="lb-current-tool">
@@ -973,16 +1174,22 @@ function GridPanel({
   cols,
   currentGridRow,
   slotColor,
-  pointerDown,
-  onPaintCell,
+  rectPreview,
+  onCellDown,
+  onCellEnter,
+  onGridUp,
+  onGridLeave,
 }: {
   mode: PaintMode;
   level: Level;
   cols: number[];
   currentGridRow: number;
   slotColor: Record<string, string>;
-  pointerDown: MutableRefObject<boolean>;
-  onPaintCell: (col: number, row: number) => void;
+  rectPreview: { minCol: number; maxCol: number; minRow: number; maxRow: number } | null;
+  onCellDown: (col: number, row: number) => void;
+  onCellEnter: (col: number, row: number) => void;
+  onGridUp: () => void;
+  onGridLeave: () => void;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [firstRow, setFirstRow] = useState(0);
@@ -1031,8 +1238,8 @@ function GridPanel({
               right: 0,
               gridTemplateColumns: templateCols,
             }}
-            onPointerUp={() => { pointerDown.current = false; }}
-            onPointerLeave={() => { pointerDown.current = false; }}
+            onPointerUp={onGridUp}
+            onPointerLeave={onGridLeave}
           >
             {Array.from({ length: lastRow - firstRow }, (_, i) => firstRow + i).map((row) => (
               <Fragment key={`row-${row}`}>
@@ -1048,8 +1255,9 @@ function GridPanel({
                     level={level}
                     current={row === currentGridRow}
                     slotColor={slotColor}
-                    pointerDown={pointerDown}
-                    onPaintCell={onPaintCell}
+                    inRectPreview={rectPreview != null && col >= rectPreview.minCol && col <= rectPreview.maxCol && row >= rectPreview.minRow && row <= rectPreview.maxRow}
+                    onCellDown={onCellDown}
+                    onCellEnter={onCellEnter}
                   />
                 ))}
               </Fragment>
@@ -1068,8 +1276,9 @@ function GridCell({
   level,
   current,
   slotColor,
-  pointerDown,
-  onPaintCell,
+  inRectPreview,
+  onCellDown,
+  onCellEnter,
 }: {
   col: number;
   row: number;
@@ -1077,8 +1286,9 @@ function GridCell({
   level: Level;
   current: boolean;
   slotColor: Record<string, string>;
-  pointerDown: MutableRefObject<boolean>;
-  onPaintCell: (col: number, row: number) => void;
+  inRectPreview: boolean;
+  onCellDown: (col: number, row: number) => void;
+  onCellEnter: (col: number, row: number) => void;
 }) {
   const i = cellIndex(level, col, row);
   const terrainCell = level.layers.terrain[i];
@@ -1087,21 +1297,23 @@ function GridCell({
   const height = level.layers.height[i]?.height ?? 0;
   const background = cellBackgroundForMode(mode, terrain, object, height, slotColor);
 
+  let cls = `lb-cell lb-cell-${mode}`;
+  if (current) cls += " lb-cell-current-row";
+  if (inRectPreview) cls += " lb-cell-rect-preview";
+  else if (terrainCell?.feature) cls += terrainCell.feature.fallback ? " lb-cell-feature-fallback" : " lb-cell-feature";
+
   return (
     <button
-      className={`lb-cell lb-cell-${mode}${current ? " lb-cell-current-row" : ""}${terrainCell?.feature ? (terrainCell.feature.fallback ? " lb-cell-feature-fallback" : " lb-cell-feature") : ""}`}
+      className={cls}
       type="button"
       style={{ background }}
       title={cellTitle(col, row, terrainCell, object, height)}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.preventDefault();
-        pointerDown.current = true;
-        onPaintCell(col, row);
+        onCellDown(col, row);
       }}
-      onPointerEnter={() => {
-        if (pointerDown.current) onPaintCell(col, row);
-      }}
+      onPointerEnter={() => onCellEnter(col, row)}
     >
       {(mode === "object" || mode === "erase") && object && <span className="lb-object-dot" />}
       {mode === "terrain" && object && <span className="lb-object-ghost" />}
