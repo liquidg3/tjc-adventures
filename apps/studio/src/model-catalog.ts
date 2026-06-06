@@ -223,7 +223,10 @@ function inferModel(name: string, packId: string): {
 } {
   const text = `${packId} ${name}`.toLowerCase();
   const shape = inferShape(text);
-  if (/\bground_|(?:^|_)ground|river|path|road/.test(text)) {
+  // Only ground_* models (flat terrain tiles) are terrain. Bare "path" is NOT
+  // included here because path_stone/path_wood etc. are 3D objects placed ON
+  // terrain, not flat ground covers. ground_path* is still caught by \bground_.
+  if (/\bground_|river|road/.test(text)) {
     return { categoryKind: "terrain", family: inferTerrainFamily(text), shape };
   }
   if (/(animal|pet|sloth|bunny|rabbit|fox|cheetah|cat|dog|bear|duck|cow|pig|sheep|chicken|fish)/.test(text)) {
@@ -232,7 +235,7 @@ function inferModel(name: string, packId: string): {
   if (/(ship|craft|fighter|rocket|ufo|astronaut|alien)/.test(text)) {
     return { categoryKind: "ships", family: inferFamily(text, "ship"), shape: "" };
   }
-  if (/(tree|pine|palm|bush|plant|flower|grass|rock|stone|log|stump|cactus)/.test(text)) {
+  if (/(tree|pine|palm|bush|plant|flower|grass|rock|stone|log|stump|cactus|wood)/.test(text)) {
     return { categoryKind: "nature", family: inferFamily(text, "nature"), shape: "" };
   }
   if (/(house|building|tower|wall|door|roof|corridor|bridge|castle|market)/.test(text)) {
@@ -258,8 +261,8 @@ function inferTerrainFamily(text: string): string {
 function inferFamily(text: string, fallback: string): string {
   const tokens = [
     "sloth", "bunny", "rabbit", "fox", "cheetah", "tree", "bush", "rock",
-    "cactus", "ship", "craft", "ufo", "alien", "corridor", "bridge", "crate",
-    "barrel", "fruit", "bed", "building", "tower",
+    "stone", "wood", "cactus", "ship", "craft", "ufo", "alien", "corridor",
+    "bridge", "crate", "barrel", "fruit", "bed", "building", "tower",
   ];
   return tokens.find((token) => text.includes(token)) ?? fallback;
 }

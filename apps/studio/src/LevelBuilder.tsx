@@ -742,6 +742,13 @@ function PalettePanel({
   onConnectedFamilyChange: (family: TerrainFeatureFamily) => void;
   onRebuildConnections: () => void;
 }) {
+  const [search, setSearch] = useState("");
+  const showList = mode !== "height" && !(mode === "terrain" && terrainBrushMode === "connected");
+  const filteredSlots = showList && search.trim()
+    ? paletteSlots.filter((id) =>
+        (catalogLabelMap[id] ?? id).toLowerCase().includes(search.toLowerCase()))
+    : paletteSlots;
+
   return (
     <section className="lb-palette lb-section">
       <h2>Palette</h2>
@@ -815,36 +822,49 @@ function PalettePanel({
         </div>
       )}
 
-      {loaded && mode !== "height" && !(mode === "terrain" && terrainBrushMode === "connected") &&
-        paletteSlots.length === 0 && (
-          <p className="dim">No matching curated models yet. Go to <b>3D Models</b> first.</p>
-        )}
+      {loaded && showList && paletteSlots.length === 0 && (
+        <p className="dim">No matching curated models yet. Go to <b>3D Models</b> first.</p>
+      )}
 
-      {mode !== "height" && !(mode === "terrain" && terrainBrushMode === "connected") && (
-        <div className="lb-palette-list">
-          {paletteSlots.map((id) => {
-            const selected = mode === "terrain" ? selectedTerrain === id : selectedObject === id;
-            return (
-              <button
-                key={id}
-                className={`lb-palette-item ${selected ? "on" : ""}`}
-                onClick={() => {
-                  if (mode === "terrain") {
-                    onModeChange("terrain");
-                    onTerrainSelect(id);
-                  } else {
-                    onModeChange("object");
-                    onObjectSelect(id);
-                  }
-                }}
-                title={id}
-              >
-                <span className="lb-swatch" style={{ background: slotColor[id] }} />
-                {catalogLabelMap[id] ?? id}
-              </button>
-            );
-          })}
-        </div>
+      {showList && (
+        <>
+          {paletteSlots.length > 6 && (
+            <input
+              className="lb-palette-search"
+              type="search"
+              placeholder="Search palette…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          )}
+          <div className="lb-palette-list">
+            {filteredSlots.length === 0 && search.trim() && (
+              <p className="dim">No matches for "{search}"</p>
+            )}
+            {filteredSlots.map((id) => {
+              const selected = mode === "terrain" ? selectedTerrain === id : selectedObject === id;
+              return (
+                <button
+                  key={id}
+                  className={`lb-palette-item ${selected ? "on" : ""}`}
+                  onClick={() => {
+                    if (mode === "terrain") {
+                      onModeChange("terrain");
+                      onTerrainSelect(id);
+                    } else {
+                      onModeChange("object");
+                      onObjectSelect(id);
+                    }
+                  }}
+                  title={id}
+                >
+                  <span className="lb-swatch" style={{ background: slotColor[id] }} />
+                  {catalogLabelMap[id] ?? id}
+                </button>
+              );
+            })}
+          </div>
+        </>
       )}
     </section>
   );
