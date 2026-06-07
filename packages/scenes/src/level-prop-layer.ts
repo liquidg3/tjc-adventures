@@ -18,6 +18,7 @@ const SLOT_PLACEMENT_SCALE: Record<string, { min: number; cell: number }> = {
 export interface LevelGridCell {
   prop?: string;
   height?: number;
+  rotation?: number;
 }
 
 export interface LevelPropLayerController {
@@ -121,6 +122,7 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       const targetH = targetHeightForSlot(cell.prop, cellSize);
       const s = rootMesh ? fitScale(rootMesh as AbstractMesh, targetH) : 1;
       node.scaling.setAll(s);
+      if (cell.rotation) node.rotation.y = cell.rotation * Math.PI / 180;
       node.position.set(baseX, (cell.height ?? 0) * HEIGHT_STEP_WU, baseZ - scrollZ);
       placed.push({ node, baseZ });
     }

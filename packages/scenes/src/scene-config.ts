@@ -49,8 +49,9 @@ export interface ShipModelNormalization {
 
 /** A single painted cell from the Level Builder grid. */
 export interface LevelGridCell {
-  prop?: string;   // slot id (e.g. "animal-sloth")
-  height?: number; // 0..MAX_HEIGHT
+  prop?: string;    // slot id (e.g. "animal-sloth")
+  height?: number;  // 0..MAX_HEIGHT
+  rotation?: number; // degrees CW from above applied to the placed object
 }
 
 /** A painted terrain cell from the Level Builder terrain layer. */

@@ -266,7 +266,7 @@ export function LevelBuilder() {
     if (mode === "terrain") {
       if (terrainBrushMode === "connected") paintConnectedFeature(col, row);
       else paintTerrainManual(col, row, isInitialDown);
-    } else if (mode === "object") paintObject(col, row);
+    } else if (mode === "object") paintObject(col, row, isInitialDown);
     else paintHeight(col, row);
   }
 
@@ -290,21 +290,37 @@ export function LevelBuilder() {
     });
   }
 
-  function rotateCellTerrain(col: number, row: number) {
+  function rotateCellAt(col: number, row: number) {
     setLevel((prev) => {
       const i = cellIndex(prev, col, row);
       if (i < 0) return prev;
-      const existing = prev.layers.terrain[i];
-      if (!existing?.terrain) return prev;
+
+      let changed = false;
       const terrain = [...prev.layers.terrain];
-      if (existing.feature) {
-        const nextRotation = (((existing.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
-        terrain[i] = { ...existing, feature: { ...existing.feature, rotation: nextRotation, manual: true } };
-      } else {
-        const nextRotation = (((existing.rotation ?? 0) + 90) % 360) as TerrainRotation;
-        terrain[i] = { ...existing, rotation: nextRotation };
+      const objects = [...prev.layers.objects];
+
+      const existingTerrain = prev.layers.terrain[i];
+      if (existingTerrain?.terrain) {
+        if (existingTerrain.feature) {
+          const nextR = (((existingTerrain.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
+          terrain[i] = { ...existingTerrain, feature: { ...existingTerrain.feature, rotation: nextR, manual: true } };
+        } else {
+          const nextR = (((existingTerrain.rotation ?? 0) + 90) % 360) as TerrainRotation;
+          terrain[i] = { ...existingTerrain, rotation: nextR };
+        }
+        changed = true;
       }
-      return { ...prev, layers: { ...prev.layers, terrain } };
+
+      const existingObjs = prev.layers.objects[i]?.objects;
+      if (existingObjs?.length) {
+        const obj = existingObjs[0];
+        const nextR = ((obj.rotation ?? 0) + 90) % 360;
+        objects[i] = { objects: [{ ...obj, rotation: nextR }, ...existingObjs.slice(1)] };
+        changed = true;
+      }
+
+      if (!changed) return prev;
+      return { ...prev, layers: { ...prev.layers, terrain, objects } };
     });
   }
 
@@ -388,12 +404,20 @@ export function LevelBuilder() {
     };
   }
 
-  function paintObject(col: number, row: number) {
+  function paintObject(col: number, row: number, allowRotate = false) {
     if (!selectedObject) return;
     setLevel((prev) => {
       const i = cellIndex(prev, col, row);
-      if (i < 0 || prev.layers.objects[i]?.objects?.[0]?.slot === selectedObject) return prev;
+      if (i < 0) return prev;
+      const existing = prev.layers.objects[i]?.objects?.[0];
       const objects = [...prev.layers.objects];
+      if (existing?.slot === selectedObject) {
+        if (!allowRotate) return prev;
+        // Same model, initial click — cycle rotation
+        const nextR = ((existing.rotation ?? 0) + 90) % 360;
+        objects[i] = { objects: [{ ...existing, rotation: nextR }] };
+        return { ...prev, layers: { ...prev.layers, objects } };
+      }
       objects[i] = {
         objects: [{ id: makePlacementId(col, row, selectedObject), slot: selectedObject }],
       };
@@ -479,8 +503,8 @@ export function LevelBuilder() {
 
   // actionRef lets the stable useCallback handlers always call the latest version
   // of paintCell/rotateCellTerrain/etc. without capturing stale closures.
-  const actionRef = useRef({ paintCell, rotateCellTerrain, brushShape, commitRect });
-  actionRef.current = { paintCell, rotateCellTerrain, brushShape, commitRect };
+  const actionRef = useRef({ paintCell, rotateCellAt, brushShape, commitRect });
+  actionRef.current = { paintCell, rotateCellAt, brushShape, commitRect };
 
   const handleCellDown = useCallback((col: number, row: number) => {
     pointerDown.current = true;
@@ -493,7 +517,7 @@ export function LevelBuilder() {
   }, []);
 
   const handleCellRightDown = useCallback((col: number, row: number) => {
-    actionRef.current.rotateCellTerrain(col, row);
+    actionRef.current.rotateCellAt(col, row);
   }, []);
 
   const handleCellEnter = useCallback((col: number, row: number) => {

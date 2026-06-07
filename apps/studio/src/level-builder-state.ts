@@ -81,6 +81,7 @@ interface LevelV1 {
 export interface LegacyLevelGridCell {
   prop?: string;
   height?: number;
+  rotation?: number;
 }
 
 export const DEFAULT_LEVEL_DURATION_SEC = 300;
@@ -133,11 +134,12 @@ export function mergeLevel(raw: unknown): Level {
 export function projectObjectsToLegacyCells(level: Level): LegacyLevelGridCell[] {
   const count = level.columns * level.rows;
   return Array.from({ length: count }, (_, i) => {
-    const prop = level.layers.objects[i]?.objects?.[0]?.slot;
+    const obj = level.layers.objects[i]?.objects?.[0];
     const height = level.layers.height[i]?.height;
     const cell: LegacyLevelGridCell = {};
-    if (prop) cell.prop = prop;
+    if (obj?.slot) cell.prop = obj.slot;
     if (typeof height === "number" && height > 0) cell.height = height;
+    if (typeof obj?.rotation === "number" && obj.rotation !== 0) cell.rotation = obj.rotation;
     return cell;
   });
 }
