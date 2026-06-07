@@ -22,7 +22,6 @@ import {
 import {
   cellIndex,
   COLUMN_OPTIONS,
-  countPaintedCells,
   emptyLevel,
   makePlacementId,
   MAX_HEIGHT,
@@ -249,18 +248,9 @@ export function LevelBuilder() {
   const currentGridRow = level.rows - 1 - progressRow;
   const progressPct = totalDepth > 0 ? (scrollZ / totalDepth) * 100 : 0;
   const cols = useMemo(() => Array.from({ length: level.columns }, (_, i) => i), [level.columns]);
-  const filledCount = useMemo(() => countPaintedCells(level), [level]);
   const fallbackCount = useMemo(
     () => level.layers.terrain.filter((c) => c.feature?.fallback).length,
     [level],
-  );
-  const selectedLabel = labelForSelection(
-    mode,
-    terrainBrushMode,
-    connectedFamily,
-    catalogLabelMap[selectedTerrain] ?? selectedTerrain,
-    catalogLabelMap[selectedObject] ?? selectedObject,
-    selectedHeight,
   );
 
   function paintCell(col: number, row: number) {
@@ -662,10 +652,10 @@ export function LevelBuilder() {
       <div className="lb-preview-shade" />
 
       <aside className="lb-panel lb-panel-left">
-        <HeaderPanel level={level} filled={filledCount} saved={saved} fps={fps} />
-        <LevelSettings
+        <LevelPanel
           level={level}
-          totalDepth={totalDepth}
+          saved={saved}
+          fps={fps}
           onColumnsChange={(columns) => {
             if (columns !== level.columns) setPendingColumns(columns);
           }}
@@ -680,7 +670,6 @@ export function LevelBuilder() {
         <PaintPanel
           mode={mode}
           brushShape={brushShape}
-          selectedLabel={selectedLabel}
           pendingClear={pendingClear}
           onModeChange={setMode}
           onBrushShapeChange={changeBrushShape}
@@ -715,8 +704,6 @@ export function LevelBuilder() {
         <PreviewPanel
           paused={paused}
           progressPct={progressPct}
-          progressRow={progressRow}
-          level={level}
           totalDepth={totalDepth}
           scrollZ={scrollZ}
           onPausedChange={setPaused}
@@ -741,47 +728,32 @@ export function LevelBuilder() {
   );
 }
 
-function HeaderPanel({ level, filled, saved, fps }: { level: Level; filled: number; saved: boolean; fps: number }) {
-  return (
-    <header className="lb-sidebar-head">
-      <h1>Level Builder</h1>
-      <p className="dim">
-        {level.columns}×{level.rows} grid · {level.cellSize.toFixed(1)}wu/cell ·{" "}
-        {filled}/{level.columns * level.rows} filled · {saved ? "✓" : "saving…"}
-      </p>
-      <p className="dim">
-        <b className={`lb-fps ${fps < 30 ? "lb-fps-bad" : fps < 50 ? "lb-fps-warn" : "lb-fps-good"}`}>
-          {fps} fps
-        </b>
-      </p>
-    </header>
-  );
-}
-
-function LevelSettings({
+function LevelPanel({
   level,
-  totalDepth,
+  saved,
+  fps,
   onColumnsChange,
 }: {
   level: Level;
-  totalDepth: number;
+  saved: boolean;
+  fps: number;
   onColumnsChange: (columns: number) => void;
 }) {
   return (
-    <section className="lb-section">
-      <h2>Level</h2>
+    <section className="lb-section lb-level-panel">
+      <div className="lb-level-meta">
+        <span className="lb-level-title">Level Builder</span>
+        <span className="dim">{saved ? "✓" : "saving…"}</span>
+        <b className={`lb-fps ${fps < 30 ? "lb-fps-bad" : fps < 50 ? "lb-fps-warn" : "lb-fps-good"}`}>{fps} fps</b>
+      </div>
       <div className="lb-settings-grid">
         <label>
           <span>Columns</span>
           <select value={level.columns} onChange={(e) => onColumnsChange(Number(e.target.value))}>
-            {COLUMN_OPTIONS.map((columns) => (
-              <option key={columns} value={columns}>{columns}</option>
-            ))}
+            {COLUMN_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </label>
-        <Readout label="Duration" value={formatTime(level.durationSec)} />
-        <Readout label="World depth" value={`${Math.round(totalDepth)}wu`} />
-        <Readout label="Cell size" value={`${level.cellSize.toFixed(1)}wu`} />
+        <Readout label="Cell" value={`${level.cellSize.toFixed(0)}wu`} />
       </div>
     </section>
   );
@@ -825,7 +797,6 @@ function Readout({ label, value }: { label: string; value: string }) {
 function PaintPanel({
   mode,
   brushShape,
-  selectedLabel,
   pendingClear,
   onModeChange,
   onBrushShapeChange,
@@ -835,7 +806,6 @@ function PaintPanel({
 }: {
   mode: PaintMode;
   brushShape: "free" | "rect";
-  selectedLabel: string;
   pendingClear: boolean;
   onModeChange: (mode: PaintMode) => void;
   onBrushShapeChange: (shape: "free" | "rect") => void;
@@ -844,44 +814,18 @@ function PaintPanel({
   onConfirmClear: () => void;
 }) {
   return (
-    <section className="lb-section">
-      <h2>Paint</h2>
-      <div className="lb-toolbar">
-        <div className="lb-tool-group">
-          <span className="lb-tool-label">Mode</span>
-          {PAINT_MODES.map((item) => (
-            <button
-              key={item.id}
-              className={mode === item.id ? "on" : ""}
-              onClick={() => onModeChange(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <div className="lb-tool-group">
-          <span className="lb-tool-label">Brush</span>
-          <button
-            className={brushShape === "free" ? "on" : ""}
-            onClick={() => onBrushShapeChange("free")}
-            title="Paint cell by cell while dragging"
-          >
-            Free
-          </button>
-          <button
-            className={brushShape === "rect" ? "on" : ""}
-            onClick={() => onBrushShapeChange("rect")}
-            title="Click and drag to fill a rectangle"
-          >
-            Rect
-          </button>
-        </div>
+    <section className="lb-section lb-paint-panel">
+      <div className="lb-paint-row">
+        <select value={mode} onChange={(e) => onModeChange(e.target.value as PaintMode)}>
+          {PAINT_MODES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+        </select>
+        <select value={brushShape} onChange={(e) => onBrushShapeChange(e.target.value as "free" | "rect")}
+          title="Free = paint while dragging · Rect = drag to fill rectangle">
+          <option value="free">Free</option>
+          <option value="rect">Rect</option>
+        </select>
+        <button className="lb-reset btn-sm" onClick={onRequestClear}>Clear</button>
       </div>
-      <div className="lb-current-tool">
-        <span className="lb-tool-label">Current</span>
-        <b>{selectedLabel}</b>
-      </div>
-      <button className="lb-reset" onClick={onRequestClear}>Clear Level</button>
       {pendingClear && (
         <div className="confirm-box lb-confirm-box">
           <div className="confirm-title">Clear Level</div>
@@ -1074,8 +1018,6 @@ function PalettePanel({
 function PreviewPanel({
   paused,
   progressPct,
-  progressRow,
-  level,
   totalDepth,
   scrollZ,
   onPausedChange,
@@ -1085,8 +1027,6 @@ function PreviewPanel({
 }: {
   paused: boolean;
   progressPct: number;
-  progressRow: number;
-  level: Level;
   totalDepth: number;
   scrollZ: number;
   onPausedChange: (paused: boolean) => void;
@@ -1130,7 +1070,6 @@ function PreviewPanel({
 
   return (
     <section className="lb-section lb-preview-section">
-      <h2>Preview</h2>
       <div className="lb-preview-bar">
         <button className={paused ? "" : "on"} onClick={() => onPausedChange(!paused)}>
           {paused ? "Play" : "Pause"}
@@ -1156,8 +1095,6 @@ function PreviewPanel({
         <span className="lb-scrub-thumb" style={{ left: `${progressPct}%` }} />
       </div>
       <div className="lb-preview-readout">
-        <span><b>Row</b> {progressRow + 1}/{level.rows}</span>
-        <span><b>Distance</b> {Math.round(scrollZ)}/{Math.round(totalDepth)}wu</span>
         <span><b>Time</b> {elapsedSeconds.toFixed(1)}/{levelSeconds.toFixed(1)}s</span>
       </div>
     </section>
@@ -1321,22 +1258,6 @@ function GridCell({
   );
 }
 
-function labelForSelection(
-  mode: PaintMode,
-  terrainBrushMode: "manual" | "connected",
-  connectedFamily: TerrainFeatureFamily,
-  terrain: string,
-  object: string,
-  height: number,
-): string {
-  if (mode === "terrain") {
-    if (terrainBrushMode === "connected") return `Connected: ${FAMILY_LABELS[connectedFamily]}`;
-    return terrain || "No terrain selected";
-  }
-  if (mode === "object") return object || "No object selected";
-  if (mode === "height") return `Height ${height}`;
-  return "Erase all layers";
-}
 
 function formatTime(seconds: number): string {
   const min = Math.floor(seconds / 60);
