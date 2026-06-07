@@ -94,7 +94,7 @@ function KenneyCard({ pack }: { pack: PackCatalogItem }) {
           {imp === "busy"
             ? "importing…"
             : imp === "done"
-              ? `✓ ${count} staged`
+              ? `✓ ${count} models imported`
               : imp === "err"
                 ? "failed — retry"
                 : pack.imported
