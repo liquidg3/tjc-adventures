@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AssetLibrary } from "./AssetLibrary";
-import { AssetTest } from "./AssetTest";
+import { AssetPreview } from "./AssetTest";
 import { Home, type SectionId } from "./Home";
 import { LevelBuilder } from "./LevelBuilder";
 import { ModelsBoard } from "./ModelsBoard";
@@ -61,7 +61,7 @@ export function App() {
       </button>
       {section === "models" && <ModelsBoard />}
       {section === "assets" && <AssetLibrary />}
-      {section === "asset-test" && <AssetTest />}
+      {section === "asset-test" && <AssetPreview />}
       {section === "ui" && <UiBuilder />}
       {section === "vertical" && <VerticalScroller />}
       {section === "level" && <LevelBuilder />}

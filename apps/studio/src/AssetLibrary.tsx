@@ -192,7 +192,7 @@ export function AssetLibrary() {
           <b> Import</b> on the ones you want — the dev server downloads, unzips
           and stages them into committed <code>public/models/</code> (3D) or
           <code> public/ui/</code> (UI). Imported 3D packs show up in
-          <b> Asset Test</b> and the <b>3D Models</b> board.
+          <b> Asset Preview</b> and the <b>3D Models</b> board.
         </p>
       </header>
 

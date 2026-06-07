@@ -223,11 +223,11 @@ function inferModel(name: string, packId: string): {
 } {
   const text = `${packId} ${name}`.toLowerCase();
   const shape = inferShape(text);
-  // Only ground_* / terrain_* models (flat terrain tiles) are terrain. Bare
-  // "path" is NOT included because path_stone/path_wood etc. are 3D objects
-  // placed ON terrain. ground_path* is caught by \bground_; space-kit terrain
-  // tiles use the terrain_* prefix instead, caught by \bterrain.
-  if (/\bground_|\bterrain|river|road/.test(text)) {
+  // Only flat-tile models are terrain. Bare "path" is excluded (path_stone etc.
+  // are 3D objects ON terrain). Packs use different conventions:
+  //   Nature/Space:  ground_* or terrain_* prefix
+  //   Dungeon/modular: floor (template-floor, template-floor-big, …)
+  if (/\bground_|\bterrain|\bfloor|river|road/.test(text)) {
     return { categoryKind: "terrain", family: inferTerrainFamily(text), shape };
   }
   if (/(animal|pet|sloth|bunny|rabbit|fox|cheetah|cat|dog|bear|duck|cow|pig|sheep|chicken|fish)/.test(text)) {

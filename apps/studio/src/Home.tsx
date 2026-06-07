@@ -47,7 +47,7 @@ const GROUPS: SectionGroup[] = [
       },
       {
         id: "asset-test",
-        title: "Asset Test",
+        title: "Asset Preview",
         desc: "Preview imported Kenney packs in one shared 3D viewer.",
         status: "ready",
       },

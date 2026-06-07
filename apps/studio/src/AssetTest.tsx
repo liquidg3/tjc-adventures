@@ -72,7 +72,7 @@ function AssetViewer({
 }
 
 /** Browse a staged pack with one shared 3D viewer + live orientation controls. */
-export function AssetTest() {
+export function AssetPreview() {
   const [packs, setPacks] = useState<PackManifest[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
@@ -139,7 +139,7 @@ export function AssetTest() {
   return (
     <div className="studio">
       <header>
-        <h1>Asset Test</h1>
+        <h1>Asset Preview</h1>
         <p>
           Pick a model to preview it in the shared 3D viewer (one WebGL context, so it
           scales to any pack size). Import packs from the <b>Asset Library</b> (or stage a

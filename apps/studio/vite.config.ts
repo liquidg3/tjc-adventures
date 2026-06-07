@@ -224,14 +224,18 @@ async function kenneyImport(slug: string) {
     }
   }
   // copy only textures the staged GLBs actually reference — skips Kenney's
-  // hundreds of preview-angle PNGs (vertex-colored GLBs reference none)
+  // hundreds of preview-angle PNGs (vertex-colored GLBs reference none).
+  // Preserve the full relative URI path (e.g. Textures/colormap.png) so
+  // Babylon can resolve the texture at the same relative location it expects.
   const neededTex = new Set<string>();
-  for (const m of models) for (const uri of glbImageUris(join(out, m.file))) neededTex.add(basename(uri));
-  for (const name of neededTex) {
-    const src = all.find((f) => basename(f) === name);
+  for (const m of models) for (const uri of glbImageUris(join(out, m.file))) neededTex.add(uri);
+  for (const uri of neededTex) {
+    const src = all.find((f) => basename(f) === basename(uri));
     if (src) {
       try {
-        copyFileSync(src, join(out, name));
+        const dest = join(out, uri);
+        mkdirSync(dirname(dest), { recursive: true });
+        copyFileSync(src, dest);
       } catch {
         /* ignore */
       }

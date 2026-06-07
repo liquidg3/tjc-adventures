@@ -21,7 +21,7 @@ import {
   writeFileSync,
   rmSync,
 } from "node:fs";
-import { join, basename, extname } from "node:path";
+import { join, basename, extname, relative, dirname } from "node:path";
 
 const SRC = process.argv[2];
 const PACK = process.argv[3] || "pack";
@@ -53,12 +53,16 @@ const texs = all.filter(
 if (existsSync(OUT)) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
-// copy textures too, in case a glb/obj references them by relative path
+// copy textures preserving their relative path from SRC so GLBs that reference
+// e.g. "Textures/colormap.png" can resolve the file at that same relative path.
 for (const t of texs) {
+  const rel = relative(SRC, t);
+  const dest = join(OUT, rel);
   try {
-    copyFileSync(t, join(OUT, basename(t)));
+    mkdirSync(dirname(dest), { recursive: true });
+    copyFileSync(t, dest);
   } catch {
-    /* ignore dup names */
+    /* ignore */
   }
 }
 
