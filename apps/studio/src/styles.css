@@ -1231,20 +1231,13 @@ section h2 {
 .lb-paint-row .lb-reset { flex-shrink: 0; width: auto; }
 /* Palette items are content labels — keep them sentence-case */
 .lb-palette-item { text-transform: none; letter-spacing: normal; }
-/* Kit filter chips above the palette list */
-.lb-kit-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+/* Kit filter dropdown above the palette list */
+.lb-kit-select {
+  width: 100%;
   margin-bottom: 6px;
   flex-shrink: 0;
-}
-.lb-kit-chip {
-  font-size: 0.72rem;
-  padding: 0.15rem 0.5rem;
-  cursor: pointer;
-  text-transform: none;
-  letter-spacing: normal;
+  background-color: var(--ui-color-panel-body, #0e1530);
+  color: var(--ui-input-color, #e6ebf5);
 }
 /* Rebuild Connections row */
 .lb-rebuild-row {

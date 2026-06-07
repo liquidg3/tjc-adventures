@@ -1010,23 +1010,16 @@ function PalettePanel({
       {showList && (
         <>
           {availableKits.length > 1 && (
-            <div className="lb-kit-chips">
-              <button
-                className={`lb-kit-chip${selectedKit === "all" ? " on" : ""}`}
-                onClick={() => setSelectedKit("all")}
-              >
-                All
-              </button>
+            <select
+              className="lb-kit-select"
+              value={selectedKit}
+              onChange={(e) => setSelectedKit(e.target.value)}
+            >
+              <option value="all">All kits</option>
               {availableKits.map((kit) => (
-                <button
-                  key={kit}
-                  className={`lb-kit-chip${selectedKit === kit ? " on" : ""}`}
-                  onClick={() => setSelectedKit(kit)}
-                >
-                  {kit}
-                </button>
+                <option key={kit} value={kit}>{kit}</option>
               ))}
-            </div>
+            </select>
           )}
           {paletteSlots.length > 6 && (
             <input
