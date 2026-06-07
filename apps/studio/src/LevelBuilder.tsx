@@ -197,6 +197,10 @@ export function LevelBuilder() {
       level.cellSize,
       assetUrlMap,
     );
+  }, [level.layers.objects, level.layers.height, level.columns, level.rows, level.cellSize, assetUrlMap, loaded]);
+
+  useEffect(() => {
+    if (!loaded || !handleRef.current) return;
     const terrainPreviewCells = level.layers.terrain.map((cell) => ({
       terrain: cell.terrain,
       color: cell.terrain ? slotColor[cell.terrain] : undefined,
@@ -209,7 +213,7 @@ export function LevelBuilder() {
       level.cellSize,
       assetUrlMap,
     );
-  }, [level, assetUrlMap, loaded, slotColor]);
+  }, [level.layers.terrain, level.columns, level.rows, level.cellSize, assetUrlMap, loaded, slotColor]);
 
   useEffect(() => {
     handleRef.current?.setLevelScrollPaused(paused);

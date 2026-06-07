@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-05 (session 3)._
+_Last updated: 2026-06-06 (session 4)._
 
 ---
 
@@ -19,13 +19,12 @@ _Last updated: 2026-06-05 (session 3)._
 - **M0 multiplayer spine:** done & verified, **PARKED**. Laptop hosts a Colyseus
   room; phones join via QR (`/host` + `/join` in `apps/game-client`). Not wired to
   the 3D game. `npm run verify:spine` exercises it headlessly.
-- **ACTIVE WORK → the single-player 3D vertical-scroller, tuned through the
-  Studio.** We are iterating the *look and flight feel* of the meadow scroller,
-  decoupled from netcode/gameplay. Recent work: zones/climates, momentum + barrel
-  roll, the asset tooling below, and (this session) the player ship is fully
-  **gameplay-ready** — flies forward, banks into turns, the double-tap barrel
-  roll is a real emergency juke (locked at 2.5×SHIP_SPEED for 0.28s, rolls
-  toward the tapped direction).
+- **ACTIVE WORK → the Level Builder.** We are building out the five-minute authored
+  level for the vertical scroller through the Studio. The Level Builder is now a
+  substantial authoring surface: v2 layered schema (terrain/height/objects), live 3D
+  preview with terrain and object layers, smart connected terrain painting, performance
+  optimizations, and a polished UI. See `docs/level-builder-plan.md` for the phase-by-phase
+  status.
 - **ART DIRECTION → Kenney CC0 low-poly (committed decision).** All non-Kenney
   assets were removed — the old ~505 MB Sketchfab `src/models` library and the
   Synty experiment are gone. Game art now comes exclusively from Kenney's CC0 3D
@@ -38,147 +37,123 @@ _Last updated: 2026-06-05 (session 3)._
   fetches `asset-map.json` and immediately swaps in the Kenney ship — the legacy
   one only appears for the ~50 ms before that fetch resolves. Scenery is still
   the last legacy holdout (`tree_fur`, `bush`, `rocks_small`, `tree_stylized`).
-- **ACTIVE: Studio UI Builder (rewritten this session — v2 schema).** `#ui`
-  maps imported UI-pack images onto semantic chrome roles, persists to
-  `apps/studio/ui-theme.json`, and live-applies CSS variables. The schema is
-  now split into **semantic system color tokens** plus a **discriminated union
-  by chrome kind**:
-    - `colors` — shared UI decisions for text, muted text, panel headings/body,
-      editor control labels/borders/surfaces, focus, selection, status, and
-      checkerboard preview colors. Use these for broad Studio/editor color
-      fixes; don't add ad hoc component color knobs unless a role genuinely
-      needs a per-role exception.
-    - `kind: "bar"` — buttons, inputs, toolbars, badges. Single uniform slice,
-      `padding`, `textColor`, `fillColor`, `uppercase`, `letterSpacing`.
-    - `kind: "card"` — Home cards, slot cards, side panels. Per-edge slice
-      (T R B L); **the source image's top slice IS the header band height**,
-      published as `--ui-<role>-header-h` and consumed by `.studio-card-title`
-      `min-height` so titles land in the band exactly. Separate `padHeader`
-      and `padBody`, `headerTextColor` / `bodyTextColor`, `headerUppercase`.
-    - `kind: "outline"` — Level Builder grid frame: same slice but no `fill`,
-      transparent middle.
-  Each role's editor panel only renders the controls for its kind, so card
-  knobs no longer leak onto buttons. Auto-migration from v1 flat shape
-  preserves user picks. Asset picker auto-clamps slice on image change via
-  `suggestSliceForImage(url, kind)` so a new image doesn't immediately yield a
-  "middle = 0×0" garbage state. `SlicePreview` shows source dims + computed
-  middle dims and red-flags overlapping edges. **Roles list: 14** — buttons
-  (default/hover/active/critical/disabled), input, input-focus, toolbar, cards
-  (home/content), grid-outline, badge (default/ok/error). `header-h` is now
-  published from `width.top` (rendered pixels), not `slice.top` (source pixels)
-  — keeps the card-head negative-margin positioning correct when slice ≠ width.
-  Draft / Save / Revert / Reset confirmation; raw assets shown on a
-  checkerboard (not inside themed chrome) so the user sees the actual source.
-  The left rail starts with **System colors** before role-specific editors.
-  Color fields support an explicit `transparent` toggle because native
-  `<input type="color">` cannot select transparency; this matters most for
-  `fillColor`, which paints behind transparent 9-slice middles. Each system
-  color field shows a plain-language "where this appears" note, and the
-  System colors preview demonstrates control surface/border/label/focus,
-  selection, and checkerboard tokens.
-- **NEW THIS SESSION → UI Builder chrome polish pass.** Several gaps closed:
-  - **`input-focus` role** added (12th role, `bar` kind) — controls the 9-slice
-    border shown on focused `<input>`, `<select>`, and `<textarea>` elements.
-    Previously hardcoded to blue gloss; now fully themeable image/slice/width/color.
-  - **`select` elements** now strip native OS appearance (`appearance: none`) and
-    show a CSS inline-SVG triangle on the right. They match input height exactly.
-  - **`btn-sm` utility class** replaces `.ui-transparent-toggle`. Add `btn-sm` to
-    any `<button>` for a compact size; the role image/colors inherit automatically.
-  - **All `!important` removed** from `styles.css` (was 11 instances). Fixed by
-    raising specificity on the low-specificity selectors (`.confirm-accept`,
-    `.critical`, `.lb-reset` → `button.` prefix) and removing ones that were
-    genuinely unnecessary (`.studio-card` is already excluded by
-    `:not(.studio-card)`; `input[type=range]` already wins on specificity;
-    `.ui-asset-tile.raw` already wins; `.ui-slice-info-bad` wins by file order).
-  - **Missing `color:` vars wired** — `.badge`, `.lb-grid`, `.ui-preview-grid`,
-    `input:focus` all now read their role's `--ui-*-color` CSS variable. Previously
-    the UI Builder let you change these text colors but nothing consumed them.
-  - **`header h1 / p / code`** wired to `--ui-color-focus`, `--ui-color-text-muted`,
-    `--ui-color-warning` tokens so the UI Builder title and `bar`/`card`/`outline`
-    code spans respond to the system color editor.
-  - **Auto-commit on Save** — `jsonFilePlugin` accepts an optional `onWrite`
-    callback; the `ui-theme` endpoint passes one that runs
-    `git add … && git commit` immediately after writing. Every Save = one git
-    commit (`chore(studio): auto-save ui-theme.json`). Restart dev:studio to
-    pick up Vite config changes.
-  - **Preview panel overflow fixed** — cursor `<select>` dropdowns in the right
-    column no longer bleed outside the card boundary (`overflow: hidden` +
-    `min-width: 0` on `.ui-preview-panel`; `width: 100%` on child selects/inputs).
-- **Studio landing reorganized this session.** Home now groups cards: Universal
-  Tools (3D Models / Asset Library / Asset Test / UI Builder) and one section
-  per game mode (Vertical Shooter, Side Scroller [coming soon], Death Race
-  [coming soon]). Per-mode each has the same two cards: **Test Play** (was
-  "Vertical Scroller") and **Level Builder**. Adding a new game mode = adding a
-  `SectionGroup` entry in `Home.tsx`.
-- **Level Builder now has a live 3D preview.** The vertical-scroller scene runs
-  full-screen behind the controls; props are placed at their exact grid world
-  positions via `createLevelPropLayer` in `packages/scenes/src/level-prop-layer.ts`.
-  Play/Pause and the scrub slider cover 0 → level depth in world units; slider
-  changes now drive both the painted prop layer and the ground texture scroll
-  phase so scrubbing moves the visible 3D preview through the authored run.
-  Loading grid cells also hides the legacy random scenery field so the preview
-  reflects the authored grid instead of mixed authored + procedural props.
-  Level Builder calls `setPlayerShipVisible(false)` so the builder preview is
-  level-only; Test Play still shows and controls the ship.
-  **Layout**: `lb-page` = fixed full-viewport div; the scene canvas fills the page,
-  the left panel holds paint tools + palette, and the right panel holds preview
-  controls + an independently scrolling mode-aware grid with a current-row gutter.
-  The grid display is inverted relative to storage: the start row is shown at the
-  bottom, the far end at the top, and the current-row marker moves upward as the
-  preview flies forward.
-  Controls: `LevelBuilder.tsx`. **v2 pass landed**: `level-builder-state.ts`
-  now migrates old v1 `{prop?, height?}` JSON into a v2 schema with separate
-  terrain/height/object layers. Default new levels are five minutes
-  (`12×150`, `32wu` cells, `4800wu` total depth at `SCROLL = 16`). Paint modes
-  are Terrain / Objects / Height / Erase with filtered palettes; the grid draws
-  terrain color, dark height overlay, and object dots. Runtime preview receives
-  both a terrain layer and a legacy object/height projection.
-  `level-prop-layer.ts` now applies slot-specific target heights and raises
-  objects by painted height, so trees are no longer fit to tiny cell height.
-  Cleanup pass: `LevelBuilder.tsx` is split into explicit panel/cell helper
-  components, grid column changes use the custom Studio confirmation box because
-  they rebuild painted layers, and stale Level Builder CSS/layout rules were
-  removed. Grass/bushes are object-mode placements. The visible palette now
-  reads curated imported model-catalog items; legacy fixed-slot IDs remain
-  readable under the hood only for existing saved levels/runtime holdouts.
-  **Plan forward**: `docs/level-builder-plan.md` is the handoff plan.
-  **Terrain preview is in progress.** `packages/scenes/src/level-terrain-layer.ts`
-  renders a scrolling authored-ground grid aligned to the object-placement field;
-  painted terrain cells instantiate their assigned terrain GLB in the 3D preview
-  while the 2D editor grid stays solid-swatch for readability. Terrain cells are
-  exclusive: painting a terrain slot replaces the prior terrain value for that
-  cell, and rendered terrain tiles fit the exact cell footprint to avoid
-  different terrain types overlapping at boundaries. Terrain GLBs use the raw
-  loader so their materials match the 3D Models board. Phase 4 is not closed yet:
-  terrain updates still full-rebuild, height does not displace terrain, and the
-  terrain-vs-object visual contract still needs more validation.
-  **NEW SESSION 3 → Phase 6: Smart Terrain Painting (first slice) is in.** The
-  Terrain mode now has a Manual / Connected brush sub-mode. Connected mode lets the
-  designer paint a feature family (River for now; Path/Road once curated) and the
-  editor automatically resolves shape + rotation from 4-directional neighbor
-  connectivity. New files: `terrain-connectivity.ts` (16-mask table),
-  `terrain-feature-resolver.ts` (catalog lookup + fallback chains + camelCase-aware
-  tiebreaker). `TerrainCell` gained an optional `feature` field that stores family,
-  shape, rotation, and resolved modelId. The renderer now applies Y-axis rotation to
-  placed terrain tiles. All paint operations use functional `setLevel(prev => ...)`
-  updaters so rapid drag never drops intermediate writes.
-  **One open item:** the rotation table in `terrain-connectivity.ts` assumes Kenney
-  river/path models are authored N-S-straight at rotation=0, N+E-corner at rotation=0.
-  Load the five base models in Asset Test and update the table if wrong. See the
-  `VISUAL INSPECTION REQUIRED` comment in that file.
-- **NEW THIS SESSION → Asset Library expanded to 3D + UI packs.** Library
-  filter chips: All / 3D / UI plus inferred pack theme and import-state filters.
-  Pack themes are derived from Kenney pack names returned by `#__kenney/list`;
-  imported runtime models still come only from staged `public/models/*/manifest.json`
-  files. UI uses Kenney's `tag:interface` (not `tag:UI` — that returns nothing).
-  UI imports stage to `apps/studio/public/ui/kenney-<slug>/` preserving the
-  pack's `PNG/Default/`, `Vector/` etc. structure; 3D stays in `public/models/`.
-  Same one-click import.
-- **NEW THIS SESSION → Studio chrome restyled with Kenney UI Pack Sci-Fi.** All
-  cards, buttons, inputs, cursors now use 9-sliced `bar_round_*` and composite
-  `button_square_header_*_rectangle` images via CSS `border-image`. See
-  `apps/studio/src/styles.css` end-of-file block "KENNEY UI PACK SCI-FI" for
-  the anatomy diagram and class mapping.
+- **Studio landing:** Home groups cards into Universal Tools (3D Models / Asset
+  Library / Asset Preview / UI Builder) and one section per game mode (Vertical
+  Shooter, Side Scroller [coming soon], Death Race [coming soon]). Per-mode each
+  has **Test Play** and **Level Builder** cards.
+- **Studio chrome:** skinned with Kenney UI Pack Sci-Fi via CSS `border-image`
+  9-slice. `apps/studio/src/styles.css` (end-of-file block "KENNEY UI PACK SCI-FI")
+  drives all cards, buttons, inputs. The **UI Builder** (`#ui`) maps images to
+  semantic chrome roles + system color tokens, persisting to `apps/studio/ui-theme.json`.
+
+---
+
+## Level Builder — current state (the active surface)
+
+The Level Builder was refactored into focused modules in session 4. It is the primary work surface going forward.
+
+**Module split (SOLID refactor — done)**
+- `level-builder-types.ts` — `PaintMode` + `PAINT_MODES`
+- `level-panels.tsx` — `LevelPanel`, `PaintPanel`, `PreviewPanel`, `ColumnChangeConfirm`
+- `level-palette.tsx` — `PalettePanel`, `formatModelLabel`
+- `level-grid.tsx` — `GridPanel` + memoized `GridCell` (virtualized)
+- `LevelBuilder.tsx` — ~795 lines of core state, paint/erase/rotate logic, scene wiring
+
+### What is working
+
+**Data model (v2 layered schema)**
+- `level-builder-state.ts` holds `TerrainCell`, `TerrainFeatureCell`, `PlacedObject`,
+  `HeightCell`, `ObjectCell`, `LevelLayers`, `Level`. The v2 schema stores separate
+  `terrain`, `height`, and `objects` arrays per level.
+- `TerrainCell` has an optional `feature` (connected feature intent: family, shape,
+  rotation, modelId, fallback flag) and an optional `rotation` (manual non-feature rotation).
+- `PlacedObject` has an optional `rotation` (yaw degrees).
+- Migration from v1 `{prop?, height?}` JSON runs on load.
+
+**Modes and palette**
+- Three paint modes: `Terrain`, `Objects`, `Height`.
+- Each mode has its own eraser (toggle button in the palette panel; erases only that
+  layer). **There is no separate "Erase" top-level mode** — erasing is a per-mode toggle.
+- Terrain mode has a **Manual / Connected** sub-mode selector.
+  - Manual: left-click same model cycles rotation 0→90→180→270; places new model otherwise.
+  - Connected: paint a feature family (River by default); neighbor mask drives shape + rotation.
+- Right-clicking any cell rotates both the terrain and the object in that cell simultaneously.
+- Object mode has palette search input and kit dropdown ("All kits" + per-kit filter).
+- Brush shape: `free` (drag stroke) or `rect` (drag to fill rectangle).
+- A **Rebuild Connections** button re-resolves all non-manual feature cells.
+- Fallback count badge shows how many cells fell back to a non-exact shape.
+
+**Smart terrain painting (Phase 6 — complete)**
+- `terrain-connectivity.ts`: `terrainMaskForCell`, `terrainShapeForMask`, full 16-entry
+  shape/rotation table (4-bit N/E/S/W mask → `{shape, rotation}`).
+- `terrain-feature-resolver.ts`: `buildTerrainFeatureLookup`, `resolveTerrainFeatureModel`
+  (camelCase-tokenized tiebreaker), `resolveTerrainFeatureFallback` (plan fallback chains),
+  `availableFeatureFamilies`.
+- Paint operations use functional `setLevel(prev => ...)` updaters so rapid drag never
+  drops intermediate writes.
+- Erasing a connected cell recomputes same-family neighbors.
+
+**Model catalog fixes**
+- `path_stone` / `path_wood` are classified as objects (not terrain).
+- `wood` models added to the nature category.
+- Space kit: terrain models use `terrain_*` prefix for detection.
+- Dungeon kit: terrain models use `floor` prefix for detection.
+
+**Texture import fix**
+- `scripts/stage-pack.mjs`: GLB relative-path `Textures/colormap.png` is now preserved
+  during pack staging (was previously broken, dropping texture references).
+
+**3D preview**
+- `level-terrain-layer.ts` renders a scrolling grid of terrain GLBs; one `DynamicTexture`
+  paints the authored grid color as a fallback / editor surface.
+- Terrain cell `rotation` is applied in the scene via `LevelTerrainCell.rotation`;
+  `level-terrain-layer.ts` passes `−rotation×π/180` on the Y axis.
+- `level-prop-layer.ts` places objects at their grid world positions; applies
+  `node.addRotation(0, -deg*PI/180, 0)` for `PlacedObject.rotation` (same
+  negative-Y convention as the terrain layer — matches Babylon.js `rotationQuaternion`
+  path and avoids the `.rotation.y` conflict).
+- Object scale uses name-category inference from `SLOT_PLACEMENT_SCALE` in
+  `level-prop-layer.ts`: trees use `{min:22, cell:2.4}`; default unknown `{min:8, cell:1.0}`.
+- Catalog model values (`"model:pack/name"`) are resolved to URLs via `assetValueToUrl`.
+- `projectObjectsToLegacyCells` passes `rotation` from `PlacedObject` into the legacy
+  `LevelGridCell` shape the prop layer consumes.
+
+**UI and panels (all in LevelBuilder.tsx)**
+- `LevelPanel` — title + FPS readout + autosave indicator.
+- `PaintPanel` — mode dropdown + brush shape dropdown (free/rect) + Clear button.
+- `PalettePanel` — search input + kit dropdown + eraser button + model tiles.
+- `PreviewPanel` — play/pause + scrub slider.
+- `GridPanel` — virtualized 2D grid (React.memo + per-cell primitives + stable
+  useCallback via `actionRef`); 600 → 1 re-renders per paint operation.
+- Layout: `lb-page` fixed full-viewport; scene canvas fills the background; left
+  panel = paint/palette tools; right panel = preview controls + grid.
+
+**Asset Preview**
+- `AssetTest.tsx` renamed to `AssetPreview` (export name + H1 heading).
+- Home card updated to "Asset Preview".
+
+### What is still open (punch list for next agent)
+
+1. **Terrain full-rebuild on every edit.** `level-terrain-layer.ts` rebuilds all
+   terrain meshes on every `setLevelTerrainCells` call. No diff-based update yet.
+3. **Height does not displace terrain in the 3D view.** Height layer paints the
+   grid overlay and affects object Y placement, but terrain mesh vertices are not
+   displaced.
+4. **Object rotation direction may need tuning.** Negative Y matches the terrain
+   layer convention; needs visual verification in the 3D preview.
+5. **Enemies don't spawn.** `asset-map.json` has `ship-enemy = craft_miner` but
+   nothing in the scene spawns enemies yet.
+6. **Scenery uses legacy `/models/environment/` GLBs.** `scene-config.SCENERY_MODELS`
+   still references `tree_fur`, `bush`, `rocks_small`, `tree_stylized`. Needs swap
+   to Kenney nature-kit models.
+7. **Rotation visual verification.** The `SHAPE_TABLE` in `terrain-connectivity.ts`
+   assumes Kenney river models are authored N-S-straight at rotation=0, N+E-corner
+   at rotation=0. See `VISUAL INSPECTION REQUIRED` comment in that file. Load the
+   five base river models in Asset Preview and update the table if wrong.
+8. **M0 multiplayer spine is parked.** No active work needed; it still runs via
+   `npm run verify:spine`.
+
+---
 
 ## The one thing that changed structurally (don't trip on the old layout)
 
@@ -215,61 +190,68 @@ Dev servers auto-open the browser. `npm run free-ports` if a port is stuck.
 
 ```
 packages/scenes/
-  src/ship-scene.ts        ★ composition root for the Babylon vertical-scroller scene (@tjc/scenes)
-  src/scene-config.ts      scene constants, presets, exported types, SceneHandle contract
-  src/flight-controller.ts ship movement + camera-bank runtime controller
-  src/ship-controller.ts   player ship load/swap/scale/shadow/material controller
+  src/ship-scene.ts          ★ composition root for the Babylon vertical-scroller scene (@tjc/scenes)
+  src/scene-config.ts        scene constants, presets, exported types, SceneHandle contract
+  src/flight-controller.ts   ship movement + camera-bank runtime controller
+  src/ship-controller.ts     player ship load/swap/scale/shadow/material controller
   src/lighting-controller.ts sun/sky/shadow preset + live sun controls
-  src/prop-field.ts        prop scatter + recycling controller
-  src/ground-texture.ts    procedural meadow painter
-  src/ground-layer.ts      one scrolling ground (style/tile + scroll + clip); the scene runs two for climate wipes
-  src/zone-sequencer.ts    scroll-distance track of zones; climate boundaries drift in at scroll speed, lighting cross-fades
-  src/ship-materials.ts    model loading + imported-material normalization
-  src/debug.ts             flaggable logging: dbg()/dbgWarn()/dbgError(); on in dev or with ?debug
-  src/index.ts             re-exports ship-scene
+  src/prop-field.ts          prop scatter + recycling controller
+  src/ground-texture.ts      procedural meadow painter
+  src/ground-layer.ts        one scrolling ground (style/tile + scroll + clip); the scene runs two for climate wipes
+  src/zone-sequencer.ts      scroll-distance track of zones; climate boundaries drift in at scroll speed, lighting cross-fades
+  src/level-prop-layer.ts    ★ Level Builder object placement layer — generation counters, in-flight promise map, SLOT_PLACEMENT_SCALE
+  src/level-terrain-layer.ts ★ Level Builder terrain mesh layer — DynamicTexture grid + GLB tiles + rotation; full-rebuild on every edit
+  src/ship-materials.ts      model loading + imported-material normalization
+  src/debug.ts               flaggable logging: dbg()/dbgWarn()/dbgError(); on in dev or with ?debug
+  src/index.ts               re-exports ship-scene
 
 apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary surface
-  src/Home.tsx             launcher cards → models | assets | asset-test | ui | vertical | level (+ side/race soon)
-  src/App.tsx              section router (Home ↔ a section)
-  src/AssetLibrary.tsx     ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
-  src/AssetTest.tsx        single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
-  src/ModelsBoard.tsx      3D Models catalog: curate imported models, usage tags, and normalization
-  src/SlotCard.tsx         selected-model normalization editor reused by the catalog detail panel
-  src/ModelPreview.tsx     budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
-  src/LevelBuilder.tsx     ★ NEW: layered five-minute level authoring surface (terrain / objects / height)
+  src/Home.tsx               launcher cards → models | assets | asset-preview | ui | vertical | level (+ side/race soon)
+  src/App.tsx                section router (Home ↔ a section)
+  src/AssetLibrary.tsx       ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
+  src/AssetPreview.tsx       single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
+  src/ModelsBoard.tsx        3D Models catalog: curate imported models, usage tags, and normalization
+  src/SlotCard.tsx           selected-model normalization editor reused by the catalog detail panel
+  src/ModelPreview.tsx       budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
+  src/LevelBuilder.tsx       ★ ~795-line core: state, paint/erase/rotate logic, scene wiring
+  src/level-builder-types.ts PaintMode type + PAINT_MODES constant (shared across Level Builder modules)
+  src/level-panels.tsx       LevelPanel, PaintPanel, PreviewPanel, ColumnChangeConfirm
+  src/level-palette.tsx      PalettePanel (search, kit filter, eraser, terrain/object/height tiles)
+  src/level-grid.tsx         GridPanel (virtualized) + memoized GridCell (per-cell primitives, stable handlers)
   src/level-builder-state.ts Level v2 types + migration/projection + emptyLevel/mergeLevel/cellIndex helpers
-  src/UiBuilder.tsx        ★ NEW: assign imported UI images to semantic chrome roles → ui-theme.json;
-                             draft/save, raw asset grid, slice preview, card header/body padding
-  src/ui-theme-state.ts    UI theme schema, defaults, asset loader, CSS variable applier
-  src/use-persisted-json.ts ★ shared "mirror a Studio JSON endpoint" hook — used by ModelsBoard, LevelBuilder
+  src/terrain-connectivity.ts 4-bit neighbor mask, terrainMaskForCell, terrainShapeForMask, SHAPE_TABLE
+  src/terrain-feature-resolver.ts buildTerrainFeatureLookup, resolveTerrainFeatureFallback, availableFeatureFamilies
+  src/model-catalog.ts       inferModel, inferTerrainFamily, SLOT_PLACEMENT_SCALE; path_stone/path_wood=objects; space=terrain_*; dungeon=floor
+  src/UiBuilder.tsx          ★ assign imported UI images to semantic chrome roles → ui-theme.json
+  src/ui-theme-state.ts      UI theme schema, defaults, asset loader, CSS variable applier
+  src/use-persisted-json.ts  ★ canonical autosave hook with functional updater support via valueRef.current
   src/asset-normalization.ts preset registry + asset-map parsing/serialization helpers + model overrides
-  src/viewer-scene.ts      createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
-  src/viewer-budget.ts     caps live WebGL contexts at 6 — leased by ModelPreview (Asset Test uses ONE shared viewer)
-  src/models.ts            loadStagedModels(): reads imported packs from public/models (index.json + manifests)
-  src/slots.ts             legacy game asset slots, still read for compatibility/runtime holdouts
-  src/VerticalScroller.tsx the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
-                           now reads asset-map + normalization presets so the live ship matches the 3D Models board
+  src/viewer-scene.ts        createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
+  src/viewer-budget.ts       caps live WebGL contexts at 6 — leased by ModelPreview (Asset Preview uses ONE shared viewer)
+  src/models.ts              loadStagedModels(): reads imported packs from public/models (index.json + manifests)
+  src/slots.ts               legacy game asset slots, still read for compatibility/runtime holdouts
+  src/VerticalScroller.tsx   the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
+                             now reads asset-map + normalization presets so the live ship matches the 3D Models board
   src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
-  src/styles.css           full Studio CSS — ends with a Kenney UI Pack Sci-Fi block that skins controls
-                             via ui-theme CSS variables + border-image 9-slice; anatomy diagram inline
-  public/models/           PRODUCTION 3D (committed CC0): kenney-<pack>/*.glb + manifest.json, index.json;
-                             plus legacy ships/ + environment/ the scene still loads (pending the swap)
-  public/ui/               ★ NEW: PRODUCTION UI (committed CC0): kenney-<pack>/PNG/<Color>/Default/*.png +
-                             Vector/*.svg + manifest.json, index.json. Currently has ui-pack + ui-pack-sci-fi
-                             (the latter is what skins the Studio chrome).
-  vite.config.ts           dev endpoints (JSON-mirror routes share one jsonFilePlugin factory):
-                             /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides},
-                             /__level-builder, /__ui-theme; plus /__kenney/{list,meta,import}
+  src/styles.css             full Studio CSS — ends with a Kenney UI Pack Sci-Fi block that skins controls
+                               via ui-theme CSS variables + border-image 9-slice; anatomy diagram inline
+  public/models/             PRODUCTION 3D (committed CC0): kenney-<pack>/*.glb + manifest.json, index.json;
+                               plus legacy ships/ + environment/ the scene still loads (pending the swap)
+  public/ui/                 PRODUCTION UI (committed CC0): kenney-<pack>/PNG/<Color>/Default/*.png +
+                               Vector/*.svg + manifest.json, index.json. Currently has ui-pack + ui-pack-sci-fi
+  vite.config.ts             dev endpoints (JSON-mirror routes share one jsonFilePlugin factory):
+                               /__asset-map, /__vertical-defaults, /__asset-normalization-{presets,overrides},
+                               /__level-builder, /__ui-theme; plus /__kenney/{list,meta,import}
   model-catalog-overrides.json committed catalog curation overrides (usage/category/family/shape)
-  asset-map.json           legacy committed slot→model assignments, still read for old/runtime paths
+  asset-map.json             legacy committed slot→model assignments, still read for old/runtime paths
   asset-normalization-presets.json   committed shared normalization baselines
   asset-normalization-overrides.json committed per-model normalization overrides
-  level-builder.json       committed layered Level Builder JSON — written by the Level Builder section
-  ui-theme.json            committed Studio chrome theme — image role mapping + slices/padding/text
+  level-builder.json         committed layered Level Builder JSON — written by the Level Builder section
+  ui-theme.json              committed Studio chrome theme — image role mapping + slices/padding/text
 
 apps/game-client/          Vite + React (port 5173)
-  src/GameSandbox.tsx      mounts @tjc/scenes on a canvas (route /)
-  src/main.tsx             routes: / = sandbox, /host = Host lobby, /join = Controller (phone)
+  src/GameSandbox.tsx        mounts @tjc/scenes on a canvas (route /)
+  src/main.tsx               routes: / = sandbox, /host = Host lobby, /join = Controller (phone)
   src/Host.tsx / Controller.tsx / colyseus.ts   M0 multiplayer spine (parked)
   public/models/{ships,environment}/  the scene's runtime models for this app
 
@@ -292,7 +274,9 @@ A tilted 2.5D vertical scroller (Raiden-style). `createShipScene(canvas)` return
 dispose, setCameraRotationMode, setShipHeight, setShipSize, getShipPosition,
 resetShip, setGroundStyle, setPixelScale, setLightingPreset,
 setSunIntensity, setSkyIntensity, setSunAzimuth, setSunElevation, getLightingState,
-setLevelPlan, getZoneStatus, setScenery  (+ setGroundTile, setPipelineMode, setRtHeight, ship-light setters)
+setLevelPlan, getZoneStatus, setScenery,
+setLevelCells, setLevelTerrainCells, setLevelScrollPaused, getLevelScrollZ, getFps
+(+ setGroundTile, setPipelineMode, setRtHeight, ship-light setters)
 ```
 
 **Structure after the refactor:**
@@ -308,6 +292,9 @@ setLevelPlan, getZoneStatus, setScenery  (+ setGroundTile, setPipelineMode, setR
 - `ground-layer.ts` is one scrolling ground; the scene runs two so a climate can
   wipe in across the field via a moving clip seam.
 - `zone-sequencer.ts` runs a `LevelPlan` as a scroll-distance track.
+- `level-prop-layer.ts` places authored Level Builder objects at grid world positions.
+- `level-terrain-layer.ts` places authored terrain tiles as GLB meshes + a
+  DynamicTexture fallback grid.
 
 **Zone plan (level sequencer).** `setLevelPlan({ zones })` runs an auto-scrolling
 track: the ship advances at `SCROLL`, each zone (climate) occupies `lengthSec` of
@@ -342,48 +329,7 @@ owns ground + lighting; the manual panels drive the scene only when stopped.
 | `CAMERA_Z_ROT` | `0.02` | subtle head-lean for the current default bank axis |
 | `CAMERA_ROT_LERP` | `4` | eases camera/rig rotation |
 
-**Current scene behavior:**
-
-- **Camera:** `FreeCamera` parented under a `cam-rig` `TransformNode` so bank can be
-  tested by rotating the camera child or the rig. 7 runtime modes
-  (`CameraRotationMode`: `none`, `camera-x/y/z`, `rig-x/y/z`); default **`camera-z`**
-  (closest-feeling bank), with a *small* tilt. Smoothed via `CAMERA_ROT_LERP`.
-- **Ship:** `/models/ships/ship_classic.glb`, fit to `SHIP_SIZE`, starts at
-  `(0, SHIP_HEIGHT, SHIP_START_Z)`, banks on turns.
-- **Movement / bounds:** Arrows/WASD, Shift boost, `P` pixel toggle. **Momentum**:
-  velocity eases toward input (`SHIP_ACCEL`), so steering builds speed and
-  releasing coasts; bank + camera-lean follow the smoothed velocity.
-  **Double-tap left/right = barrel-roll dodge** (`DODGE_DURATION`/`DODGE_DASH`,
-  detected in `input-controller.ts`; rolls `rotation.z` + a lateral burst — hook
-  for i-frames once projectiles exist). **X and Z are clamped to the visible
-  viewport** by projecting the ship to screen space and raycasting into its flight
-  plane. **This math runs in CSS-pixel space (`canvas.clientWidth/Height`), NOT
-  `getRenderWidth()`** — see the pixelation gotcha below.
-- **Scenery (per climate):** `prop-field.ts` runs one instance pool per model
-  (bush/rock/tree_fur/tree_stylized); each climate sets a per-model density and
-  the pool shows props whose fixed random rank is under it, re-evaluated only at
-  the far edge so scenery streams in with the ground seam (no mid-field pop).
-- **Ground:** `CreateGround 1200×1000` at `z=400` (wide enough that fullscreen
-  doesn't show the left/right edges). Procedural meadow `DynamicTexture` 512px
-  (trilinear + mips). 4 `GroundStyle`s: `painterly`, `flat`, `stripes`, `checker`.
-  `vOffset` scroll rate is matched to prop speed using the live `vScale`.
-- **Scenery (scatter + scroll):** mixed trees `tree_fur` ×12 + `tree_stylized` ×12
-  (height **24** — recently shrunk from 120; fly-over for now), `rocks_small` ×30
-  (h3). Full-width placement incl. the center lane; recycled past `z < -40` to
-  `+FIELD_DEPTH`.
-- **Lighting:** a `DirectionalLight` (sun) + `HemisphericLight` (sky fill).
-  5 `LightingPreset`s (`noon`/`golden`/`overcast`/`dramatic`/`moonlit`) set
-  sun/sky color+intensity, clear color, shadow darkness. **Live sun controls**:
-  intensity, sky-fill intensity, and sun **azimuth + elevation** (the tuner derives
-  azimuth/elevation from a preset so the sliders track it; nudge from there).
-  **Current default starting point:** `dramatic`, sun **2.8**, sky **0.20**,
-  angle **110°**, height **84°**.
-- **Shadow:** real `ShadowGenerator` (2048, `useBlurExponentialShadowMap`,
-  `blurKernel 48`); `ground.receiveShadows = true`; ship is a shadow caster.
-  **The old "blob shadow disc" is gone** — this is a true projected, blurred shadow
-  that no longer clips through the ground when banking.
-- **Pixelate:** `engine.setHardwareScalingLevel(level)` (Off/2×/3×/4×). `P` toggles.
-- **Debug:** `[TJC]` console logs via `packages/scenes/src/debug.ts` (dev / `?debug`).
+---
 
 ## The Studio tuner — `apps/studio/src/VerticalScroller.tsx`
 
@@ -415,27 +361,13 @@ category/family/shape corrections.
 
 **Normalization lives here too.** The selected catalog model uses the same
 normalization preset/override system as before, so any imported model can be
-made game-ready at selection time. Current presets:
+made game-ready at selection time. Current presets: `none`, `kenney-space-kit`,
+`kenney-nature-kit`.
 
-- `none`
-- `kenney-space-kit`
-- `kenney-nature-kit`
-
-The grid card preview is the lightweight beauty view:
-- rotating isometric camera
-- mouse interaction enabled
-- no gizmos
-
-The expanded modal is the real alignment tool:
-- 2×2 grid: `Top`, `Front`, `Side`, `Iso`
-- side-panel tuning controls
-- draft-only edits until saved
-- actions:
-  - `Reset Draft`
-  - `Save Preset`
-  - `Save For Model`
-  - `Clear Model Override`
-- confirmations are in-app UI, not browser `confirm()`
+The grid card preview is the lightweight beauty view (rotating isometric camera,
+mouse interaction enabled, no gizmos). The expanded modal is the real alignment
+tool (2×2 grid: Top/Front/Side/Iso; side-panel tuning; draft-only edits until
+saved; Reset Draft / Save Preset / Save For Model / Clear Model Override).
 
 Persistence model:
 - `asset-normalization-presets.json` = shared kit baseline
@@ -446,21 +378,6 @@ Important unresolved bug:
   on ship forward. A ship can look correct against the preview forward indicator
   and still fly backward in the vertical scroller. Treat this as a
   runtime-vs-preview convention mismatch, not as a tuning mistake.
-
-The asset map supports both the old string form and the new object form:
-
-```json
-"ship-player": "model:kenney-space-kit/craft_racer"
-```
-
-or:
-
-```json
-"ship-player": {
-  "model": "model:kenney-space-kit/craft_racer",
-  "preset": "kenney-space-kit"
-}
-```
 
 ---
 
@@ -483,18 +400,16 @@ if we want more variety or a complementary style):
    scrapes kenney.nl (`/__kenney/list` paginates `category:3D`; `/__kenney/meta?slug=`
    finds each pack's preview + zip). Each card's one-click **Import** →
    `POST /__kenney/import?slug=` downloads the zip, `unzip`s it, copies the GLBs (and
-   only textures a GLB actually references — not Kenney's preview PNGs) into
-   `public/models/kenney-<slug>/`, writes `manifest.json`, and appends the pack to
-   `public/models/index.json`. Cards show "✓ imported" for staged packs.
-2. **Asset Test** (`/asset-test`) — one shared 3D viewer (single WebGL context) to
+   only textures a GLB actually references — including relative-path `Textures/colormap.png`
+   now preserved by `stage-pack.mjs`) into `public/models/kenney-<slug>/`, writes
+   `manifest.json`, and appends the pack to `public/models/index.json`.
+2. **Asset Preview** (`/asset-preview`) — one shared 3D viewer (single WebGL context) to
    preview any staged model as a rotating isometric browse view. Kits start
    collapsed. The viewer auto-applies the matching preset by kit.
 3. **3D Models board** (`/models`) — catalog-only imported-model management:
    kit/theme/category filters, usage checkboxes, and one selected-model
    normalization preview. Legacy slot assignment is intentionally not shown.
-   Catalog overrides persist to
-   `apps/studio/model-catalog-overrides.json`; derived data stays generated from
-   pack manifests + inference.
+   Catalog overrides persist to `apps/studio/model-catalog-overrides.json`.
 4. **`scripts/stage-pack.mjs`** — manual equivalent of Import for a local pack folder;
    assimp-converts OBJ/FBX if a pack ships those instead of GLB.
 
@@ -508,90 +423,63 @@ models change.
 `public/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` — the *only*
 non-Kenney files left, kept because `packages/scenes` still loads them
 (`DEFAULT_SHIP_MODEL_URL`, `SCENERY_MODELS` in `scene-config.ts`). Swapping these to
-Kenney is the next task (below).
+Kenney is a pending task.
 
 ---
 
 ## Open punch list (what's NOT done)
 
-**Look & feel (in active QE tuning):**
-1. **Lighting** — current default starting point is now `dramatic` with sun **2.8**,
-   sky **0.20**, angle **110°**, height **84°**. QE should tune from there; once
-   it feels locked, consider trimming the slider panel.
-2. **Pixelation** — hardware-scaling pixelation (the current approach) reads as
-   *blurry*, not retro/charming, per QE. If none of Off/2×/3×/4× satisfy, the real
-   fix is the **low-res render-target + nearest-neighbor + palette** pipeline
-   described in `architecture.md` §6 — not hardware scaling.
-3. **Ground** — QE verdict: `flat` grass is best *only* because it hides the tiling;
-   `painterly` has the best texture but the tiles are obvious. Procedural is just for
-   picking a direction — **source a real seamless CC0 ground texture** once a look is
-   chosen (Kenney/Poly Haven).
-4. **Bank feel** — `camera-z` (subtle) is the current keeper; confirm, then optionally
-   remove the Camera Rotation panel.
-5. **Trees** are now small fly-over props; real **dodging/obstacle collision** is
-   deferred to gameplay.
+**Level Builder (active work):**
+1. **Terrain full-rebuild on every edit** — `level-terrain-layer.ts` does not diff;
+   every `setLevelTerrainCells` call rebuilds all terrain meshes.
+3. **Height does not displace terrain in the 3D view** — height layer affects object Y
+   but terrain mesh vertices are not displaced.
+4. **Object rotation direction may need tuning** — negative Y matches terrain layer
+   convention; verify visually in the 3D preview.
+5. **Rotation visual verification** — see `VISUAL INSPECTION REQUIRED` comment in
+   `terrain-connectivity.ts`; load five river models in Asset Preview and confirm
+   the `SHAPE_TABLE` assumptions.
+6. **path / road family curation** — types and lookup are ready; models need to be
+   curated in the 3D Models board and marked for terrain use.
+7. **Minimap / jump-to-row** — current-position indicator for long levels is still missing;
+   the active row can scroll offscreen with no way to jump back.
 
 **Art pipeline:**
-6. **Scene still runs legacy models.** The runtime scene loads `ship_classic` +
-   the four `environment/` props (the last non-Kenney files). **The swap to Kenney
-   models is the #1 next step** (see below) — pick a Space-Kit ship + Nature-Kit
-   scenery in the **3D Models board**, repoint `scene-config.ts`, delete the legacy
-   files, then sync `apps/game-client/public/models`.
-7. **Kenney kits are big catalogs, not curated sets.** `nature-kit` is 329 models,
-   `space-kit` 153 — most won't be used. Curate the handful the scene actually needs
-   via the 3D Models board; no `gltfpack` pass is needed (Kenney GLBs are already
-   tiny and vertex-colored).
+8. **Scene still runs legacy models** — `scene-config.SCENERY_MODELS` loads the four
+   non-Kenney `environment/` props. Swap to Kenney nature-kit replacements, delete
+   legacy files, sync `apps/game-client/public/models`.
 
 **Gameplay (not started — pilot-flight only):**
-8. No shooting / enemies / pickups / rescue / cages yet. Roles (Gunner, Spotter) are
-   designed in `docs/` and the **M0 spine exists but is parked** — neither is wired
-   into the scene. **No auto-fire** (kids own the shooting).
-9. **Raiden pickup mechanics** (weapon medals → upgrades, bombs) — adapt later per
-   `prototype-meadow-run.md`.
+9. No shooting / enemies / pickups / rescue / cages yet. `asset-map.json` has
+   `ship-enemy = craft_miner` but nothing spawns. Roles (Gunner, Spotter) are
+   designed in `docs/` and the **M0 spine exists but is parked**.
+10. **Raiden pickup mechanics** (weapon medals → upgrades, bombs) — adapt later per
+    `prototype-meadow-run.md`.
 
 ## Suggested next steps (in order)
 
-1. **Level Builder — verify and finish Phase 6 smart terrain painting.**
-   The Connected Feature brush is in and typechecks clean. Before calling it done:
-   - Open `#level`, switch to Terrain → Connected → River, paint a line and a
-     corner, and confirm the 3D preview shows the right shapes facing the right way.
-   - If shapes are rotated wrong: update the `SHAPE_TABLE` in
-     `apps/studio/src/terrain-connectivity.ts` (the `VISUAL INSPECTION REQUIRED`
-     comment lists exactly which five models to check in Asset Test).
-   - Then continue with Phase 6 second slice: Rebuild Connections command,
-     `path` family (models are already cataloged; just needs curation), and a
-     fallback badge so the designer sees when a shape fell back.
-2. **Level Builder — fix runtime terrain (Phase 4 remaining gaps).**
-   Terrain still full-rebuilds on every edit; height does not displace terrain.
-   These were open before Phase 6 and remain open. Once Phase 6 is visually
-   verified, tackle diff-based terrain updates and height displacement.
-3. **Finish the UI Builder pass.** `#ui` now edits `ui-theme.json` with draft/save,
-   raw asset grid, source slice preview, role presets, card header/body padding,
-   and live CSS variable application. Next polish: add image dimensions/metadata
-   to asset tiles, group/filter assets by kind (chrome vs icon buttons vs parts vs
-   cursors), add per-role presets for Kenney UI families, and migrate any remaining
-   one-off hardcoded chrome selectors into the role map.
-3. **Enemies — start the gameplay layer.** `asset-map.json` already has
+1. **Terrain rotation visual verification** — load the five base river models in
+   Asset Preview, check orientation vs. the `SHAPE_TABLE` in `terrain-connectivity.ts`,
+   update the table if wrong.
+3. **Path / road family** — curate path models in the 3D Models board, mark them for
+   terrain use, verify the Connected brush works end-to-end.
+4. **Diff-based terrain updates** — replace the full-rebuild in `level-terrain-layer.ts`
+   with a diffed update so painting terrain is fast at 150+ rows.
+5. **Height displacement** — apply painted height to terrain mesh vertices in the 3D
+   preview so the elevation layer has visible effect.
+6. **Legacy scenery swap** — pick Kenney nature-kit replacements for the scene's four
+   `environment/` props, repoint `scene-config.SCENERY_MODELS`, delete the legacy
+   files, sync `apps/game-client/public/models`.
+7. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
-   simple straight-line enemies streaming down-screen, no shooting yet — give
-   the player something to use the freshly-tuned dodge on. Per
-   `prototype-meadow-run.md`. (When you spawn enemies, remember they face the
-   **opposite** way to the player — they should look toward the player, so do
-   NOT apply `SHIP_MODEL_FORWARD_YAW` to them; that constant is player-only.)
-4. **Finish the Kenney scenery swap.** The scene still loads the last legacy
-   `/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` props.
-   Pick Kenney nature-kit replacements via the 3D Models board, repoint
-   `scene-config.SCENERY_MODELS`, delete the legacy files, sync
-   `apps/game-client/public/models`. (Scenery doesn't need a forward-yaw — only
-   ships have a front.)
-5. **Shooting** — wire projectiles from the player ship's nose (the Gunner
-   role); enemies become real targets.
-6. Lock the **look**: settle lighting + ground direction; decide if
-   hardware-scaling pixel stays or the low-res-RT pipeline
-   (`architecture.md` §6) is needed; bake into defaults.
-7. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
+   simple straight-line enemies streaming down-screen, no shooting yet. Per
+   `prototype-meadow-run.md`. (When spawning enemies, do **NOT** apply
+   `SHIP_MODEL_FORWARD_YAW` — enemies need the opposite facing.)
+8. **Shooting** — wire projectiles from the player ship's nose (the Gunner role);
+   enemies become real targets.
+9. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
-8. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
+10. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
 
 ---
 
@@ -604,7 +492,7 @@ Kenney is the next task (below).
   Fixed by `apps/studio/src/viewer-budget.ts` (hard cap of **6** leased slots) +
   `ModelPreview.tsx` lazy-mounting an engine only while the card is on screen
   (IntersectionObserver). **Never create unbounded Babylon engines on one page.**
-  The **Asset Test** screen sidesteps the cap entirely with ONE shared viewer that
+  The **Asset Preview** screen sidesteps the cap entirely with ONE shared viewer that
   recreates its engine on model-select — preview any pack size at one context.
 - **Pixelation breaks screen-space math if you use render-buffer dims.**
   `setHardwareScalingLevel(n)` shrinks the render buffer to 1/n, and Babylon's
@@ -649,6 +537,35 @@ Kenney is the next task (below).
 - **Kenney's UI tag is `tag:interface`, not `tag:UI`.** When scraping
   kenney.nl for UI packs, `tag:UI` returns nothing — Kenney consistently uses
   `interface` for the broader UI category. See `vite.config.ts:scrapeKenneyList`.
+- **Object rotation in `level-prop-layer.ts` uses `node.addRotation(0, -deg*PI/180, 0)`,
+  NOT `node.rotation.y`.** Direct `.rotation.y` assignment conflicts with
+  Babylon.js's `rotationQuaternion` path and produces wrong results. Use
+  `addRotation` for any model loaded through `SceneLoader.ImportMeshAsync`.
+- **Terrain rotation convention:** `LevelTerrainCell.rotation` is degrees CW from
+  above; `level-terrain-layer.ts` applies `−rotation×π/180` on the Y axis.
+  This matches the object rotation sign so both layers rotate the same way.
+- **Level Builder DOM grid must stay virtualized.** The 2D grid uses row
+  virtualization (`VIRTUAL_ROW_H = 20px`; only visible rows rendered). At 32
+  columns the five-minute grid has 400 rows = 12,800 cells. Without
+  virtualization React reconciles all of them on every RAF tick. Keep `GridPanel`
+  virtualized; any new grid-like surface must do the same.
+- **Level Builder terrain texture should stay one texture.** The 3D authoring
+  grid is repainted into one `DynamicTexture` with `uScale=vScale=1`; avoid GPU
+  texture tiling for the grid because minified tiled dynamic textures tanked FPS
+  in earlier passes. See `level-terrain-layer.ts`.
+- **Async model-placement race — use generation counters.** `level-prop-layer.ts`
+  uses fire-and-forget async placement (`void loadAndPlace(...)`).
+  Without a generation counter, rapid calls produce orphan meshes in the scene that are
+  never disposed. Pattern: `let generation = 0;` → `const gen = ++generation;` at call
+  start → check `gen !== generation` before and after every `await`.
+- **In-flight promise map prevents duplicate model loads.** `SceneLoader.ImportMeshAsync`
+  adds ALL meshes to the scene permanently. If two concurrent calls both see
+  `!modelCache.has(url)` before either adds to the cache, the model loads twice and the
+  first load's meshes leak forever. Fix: a `loadingPromises: Map<string, Promise<void>>`
+  sentinel — check it before starting a load, set it immediately, delete it on resolve.
+- **Kenney's UI tag is `tag:interface`, not `tag:UI`.** When scraping
+  kenney.nl for UI packs, `tag:UI` returns nothing — Kenney consistently uses
+  `interface` for the broader UI category. See `vite.config.ts:scrapeKenneyList`.
 - **Kenney sci-fi card anatomy** (`button_square_header_*_rectangle`, 192×64):
   blue header band (~22–28 px tall) + grey body + screw row (~6–8 px) along the
   bottom. Use `border-image-slice: 26 12 12 12 fill` (T R B L) so the header
@@ -657,93 +574,43 @@ Kenney is the next task (below).
   horizontal pill — slice/width 8 for small, 12 for large; Double large
   (192×48) uses source slice 24 with render width 12. **Slice values vs source
   pixels matter** — guessing gives stretched corners and edge seams.
-- **UI Builder kind-aware schema** (v2 this session). Roles are now a
-  discriminated union: `bar | card | outline`. Each kind exposes only the
-  knobs that make sense for it (bar gets single slice + padding; card gets
-  per-edge slice + padHeader/padBody + split header/body text colors; outline
-  gets slice without `fill`). v1 flat themes auto-migrate to v2 in memory at
-  fetch time and persist back as v2 on first Save. **Adding new chrome roles:**
-  extend `UiChromeRoleId` + `ROLE_KIND` + `UI_ROLE_LABELS` + `DEFAULT_UI_THEME`,
-  add a CSS rule consuming the new vars, and (if needed) a `case` in
-  `renderExample(id, label)`.
+- **UI Builder kind-aware schema (v2).** Roles are a discriminated union:
+  `bar | card | outline`. Each kind exposes only the knobs that make sense for it.
+  v1 flat themes auto-migrate to v2 in memory at fetch time and persist back as v2
+  on first Save. **Adding new chrome roles:** extend `UiChromeRoleId` + `ROLE_KIND`
+  + `UI_ROLE_LABELS` + `DEFAULT_UI_THEME`, add a CSS rule consuming the new vars,
+  and (if needed) a `case` in `renderExample(id, label)`.
 - **9-slice math constraints**: `slice.top + slice.bottom ≤ source.height`
   and `slice.left + slice.right ≤ source.width`. Whatever's left is the body
   band that stretches. If the sum overshoots, the middle is negative px → the
   browser paints transparency through it, which reads as a hollow centre on
-  any element bigger than the source. `SlicePreview` now shows source dims +
-  computed middle dims and red-flags overlap. **Picking an image** also runs
-  `suggestSliceForImage(url, kind)` — a filename heuristic that pre-fills
-  reasonable slice values for the Kenney sci-fi families so a fresh image
-  doesn't start broken. For 16px-tall bars at slice 8, the centre is exactly
-  0px tall — use a taller source (`bar_round_large` = 24px) or set `fillColor`
-  on the role to paint a solid behind the transparent band. If a 24px-tall
-  large bar shows thin edge seams, check for a stale small-bar slice (`8`);
-  large bars need `12`, and Double large bars need source slice `24`.
+  any element bigger than the source. `SlicePreview` shows source dims +
+  computed middle dims and red-flags overlap.
 - **`border-image-slice` ≠ `border-image-width`**. Slice is how many SOURCE
   pixels to cut from each edge. Width is how many RENDER pixels those edges
-  occupy. When `width ≠ slice` the corners scale (compressed or stretched)
-  and look different from the source middle stretching. Visible at any size
-  that isn't exactly the source dimensions. To make a bar look honest at any
-  element size: set `width = slice` so corners render at native source size.
+  occupy. When `width ≠ slice` the corners scale (compressed or stretched).
+  To make a bar look honest at any element size: set `width = slice` so corners
+  render at native source size.
 - **Card title element drives the header band, not padding-top.** The
   `.studio-card-title` element has `min-height: var(--ui-<role>-header-h)` so
-  its outer box exactly fills the painted header band. The body wrapper
-  (`.studio-card-body`) sits below with its own padding. **Adding a header
-  band to a new component** = wrap its title in `<span class="studio-card-title">`
-  and the rest in `<div class="studio-card-body">`. Without the title
-  element, the header role's `headerTextColor` has nothing to apply to.
-- **`button:not(.studio-card)` selectors.** The Studio's Home landing cards
-  are `<button>` for clickability but they want the headered-card recipe, not
-  the bar-button recipe. Every bar-button rule (`button:hover`, `:active`,
-  `:disabled`, `.on`, `.critical`) excludes `.studio-card` via `:not()` so
-  cards keep their Kenney sci-fi panel. **Adding a new bar-button rule** =
-  include the `:not(.studio-card)` clause.
+  its outer box exactly fills the painted header band. **Adding a header band to
+  a new component** = wrap its title in `<span class="studio-card-title">` and
+  the rest in `<div class="studio-card-body">`.
+- **`button:not(.studio-card):not(.lb-cell)` is the base button selector.** Grid
+  paint cells (`lb-cell`) are bespoke `<button>` elements that must never receive
+  button chrome. Any new non-UI button added to the page must be excluded via
+  `:not()` or given an explicit exclusion rule.
+- **Bar-button selectors exclude `.studio-card`** (`button:not(.studio-card)`).
+  Studio's landing cards are `<button>` but want the card recipe. Any new
+  bar-button rule must include the `:not()` clause.
 - **`textColor` vs `fillColor`**. `textColor` → CSS `color` (foreground text);
-  `fillColor` → CSS `background-color` (the box behind the text, visible
-  wherever the border-image's middle is transparent). Two independent
-  properties; setting one doesn't imply the other. Every button state rule
-  must explicitly set both vars (the `:disabled` and `:hover` rules were
-  missing `color` for a stretch — fixed this session). **Body text colour
-  on content-card themed side panels also requires removing hardcoded `color:` rules on direct
-  descendants** (e.g. `.studio-card-desc` had a hardcoded `#9fb5d3` that
-  overrode the themed body colour; it's now stripped so the cascade wins).
-  If a button shows a squared-off color block, check that role's `fillColor`;
-  set it to `transparent` unless the source image truly needs a solid middle.
+  `fillColor` → CSS `background-color`. Two independent properties; every button
+  state rule must explicitly set both vars.
 - **Headings inside themed panels need an explicit override.** The bare
-  `h1, h2, h3 { color: #d5e3ff; }` rule wins by specificity inside any
-  themed container. The explicit override at the end of `styles.css` lists
-  every content-card themed panel container (`preview-sidepanel`, `preset-editor`,
-  `confirm-box`, `lb-palette`, `asset-stage`, `asset-list`, the three UI
-  Builder columns) and points their headings at
-  `--ui-card-content-header-color`. **Add new panel-themed surfaces to that
-  list** if you want their headings to honour the role.
-- **UI Builder columns ARE themed by content-card.** The role list / editor /
-  examples columns ride `card-content` so tuning that role affects them too.
-  This is meta-chrome (editor styling itself with the role being edited),
-  intentional — the user wants visual consistency. **Don't strip the theming
-  back to flat** unless asked.
-- **Pack-card markup quirk**: Asset Library pack cards reorder to put the
-  title BEFORE the thumb so the title lands in the header band. The thumb
-  uses `width: calc(100% + 32px); margin: 0 -16px` to mirror the card-head's
-  `-16px` sideways pull and align with the card frame. The `-16` is
-  hardcoded to the current `card-content.padBody` left/right; if that
-  changes, the thumb needs a matching var or it'll misalign.
-- **Level Builder data shape**: v2 layered JSON with `terrain`, `height`, and
-  `objects` layers. Default new levels are five minutes: `12` columns,
-  `150` rows, `32wu` cells, `4800wu` world depth at `SCROLL = 16`. Storage is
-  row-major with row 0 = far end/top of runtime view; the editor displays the
-  grid inverted so the start row is at the bottom. Old v1 `{prop?, height?}`
-  JSON migrates on load. The scene receives a model-backed terrain layer plus
-  a legacy object/height projection for placed props.
-- **Studio JSON endpoints all share one factory** — `jsonFilePlugin(name,
-  route, file)` in `vite.config.ts`. Add a new endpoint with one line +
-  matching file constant. The Studio JSONs (asset-map, vertical-defaults,
-  both normalization files, level-builder, ui-theme) all ride this.
-- **`usePersistedJson<T>` is the canonical Studio autosave persistence hook** —
-  `apps/studio/src/use-persisted-json.ts`. GET on mount, POST on update,
-  returns `{value, setValue, saved, loaded}`. Use it for autosaving JSON-backed
-  surfaces. `UiBuilder` intentionally does a local draft + explicit Save/Revert
-  flow so a bad chrome experiment does not immediately overwrite `ui-theme.json`.
+  `h1, h2, h3 { color: #d5e3ff; }` rule wins by specificity inside any themed
+  container. The explicit override at the end of `styles.css` lists every
+  content-card themed panel container and points their headings at
+  `--ui-card-content-header-color`. Add new panel-themed surfaces to that list.
 - **No `React.StrictMode`** — double-invoked effects would start Babylon/rooms twice.
 - **Run npm scripts from the repo root.** `dev:studio`, `dev:client`, etc. are root
   scripts; running them inside a workspace dir errors with "Missing script".
@@ -752,7 +619,7 @@ Kenney is the next task (below).
   (local folder). The old `convert-models`/`import-models` scripts and the 505 MB
   `src/models` library they built are **deleted** — don't look for them.
 - **Where models live:** **committed** under each app's `public/models` (served at
-  `/models/**`). The Studio's 3D Models board + Asset Test read
+  `/models/**`). The Studio's 3D Models board + Asset Preview read
   `apps/studio/public/models` via `index.json` → per-pack `manifest.json` (no
   `import.meta.glob`). The scene loads from the app it runs in
   (`apps/game-client/public/models`), so **keep the two `public/models` in sync**
@@ -760,5 +627,16 @@ Kenney is the next task (below).
 - **Kenney GLBs are vertex-colored (no texture images)** — they render correctly
   flat-shaded; don't expect PBR atlases. Import copies only referenced textures, so
   Kenney's preview PNGs are (correctly) skipped.
+- **`assetValueToUrl(value)` is the canonical helper** in `asset-normalization.ts` —
+  converts `"model:pack/name"` → `"/models/pack/name.glb"`. Do not re-implement inline.
+- **`usePersistedJson<T>` is the canonical Studio autosave persistence hook** —
+  `apps/studio/src/use-persisted-json.ts`. GET on mount, POST on update,
+  returns `{value, setValue, saved, loaded}`. Supports functional updater
+  (`setValue(prev => ...)`) via `valueRef.current`. Use it for autosaving
+  JSON-backed surfaces. `UiBuilder` intentionally does a local draft + explicit
+  Save/Revert flow so a bad chrome experiment does not immediately overwrite
+  `ui-theme.json`.
+- **Studio JSON endpoints all share one factory** — `jsonFilePlugin(name,
+  route, file)` in `vite.config.ts`. Add a new endpoint with one line +
+  matching file constant.
 - **Ports:** server **2567**, game client **5173**, Studio **5174**.
-</content>

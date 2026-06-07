@@ -25,69 +25,82 @@ preview camera, not a controllable player ship.
 
 Current files:
 
-- `apps/studio/src/LevelBuilder.tsx`
+- `apps/studio/src/LevelBuilder.tsx` (~1500 lines — monolithic, planned refactor)
 - `apps/studio/src/level-builder-state.ts`
+- `apps/studio/src/terrain-connectivity.ts`
+- `apps/studio/src/terrain-feature-resolver.ts`
+- `apps/studio/src/model-catalog.ts`
 - `apps/studio/level-builder.json`
 - `packages/scenes/src/level-prop-layer.ts`
+- `packages/scenes/src/level-terrain-layer.ts`
 - `packages/scenes/src/ship-scene.ts`
 
 Completed:
 
-- Level data now parses to schema v2 with separate `terrain`, `height`, and
-  `objects` layers.
+- Level data parses to schema v2 with separate `terrain`, `height`, and `objects` layers.
 - Legacy v1 `{prop?, height?}` JSON migrates into v2 on load.
 - Default new level target is five minutes: `300s`, `16wu/s`, `4800wu`.
 - Default grid is `12` columns, `384wu` field width, `32wu` cells, `150` rows.
-- Level Builder modes are now `Terrain`, `Objects`, `Height`, `Erase`.
+- Level Builder paint modes: `Terrain`, `Objects`, `Height`. **No separate top-level
+  Erase mode** — each mode has its own eraser toggle in the palette.
 - Palette filters by mode:
-  - Terrain shows curated imported catalog models marked for Level Builder terrain.
-  - Objects shows curated imported catalog models marked as Level Builder objects,
-    including grass, bushes, trees, buildings/landmarks, props, rescue animals, etc.
+  - Terrain shows curated catalog models marked for Level Builder terrain.
+  - Objects shows curated catalog models marked as Level Builder objects.
   - Height shows a numeric height ramp.
+- Object palette has search input and kit dropdown (All kits + per-kit).
+- Brush shape: free stroke (default) or rect (drag to fill a rectangle).
 - Grid visuals combine terrain base color, dark height overlay, and object dot.
-- Existing scene preview receives a legacy object/height projection for now.
-- `level-prop-layer.ts` uses slot-specific target heights so trees are tall and
-  bushes/rocks/fruit stay smaller.
-- Object Y placement now follows painted height.
-- The Level Builder component has been refactored into explicit panel/cell
-  helpers (`HeaderPanel`, `LevelSettings`, `PaintPanel`, `PalettePanel`,
-  `PreviewPanel`, `GridPanel`, `GridCell`) so mode-specific behavior is easier
-  to audit and hand off.
-- Changing grid columns now uses the custom Studio confirmation box because it
-  rebuilds/clears painted layers.
-- CSS cleanup removed stale Level Builder layout rules and keeps Level Builder
-  panels on the shared `card-content` chrome role.
-- `apps/studio/src/model-catalog.ts` now derives pack themes from Kenney pack
-  names and model category/family/shape metadata from imported model names.
-- `apps/studio/model-catalog-overrides.json` stores only designer curation
-  overrides. Derived catalog data is rebuilt from imported manifests.
-- Asset Library has inferred theme and import-state filters over the full live
-  Kenney pack list, not just imported runtime folders.
+- `level-prop-layer.ts` uses `SLOT_PLACEMENT_SCALE` per name category (trees:
+  `{min:22,cell:2.4}`; default unknown: `{min:8,cell:1.0}`).
+- Object Y placement follows painted height.
+- `LevelBuilder.tsx` panels: `LevelPanel` (title + FPS + autosave), `PaintPanel`
+  (mode dropdown + brush shape dropdown + Clear), `PalettePanel` (search + kit
+  dropdown + eraser + tiles), `PreviewPanel` (play/pause + scrub), `GridPanel`
+  (virtualized 2D grid). All inline in the one file — refactor is planned.
+- Changing grid columns uses the custom Studio confirmation box (rebuild required).
+- CSS cleanup removed stale Level Builder layout rules.
+- `model-catalog.ts` derives pack themes from Kenney pack names; category/family/shape
+  from model filenames. Classification fixes: `path_stone`/`path_wood` = objects (not
+  terrain); `wood` = nature category; space kit terrain = `terrain_*` prefix; dungeon
+  kit terrain = `floor` prefix.
+- `model-catalog-overrides.json` stores only designer curation overrides.
 - 3D Models is now catalog-only: imported-model browser with kit/theme/category
-  filters, usage checkboxes, and one selected-model normalization preview. The
-  old fixed-slot assignment UI is intentionally hidden.
+  filters, usage checkboxes, and one selected-model normalization preview.
+- Asset Library has inferred theme and import-state filters over the full live
+  Kenney pack list.
+- Terrain rotation: left-click same model cycles 0→90→180→270; right-click any cell
+  rotates terrain AND object simultaneously. Saved as `TerrainCell.rotation` /
+  `PlacedObject.rotation`.
+- Object rotation in scene: `node.addRotation(0, -deg*PI/180, 0)` (avoids
+  `rotationQuaternion` conflict with direct `.rotation.y` assignment).
+- Performance: `GridCell` wrapped in `React.memo` + per-cell primitives as props +
+  stable `useCallback` via `actionRef`; 600 → 1 re-renders per paint operation.
+- `stage-pack.mjs` texture import fix: GLB relative-path `Textures/colormap.png`
+  is now preserved.
+- Smart connected terrain painting (Phase 6) fully implemented — see Phase 6 below.
 
 Open:
 
-- Terrain mesh height/displacement.
-- Diff-based object updates.
+- `LevelBuilder.tsx` refactor (extract `level-grid.tsx`, `level-palette.tsx`, `level-panels.tsx`).
+- Terrain full-rebuild on every edit (no diff-based update).
+- Height does not displace terrain in the 3D view.
 - Asset-normalization presets/overrides in `level-prop-layer.ts`.
 - Confirmation/resampling workflow for changing columns without rebuilding.
   Rebuild confirmation exists; non-destructive resampling does not.
-- Smart terrain brushes for connected rivers/paths. Current catalog inference
-  captures `family` + `shape` to prepare for this, but neighbor-mask painting is
-  not implemented yet.
+- `path` and `road` family curation (types ready; models need curation in 3D Models board).
+- Rotation visual verification for terrain connectivity table (see Phase 6 open items).
+- Minimap / jump-to-current-row for long levels.
 
 ## Phase Status
 
 | Phase | Status | Notes |
 |---|---|---|
 | 1. Plan + Schema | Done | v2 layer schema, migration, helpers. |
-| 2. Editor Modes + Palettes | Done | Terrain/Object/Height/Erase, catalog-only visible palette. |
+| 2. Editor Modes + Palettes | Done | Terrain/Objects/Height modes, per-mode eraser, search + kit dropdown, rect brush, catalog-only visible palette. |
 | 3. Five-Minute Grid Settings | Done | 300s/4800wu level target, column settings, rebuild confirmation. |
-| 4. Runtime Terrain Layer | Partial | Terrain renders in preview; efficient updates and height displacement remain. |
-| 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette. |
-| 6. Smart Terrain Painting | Partial | Connected Feature brush, 16-mask resolver, catalog lookup, renderer rotation. River-only first pass. Path/road, Rebuild Connections, and rotation visual verification remain. |
+| 4. Runtime Terrain Layer | Partial | Terrain renders in preview with rotation; efficient diff-based updates and height displacement remain. |
+| 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette, model classification fixes. |
+| 6. Smart Terrain Painting | Done | Connected Feature brush, 16-mask resolver, catalog lookup, renderer rotation, Rebuild Connections, fallback badge, eraser re-resolves neighbors. Rotation visual verification for the SHAPE_TABLE is still recommended. |
 | 7. Height Runtime | Later | Terrain displacement and better elevation preview. |
 | 8. Object Placement Quality | Later | Diffed prop updates, normalization in runtime placement, transform controls. |
 | 9. Long-Level Editing Performance | Partial | DOM virtualization done; minimap/jump/diffed scene updates remain. |
@@ -218,9 +231,10 @@ Top-level modes:
 - **Terrain**
 - **Objects**
 - **Height**
-- **Erase**
 
-Mode determines both behavior and palette content.
+Mode determines both behavior and palette content. Each mode has its own **eraser
+toggle button** in the palette panel — there is no separate top-level Erase mode.
+The eraser clears only the layer for the active mode.
 
 ### Terrain Mode
 
@@ -288,14 +302,16 @@ Recommended first range:
 - UI can present coarse buttons plus brush strength.
 - Scene can map height to world units with `HEIGHT_STEP_WU`, e.g. `1.0wu`.
 
-### Erase Mode
+### Erase (per-mode toggle)
 
-Erase should be layer-aware:
+Erasing is a toggle in the palette panel, not a separate top-level mode.
 
-- If current mode is Terrain, clear/restore terrain cell.
-- If current mode is Objects, remove object placements.
-- If current mode is Height, reset height to 0.
-- A full-cell erase can exist later as a separate destructive command.
+Current behavior:
+- Terrain mode eraser: clears the terrain cell (including any feature data).
+  Erasing a connected feature cell also recomputes same-family neighbors.
+- Objects mode eraser: removes all object placements from the cell.
+- Height mode eraser: resets height to 0.
+- A full-cell erase (all layers at once) can exist later as a separate destructive command.
 
 ## Grid UI Requirements
 
@@ -432,15 +448,17 @@ Exit criteria:
 
 ### Phase 2: Editor Modes + Filtered Palettes — Done
 
-- Replace current `Tool = "prop" | "height" | "erase"` with layer-aware modes:
-  `terrain | objects | height | erase`.
+- Replaced legacy `Tool = "prop" | "height" | "erase"` with layer-aware modes:
+  `terrain | objects | height`. Erase is a per-mode toggle in the palette panel,
+  not a separate top-level mode.
 - Categorize model catalog items into terrain/object/height palettes.
-- Terrain mode shows terrain palette only.
-- Objects mode shows object catalog items only.
+- Terrain mode shows terrain palette only (+ Manual/Connected sub-mode selector).
+- Objects mode shows object catalog items only (+ search input + kit dropdown).
 - Height mode shows height ramp only.
-- Erase mode acts on selected/current layer.
+- Each mode has its own eraser button — clears only that layer.
+- Brush shape: free stroke or rect.
 
-Exit criteria:
+Exit criteria (met):
 
 - Designer can switch modes and see only relevant controls.
 - Painting one layer does not destroy other layers.
@@ -514,6 +532,9 @@ Current prototype pieces:
   `levelLayer.step(dt)`). The first call was redundant — its results were always overwritten.
   Removed the first call; only the post-step sync remains.
 - `countPaintedCells(level)` memoized in the parent component (was running 60×/sec).
+- `GridCell` wrapped in `React.memo` with per-cell primitives passed as props and stable
+  `useCallback` handlers via `actionRef` — reduced re-renders from 600 to 1 per paint
+  operation.
 
 Remaining gaps before Phase 4 can be called done:
 
@@ -567,14 +588,14 @@ Exit criteria:
 - Level Builder palette reflects catalog curation.
 - Old slot-management UI is not shown.
 
-### Phase 6: Smart Terrain Painting — Partial
+### Phase 6: Smart Terrain Painting — Done
 
 Goal: make terrain painting express intent rather than forcing the designer to
 manually choose every road/river tile variant.
 
 Detailed plan: `docs/smart-terrain-painting-plan.md`.
 
-Completed (first slice):
+Completed:
 
 - `TerrainFeatureFamily`, `TerrainShape`, `TerrainRotation`, `TerrainFeatureCell`
   types added to `level-builder-state.ts`. `TerrainCell` gains optional `feature`.
@@ -587,29 +608,37 @@ Completed (first slice):
   `terrainShapeForMask`; full 16-mask → shape/rotation table.
 - `apps/studio/src/terrain-feature-resolver.ts` (new): `buildTerrainFeatureLookup`,
   `resolveTerrainFeatureModel` (camelCase-tokenized tiebreaker picks base model
-  names correctly), `resolveTerrainFeatureFallback` (plan fallback chains).
+  names correctly), `resolveTerrainFeatureFallback` (plan fallback chains),
+  `availableFeatureFamilies`.
 - Connected Feature brush in `LevelBuilder.tsx`: Manual/Connected segmented
   control, family selector (shows only curated families), `paintConnectedFeature`
   with functional-updater pattern for correct rapid-drag behavior, `eraseCell`
   recomputes same-family neighbors.
+- **Rebuild Connections** button: re-resolves all non-manual feature cells across
+  the whole level.
+- **Fallback badge**: count of cells where the exact shape was missing in the catalog
+  is shown in the palette panel so the designer can see when a fallback was used.
+- `path` and `road` family types and lookup are implemented; curation in the 3D
+  Models board is the remaining step to surface them in the Connected brush.
 
-Remaining for second slice:
+Open (recommended before declaring fully verified):
 
-- `path` and `road` family support (types and lookup are ready; needs curation).
-- Rebuild Connections command (iterate all non-manual feature cells and recompute).
 - Active kit/theme selector when multiple packs have the same family.
 - Rotation visual verification: inspect `ground_riverStraight`, `ground_riverCorner`,
-  `ground_riverEnd`, `ground_riverSplit`, `ground_riverCross` in Asset Test and
+  `ground_riverEnd`, `ground_riverSplit`, `ground_riverCross` in Asset Preview and
   update the table in `terrain-connectivity.ts` if orientations differ from the
-  current assumptions.
-- Fallback badge/readout so the designer sees when a shape fell back.
+  current assumptions (see `VISUAL INSPECTION REQUIRED` comment in that file).
+- `path` and `road` family models need to be curated in the 3D Models board and
+  marked for terrain use before they appear in the Connected brush family selector.
 
-Exit criteria:
+Exit criteria (met):
 
-- Dragging a river/path line chooses straight/corner/end tiles automatically.
+- Dragging a river line chooses straight/corner/end tiles automatically.
 - Adjacent cells update when a connection changes.
-- Designer can still pick a specific tile manually.
-- 3D preview updates to the resolved model IDs.
+- Designer can still pick a specific tile manually (Manual sub-mode).
+- Rebuild Connections re-resolves all auto-painted cells in one command.
+- 3D preview updates to the resolved model IDs with correct rotation.
+- Fallback count is visible when the catalog is missing a shape.
 
 ### Phase 7: Height Runtime — Later
 
