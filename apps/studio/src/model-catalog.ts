@@ -223,10 +223,11 @@ function inferModel(name: string, packId: string): {
 } {
   const text = `${packId} ${name}`.toLowerCase();
   const shape = inferShape(text);
-  // Only ground_* models (flat terrain tiles) are terrain. Bare "path" is NOT
-  // included here because path_stone/path_wood etc. are 3D objects placed ON
-  // terrain, not flat ground covers. ground_path* is still caught by \bground_.
-  if (/\bground_|river|road/.test(text)) {
+  // Only ground_* / terrain_* models (flat terrain tiles) are terrain. Bare
+  // "path" is NOT included because path_stone/path_wood etc. are 3D objects
+  // placed ON terrain. ground_path* is caught by \bground_; space-kit terrain
+  // tiles use the terrain_* prefix instead, caught by \bterrain.
+  if (/\bground_|\bterrain|river|road/.test(text)) {
     return { categoryKind: "terrain", family: inferTerrainFamily(text), shape };
   }
   if (/(animal|pet|sloth|bunny|rabbit|fox|cheetah|cat|dog|bear|duck|cow|pig|sheep|chicken|fish)/.test(text)) {
