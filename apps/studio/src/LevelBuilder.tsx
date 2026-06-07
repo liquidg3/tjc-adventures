@@ -162,6 +162,11 @@ export function LevelBuilder() {
     () => buildTerrainFeatureLookup(catalog),
     [catalog],
   );
+  const packForSlot = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const m of catalog) map[m.modelValue] = m.packName;
+    return map;
+  }, [catalog]);
   const featureFamilies = useMemo(
     () => availableFeatureFamilies(terrainFeatureLookup),
     [terrainFeatureLookup],
@@ -235,7 +240,7 @@ export function LevelBuilder() {
 
   const catalogLabelMap = useMemo(() => {
     const labels: Record<string, string> = {};
-    for (const model of catalog) labels[model.modelValue] = `${model.name} · ${MODEL_CATEGORY_LABELS[model.categoryKind]}`;
+    for (const model of catalog) labels[model.modelValue] = formatModelLabel(model.name);
     return labels;
   }, [catalog]);
   const paletteSlots = mode === "terrain"
@@ -690,6 +695,7 @@ export function LevelBuilder() {
           connectedFamily={connectedFamily}
           featureFamilies={featureFamilies}
           fallbackCount={fallbackCount}
+          packForSlot={packForSlot}
           onModeChange={setMode}
           onTerrainSelect={setSelectedTerrain}
           onObjectSelect={setSelectedObject}
@@ -840,6 +846,19 @@ function PaintPanel({
   );
 }
 
+/** Strip the leading category prefix and split camelCase into title-cased words.
+ *  ground_riverStraight → "River Straight"
+ *  rock_largeA          → "Large A"
+ *  path_woodCorner      → "Wood Corner"
+ */
+function formatModelLabel(name: string): string {
+  const body = name.replace(/^[a-z]+_/, ""); // strip first prefix segment
+  return body
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2") // split camelCase
+    .replace(/_/g, " ")                       // remaining underscores → spaces
+    .replace(/\b\w/g, (c) => c.toUpperCase()); // title case
+}
+
 const FAMILY_LABELS: Record<TerrainFeatureFamily, string> = {
   river: "River",
   path: "Path",
@@ -859,6 +878,7 @@ function PalettePanel({
   connectedFamily,
   featureFamilies,
   fallbackCount,
+  packForSlot,
   onModeChange,
   onTerrainSelect,
   onObjectSelect,
@@ -879,6 +899,7 @@ function PalettePanel({
   connectedFamily: TerrainFeatureFamily;
   featureFamilies: TerrainFeatureFamily[];
   fallbackCount: number;
+  packForSlot: Record<string, string>;
   onModeChange: (mode: PaintMode) => void;
   onTerrainSelect: (id: string) => void;
   onObjectSelect: (id: string) => void;
@@ -888,11 +909,26 @@ function PalettePanel({
   onRebuildConnections: () => void;
 }) {
   const [search, setSearch] = useState("");
+  const [selectedKit, setSelectedKit] = useState<string>("all");
+
   const showList = mode !== "height" && !(mode === "terrain" && terrainBrushMode === "connected");
-  const filteredSlots = showList && search.trim()
-    ? paletteSlots.filter((id) =>
-        (catalogLabelMap[id] ?? id).toLowerCase().includes(search.toLowerCase()))
-    : paletteSlots;
+
+  // Kits that have at least one item in the current palette
+  const availableKits = useMemo(() => {
+    const names = new Set(paletteSlots.map((id) => packForSlot[id]).filter(Boolean));
+    return [...names].sort();
+  }, [paletteSlots, packForSlot]);
+
+  const filteredSlots = useMemo(() => {
+    if (!showList) return paletteSlots;
+    let slots = paletteSlots;
+    if (selectedKit !== "all") slots = slots.filter((id) => packForSlot[id] === selectedKit);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      slots = slots.filter((id) => (catalogLabelMap[id] ?? id).toLowerCase().includes(q));
+    }
+    return slots;
+  }, [showList, paletteSlots, selectedKit, search, packForSlot, catalogLabelMap]);
 
   return (
     <section className="lb-palette lb-section">
@@ -973,6 +1009,25 @@ function PalettePanel({
 
       {showList && (
         <>
+          {availableKits.length > 1 && (
+            <div className="lb-kit-chips">
+              <button
+                className={`lb-kit-chip${selectedKit === "all" ? " on" : ""}`}
+                onClick={() => setSelectedKit("all")}
+              >
+                All
+              </button>
+              {availableKits.map((kit) => (
+                <button
+                  key={kit}
+                  className={`lb-kit-chip${selectedKit === kit ? " on" : ""}`}
+                  onClick={() => setSelectedKit(kit)}
+                >
+                  {kit}
+                </button>
+              ))}
+            </div>
+          )}
           {paletteSlots.length > 6 && (
             <input
               className="lb-palette-search"

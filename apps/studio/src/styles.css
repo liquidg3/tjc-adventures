@@ -1220,8 +1220,32 @@ section h2 {
   align-items: center;
   gap: 6px;
 }
-.lb-paint-row select { flex: 1; min-width: 0; }
-.lb-paint-row .lb-reset { flex-shrink: 0; }
+/* Override 9-slice fill: in this dense row the light grey fill makes text invisible.
+   Use the same input-text color as other Studio inputs, on a dark panel background. */
+.lb-paint-row select {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--ui-color-panel-body, #0e1530);
+  color: var(--ui-input-color, #e6ebf5);
+}
+.lb-paint-row .lb-reset { flex-shrink: 0; width: auto; }
+/* Palette items are content labels — keep them sentence-case */
+.lb-palette-item { text-transform: none; letter-spacing: normal; }
+/* Kit filter chips above the palette list */
+.lb-kit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+.lb-kit-chip {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: normal;
+}
 /* Rebuild Connections row */
 .lb-rebuild-row {
   display: flex;
