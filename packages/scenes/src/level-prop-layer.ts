@@ -154,12 +154,28 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
 }
 
 function targetHeightForSlot(slot: string, cellSize: number): number {
-  const scale =
-    SLOT_PLACEMENT_SCALE[slot] ??
-    (slot.startsWith("animal-")
-      ? { min: 5, cell: 0.65 }
-      : slot.startsWith("prop-fruit")
-        ? { min: 2.5, cell: 0.3 }
-        : DEFAULT_PLACEMENT_SCALE);
+  const scale = slotScale(slot);
   return Math.max(scale.min, cellSize * scale.cell);
+}
+
+function slotScale(slot: string): { min: number; cell: number } {
+  if (SLOT_PLACEMENT_SCALE[slot]) return SLOT_PLACEMENT_SCALE[slot];
+  if (slot.startsWith("animal-")) return { min: 5, cell: 0.65 };
+  if (slot.startsWith("prop-fruit")) return { min: 2.5, cell: 0.3 };
+  if (slot.startsWith("model:")) {
+    // Catalog value "model:pack/model_name" — infer from the model name segment.
+    const name = (slot.split("/").pop() ?? "").toLowerCase();
+    if (/tree|pine|palm|oak|birch/.test(name))   return { min: 22, cell: 2.4 };
+    if (/bush|shrub|hedge/.test(name))            return { min: 4,  cell: 0.5 };
+    if (/grass|plant|flower/.test(name))          return { min: 3,  cell: 0.4 };
+    if (/rock|stone|boulder/.test(name))          return { min: 4,  cell: 0.5 };
+    if (/cactus/.test(name))                      return { min: 8,  cell: 0.9 };
+    if (/log|stump/.test(name))                   return { min: 4,  cell: 0.5 };
+    if (/building|house|tower|castle/.test(name)) return { min: 15, cell: 1.8 };
+    if (/chest|crate|barrel|box/.test(name))      return { min: 5,  cell: 0.65 };
+    if (/animal|sloth|bunny|rabbit|fox|bear|duck|cow|pig|sheep|chicken|fish/.test(name))
+      return { min: 4, cell: 0.55 };
+    return { min: 8, cell: 1.0 }; // unknown catalog model: scale to ~1 cellSize
+  }
+  return DEFAULT_PLACEMENT_SCALE;
 }
