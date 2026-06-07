@@ -1,0 +1,125 @@
+{
+  "pack": "kenney-cube-pets",
+  "models": [
+    {
+      "name": "animal-beaver",
+      "file": "animal-beaver.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-bee",
+      "file": "animal-bee.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-bunny",
+      "file": "animal-bunny.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-cat",
+      "file": "animal-cat.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-caterpillar",
+      "file": "animal-caterpillar.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-chick",
+      "file": "animal-chick.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-cow",
+      "file": "animal-cow.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-crab",
+      "file": "animal-crab.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-deer",
+      "file": "animal-deer.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-dog",
+      "file": "animal-dog.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-elephant",
+      "file": "animal-elephant.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-fish",
+      "file": "animal-fish.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-fox",
+      "file": "animal-fox.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-giraffe",
+      "file": "animal-giraffe.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-hog",
+      "file": "animal-hog.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-koala",
+      "file": "animal-koala.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-lion",
+      "file": "animal-lion.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-monkey",
+      "file": "animal-monkey.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-panda",
+      "file": "animal-panda.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-parrot",
+      "file": "animal-parrot.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-penguin",
+      "file": "animal-penguin.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-pig",
+      "file": "animal-pig.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-polar",
+      "file": "animal-polar.glb",
+      "atlas": ""
+    },
+    {
+      "name": "animal-tiger",
+      "file": "animal-tiger.glb",
+      "atlas": ""
+    }
+  ]
+}

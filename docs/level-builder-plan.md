@@ -25,7 +25,11 @@ preview camera, not a controllable player ship.
 
 Current files:
 
-- `apps/studio/src/LevelBuilder.tsx` (~1500 lines — monolithic, planned refactor)
+- `apps/studio/src/LevelBuilder.tsx` (~795 lines — core state, paint/erase/rotate logic, scene wiring)
+- `apps/studio/src/level-grid.tsx`
+- `apps/studio/src/level-palette.tsx`
+- `apps/studio/src/level-panels.tsx`
+- `apps/studio/src/level-builder-types.ts`
 - `apps/studio/src/level-builder-state.ts`
 - `apps/studio/src/terrain-connectivity.ts`
 - `apps/studio/src/terrain-feature-resolver.ts`
@@ -53,10 +57,9 @@ Completed:
 - `level-prop-layer.ts` uses `SLOT_PLACEMENT_SCALE` per name category (trees:
   `{min:22,cell:2.4}`; default unknown: `{min:8,cell:1.0}`).
 - Object Y placement follows painted height.
-- `LevelBuilder.tsx` panels: `LevelPanel` (title + FPS + autosave), `PaintPanel`
-  (mode dropdown + brush shape dropdown + Clear), `PalettePanel` (search + kit
-  dropdown + eraser + tiles), `PreviewPanel` (play/pause + scrub), `GridPanel`
-  (virtualized 2D grid). All inline in the one file — refactor is planned.
+- Level Builder panels are split by role: `level-panels.tsx` (`LevelPanel`,
+  `PaintPanel`, `PreviewPanel`, confirmation), `level-palette.tsx` (`PalettePanel`),
+  and `level-grid.tsx` (`GridPanel`, virtualized 2D grid).
 - Changing grid columns uses the custom Studio confirmation box (rebuild required).
 - CSS cleanup removed stale Level Builder layout rules.
 - `model-catalog.ts` derives pack themes from Kenney pack names; category/family/shape
@@ -68,21 +71,24 @@ Completed:
   filters, usage checkboxes, and one selected-model normalization preview.
 - Asset Library has inferred theme and import-state filters over the full live
   Kenney pack list.
-- Terrain rotation: left-click same model cycles 0→90→180→270; right-click any cell
-  rotates terrain AND object simultaneously. Saved as `TerrainCell.rotation` /
-  `PlacedObject.rotation`.
+- Rotation: left-clicking the same terrain/object model on initial press cycles
+  0→90→180→270. Right-click rotation is mode-scoped for performance: Terrain mode
+  rotates terrain cells; Object mode rotates placed objects. Saved as
+  `TerrainCell.rotation` / `PlacedObject.rotation`.
 - Object rotation in scene: `node.addRotation(0, -deg*PI/180, 0)` (avoids
   `rotationQuaternion` conflict with direct `.rotation.y` assignment).
 - Performance: `GridCell` wrapped in `React.memo` + per-cell primitives as props +
   stable `useCallback` via `actionRef`; 600 → 1 re-renders per paint operation.
+- Performance: object/height scene sync is separate from terrain sync, and
+  `level-prop-layer.ts` diffs object cells so painting/erasing one object only
+  re-instantiates that changed cell unless dimensions or asset mappings changed.
 - `stage-pack.mjs` texture import fix: GLB relative-path `Textures/colormap.png`
   is now preserved.
 - Smart connected terrain painting (Phase 6) fully implemented — see Phase 6 below.
 
 Open:
 
-- `LevelBuilder.tsx` refactor (extract `level-grid.tsx`, `level-palette.tsx`, `level-panels.tsx`).
-- Terrain full-rebuild on every edit (no diff-based update).
+- Terrain full-rebuild on terrain edits (no terrain diff-based update yet).
 - Height does not displace terrain in the 3D view.
 - Asset-normalization presets/overrides in `level-prop-layer.ts`.
 - Confirmation/resampling workflow for changing columns without rebuilding.
@@ -102,8 +108,8 @@ Open:
 | 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette, model classification fixes. |
 | 6. Smart Terrain Painting | Done | Connected Feature brush, 16-mask resolver, catalog lookup, renderer rotation, Rebuild Connections, fallback badge, eraser re-resolves neighbors. Rotation visual verification for the SHAPE_TABLE is still recommended. |
 | 7. Height Runtime | Later | Terrain displacement and better elevation preview. |
-| 8. Object Placement Quality | Later | Diffed prop updates, normalization in runtime placement, transform controls. |
-| 9. Long-Level Editing Performance | Partial | DOM virtualization done; minimap/jump/diffed scene updates remain. |
+| 8. Object Placement Quality | Partial | Diffed prop updates done; normalization in runtime placement and transform controls remain. |
+| 9. Long-Level Editing Performance | Partial | DOM virtualization and diffed object scene updates done; minimap/jump/terrain scene diffing remain. |
 
 Current behavior:
 

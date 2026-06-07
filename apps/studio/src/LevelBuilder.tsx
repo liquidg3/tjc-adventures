@@ -92,6 +92,7 @@ export function LevelBuilder() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handleRef = useRef<SceneHandle | null>(null);
   const rafRef = useRef<number | null>(null);
+  const lastPreviewUiTickRef = useRef(0);
   const catalogOverrides = usePersistedJson<ModelCatalogOverrides>(
     MODEL_CATALOG_OVERRIDES_URL,
     EMPTY_MODEL_CATALOG_OVERRIDES,
@@ -220,10 +221,15 @@ export function LevelBuilder() {
   }, [paused]);
 
   useEffect(() => {
-    function tick() {
+    function tick(now: number) {
       const h = handleRef.current;
-      setScrollZ(h?.getLevelScrollZ() ?? 0);
-      setFps(Math.round(h?.getFps() ?? 0));
+      if (h && now - lastPreviewUiTickRef.current >= 125) {
+        lastPreviewUiTickRef.current = now;
+        const nextZ = h.getLevelScrollZ();
+        const nextFps = Math.round(h.getFps());
+        setScrollZ((current) => Math.abs(current - nextZ) >= 0.5 ? nextZ : current);
+        setFps((current) => current !== nextFps ? nextFps : current);
+      }
       rafRef.current = requestAnimationFrame(tick);
     }
     rafRef.current = requestAnimationFrame(tick);
@@ -249,7 +255,7 @@ export function LevelBuilder() {
   const cols = useMemo(() => Array.from({ length: level.columns }, (_, i) => i), [level.columns]);
   const fallbackCount = useMemo(
     () => level.layers.terrain.filter((c) => c.feature?.fallback).length,
-    [level],
+    [level.layers.terrain],
   );
 
   function paintCell(col: number, row: number, isInitialDown = false) {
@@ -286,12 +292,10 @@ export function LevelBuilder() {
       const i = cellIndex(prev, col, row);
       if (i < 0) return prev;
 
-      let changed = false;
-      const terrain = [...prev.layers.terrain];
-      const objects = [...prev.layers.objects];
-
-      const existingTerrain = prev.layers.terrain[i];
-      if (existingTerrain?.terrain) {
+      if (mode === "terrain") {
+        const existingTerrain = prev.layers.terrain[i];
+        if (!existingTerrain?.terrain) return prev;
+        const terrain = [...prev.layers.terrain];
         if (existingTerrain.feature) {
           const nextR = (((existingTerrain.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
           terrain[i] = { ...existingTerrain, feature: { ...existingTerrain.feature, rotation: nextR, manual: true } };
@@ -299,19 +303,17 @@ export function LevelBuilder() {
           const nextR = (((existingTerrain.rotation ?? 0) + 90) % 360) as TerrainRotation;
           terrain[i] = { ...existingTerrain, rotation: nextR };
         }
-        changed = true;
+        return { ...prev, layers: { ...prev.layers, terrain } };
       }
 
+      if (mode !== "object") return prev;
       const existingObjs = prev.layers.objects[i]?.objects;
-      if (existingObjs?.length) {
-        const obj = existingObjs[0];
-        const nextR = ((obj.rotation ?? 0) + 90) % 360;
-        objects[i] = { objects: [{ ...obj, rotation: nextR }, ...existingObjs.slice(1)] };
-        changed = true;
-      }
-
-      if (!changed) return prev;
-      return { ...prev, layers: { ...prev.layers, terrain, objects } };
+      if (!existingObjs?.length) return prev;
+      const objects = [...prev.layers.objects];
+      const obj = existingObjs[0];
+      const nextR = ((obj.rotation ?? 0) + 90) % 360;
+      objects[i] = { objects: [{ ...obj, rotation: nextR }, ...existingObjs.slice(1)] };
+      return { ...prev, layers: { ...prev.layers, objects } };
     });
   }
 

@@ -77,7 +77,8 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 - Terrain mode has a **Manual / Connected** sub-mode selector.
   - Manual: left-click same model cycles rotation 0→90→180→270; places new model otherwise.
   - Connected: paint a feature family (River by default); neighbor mask drives shape + rotation.
-- Right-clicking any cell rotates both the terrain and the object in that cell simultaneously.
+- Right-click rotation is mode-scoped for performance: Terrain mode rotates terrain
+  cells; Object mode rotates placed objects. Height mode ignores rotation.
 - Object mode has palette search input and kit dropdown ("All kits" + per-kit filter).
 - Brush shape: `free` (drag stroke) or `rect` (drag to fill rectangle).
 - A **Rebuild Connections** button re-resolves all non-manual feature cells.
@@ -112,11 +113,18 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
   `node.addRotation(0, -deg*PI/180, 0)` for `PlacedObject.rotation` (same
   negative-Y convention as the terrain layer — matches Babylon.js `rotationQuaternion`
   path and avoids the `.rotation.y` conflict).
+- Object preview updates are diff-based: `LevelBuilder.tsx` syncs object/height
+  changes separately from terrain changes, and `level-prop-layer.ts` only disposes
+  and re-instantiates changed object cells unless level dimensions or asset mappings
+  change.
 - Object scale uses name-category inference from `SLOT_PLACEMENT_SCALE` in
   `level-prop-layer.ts`: trees use `{min:22, cell:2.4}`; default unknown `{min:8, cell:1.0}`.
 - Catalog model values (`"model:pack/name"`) are resolved to URLs via `assetValueToUrl`.
 - `projectObjectsToLegacyCells` passes `rotation` from `PlacedObject` into the legacy
   `LevelGridCell` shape the prop layer consumes.
+- `usePersistedJson` autosaves are debounced (250ms) and support updater functions,
+  so drag painting coalesces JSON serialization/POST work instead of blocking on
+  one full-level save per cell.
 
 **UI and panels (all in LevelBuilder.tsx)**
 - `LevelPanel` — title + FPS readout + autosave indicator.
@@ -134,8 +142,9 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 
 ### What is still open (punch list for next agent)
 
-1. **Terrain full-rebuild on every edit.** `level-terrain-layer.ts` rebuilds all
-   terrain meshes on every `setLevelTerrainCells` call. No diff-based update yet.
+1. **Terrain full-rebuild on terrain edits.** `level-terrain-layer.ts` rebuilds all
+   terrain meshes on every `setLevelTerrainCells` call. Object edits no longer trigger
+   terrain sync, but terrain itself still needs a diff path.
 3. **Height does not displace terrain in the 3D view.** Height layer paints the
    grid overlay and affects object Y placement, but terrain mesh vertices are not
    displaced.

@@ -1,6 +1,8 @@
 {
   "packs": [
     "kenney-nature-kit",
-    "kenney-space-kit"
+    "kenney-space-kit",
+    "kenney-cube-pets",
+    "kenney-modular-dungeon-kit"
   ]
 }

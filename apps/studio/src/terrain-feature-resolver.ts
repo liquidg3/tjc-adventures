@@ -33,7 +33,7 @@ export function resolveTerrainFeatureModel(
   const bucket = lookup[family]?.[shape];
   if (!bucket || bucket.length === 0) return null;
   if (bucket.length === 1) return bucket[0];
-  // Stable tiebreaker: active pack → base name (ends exactly with _shape) → alphabetical.
+  // Stable tiebreaker: active pack → base name ending in the shape token → alphabetical.
   const scored = bucket
     .map((m) => ({ m, score: scoreModel(m, shape, activePackId) }))
     .sort((a, b) => b.score - a.score || a.m.name.localeCompare(b.m.name));
@@ -76,10 +76,19 @@ function scoreModel(
 ): number {
   let score = 0;
   if (activePackId && model.packId === activePackId) score += 4;
-  const lower = model.name.toLowerCase();
-  // Prefer base model whose name ends with exactly the shape (e.g. ground_riverCorner).
+  const tokens = modelNameTokens(model.name);
+  const lower = tokens.join("_");
+  // Prefer base model whose terminal token is exactly the shape (e.g. ground_riverCorner).
   // This naturally picks ground_riverCorner over ground_riverCornerSmall, ground_riverBend, etc.
-  if (lower.endsWith(`_${shape}`) || lower === shape) score += 2;
+  if (tokens[tokens.length - 1] === shape) score += 2;
   else if (lower.includes(shape)) score += 1;
   return score;
+}
+
+function modelNameTokens(name: string): string[] {
+  return name
+    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
 }

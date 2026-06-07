@@ -1,0 +1,200 @@
+{
+  "pack": "kenney-modular-dungeon-kit",
+  "models": [
+    {
+      "name": "corridor",
+      "file": "corridor.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-corner",
+      "file": "corridor-corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-end",
+      "file": "corridor-end.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-intersection",
+      "file": "corridor-intersection.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-junction",
+      "file": "corridor-junction.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-transition",
+      "file": "corridor-transition.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-wide",
+      "file": "corridor-wide.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-wide-corner",
+      "file": "corridor-wide-corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-wide-end",
+      "file": "corridor-wide-end.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-wide-intersection",
+      "file": "corridor-wide-intersection.glb",
+      "atlas": ""
+    },
+    {
+      "name": "corridor-wide-junction",
+      "file": "corridor-wide-junction.glb",
+      "atlas": ""
+    },
+    {
+      "name": "gate",
+      "file": "gate.glb",
+      "atlas": ""
+    },
+    {
+      "name": "gate-door",
+      "file": "gate-door.glb",
+      "atlas": ""
+    },
+    {
+      "name": "gate-door-window",
+      "file": "gate-door-window.glb",
+      "atlas": ""
+    },
+    {
+      "name": "gate-metal-bars",
+      "file": "gate-metal-bars.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-corner",
+      "file": "room-corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-large",
+      "file": "room-large.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-large-variation",
+      "file": "room-large-variation.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-small",
+      "file": "room-small.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-small-variation",
+      "file": "room-small-variation.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-wide",
+      "file": "room-wide.glb",
+      "atlas": ""
+    },
+    {
+      "name": "room-wide-variation",
+      "file": "room-wide-variation.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stairs",
+      "file": "stairs.glb",
+      "atlas": ""
+    },
+    {
+      "name": "stairs-wide",
+      "file": "stairs-wide.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-corner",
+      "file": "template-corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-detail",
+      "file": "template-detail.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor",
+      "file": "template-floor.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor-big",
+      "file": "template-floor-big.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor-detail",
+      "file": "template-floor-detail.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor-detail-a",
+      "file": "template-floor-detail-a.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor-layer",
+      "file": "template-floor-layer.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor-layer-hole",
+      "file": "template-floor-layer-hole.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-floor-layer-raised",
+      "file": "template-floor-layer-raised.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-wall",
+      "file": "template-wall.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-wall-corner",
+      "file": "template-wall-corner.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-wall-detail-a",
+      "file": "template-wall-detail-a.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-wall-half",
+      "file": "template-wall-half.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-wall-stairs",
+      "file": "template-wall-stairs.glb",
+      "atlas": ""
+    },
+    {
+      "name": "template-wall-top",
+      "file": "template-wall-top.glb",
+      "atlas": ""
+    }
+  ]
+}
