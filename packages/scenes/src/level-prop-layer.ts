@@ -122,7 +122,9 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       const targetH = targetHeightForSlot(cell.prop, cellSize);
       const s = rootMesh ? fitScale(rootMesh as AbstractMesh, targetH) : 1;
       node.scaling.setAll(s);
-      if (cell.rotation) node.rotation.y = cell.rotation * Math.PI / 180;
+      // addRotation handles both rotationQuaternion (set by GLB loader) and Euler rotation.
+      // Direct assignment to rotation.y is silently ignored when rotationQuaternion is active.
+      if (cell.rotation) node.addRotation(0, -cell.rotation * Math.PI / 180, 0);
       node.position.set(baseX, (cell.height ?? 0) * HEIGHT_STEP_WU, baseZ - scrollZ);
       placed.push({ node, baseZ });
     }
