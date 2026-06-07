@@ -1,5 +1,7 @@
 import {
   Fragment,
+  memo,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -260,8 +262,6 @@ export function LevelBuilder() {
   );
 
   function paintCell(col: number, row: number, isInitialDown = false) {
-    const i = cellIndex(level, col, row);
-    if (i < 0) return;
     if (eraseActive) { eraseCell(col, row); return; }
     if (mode === "terrain") {
       if (terrainBrushMode === "connected") paintConnectedFeature(col, row);
@@ -477,36 +477,41 @@ export function LevelBuilder() {
     setBrushShape(shape);
   }
 
-  function handleCellDown(col: number, row: number) {
+  // actionRef lets the stable useCallback handlers always call the latest version
+  // of paintCell/rotateCellTerrain/etc. without capturing stale closures.
+  const actionRef = useRef({ paintCell, rotateCellTerrain, brushShape, commitRect });
+  actionRef.current = { paintCell, rotateCellTerrain, brushShape, commitRect };
+
+  const handleCellDown = useCallback((col: number, row: number) => {
     pointerDown.current = true;
-    if (brushShape === "rect") {
+    if (actionRef.current.brushShape === "rect") {
       rectAnchorRef.current = { col, row };
       setRectPreview({ minCol: col, maxCol: col, minRow: row, maxRow: row });
     } else {
-      paintCell(col, row, true);
+      actionRef.current.paintCell(col, row, true);
     }
-  }
+  }, []);
 
-  function handleCellRightDown(col: number, row: number) {
-    rotateCellTerrain(col, row);
-  }
+  const handleCellRightDown = useCallback((col: number, row: number) => {
+    actionRef.current.rotateCellTerrain(col, row);
+  }, []);
 
-  function handleCellEnter(col: number, row: number) {
+  const handleCellEnter = useCallback((col: number, row: number) => {
     if (!pointerDown.current) return;
-    if (brushShape === "rect" && rectAnchorRef.current) {
+    if (actionRef.current.brushShape === "rect" && rectAnchorRef.current) {
       const a = rectAnchorRef.current;
       setRectPreview({
         minCol: Math.min(a.col, col), maxCol: Math.max(a.col, col),
         minRow: Math.min(a.row, row), maxRow: Math.max(a.row, row),
       });
-    } else if (brushShape === "free") {
-      paintCell(col, row);
+    } else if (actionRef.current.brushShape === "free") {
+      actionRef.current.paintCell(col, row);
     }
-  }
+  }, []);
 
   function handleGridUp() {
-    if (brushShape === "rect" && pointerDown.current && rectPreview) {
-      commitRect(rectPreview);
+    if (actionRef.current.brushShape === "rect" && pointerDown.current && rectPreview) {
+      actionRef.current.commitRect(rectPreview);
     }
     pointerDown.current = false;
     rectAnchorRef.current = null;
@@ -1294,21 +1299,35 @@ function GridPanel({
                 <div className={`lb-row-gutter${row === currentGridRow ? " lb-row-gutter-current" : ""}`}>
                   {row === currentGridRow ? "▲" : level.rows - row}
                 </div>
-                {cols.map((col) => (
-                  <GridCell
-                    key={`${col}-${row}`}
-                    col={col}
-                    row={row}
-                    mode={mode}
-                    level={level}
-                    current={row === currentGridRow}
-                    slotColor={slotColor}
-                    inRectPreview={rectPreview != null && col >= rectPreview.minCol && col <= rectPreview.maxCol && row >= rectPreview.minRow && row <= rectPreview.maxRow}
-                    onCellDown={onCellDown}
-                    onCellEnter={onCellEnter}
-                    onCellRightDown={onCellRightDown}
-                  />
-                ))}
+                {cols.map((col) => {
+                  const i = row * level.columns + col;
+                  const terrainCell = level.layers.terrain[i];
+                  const terrain = terrainCell?.terrain;
+                  const object = level.layers.objects[i]?.objects?.[0]?.slot;
+                  const height = level.layers.height[i]?.height ?? 0;
+                  const featureClass = terrainCell?.feature
+                    ? (terrainCell.feature.fallback ? "fallback" : "feature")
+                    : "";
+                  return (
+                    <GridCell
+                      key={`${col}-${row}`}
+                      col={col}
+                      row={row}
+                      mode={mode}
+                      terrain={terrain}
+                      object={object}
+                      height={height}
+                      featureClass={featureClass}
+                      title={cellTitle(col, row, terrainCell, object, height)}
+                      current={row === currentGridRow}
+                      slotColor={slotColor}
+                      inRectPreview={rectPreview != null && col >= rectPreview.minCol && col <= rectPreview.maxCol && row >= rectPreview.minRow && row <= rectPreview.maxRow}
+                      onCellDown={onCellDown}
+                      onCellEnter={onCellEnter}
+                      onCellRightDown={onCellRightDown}
+                    />
+                  );
+                })}
               </Fragment>
             ))}
           </div>
@@ -1318,11 +1337,15 @@ function GridPanel({
   );
 }
 
-function GridCell({
+const GridCell = memo(function GridCell({
   col,
   row,
   mode,
-  level,
+  terrain,
+  object,
+  height,
+  featureClass,
+  title,
   current,
   slotColor,
   inRectPreview,
@@ -1333,7 +1356,11 @@ function GridCell({
   col: number;
   row: number;
   mode: PaintMode;
-  level: Level;
+  terrain: string | undefined;
+  object: string | undefined;
+  height: number;
+  featureClass: "" | "feature" | "fallback";
+  title: string;
   current: boolean;
   slotColor: Record<string, string>;
   inRectPreview: boolean;
@@ -1341,24 +1368,19 @@ function GridCell({
   onCellEnter: (col: number, row: number) => void;
   onCellRightDown: (col: number, row: number) => void;
 }) {
-  const i = cellIndex(level, col, row);
-  const terrainCell = level.layers.terrain[i];
-  const terrain = terrainCell?.terrain;
-  const object = level.layers.objects[i]?.objects?.[0]?.slot;
-  const height = level.layers.height[i]?.height ?? 0;
   const background = cellBackgroundForMode(mode, terrain, object, height, slotColor);
 
   let cls = `lb-cell lb-cell-${mode}`;
   if (current) cls += " lb-cell-current-row";
   if (inRectPreview) cls += " lb-cell-rect-preview";
-  else if (terrainCell?.feature) cls += terrainCell.feature.fallback ? " lb-cell-feature-fallback" : " lb-cell-feature";
+  else if (featureClass) cls += featureClass === "fallback" ? " lb-cell-feature-fallback" : " lb-cell-feature";
 
   return (
     <button
       className={cls}
       type="button"
       style={{ background }}
-      title={cellTitle(col, row, terrainCell, object, height)}
+      title={title}
       onPointerDown={(e) => {
         if (e.button === 2) { e.preventDefault(); onCellRightDown(col, row); return; }
         if (e.button !== 0) return;
@@ -1372,7 +1394,7 @@ function GridCell({
       {mode === "terrain" && object && <span className="lb-object-ghost" />}
     </button>
   );
-}
+});
 
 
 function formatTime(seconds: number): string {
