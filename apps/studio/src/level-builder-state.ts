@@ -29,6 +29,8 @@ export interface TerrainCell {
   terrain?: string;
   /** Connected-feature intent. When present, shape/rotation were computed from neighbors. */
   feature?: TerrainFeatureCell;
+  /** Manual rotation applied to a non-feature terrain tile. Cycles 0→90→180→270 on same-model click. */
+  rotation?: TerrainRotation;
 }
 
 export interface HeightCell {
@@ -242,7 +244,9 @@ function mergeTerrainLayer(raw: unknown, count: number): TerrainCell[] {
       return { terrain: feature.modelId, feature };
     }
     const terrain = typeof c.terrain === "string" && c.terrain ? c.terrain : undefined;
-    return terrain ? { terrain } : {};
+    if (!terrain) return {};
+    const rotation = isTerrainRotation(c.rotation) ? c.rotation : undefined;
+    return rotation !== undefined ? { terrain, rotation } : { terrain };
   });
 }
 

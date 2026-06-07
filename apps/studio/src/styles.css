@@ -1634,6 +1634,18 @@ button:not(.studio-card):not(.lb-cell):disabled, .panel-save:disabled, .kenney-i
 }
 .lb-palette-item.on { border-image-source: var(--kui-bar-sm-green-gloss); }
 
+.lb-eraser-item { margin-top: 4px; margin-bottom: 2px; }
+.lb-eraser-item.on { border-image-source: var(--kui-bar-sm-orange-gloss, var(--kui-bar-sm-green-gloss)); }
+.lb-swatch-eraser {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ui-color-control-border) 0px,
+    var(--ui-color-control-border) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
 /* ========================================================================
  * Inputs / selects / search — Grey bar
  * ====================================================================== */

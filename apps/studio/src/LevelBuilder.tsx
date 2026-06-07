@@ -30,6 +30,7 @@ import {
   type Level,
   type TerrainCell,
   type TerrainFeatureFamily,
+  type TerrainRotation,
 } from "./level-builder-state";
 import {
   buildTerrainFeatureLookup,
@@ -57,13 +58,12 @@ const LEVEL_URL = "/__level-builder";
 const ASSET_MAP_URL = "/__asset-map";
 const MODEL_CATALOG_OVERRIDES_URL = "/__model-catalog-overrides";
 
-type PaintMode = "terrain" | "object" | "height" | "erase";
+type PaintMode = "terrain" | "object" | "height";
 
 const PAINT_MODES: Array<{ id: PaintMode; label: string }> = [
   { id: "terrain", label: "Terrain" },
   { id: "object", label: "Objects" },
   { id: "height", label: "Height" },
-  { id: "erase", label: "Erase" },
 ];
 
 const HEIGHT_LEVELS = Array.from({ length: MAX_HEIGHT + 1 }, (_, i) => i);
@@ -86,6 +86,7 @@ export function LevelBuilder() {
   const [terrainBrushMode, setTerrainBrushMode] = useState<"manual" | "connected">("manual");
   const [connectedFamily, setConnectedFamily] = useState<TerrainFeatureFamily>("river");
   const [brushShape, setBrushShape] = useState<"free" | "rect">("free");
+  const [eraseActive, setEraseActive] = useState(false);
   const rectAnchorRef = useRef<{ col: number; row: number } | null>(null);
   const [rectPreview, setRectPreview] = useState<{ minCol: number; maxCol: number; minRow: number; maxRow: number } | null>(null);
   const [assignedSlots, setAssignedSlots] = useState<string[]>([]);
@@ -210,7 +211,7 @@ export function LevelBuilder() {
     const terrainPreviewCells = level.layers.terrain.map((cell) => ({
       terrain: cell.terrain,
       color: cell.terrain ? slotColor[cell.terrain] : undefined,
-      rotation: cell.feature?.rotation,
+      rotation: cell.feature?.rotation ?? cell.rotation,
     }));
     handleRef.current.setLevelTerrainCells(
       terrainPreviewCells as LevelTerrainCell[],
@@ -258,25 +259,51 @@ export function LevelBuilder() {
     [level],
   );
 
-  function paintCell(col: number, row: number) {
+  function paintCell(col: number, row: number, isInitialDown = false) {
     const i = cellIndex(level, col, row);
     if (i < 0) return;
+    if (eraseActive) { eraseCell(col, row); return; }
     if (mode === "terrain") {
       if (terrainBrushMode === "connected") paintConnectedFeature(col, row);
-      else paintTerrainManual(col, row);
+      else paintTerrainManual(col, row, isInitialDown);
     } else if (mode === "object") paintObject(col, row);
-    else if (mode === "height") paintHeight(col, row);
-    else eraseCell(col, row);
+    else paintHeight(col, row);
   }
 
-  function paintTerrainManual(col: number, row: number) {
+  function paintTerrainManual(col: number, row: number, allowRotate = false) {
     if (!selectedTerrain) return;
     setLevel((prev) => {
       const i = cellIndex(prev, col, row);
-      if (i < 0 || prev.layers.terrain[i]?.terrain === selectedTerrain) return prev;
+      if (i < 0) return prev;
       const terrain = [...prev.layers.terrain];
-      // Manual paint clears any connected-feature metadata on the cell.
+      const existing = prev.layers.terrain[i];
+      if (allowRotate && existing?.terrain === selectedTerrain && !existing.feature) {
+        // Same model, initial click — cycle rotation 0→90→180→270→0
+        const nextRotation = (((existing.rotation ?? 0) + 90) % 360) as TerrainRotation;
+        terrain[i] = { terrain: selectedTerrain, rotation: nextRotation };
+        return { ...prev, layers: { ...prev.layers, terrain } };
+      }
+      if (existing?.terrain === selectedTerrain && !existing.feature) return prev;
+      // New model or was a feature — place fresh (clears feature metadata).
       terrain[i] = { terrain: selectedTerrain };
+      return { ...prev, layers: { ...prev.layers, terrain } };
+    });
+  }
+
+  function rotateCellTerrain(col: number, row: number) {
+    setLevel((prev) => {
+      const i = cellIndex(prev, col, row);
+      if (i < 0) return prev;
+      const existing = prev.layers.terrain[i];
+      if (!existing?.terrain) return prev;
+      const terrain = [...prev.layers.terrain];
+      if (existing.feature) {
+        const nextRotation = (((existing.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
+        terrain[i] = { ...existing, feature: { ...existing.feature, rotation: nextRotation, manual: true } };
+      } else {
+        const nextRotation = (((existing.rotation ?? 0) + 90) % 360) as TerrainRotation;
+        terrain[i] = { ...existing, rotation: nextRotation };
+      }
       return { ...prev, layers: { ...prev.layers, terrain } };
     });
   }
@@ -385,23 +412,26 @@ export function LevelBuilder() {
   }
 
   function eraseCell(col: number, row: number) {
+    const eraseTerrain = mode === "terrain";
+    const eraseObjects = mode === "object";
+    const eraseHeight  = mode === "height";
     setLevel((prev) => {
       const i = cellIndex(prev, col, row);
       if (i < 0) return prev;
+
       if (
-        !prev.layers.terrain[i]?.terrain &&
-        !prev.layers.terrain[i]?.feature &&
-        !prev.layers.height[i]?.height &&
-        !prev.layers.objects[i]?.objects?.length
+        !(eraseTerrain && (prev.layers.terrain[i]?.terrain || prev.layers.terrain[i]?.feature)) &&
+        !(eraseObjects && prev.layers.objects[i]?.objects?.length) &&
+        !(eraseHeight  && prev.layers.height[i]?.height)
       ) return prev;
 
-      const oldFamily = prev.layers.terrain[i]?.feature?.family;
+      const oldFamily = eraseTerrain ? prev.layers.terrain[i]?.feature?.family : undefined;
       const terrain = [...prev.layers.terrain];
-      const height = [...prev.layers.height];
+      const height  = [...prev.layers.height];
       const objects = [...prev.layers.objects];
-      terrain[i] = {};
-      height[i] = {};
-      objects[i] = {};
+      if (eraseTerrain) terrain[i] = {};
+      if (eraseHeight)  height[i]  = {};
+      if (eraseObjects) objects[i] = {};
 
       // Recompute connected-feature neighbors that lost a connection.
       if (oldFamily) {
@@ -453,8 +483,12 @@ export function LevelBuilder() {
       rectAnchorRef.current = { col, row };
       setRectPreview({ minCol: col, maxCol: col, minRow: row, maxRow: row });
     } else {
-      paintCell(col, row);
+      paintCell(col, row, true);
     }
+  }
+
+  function handleCellRightDown(col: number, row: number) {
+    rotateCellTerrain(col, row);
   }
 
   function handleCellEnter(col: number, row: number) {
@@ -491,12 +525,12 @@ export function LevelBuilder() {
       for (let c = rect.minCol; c <= rect.maxCol; c++) cells.push({ col: c, row: r });
     }
     if (cells.length === 0) return;
+    if (eraseActive) { eraseRect(cells); return; }
     if (mode === "terrain") {
       if (terrainBrushMode === "connected") paintConnectedFeatureRect(cells);
       else paintTerrainManualRect(cells);
     } else if (mode === "object") paintObjectRect(cells);
-    else if (mode === "height") paintHeightRect(cells);
-    else eraseRect(cells);
+    else paintHeightRect(cells);
   }
 
   function paintTerrainManualRect(cells: Array<{ col: number; row: number }>) {
@@ -544,9 +578,12 @@ export function LevelBuilder() {
   }
 
   function eraseRect(cells: Array<{ col: number; row: number }>) {
+    const eraseTerrain = mode === "terrain";
+    const eraseObjects = mode === "object";
+    const eraseHeight  = mode === "height";
     setLevel((prev) => {
       const terrain = [...prev.layers.terrain];
-      const height = [...prev.layers.height];
+      const height  = [...prev.layers.height];
       const objects = [...prev.layers.objects];
       const erasedSet = new Set(cells.map(({ col, row }) => cellIndex(prev, col, row)).filter((i) => i >= 0));
       let changed = false;
@@ -555,11 +592,15 @@ export function LevelBuilder() {
       for (const { col, row } of cells) {
         const i = cellIndex(prev, col, row);
         if (i < 0) continue;
-        if (!terrain[i]?.terrain && !terrain[i]?.feature && !height[i]?.height && !objects[i]?.objects?.length) continue;
-        if (terrain[i]?.feature?.family) erasedFeatures.push({ col, row, family: terrain[i].feature!.family });
-        terrain[i] = {};
-        height[i] = {};
-        objects[i] = {};
+        if (
+          !(eraseTerrain && (terrain[i]?.terrain || terrain[i]?.feature)) &&
+          !(eraseObjects && objects[i]?.objects?.length) &&
+          !(eraseHeight  && height[i]?.height)
+        ) continue;
+        if (eraseTerrain && terrain[i]?.feature?.family) erasedFeatures.push({ col, row, family: terrain[i].feature!.family });
+        if (eraseTerrain) terrain[i] = {};
+        if (eraseHeight)  height[i]  = {};
+        if (eraseObjects) objects[i] = {};
         changed = true;
       }
 
@@ -676,7 +717,7 @@ export function LevelBuilder() {
           mode={mode}
           brushShape={brushShape}
           pendingClear={pendingClear}
-          onModeChange={setMode}
+          onModeChange={(m) => { setMode(m); setEraseActive(false); }}
           onBrushShapeChange={changeBrushShape}
           onRequestClear={() => setPendingClear(true)}
           onCancelClear={() => setPendingClear(false)}
@@ -696,13 +737,15 @@ export function LevelBuilder() {
           featureFamilies={featureFamilies}
           fallbackCount={fallbackCount}
           packForSlot={packForSlot}
-          onModeChange={setMode}
+          onModeChange={(m) => { setMode(m); setEraseActive(false); }}
           onTerrainSelect={setSelectedTerrain}
           onObjectSelect={setSelectedObject}
           onHeightSelect={setSelectedHeight}
           onTerrainBrushModeChange={setTerrainBrushMode}
           onConnectedFamilyChange={setConnectedFamily}
           onRebuildConnections={rebuildConnections}
+          eraseActive={eraseActive}
+          onEraseActiveChange={setEraseActive}
         />
       </aside>
 
@@ -726,6 +769,7 @@ export function LevelBuilder() {
           rectPreview={rectPreview}
           onCellDown={handleCellDown}
           onCellEnter={handleCellEnter}
+          onCellRightDown={handleCellRightDown}
           onGridUp={handleGridUp}
           onGridLeave={handleGridLeave}
         />
@@ -886,6 +930,8 @@ function PalettePanel({
   onTerrainBrushModeChange,
   onConnectedFamilyChange,
   onRebuildConnections,
+  eraseActive,
+  onEraseActiveChange,
 }: {
   loaded: boolean;
   mode: PaintMode;
@@ -907,6 +953,8 @@ function PalettePanel({
   onTerrainBrushModeChange: (mode: "manual" | "connected") => void;
   onConnectedFamilyChange: (family: TerrainFeatureFamily) => void;
   onRebuildConnections: () => void;
+  eraseActive: boolean;
+  onEraseActiveChange: (active: boolean) => void;
 }) {
   const [search, setSearch] = useState("");
   const [selectedKit, setSelectedKit] = useState<string>("all");
@@ -994,6 +1042,7 @@ function PalettePanel({
               onClick={() => {
                 onModeChange("height");
                 onHeightSelect(h);
+                onEraseActiveChange(false);
               }}
               style={{ opacity: 0.2 + (h / MAX_HEIGHT) * 0.8 }}
             >
@@ -1001,6 +1050,17 @@ function PalettePanel({
             </button>
           ))}
         </div>
+      )}
+
+      {loaded && (
+        <button
+          className={`lb-palette-item lb-eraser-item ${eraseActive ? "on" : ""}`}
+          onClick={() => onEraseActiveChange(!eraseActive)}
+          title="Erase this layer's paint. Right-click any cell to rotate it."
+        >
+          <span className="lb-swatch lb-swatch-eraser" />
+          Eraser
+        </button>
       )}
 
       {loaded && showList && paletteSlots.length === 0 && (
@@ -1041,6 +1101,7 @@ function PalettePanel({
                   key={id}
                   className={`lb-palette-item ${selected ? "on" : ""}`}
                   onClick={() => {
+                    onEraseActiveChange(false);
                     if (mode === "terrain") {
                       onModeChange("terrain");
                       onTerrainSelect(id);
@@ -1162,6 +1223,7 @@ function GridPanel({
   rectPreview,
   onCellDown,
   onCellEnter,
+  onCellRightDown,
   onGridUp,
   onGridLeave,
 }: {
@@ -1173,6 +1235,7 @@ function GridPanel({
   rectPreview: { minCol: number; maxCol: number; minRow: number; maxRow: number } | null;
   onCellDown: (col: number, row: number) => void;
   onCellEnter: (col: number, row: number) => void;
+  onCellRightDown: (col: number, row: number) => void;
   onGridUp: () => void;
   onGridLeave: () => void;
 }) {
@@ -1243,6 +1306,7 @@ function GridPanel({
                     inRectPreview={rectPreview != null && col >= rectPreview.minCol && col <= rectPreview.maxCol && row >= rectPreview.minRow && row <= rectPreview.maxRow}
                     onCellDown={onCellDown}
                     onCellEnter={onCellEnter}
+                    onCellRightDown={onCellRightDown}
                   />
                 ))}
               </Fragment>
@@ -1264,6 +1328,7 @@ function GridCell({
   inRectPreview,
   onCellDown,
   onCellEnter,
+  onCellRightDown,
 }: {
   col: number;
   row: number;
@@ -1274,6 +1339,7 @@ function GridCell({
   inRectPreview: boolean;
   onCellDown: (col: number, row: number) => void;
   onCellEnter: (col: number, row: number) => void;
+  onCellRightDown: (col: number, row: number) => void;
 }) {
   const i = cellIndex(level, col, row);
   const terrainCell = level.layers.terrain[i];
@@ -1294,13 +1360,15 @@ function GridCell({
       style={{ background }}
       title={cellTitle(col, row, terrainCell, object, height)}
       onPointerDown={(e) => {
+        if (e.button === 2) { e.preventDefault(); onCellRightDown(col, row); return; }
         if (e.button !== 0) return;
         e.preventDefault();
         onCellDown(col, row);
       }}
+      onContextMenu={(e) => e.preventDefault()}
       onPointerEnter={() => onCellEnter(col, row)}
     >
-      {(mode === "object" || mode === "erase") && object && <span className="lb-object-dot" />}
+      {mode === "object" && object && <span className="lb-object-dot" />}
       {mode === "terrain" && object && <span className="lb-object-ghost" />}
     </button>
   );
