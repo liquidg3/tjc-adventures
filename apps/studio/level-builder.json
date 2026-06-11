@@ -35737,10 +35737,25 @@
       {},
       {},
       {},
+      {
+        "objects": [
+          {
+            "id": "287:11:model:kenney-nature-kit/fence_bend",
+            "slot": "model:kenney-nature-kit/fence_bend"
+          }
+        ]
+      },
       {},
       {},
-      {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "287:14:model:kenney-nature-kit/fence_bend",
+            "slot": "model:kenney-nature-kit/fence_bend",
+            "rotation": 270
+          }
+        ]
+      },
       {},
       {},
       {},
@@ -35764,8 +35779,8 @@
       {
         "objects": [
           {
-            "id": "288:11:model:kenney-nature-kit/cliff_top_stone",
-            "slot": "model:kenney-nature-kit/cliff_top_stone",
+            "id": "288:11:model:kenney-nature-kit/cliff_waterfall_rock",
+            "slot": "model:kenney-nature-kit/cliff_waterfall_rock",
             "rotation": 180
           }
         ]
@@ -35796,9 +35811,8 @@
       {
         "objects": [
           {
-            "id": "289:11:model:kenney-nature-kit/cliff_top_stone",
-            "slot": "model:kenney-nature-kit/cliff_top_stone",
-            "rotation": 180
+            "id": "289:11:model:kenney-nature-kit/cliff_waterfall_rock",
+            "slot": "model:kenney-nature-kit/cliff_waterfall_rock"
           }
         ]
       },
@@ -35824,6 +35838,58 @@
       {},
       {},
       {},
+      {
+        "objects": [
+          {
+            "id": "290:10:model:kenney-nature-kit/cliff_rock",
+            "slot": "model:kenney-nature-kit/cliff_rock"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "290:11:model:kenney-nature-kit/cliff_rock",
+            "slot": "model:kenney-nature-kit/cliff_rock"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "291:8:model:kenney-nature-kit/cliff_rock",
+            "slot": "model:kenney-nature-kit/cliff_rock"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "291:9:model:kenney-nature-kit/cliff_rock",
+            "slot": "model:kenney-nature-kit/cliff_rock"
+          }
+        ]
+      },
       {},
       {},
       {},
@@ -35846,31 +35912,14 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "292:8:model:kenney-nature-kit/cliff_rock",
+            "slot": "model:kenney-nature-kit/cliff_rock"
+          }
+        ]
+      },
       {},
       {},
       {},
