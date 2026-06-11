@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-06 (session 4)._
+_Last updated: 2026-06-10 (session 5)._
 
 ---
 
@@ -142,9 +142,6 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 
 ### What is still open (punch list for next agent)
 
-1. **Terrain full-rebuild on terrain edits.** `level-terrain-layer.ts` rebuilds all
-   terrain meshes on every `setLevelTerrainCells` call. Object edits no longer trigger
-   terrain sync, but terrain itself still needs a diff path.
 3. **Height does not displace terrain in the 3D view.** Height layer paints the
    grid overlay and affects object Y placement, but terrain mesh vertices are not
    displaced.
@@ -209,7 +206,7 @@ packages/scenes/
   src/ground-layer.ts        one scrolling ground (style/tile + scroll + clip); the scene runs two for climate wipes
   src/zone-sequencer.ts      scroll-distance track of zones; climate boundaries drift in at scroll speed, lighting cross-fades
   src/level-prop-layer.ts    ★ Level Builder object placement layer — generation counters, in-flight promise map, SLOT_PLACEMENT_SCALE
-  src/level-terrain-layer.ts ★ Level Builder terrain mesh layer — DynamicTexture grid + GLB tiles + rotation; full-rebuild on every edit
+  src/level-terrain-layer.ts ★ Level Builder terrain mesh layer — DynamicTexture grid + GLB tiles + rotation; diff-based mesh updates (session 5)
   src/ship-materials.ts      model loading + imported-material normalization
   src/debug.ts               flaggable logging: dbg()/dbgWarn()/dbgError(); on in dev or with ?debug
   src/index.ts               re-exports ship-scene
@@ -439,8 +436,6 @@ Kenney is a pending task.
 ## Open punch list (what's NOT done)
 
 **Level Builder (active work):**
-1. **Terrain full-rebuild on every edit** — `level-terrain-layer.ts` does not diff;
-   every `setLevelTerrainCells` call rebuilds all terrain meshes.
 3. **Height does not displace terrain in the 3D view** — height layer affects object Y
    but terrain mesh vertices are not displaced.
 4. **Object rotation direction may need tuning** — negative Y matches terrain layer
@@ -472,8 +467,6 @@ Kenney is a pending task.
    update the table if wrong.
 3. **Path / road family** — curate path models in the 3D Models board, mark them for
    terrain use, verify the Connected brush works end-to-end.
-4. **Diff-based terrain updates** — replace the full-rebuild in `level-terrain-layer.ts`
-   with a diffed update so painting terrain is fast at 150+ rows.
 5. **Height displacement** — apply painted height to terrain mesh vertices in the 3D
    preview so the elevation layer has visible effect.
 6. **Legacy scenery swap** — pick Kenney nature-kit replacements for the scene's four
@@ -562,6 +555,14 @@ Kenney is a pending task.
   grid is repainted into one `DynamicTexture` with `uScale=vScale=1`; avoid GPU
   texture tiling for the grid because minified tiled dynamic textures tanked FPS
   in earlier passes. See `level-terrain-layer.ts`.
+- **Level edits must replace ONLY the layer arrays they touch.** The scene-sync
+  effects in `LevelBuilder.tsx` key on layer-array identity (`level.layers.terrain`
+  vs `.objects`/`.height`). An updater that clones all three arrays re-fires every
+  sync effect — erasing one object used to trigger a full terrain GLB rebuild this
+  way. Both scene layers (`level-prop-layer.ts`, `level-terrain-layer.ts`) now diff
+  by cell key and only dispose/re-instantiate changed cells; a partial terrain
+  update arriving before the first full build completes escalates to a full rebuild
+  (`fullBuildDone` flag) so an interrupted pass can't leave holes.
 - **Async model-placement race — use generation counters.** `level-prop-layer.ts`
   uses fire-and-forget async placement (`void loadAndPlace(...)`).
   Without a generation counter, rapid calls produce orphan meshes in the scene that are

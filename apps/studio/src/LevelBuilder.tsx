@@ -428,27 +428,33 @@ export function LevelBuilder() {
     });
   }
 
+  // Erase replaces ONLY the active mode's layer array. Replacing untouched
+  // layers gives them new identities, which re-fires their scene-sync effects —
+  // an object erase used to trigger a full terrain GLB rebuild that way.
   function eraseCell(col: number, row: number) {
-    const eraseTerrain = mode === "terrain";
-    const eraseObjects = mode === "object";
-    const eraseHeight  = mode === "height";
+    const eraseMode = mode;
     setLevel((prev) => {
       const i = cellIndex(prev, col, row);
       if (i < 0) return prev;
 
-      if (
-        !(eraseTerrain && (prev.layers.terrain[i]?.terrain || prev.layers.terrain[i]?.feature)) &&
-        !(eraseObjects && prev.layers.objects[i]?.objects?.length) &&
-        !(eraseHeight  && prev.layers.height[i]?.height)
-      ) return prev;
+      if (eraseMode === "object") {
+        if (!prev.layers.objects[i]?.objects?.length) return prev;
+        const objects = [...prev.layers.objects];
+        objects[i] = {};
+        return { ...prev, layers: { ...prev.layers, objects } };
+      }
 
-      const oldFamily = eraseTerrain ? prev.layers.terrain[i]?.feature?.family : undefined;
+      if (eraseMode === "height") {
+        if (!prev.layers.height[i]?.height) return prev;
+        const height = [...prev.layers.height];
+        height[i] = {};
+        return { ...prev, layers: { ...prev.layers, height } };
+      }
+
+      if (!(prev.layers.terrain[i]?.terrain || prev.layers.terrain[i]?.feature)) return prev;
+      const oldFamily = prev.layers.terrain[i]?.feature?.family;
       const terrain = [...prev.layers.terrain];
-      const height  = [...prev.layers.height];
-      const objects = [...prev.layers.objects];
-      if (eraseTerrain) terrain[i] = {};
-      if (eraseHeight)  height[i]  = {};
-      if (eraseObjects) objects[i] = {};
+      terrain[i] = {};
 
       // Recompute connected-feature neighbors that lost a connection.
       if (oldFamily) {
@@ -466,7 +472,7 @@ export function LevelBuilder() {
         }
       }
 
-      return { ...prev, layers: { terrain, height, objects } };
+      return { ...prev, layers: { ...prev.layers, terrain } };
     });
   }
 
@@ -599,14 +605,35 @@ export function LevelBuilder() {
     });
   }
 
+  // Same single-layer rule as eraseCell — see comment there.
   function eraseRect(cells: Array<{ col: number; row: number }>) {
-    const eraseTerrain = mode === "terrain";
-    const eraseObjects = mode === "object";
-    const eraseHeight  = mode === "height";
+    const eraseMode = mode;
     setLevel((prev) => {
+      if (eraseMode === "object") {
+        const objects = [...prev.layers.objects];
+        let changed = false;
+        for (const { col, row } of cells) {
+          const i = cellIndex(prev, col, row);
+          if (i < 0 || !objects[i]?.objects?.length) continue;
+          objects[i] = {};
+          changed = true;
+        }
+        return changed ? { ...prev, layers: { ...prev.layers, objects } } : prev;
+      }
+
+      if (eraseMode === "height") {
+        const height = [...prev.layers.height];
+        let changed = false;
+        for (const { col, row } of cells) {
+          const i = cellIndex(prev, col, row);
+          if (i < 0 || !height[i]?.height) continue;
+          height[i] = {};
+          changed = true;
+        }
+        return changed ? { ...prev, layers: { ...prev.layers, height } } : prev;
+      }
+
       const terrain = [...prev.layers.terrain];
-      const height  = [...prev.layers.height];
-      const objects = [...prev.layers.objects];
       const erasedSet = new Set(cells.map(({ col, row }) => cellIndex(prev, col, row)).filter((i) => i >= 0));
       let changed = false;
       const erasedFeatures: Array<{ col: number; row: number; family: TerrainFeatureFamily }> = [];
@@ -614,15 +641,9 @@ export function LevelBuilder() {
       for (const { col, row } of cells) {
         const i = cellIndex(prev, col, row);
         if (i < 0) continue;
-        if (
-          !(eraseTerrain && (terrain[i]?.terrain || terrain[i]?.feature)) &&
-          !(eraseObjects && objects[i]?.objects?.length) &&
-          !(eraseHeight  && height[i]?.height)
-        ) continue;
-        if (eraseTerrain && terrain[i]?.feature?.family) erasedFeatures.push({ col, row, family: terrain[i].feature!.family });
-        if (eraseTerrain) terrain[i] = {};
-        if (eraseHeight)  height[i]  = {};
-        if (eraseObjects) objects[i] = {};
+        if (!(terrain[i]?.terrain || terrain[i]?.feature)) continue;
+        if (terrain[i]?.feature?.family) erasedFeatures.push({ col, row, family: terrain[i].feature!.family });
+        terrain[i] = {};
         changed = true;
       }
 
@@ -638,7 +659,7 @@ export function LevelBuilder() {
         }
       }
 
-      return { ...prev, layers: { terrain, height, objects } };
+      return { ...prev, layers: { ...prev.layers, terrain } };
     });
   }
 

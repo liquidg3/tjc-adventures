@@ -69,12 +69,17 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
   let cellSize = 1;
   let cells: LevelTerrainCell[] = [];
   let assetUrls: Record<string, string> = {};
+  let currentAssetUrls: Record<string, string> | null = null;
   let scrollZ = 0;
   let surfaceKey = "";
   const modelCache = new Map<string, AbstractMesh | null>();
   const loadingPromises = new Map<string, Promise<void>>();
-  const placed: PlacedTerrain[] = [];
+  const placed = new Map<number, PlacedTerrain>();
+  // Incremented on every setTerrainCells call so stale async completions self-abort.
   let generation = 0;
+  // False until a full placement pass completes; a partial update arriving before
+  // that escalates back to a full rebuild so an interrupted pass can't leave holes.
+  let fullBuildDone = false;
 
   function ensureSurface(nextColumns: number, nextCellSize: number) {
     const fieldWidth = nextColumns * nextCellSize;
@@ -162,12 +167,17 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
   }
 
   function clearPlaced() {
-    for (const p of placed) p.node.dispose();
-    placed.length = 0;
+    for (const p of placed.values()) p.node.dispose();
+    placed.clear();
+  }
+
+  function disposePlacedAt(index: number) {
+    placed.get(index)?.node.dispose();
+    placed.delete(index);
   }
 
   function syncPositions() {
-    for (const p of placed) {
+    for (const p of placed.values()) {
       const z = p.baseZ - scrollZ + p.zOffset;
       p.node.position.z = z;
       p.node.setEnabled(z > PLANE_NEAR_Z - cellSize && z < PLANE_FAR_Z + cellSize);
@@ -201,12 +211,20 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
     return bounds;
   }
 
-  async function loadAndPlaceTerrain(gen: number) {
-    clearPlaced();
+  // Identity of the placed mesh for a cell — cells whose key is unchanged keep
+  // their existing instance across setTerrainCells calls. Color is texture-only,
+  // so it deliberately does not participate.
+  function meshKey(cell: LevelTerrainCell | undefined): string {
+    if (!cell?.terrain) return "";
+    const url = assetUrls[cell.terrain];
+    if (!url) return "";
+    return `${cell.terrain}|${url}|${cell.rotation ?? 0}`;
+  }
 
+  async function ensureModelsLoaded(subset: Array<LevelTerrainCell | undefined>) {
     const uniqueUrls = new Set<string>();
-    for (const cell of cells) {
-      const url = cell.terrain ? assetUrls[cell.terrain] : undefined;
+    for (const cell of subset) {
+      const url = cell?.terrain ? assetUrls[cell.terrain] : undefined;
       if (url) uniqueUrls.add(url);
     }
 
@@ -221,60 +239,103 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
       loadingPromises.set(url, p);
       return p;
     }));
+  }
 
+  function placeCell(i: number) {
+    const slot = cells[i]?.terrain;
+    if (!slot) return;
+    const url = assetUrls[slot];
+    if (!url) return;
+    const template = modelCache.get(url);
+    if (!template) return;
+
+    const col = i % columns;
+    const row = Math.floor(i / columns);
+    const baseX = (col - columns / 2 + 0.5) * cellSize;
+    const baseZ = (rows - 1 - row) * cellSize + cellSize / 2;
+    const inst = template.instantiateHierarchy(null);
+    if (!inst) return;
+
+    const node = inst as TransformNode;
+    node.setEnabled(true);
+    const meshes = node.getChildMeshes();
+    for (const m of meshes) m.setEnabled(true);
+    const bounds = getTerrainBounds(meshes);
+    if (bounds) {
+      const footprint = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) || 1;
+      node.scaling.setAll(cellSize / footprint);
+    }
+
+    const scaledBounds = getTerrainBounds(meshes);
+    const centerX = scaledBounds ? (scaledBounds.minX + scaledBounds.maxX) / 2 : 0;
+    const centerZ = scaledBounds ? (scaledBounds.minZ + scaledBounds.maxZ) / 2 : 0;
+    const minY = scaledBounds?.minY ?? 0;
+    const zOffset = -centerZ;
+    node.position.set(baseX - centerX, PLANE_Y + 0.08 - minY, baseZ - scrollZ + zOffset);
+    const rotDeg = cells[i]?.rotation ?? 0;
+    if (rotDeg) node.rotation.y = -rotDeg * Math.PI / 180;
+    placed.set(i, { node, baseZ, zOffset });
+  }
+
+  async function rebuildAll(gen: number) {
+    fullBuildDone = false;
+    clearPlaced();
+
+    await ensureModelsLoaded(cells);
     if (gen !== generation) return;
 
     for (let i = 0; i < cells.length; i++) {
-      if (gen !== generation) break;
-
-      const slot = cells[i]?.terrain;
-      if (!slot) continue;
-      const url = assetUrls[slot];
-      if (!url) continue;
-      const template = modelCache.get(url);
-      if (!template) continue;
-
-      const col = i % columns;
-      const row = Math.floor(i / columns);
-      const baseX = (col - columns / 2 + 0.5) * cellSize;
-      const baseZ = (rows - 1 - row) * cellSize + cellSize / 2;
-      const inst = template.instantiateHierarchy(null);
-      if (!inst) continue;
-
-      const node = inst as TransformNode;
-      node.setEnabled(true);
-      for (const mesh of node.getChildMeshes()) mesh.setEnabled(true);
-      const meshes = node.getChildMeshes();
-      const bounds = getTerrainBounds(meshes);
-      if (bounds) {
-        const footprint = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) || 1;
-        node.scaling.setAll(cellSize / footprint);
-      }
-
-      const scaledBounds = getTerrainBounds(meshes);
-      const centerX = scaledBounds ? (scaledBounds.minX + scaledBounds.maxX) / 2 : 0;
-      const centerZ = scaledBounds ? (scaledBounds.minZ + scaledBounds.maxZ) / 2 : 0;
-      const minY = scaledBounds?.minY ?? 0;
-      const zOffset = -centerZ;
-      node.position.set(baseX - centerX, PLANE_Y + 0.08 - minY, baseZ - scrollZ + zOffset);
-      const rotDeg = cells[i]?.rotation ?? 0;
-      if (rotDeg) node.rotation.y = -rotDeg * Math.PI / 180;
-      placed.push({ node, baseZ, zOffset });
+      if (gen !== generation) return;
+      placeCell(i);
     }
+    syncPositions();
+    fullBuildDone = true;
+  }
 
+  async function updateChanged(changed: number[], gen: number) {
+    await ensureModelsLoaded(changed.map((i) => cells[i]));
+    if (gen !== generation) return;
+
+    for (const i of changed) {
+      if (gen !== generation) return;
+      disposePlacedAt(i);
+      placeCell(i);
+    }
     syncPositions();
   }
 
   return {
     setTerrainCells(nextCells, nextColumns, nextRows, nextCellSize, nextAssetUrls) {
-      columns = Math.max(1, nextColumns);
-      rows = Math.max(1, nextRows);
-      cellSize = Math.max(0.001, nextCellSize);
+      const c = Math.max(1, nextColumns);
+      const r = Math.max(1, nextRows);
+      const s = Math.max(0.001, nextCellSize);
+      const sizeChanged =
+        c !== columns ||
+        r !== rows ||
+        s !== cellSize ||
+        nextAssetUrls !== currentAssetUrls;
+      const prevCells = cells;
+      columns = c;
+      rows = r;
+      cellSize = s;
       cells = nextCells;
       assetUrls = nextAssetUrls;
+      currentAssetUrls = nextAssetUrls;
       ensureSurface(columns, cellSize);
       repaint();
-      void loadAndPlaceTerrain(++generation);
+
+      if (sizeChanged || !fullBuildDone) {
+        void rebuildAll(++generation);
+        return;
+      }
+
+      const changed: number[] = [];
+      const count = Math.max(prevCells.length, cells.length);
+      for (let i = 0; i < count; i++) {
+        if (meshKey(prevCells[i]) !== meshKey(cells[i])) changed.push(i);
+      }
+      if (changed.length === 0) return;
+      void updateChanged(changed, ++generation);
     },
 
     setScrollZ(z) {
