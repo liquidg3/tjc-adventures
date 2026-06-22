@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-10 (session 5)._
+_Last updated: 2026-06-13 (session 6)._
 
 ---
 
@@ -35,8 +35,9 @@ _Last updated: 2026-06-10 (session 5)._
   `asset-map.json`). `scene-config.DEFAULT_SHIP_MODEL_URL` still points at the
   legacy `ship_classic.glb` as the cold-start default, but `VerticalScroller`
   fetches `asset-map.json` and immediately swaps in the Kenney ship — the legacy
-  one only appears for the ~50 ms before that fetch resolves. Scenery is still
-  the last legacy holdout (`tree_fur`, `bush`, `rocks_small`, `tree_stylized`).
+  one only appears for the ~50 ms before that fetch resolves. Legacy scenery
+  constants still exist for older/procedural scene paths, but Studio Test Play
+  disables that loader and uses the Level Builder artifact for level graphics.
 - **Studio landing:** Home groups cards into Universal Tools (3D Models / Asset
   Library / Asset Preview / UI Builder) and one section per game mode (Vertical
   Shooter, Side Scroller [coming soon], Death Race [coming soon]). Per-mode each
@@ -77,8 +78,14 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 - Terrain mode has a **Manual / Connected** sub-mode selector.
   - Manual: left-click same model cycles rotation 0→90→180→270; places new model otherwise.
   - Connected: paint a feature family (River by default); neighbor mask drives shape + rotation.
-- Right-click rotation is mode-scoped for performance: Terrain mode rotates terrain
-  cells; Object mode rotates placed objects. Height mode ignores rotation.
+    Left-click an already-connected same-family cell to rotate it manually; that
+    marks the cell `manual` so neighbor rebuilds do not overwrite it.
+- Right-click (and right-drag) is a quick-erase for the active mode's layer — it
+  bypasses the eraser toggle. Rotation is left-click-same-model only (manual
+  terrain + objects); right-click no longer rotates (session 5).
+- Palette tiles show 3D thumbnails (`model-thumbnails.ts`: ONE shared offscreen
+  Babylon engine, sequential queue, per-URL data-URL cache, idle-disposed). The
+  slot color stays as the tile border so the grid-color mapping survives.
 - Object mode has palette search input and kit dropdown ("All kits" + per-kit filter).
 - Brush shape: `free` (drag stroke) or `rect` (drag to fill rectangle).
 - A **Rebuild Connections** button re-resolves all non-manual feature cells.
@@ -107,16 +114,67 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 **3D preview**
 - `level-terrain-layer.ts` renders a scrolling grid of terrain GLBs; one `DynamicTexture`
   paints the authored grid color as a fallback / editor surface.
+- Authored terrain catches the player ship shadow: both the DynamicTexture runway
+  mesh and model-backed terrain GLB child meshes set `receiveShadows = true`.
+- The ship shadow uses Babylon's real shadow map, not a fake blob/disc. The scene
+  explicitly registers the ship root and child meshes as shadow casters so the
+  projected silhouette is model-shaped on authored terrain.
+- Refresh hardening: `ship-controller.ts` creates a visible fallback ship immediately
+  and keeps it until the assigned Kenney player ship successfully replaces it, so
+  the default-ship load and asset-map ship swap cannot leave Test Play with no
+  visible player. `vertical-scroller-state.ts` also clamps `shipSize` and
+  `altitude` read from `#vertical?...` hash params.
+- Studio Test Play clamps level scrolling before the last authored rows leave the
+  play area (`stopAtLevelEndHold: true`), leaving the end of the Level Builder
+  artifact on screen for the later boss-fight hold instead of exposing fallback
+  terrain past the authored run.
 - Terrain cell `rotation` is applied in the scene via `LevelTerrainCell.rotation`;
-  `level-terrain-layer.ts` passes `−rotation×π/180` on the Y axis.
+  `level-terrain-layer.ts` applies `−rotation×π/180` on the Y axis via `addRotation`
+  so GLB roots with `rotationQuaternion` actually rotate.
 - `level-prop-layer.ts` places objects at their grid world positions; applies
   `node.addRotation(0, -deg*PI/180, 0)` for `PlacedObject.rotation` (same
   negative-Y convention as the terrain layer — matches Babylon.js `rotationQuaternion`
   path and avoids the `.rotation.y` conflict).
+- Vertical Shooter **Test Play** now loads the persisted `level-builder.json`
+  (`/__level-builder`) and feeds the same terrain/object projections into the
+  shared scene, so it flies the authored Level Builder run instead of only the
+  procedural ground/scenery setup. Test Play also calls `setBaseGroundVisible(false)`
+  so the old procedural/tiled base ground does not show through at authored
+  terrain edges; Level Builder keeps its own editor-background setup. The old
+  Zone Plan / Ground / Scenery Test Play panels are gone — the Level Builder
+  artifact is the level-graphics source of truth. Test Play keeps player,
+  camera, lighting, and render controls plus an authored-run pause/restart panel.
 - Object preview updates are diff-based: `LevelBuilder.tsx` syncs object/height
   changes separately from terrain changes, and `level-prop-layer.ts` only disposes
   and re-instantiates changed object cells unless level dimensions or asset mappings
   change.
+- Level Builder perf metrics are exposed through `SceneHandle.getPerfMetrics()` and
+  sampled into the `LevelPanel` every 750ms. Safari console helper:
+  `window.__tjcSceneMetrics?.()` returns the latest sampled scene buckets. Key buckets:
+  `frame.render`, `frame.syncLevelScroll`, `terrain.repaint`,
+  `terrain.place.update`, `props.place.update`, and API setter timings.
+- Terrain GLB placement is scene-virtualized to the camera-visible band:
+  `level-terrain-layer.ts` keeps the cheap painted dynamic-texture plane across
+  the full terrain runway, but only places model-backed terrain cells in a row
+  window around the ship/play position. The Level Builder Preview panel exposes
+  **Back Rows** and **Forward Rows** controls that call
+  `setLevelTerrainRenderWindowRows(back, forward)` live; values persist in
+  `level-builder.json` under `preview.terrainRenderRowsBack` and
+  `preview.terrainRenderRowsForward` and are also applied by Test Play. Defaults
+  are 6 back / 14 forward. Tune those values while watching FPS and top-edge
+  pop-in instead of expanding hard-coded world-Z bounds. Do not go back to
+  instantiating every painted terrain cell; a 32-column five-minute level produced
+  ~15k meshes / ~7.5k active meshes / ~11.8M vertices and spent ~18ms/frame in
+  Babylon active-mesh evaluation.
+- Placed terrain/object roots and child meshes freeze their world matrices after
+  placement or scroll-position updates. If models need to move every frame later,
+  unfreeze before mutating transforms and refreeze afterward.
+- Perf stats now include layer-specific counts: `stats.terrainCells`,
+  `stats.terrainMeshes`, `stats.propCells`, `stats.propMeshes`.
+- Paused/idle scroll sync is guarded: `ship-scene.ts`, `level-terrain-layer.ts`,
+  and `level-prop-layer.ts` skip repeated scroll-position work when `scrollZ` has
+  not changed. If idle FPS drops, first check whether `terrain.repaint` or
+  `frame.syncLevelScroll` is still appearing in the perf readout.
 - Object scale uses name-category inference from `SLOT_PLACEMENT_SCALE` in
   `level-prop-layer.ts`: trees use `{min:22, cell:2.4}`; default unknown `{min:8, cell:1.0}`.
 - Catalog model values (`"model:pack/name"`) are resolved to URLs via `assetValueToUrl`.
@@ -127,10 +185,13 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
   one full-level save per cell.
 
 **UI and panels (all in LevelBuilder.tsx)**
-- `LevelPanel` — title + FPS readout + autosave indicator.
+- `LevelPanel` — title + FPS readout + autosave indicator + top perf buckets
+  (`avg / max ms`; hover for full bucket names and sample counts).
 - `PaintPanel` — mode dropdown + brush shape dropdown (free/rect) + Clear button.
-- `PalettePanel` — search input + kit dropdown + eraser button + model tiles.
-- `PreviewPanel` — play/pause + scrub slider.
+- `PalettePanel` — search input + kit dropdown + eraser button + square two-column
+  visual model tiles. Tile names are hover/ARIA only; the thumbnail is the visible
+  card content.
+- `PreviewPanel` — play/pause + scrub slider + terrain GLB row-window controls.
 - `GridPanel` — virtualized 2D grid (React.memo + per-cell primitives + stable
   useCallback via `actionRef`); 600 → 1 re-renders per paint operation.
 - Layout: `lb-page` fixed full-viewport; scene canvas fills the background; left
@@ -149,9 +210,10 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
    layer convention; needs visual verification in the 3D preview.
 5. **Enemies don't spawn.** `asset-map.json` has `ship-enemy = craft_miner` but
    nothing in the scene spawns enemies yet.
-6. **Scenery uses legacy `/models/environment/` GLBs.** `scene-config.SCENERY_MODELS`
-   still references `tree_fur`, `bush`, `rocks_small`, `tree_stylized`. Needs swap
-   to Kenney nature-kit models.
+6. **Legacy scenery constants remain for older scene paths.** `scene-config.SCENERY_MODELS`
+   still references `tree_fur`, `bush`, `rocks_small`, `tree_stylized`, but Studio
+   Test Play starts the scene with `loadProceduralScenery: false`. Swap/delete these
+   only when cleaning up the legacy procedural scene path.
 7. **Rotation visual verification.** The `SHAPE_TABLE` in `terrain-connectivity.ts`
    assumes Kenney river models are authored N-S-straight at rotation=0, N+E-corner
    at rotation=0. See `VISUAL INSPECTION REQUIRED` comment in that file. Load the
@@ -278,10 +340,12 @@ A tilted 2.5D vertical scroller (Raiden-style). `createShipScene(canvas)` return
 
 ```
 dispose, setCameraRotationMode, setShipHeight, setShipSize, getShipPosition,
-resetShip, setGroundStyle, setPixelScale, setLightingPreset,
+resetShip, setGroundStyle, setBaseGroundVisible, setPixelScale, setLightingPreset,
 setSunIntensity, setSkyIntensity, setSunAzimuth, setSunElevation, getLightingState,
 setLevelPlan, getZoneStatus, setScenery,
-setLevelCells, setLevelTerrainCells, setLevelScrollPaused, getLevelScrollZ, getFps
+setLevelCells, setLevelTerrainCells, setLevelTerrainRenderWindowRows,
+setLevelScrollPaused, setLevelScrollZ,
+getLevelScrollZ, getLevelTotalDepth, getFps, getPerfMetrics
 (+ setGroundTile, setPipelineMode, setRtHeight, ship-light setters)
 ```
 
@@ -302,21 +366,11 @@ setLevelCells, setLevelTerrainCells, setLevelScrollPaused, getLevelScrollZ, getF
 - `level-terrain-layer.ts` places authored terrain tiles as GLB meshes + a
   DynamicTexture fallback grid.
 
-**Zone plan (level sequencer).** `setLevelPlan({ zones })` runs an auto-scrolling
-track: the ship advances at `SCROLL`, each zone (climate) occupies `lengthSec` of
-travel, and zone boundaries are marks on the track that map to a world-Z and drift
-toward the camera **at scroll speed** — a boundary is a real line you fly through,
-drawn by clipping a second `ground-layer` to the far side of the seam. Lighting
-cross-fades as the seam crosses the field. `getZoneStatus()` reports the current
-zone; pass `null` to return to manual control. In the Studio, the **Zone Plan**
-panel owns the zone list, and the **selected zone is mirrored into the live look**
-so the existing **Ground**, **Lighting**, **Ship Lighting**, and **Scenery**
-panels edit it (no duplicate controls) — ground, sun lighting, ship (PBR) lighting,
-and scenery are all per-zone and cross-fade as the climate seam crosses the field.
-Zones persist in `vertical-defaults.json` (`blendSec` is vestigial — the
-transition speed is the scroll speed). Default plan = Meadow → Woodland → Canyon →
-Approach (see `docs/prototype-meadow-run.md`). While a plan plays the sequencer
-owns ground + lighting; the manual panels drive the scene only when stopped.
+**Zone plan / procedural graphics are legacy.** `setLevelPlan`, `ground-layer`,
+`ground-texture`, and `prop-field` still exist in the shared scene for compatibility
+and older experiments, but Studio Test Play no longer uses them for level graphics.
+The persisted Level Builder artifact (`level-builder.json`) drives authored
+terrain and object visuals through `setLevelTerrainCells` and `setLevelCells`.
 
 **Current tunables (constants at the top of the file):**
 
@@ -341,12 +395,11 @@ owns ground + lighting; the manual panels drive the scene only when stopped.
 
 Live panels around the canvas (all **collapsed by default**; click a header to open):
 
-- **Zone Plan** (the level's ordered climates; selecting a zone mirrors it into the
-  Ground/Lighting/Ship-Lighting/Scenery panels so they edit *that* zone)
+- **Level Run** (authored-level pause/resume, progress, restart)
 - **Ship Size** (slider) · **Ship Position** (live x/y/z readout + "Reset to start")
 - **Camera Rotation** (the 7 modes) · **Ship Altitude** (slider)
-- **Ground** (4 styles) · **Lighting** (5 presets + Sun / Sky / Angle / Height sliders)
-- **Ship Lighting** (PBR) · **Scenery** (per-model density) · **Pixelate** (Off / 2× / 3× / 4×)
+- **Lighting** (5 presets + Sun / Sky / Angle / Height sliders)
+- **Ship Lighting** (PBR) · **Pixelate** (Off / 2× / 3× / 4×) · **Render Pipeline**
 
 Each panel maps to a `SceneHandle` method. The Ship-Position readout is how QE
 reports good coordinates back; that's why `getShipPosition`/`resetShip` exist.
@@ -425,11 +478,11 @@ if we want more variety or a complementary style):
 (153). The game-client has its own `public/models` to sync when the scene's runtime
 models change.
 
-**Still legacy (pending the scene swap):** `public/models/ships/ship_classic.glb` and
+**Still legacy (pending cleanup):** `public/models/ships/ship_classic.glb` and
 `public/models/environment/{bush,rocks_small,tree_fur,tree_stylized}.glb` — the *only*
-non-Kenney files left, kept because `packages/scenes` still loads them
-(`DEFAULT_SHIP_MODEL_URL`, `SCENERY_MODELS` in `scene-config.ts`). Swapping these to
-Kenney is a pending task.
+non-Kenney files left. Studio Test Play no longer loads the environment props,
+but older scene paths can still opt into `SCENERY_MODELS`. Swapping or deleting
+these belongs with cleanup of the legacy procedural scene path.
 
 ---
 
@@ -449,9 +502,10 @@ Kenney is a pending task.
    the active row can scroll offscreen with no way to jump back.
 
 **Art pipeline:**
-8. **Scene still runs legacy models** — `scene-config.SCENERY_MODELS` loads the four
-   non-Kenney `environment/` props. Swap to Kenney nature-kit replacements, delete
-   legacy files, sync `apps/game-client/public/models`.
+8. **Legacy procedural scenery cleanup** — `scene-config.SCENERY_MODELS` still points
+   at four non-Kenney `environment/` props for older scene paths. Studio Test Play
+   disables procedural scenery loading; cleanup can either delete the old path or
+   repoint it to Kenney replacements.
 
 **Gameplay (not started — pilot-flight only):**
 9. No shooting / enemies / pickups / rescue / cages yet. `asset-map.json` has
@@ -469,9 +523,8 @@ Kenney is a pending task.
    terrain use, verify the Connected brush works end-to-end.
 5. **Height displacement** — apply painted height to terrain mesh vertices in the 3D
    preview so the elevation layer has visible effect.
-6. **Legacy scenery swap** — pick Kenney nature-kit replacements for the scene's four
-   `environment/` props, repoint `scene-config.SCENERY_MODELS`, delete the legacy
-   files, sync `apps/game-client/public/models`.
+6. **Legacy procedural cleanup** — decide whether to delete the old procedural
+   scenery path or repoint `scene-config.SCENERY_MODELS` to Kenney replacements.
 7. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
    simple straight-line enemies streaming down-screen, no shooting yet. Per

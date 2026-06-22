@@ -7,6 +7,8 @@ import {
   type Scene,
   type TransformNode,
 } from "@babylonjs/core";
+import type { PerfRecorder } from "./perf-metrics";
+import { SHIP_START_Z } from "./scene-config";
 import { loadRawModel } from "./ship-materials";
 
 export interface LevelTerrainCell {
@@ -23,7 +25,9 @@ export interface LevelTerrainLayerController {
     cellSize: number,
     assetUrlMap: Record<string, string>,
   ): void;
+  setRenderWindowRows(backRows: number, forwardRows: number): void;
   setScrollZ(z: number): void;
+  getStats(): { placedCells: number; placedMeshes: number };
   dispose(): void;
 }
 
@@ -33,6 +37,12 @@ const PLANE_CENTER_Z = 400;
 const PLANE_NEAR_Z = PLANE_CENTER_Z - PLANE_DEPTH / 2;
 const PLANE_FAR_Z = PLANE_CENTER_Z + PLANE_DEPTH / 2;
 const CELL_PX = 12;
+// The cheap dynamic texture covers the full runway; GLB terrain stays
+// row-windowed around the ship so the builder does not flood the scene with
+// active meshes.
+const DEFAULT_MODEL_ROWS_BACK = 6;
+const DEFAULT_MODEL_ROWS_FORWARD = 14;
+const MAX_MODEL_WINDOW_ROWS = 96;
 const MIN_TEX_SIZE = 64;
 const MAX_TEX_SIZE = 4096;
 const EMPTY_GROUND = "#f6f8ef";
@@ -47,6 +57,7 @@ interface PlacedTerrain {
   node: TransformNode;
   baseZ: number;
   zOffset: number;
+  meshCount: number;
 }
 
 interface TerrainBounds {
@@ -57,7 +68,7 @@ interface TerrainBounds {
   maxZ: number;
 }
 
-export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerController {
+export function createLevelTerrainLayer(scene: Scene, perf?: PerfRecorder): LevelTerrainLayerController {
   let mesh: ReturnType<typeof MeshBuilder.CreateGround> | null = null;
   let mat: StandardMaterial | null = null;
   let tex: DynamicTexture | null = null;
@@ -72,6 +83,9 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
   let currentAssetUrls: Record<string, string> | null = null;
   let scrollZ = 0;
   let surfaceKey = "";
+  let visiblePlacementKey = "";
+  let renderRowsBack = DEFAULT_MODEL_ROWS_BACK;
+  let renderRowsForward = DEFAULT_MODEL_ROWS_FORWARD;
   const modelCache = new Map<string, AbstractMesh | null>();
   const loadingPromises = new Map<string, Promise<void>>();
   const placed = new Map<number, PlacedTerrain>();
@@ -113,9 +127,11 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
     mesh.position.set(0, PLANE_Y, PLANE_CENTER_Z);
     mesh.material = mat;
     mesh.isPickable = false;
+    mesh.receiveShadows = true;
   }
 
   function repaint() {
+    const t0 = performance.now();
     if (!ctx || !tex || columns <= 0 || rows <= 0 || cellSize <= 0) return;
 
     ctx.clearRect(0, 0, texW, texH);
@@ -164,6 +180,7 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
     }
 
     tex.update();
+    perf?.sample("terrain.repaint", performance.now() - t0);
   }
 
   function clearPlaced() {
@@ -177,11 +194,54 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
   }
 
   function syncPositions() {
+    const bounds = renderWindowBounds();
     for (const p of placed.values()) {
       const z = p.baseZ - scrollZ + p.zOffset;
+      unfreezeNode(p.node);
       p.node.position.z = z;
-      p.node.setEnabled(z > PLANE_NEAR_Z - cellSize && z < PLANE_FAR_Z + cellSize);
+      p.node.setEnabled(z > bounds.nearZ - cellSize && z < bounds.farZ + cellSize);
+      freezeNode(p.node);
     }
+  }
+
+  function renderWindowBounds() {
+    return {
+      nearZ: SHIP_START_Z - renderRowsBack * cellSize,
+      farZ: SHIP_START_Z + renderRowsForward * cellSize,
+    };
+  }
+
+  function visibleRowRange(): { first: number; last: number } {
+    if (columns <= 0 || rows <= 0 || cellSize <= 0) return { first: 0, last: -1 };
+    const { nearZ, farZ } = renderWindowBounds();
+    const first = Math.max(
+      0,
+      Math.floor((rows * cellSize - (farZ + scrollZ)) / cellSize),
+    );
+    const last = Math.min(
+      rows - 1,
+      Math.ceil((rows * cellSize - (nearZ + scrollZ)) / cellSize),
+    );
+    return { first, last };
+  }
+
+  function visiblePlacementIndices(): number[] {
+    const { first, last } = visibleRowRange();
+    if (last < first) return [];
+    const indices: number[] = [];
+    for (let row = first; row <= last; row++) {
+      const base = row * columns;
+      for (let col = 0; col < columns; col++) {
+        const i = base + col;
+        if (meshKey(cells[i])) indices.push(i);
+      }
+    }
+    return indices;
+  }
+
+  function nextVisiblePlacementKey(): string {
+    const { first, last } = visibleRowRange();
+    return `${first}:${last}:${columns}:${rows}:${cellSize}`;
   }
 
   function getTerrainBounds(meshes: AbstractMesh[]): TerrainBounds | null {
@@ -259,7 +319,10 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
     const node = inst as TransformNode;
     node.setEnabled(true);
     const meshes = node.getChildMeshes();
-    for (const m of meshes) m.setEnabled(true);
+    for (const m of meshes) {
+      m.setEnabled(true);
+      setReceiveShadows(m);
+    }
     const bounds = getTerrainBounds(meshes);
     if (bounds) {
       const footprint = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) || 1;
@@ -273,35 +336,85 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
     const zOffset = -centerZ;
     node.position.set(baseX - centerX, PLANE_Y + 0.08 - minY, baseZ - scrollZ + zOffset);
     const rotDeg = cells[i]?.rotation ?? 0;
-    if (rotDeg) node.rotation.y = -rotDeg * Math.PI / 180;
-    placed.set(i, { node, baseZ, zOffset });
+    // addRotation handles GLB roots with rotationQuaternion. Direct assignment to
+    // rotation.y can be ignored when a quaternion is active.
+    if (rotDeg) node.addRotation(0, -rotDeg * Math.PI / 180, 0);
+    freezeNode(node);
+    placed.set(i, { node, baseZ, zOffset, meshCount: meshes.length });
   }
 
   async function rebuildAll(gen: number) {
     fullBuildDone = false;
     clearPlaced();
+    visiblePlacementKey = nextVisiblePlacementKey();
+    const visible = visiblePlacementIndices();
 
-    await ensureModelsLoaded(cells);
+    const loadT0 = performance.now();
+    await ensureModelsLoaded(visible.map((i) => cells[i]));
+    perf?.sample("terrain.loadModels", performance.now() - loadT0);
     if (gen !== generation) return;
 
-    for (let i = 0; i < cells.length; i++) {
+    const placeT0 = performance.now();
+    for (const i of visible) {
       if (gen !== generation) return;
       placeCell(i);
     }
     syncPositions();
+    perf?.sample("terrain.place.rebuild", performance.now() - placeT0);
     fullBuildDone = true;
   }
 
   async function updateChanged(changed: number[], gen: number) {
-    await ensureModelsLoaded(changed.map((i) => cells[i]));
+    perf?.count("terrain.changedCells", changed.length);
+    const visibleSet = new Set(visiblePlacementIndices());
+    const visibleChanged = changed.filter((i) => visibleSet.has(i));
+    const loadT0 = performance.now();
+    await ensureModelsLoaded(visibleChanged.map((i) => cells[i]));
+    perf?.sample("terrain.loadModels", performance.now() - loadT0);
     if (gen !== generation) return;
 
+    const placeT0 = performance.now();
     for (const i of changed) {
       if (gen !== generation) return;
       disposePlacedAt(i);
+      if (visibleSet.has(i)) placeCell(i);
+    }
+    syncPositions();
+    perf?.sample("terrain.place.update", performance.now() - placeT0);
+  }
+
+  async function syncVisiblePlacement(gen: number) {
+    const nextKey = nextVisiblePlacementKey();
+    if (nextKey === visiblePlacementKey && fullBuildDone) {
+      syncPositions();
+      return;
+    }
+    visiblePlacementKey = nextKey;
+    const visible = visiblePlacementIndices();
+    const visibleSet = new Set(visible);
+
+    for (const index of [...placed.keys()]) {
+      if (!visibleSet.has(index)) disposePlacedAt(index);
+    }
+
+    const toPlace = visible.filter((index) => !placed.has(index));
+    if (toPlace.length === 0) {
+      syncPositions();
+      return;
+    }
+
+    const loadT0 = performance.now();
+    await ensureModelsLoaded(toPlace.map((i) => cells[i]));
+    perf?.sample("terrain.loadModels", performance.now() - loadT0);
+    if (gen !== generation) return;
+
+    const placeT0 = performance.now();
+    for (const i of toPlace) {
+      if (gen !== generation) return;
       placeCell(i);
     }
     syncPositions();
+    perf?.sample("terrain.place.visible", performance.now() - placeT0);
   }
 
   return {
@@ -338,10 +451,28 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
       void updateChanged(changed, ++generation);
     },
 
+    setRenderWindowRows(backRows, forwardRows) {
+      const nextBack = clamp(Math.round(backRows), 0, MAX_MODEL_WINDOW_ROWS);
+      const nextForward = clamp(Math.round(forwardRows), 0, MAX_MODEL_WINDOW_ROWS);
+      if (nextBack === renderRowsBack && nextForward === renderRowsForward) return;
+      renderRowsBack = nextBack;
+      renderRowsForward = nextForward;
+      void syncVisiblePlacement(++generation);
+    },
+
     setScrollZ(z) {
-      scrollZ = Math.max(0, z);
+      const nextZ = Math.max(0, z);
+      if (Math.abs(nextZ - scrollZ) < 0.001) return;
+      scrollZ = nextZ;
       repaint();
-      syncPositions();
+      const needsPlacementSync = !fullBuildDone || nextVisiblePlacementKey() !== visiblePlacementKey;
+      if (needsPlacementSync) void syncVisiblePlacement(++generation);
+      else syncPositions();
+    },
+    getStats() {
+      let placedMeshes = 0;
+      for (const p of placed.values()) placedMeshes += p.meshCount;
+      return { placedCells: placed.size, placedMeshes };
     },
 
     dispose() {
@@ -362,4 +493,23 @@ export function createLevelTerrainLayer(scene: Scene): LevelTerrainLayerControll
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
+}
+
+function freezeNode(node: TransformNode) {
+  node.freezeWorldMatrix();
+  for (const mesh of node.getChildMeshes()) mesh.freezeWorldMatrix();
+}
+
+function unfreezeNode(node: TransformNode) {
+  node.unfreezeWorldMatrix();
+  for (const mesh of node.getChildMeshes()) mesh.unfreezeWorldMatrix();
+}
+
+function setReceiveShadows(mesh: AbstractMesh) {
+  const instanced = mesh as AbstractMesh & { sourceMesh?: AbstractMesh };
+  if (instanced.sourceMesh) {
+    instanced.sourceMesh.receiveShadows = true;
+    return;
+  }
+  mesh.receiveShadows = true;
 }

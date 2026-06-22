@@ -9,6 +9,7 @@ import {
   createShipScene,
   type LevelGridCell,
   type LevelTerrainCell,
+  type PerfMetricSnapshot,
   type SceneHandle,
 } from "@tjc/scenes";
 import {
@@ -22,6 +23,7 @@ import {
   makePlacementId,
   MAX_HEIGHT,
   mergeLevel,
+  normalizeTerrainRenderRows,
   projectObjectsToLegacyCells,
   type Level,
   type TerrainCell,
@@ -84,15 +86,19 @@ export function LevelBuilder() {
   const [paused, setPaused] = useState(true);
   const [scrollZ, setScrollZ] = useState(0);
   const [fps, setFps] = useState(0);
+  const [perfMetrics, setPerfMetrics] = useState<PerfMetricSnapshot>({});
   const [pendingClear, setPendingClear] = useState(false);
   const [pendingColumns, setPendingColumns] = useState<number | null>(null);
 
   const pointerDown = useRef(false);
+  const rightPointerDown = useRef(false);
   const pausedBeforeScrub = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handleRef = useRef<SceneHandle | null>(null);
   const rafRef = useRef<number | null>(null);
   const lastPreviewUiTickRef = useRef(0);
+  const lastPerfUiTickRef = useRef(0);
+  const latestPerfMetricsRef = useRef<PerfMetricSnapshot>({});
   const catalogOverrides = usePersistedJson<ModelCatalogOverrides>(
     MODEL_CATALOG_OVERRIDES_URL,
     EMPTY_MODEL_CATALOG_OVERRIDES,
@@ -128,12 +134,15 @@ export function LevelBuilder() {
     if (!canvasRef.current) return;
     const handle = createShipScene(canvasRef.current);
     handleRef.current = handle;
+    (window as Window & { __tjcSceneMetrics?: () => PerfMetricSnapshot }).__tjcSceneMetrics = () =>
+      latestPerfMetricsRef.current;
     handle.setPlayerShipVisible(false);
     handle.setLevelScrollPaused(true);
     handle.setGroundStyle("white");
     return () => {
       handle.dispose();
       handleRef.current = null;
+      delete (window as Window & { __tjcSceneMetrics?: () => PerfMetricSnapshot | undefined }).__tjcSceneMetrics;
     };
   }, []);
 
@@ -221,6 +230,14 @@ export function LevelBuilder() {
   }, [paused]);
 
   useEffect(() => {
+    if (!loaded) return;
+    handleRef.current?.setLevelTerrainRenderWindowRows(
+      level.preview.terrainRenderRowsBack,
+      level.preview.terrainRenderRowsForward,
+    );
+  }, [loaded, level.preview.terrainRenderRowsBack, level.preview.terrainRenderRowsForward]);
+
+  useEffect(() => {
     function tick(now: number) {
       const h = handleRef.current;
       if (h && now - lastPreviewUiTickRef.current >= 125) {
@@ -229,6 +246,12 @@ export function LevelBuilder() {
         const nextFps = Math.round(h.getFps());
         setScrollZ((current) => Math.abs(current - nextZ) >= 0.5 ? nextZ : current);
         setFps((current) => current !== nextFps ? nextFps : current);
+      }
+      if (h && now - lastPerfUiTickRef.current >= 750) {
+        lastPerfUiTickRef.current = now;
+        const nextMetrics = h.getPerfMetrics();
+        latestPerfMetricsRef.current = nextMetrics;
+        setPerfMetrics(nextMetrics);
       }
       rafRef.current = requestAnimationFrame(tick);
     }
@@ -261,7 +284,7 @@ export function LevelBuilder() {
   function paintCell(col: number, row: number, isInitialDown = false) {
     if (eraseActive) { eraseCell(col, row); return; }
     if (mode === "terrain") {
-      if (terrainBrushMode === "connected") paintConnectedFeature(col, row);
+      if (terrainBrushMode === "connected") paintConnectedFeature(col, row, isInitialDown);
       else paintTerrainManual(col, row, isInitialDown);
     } else if (mode === "object") paintObject(col, row, isInitialDown);
     else paintHeight(col, row);
@@ -274,10 +297,18 @@ export function LevelBuilder() {
       if (i < 0) return prev;
       const terrain = [...prev.layers.terrain];
       const existing = prev.layers.terrain[i];
-      if (allowRotate && existing?.terrain === selectedTerrain && !existing.feature) {
+      if (allowRotate && existing?.terrain === selectedTerrain) {
         // Same model, initial click — cycle rotation 0→90→180→270→0
-        const nextRotation = (((existing.rotation ?? 0) + 90) % 360) as TerrainRotation;
-        terrain[i] = { terrain: selectedTerrain, rotation: nextRotation };
+        if (existing.feature) {
+          const nextRotation = (((existing.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
+          terrain[i] = {
+            ...existing,
+            feature: { ...existing.feature, rotation: nextRotation, manual: true },
+          };
+        } else {
+          const nextRotation = (((existing.rotation ?? 0) + 90) % 360) as TerrainRotation;
+          terrain[i] = { terrain: selectedTerrain, rotation: nextRotation };
+        }
         return { ...prev, layers: { ...prev.layers, terrain } };
       }
       if (existing?.terrain === selectedTerrain && !existing.feature) return prev;
@@ -287,37 +318,7 @@ export function LevelBuilder() {
     });
   }
 
-  function rotateCellAt(col: number, row: number) {
-    setLevel((prev) => {
-      const i = cellIndex(prev, col, row);
-      if (i < 0) return prev;
-
-      if (mode === "terrain") {
-        const existingTerrain = prev.layers.terrain[i];
-        if (!existingTerrain?.terrain) return prev;
-        const terrain = [...prev.layers.terrain];
-        if (existingTerrain.feature) {
-          const nextR = (((existingTerrain.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
-          terrain[i] = { ...existingTerrain, feature: { ...existingTerrain.feature, rotation: nextR, manual: true } };
-        } else {
-          const nextR = (((existingTerrain.rotation ?? 0) + 90) % 360) as TerrainRotation;
-          terrain[i] = { ...existingTerrain, rotation: nextR };
-        }
-        return { ...prev, layers: { ...prev.layers, terrain } };
-      }
-
-      if (mode !== "object") return prev;
-      const existingObjs = prev.layers.objects[i]?.objects;
-      if (!existingObjs?.length) return prev;
-      const objects = [...prev.layers.objects];
-      const obj = existingObjs[0];
-      const nextR = ((obj.rotation ?? 0) + 90) % 360;
-      objects[i] = { objects: [{ ...obj, rotation: nextR }, ...existingObjs.slice(1)] };
-      return { ...prev, layers: { ...prev.layers, objects } };
-    });
-  }
-
-  function paintConnectedFeature(col: number, row: number) {
+  function paintConnectedFeature(col: number, row: number, allowRotate = false) {
     const family = connectedFamily;
     setLevel((prev) => {
       const i = cellIndex(prev, col, row);
@@ -325,6 +326,15 @@ export function LevelBuilder() {
 
       // No-op if this cell already belongs to the same non-manual family.
       const existing = prev.layers.terrain[i];
+      if (allowRotate && existing?.feature?.family === family) {
+        const terrain = [...prev.layers.terrain];
+        const nextRotation = (((existing.feature.rotation ?? 0) + 90) % 360) as TerrainRotation;
+        terrain[i] = {
+          ...existing,
+          feature: { ...existing.feature, rotation: nextRotation, manual: true },
+        };
+        return { ...prev, layers: { ...prev.layers, terrain } };
+      }
       if (existing?.feature?.family === family && !existing.feature.manual) return prev;
 
       // Clone and mark target as family member (placeholder shape resolved below).
@@ -501,9 +511,9 @@ export function LevelBuilder() {
   }
 
   // actionRef lets the stable useCallback handlers always call the latest version
-  // of paintCell/rotateCellTerrain/etc. without capturing stale closures.
-  const actionRef = useRef({ paintCell, rotateCellAt, brushShape, commitRect });
-  actionRef.current = { paintCell, rotateCellAt, brushShape, commitRect };
+  // of paintCell/eraseCell/etc. without capturing stale closures.
+  const actionRef = useRef({ paintCell, eraseCell, brushShape, commitRect });
+  actionRef.current = { paintCell, eraseCell, brushShape, commitRect };
 
   const handleCellDown = useCallback((col: number, row: number) => {
     pointerDown.current = true;
@@ -515,11 +525,19 @@ export function LevelBuilder() {
     }
   }, []);
 
+  // Right-click (and right-drag) quick-erases the active mode's layer, bypassing
+  // the eraser toggle. Rotation is left-click-same-model (paintTerrainManual /
+  // paintObject), not right-click.
   const handleCellRightDown = useCallback((col: number, row: number) => {
-    actionRef.current.rotateCellAt(col, row);
+    rightPointerDown.current = true;
+    actionRef.current.eraseCell(col, row);
   }, []);
 
   const handleCellEnter = useCallback((col: number, row: number) => {
+    if (rightPointerDown.current) {
+      actionRef.current.eraseCell(col, row);
+      return;
+    }
     if (!pointerDown.current) return;
     if (actionRef.current.brushShape === "rect" && rectAnchorRef.current) {
       const a = rectAnchorRef.current;
@@ -537,12 +555,14 @@ export function LevelBuilder() {
       actionRef.current.commitRect(rectPreview);
     }
     pointerDown.current = false;
+    rightPointerDown.current = false;
     rectAnchorRef.current = null;
     setRectPreview(null);
   }
 
   function handleGridLeave() {
     pointerDown.current = false;
+    rightPointerDown.current = false;
     rectAnchorRef.current = null;
     setRectPreview(null);
   }
@@ -698,24 +718,50 @@ export function LevelBuilder() {
   }
 
   function resetLevel() {
-    setLevel(emptyLevel({
-      columns: level.columns,
-      durationSec: level.durationSec,
-      fieldWidth: level.fieldWidth,
-      scrollSpeed: level.scrollSpeed,
-    }));
+    setLevel({
+      ...emptyLevel({
+        columns: level.columns,
+        durationSec: level.durationSec,
+        fieldWidth: level.fieldWidth,
+        scrollSpeed: level.scrollSpeed,
+      }),
+      preview: level.preview,
+    });
     setPendingClear(false);
   }
 
   function rebuildForColumns(columns: number) {
-    setLevel(emptyLevel({
-      columns,
-      durationSec: level.durationSec,
-      fieldWidth: level.fieldWidth,
-      scrollSpeed: level.scrollSpeed,
-    }));
+    setLevel({
+      ...emptyLevel({
+        columns,
+        durationSec: level.durationSec,
+        fieldWidth: level.fieldWidth,
+        scrollSpeed: level.scrollSpeed,
+      }),
+      preview: level.preview,
+    });
     setPendingColumns(null);
     handleRef.current?.setLevelScrollZ(0);
+  }
+
+  function setTerrainRenderRowsBack(rows: number) {
+    setLevel((prev) => ({
+      ...prev,
+      preview: {
+        ...prev.preview,
+        terrainRenderRowsBack: normalizeTerrainRenderRows(rows),
+      },
+    }));
+  }
+
+  function setTerrainRenderRowsForward(rows: number) {
+    setLevel((prev) => ({
+      ...prev,
+      preview: {
+        ...prev.preview,
+        terrainRenderRowsForward: normalizeTerrainRenderRows(rows),
+      },
+    }));
   }
 
   function scrubTo(z: number) {
@@ -745,6 +791,7 @@ export function LevelBuilder() {
           level={level}
           saved={saved}
           fps={fps}
+          perfMetrics={perfMetrics}
           onColumnsChange={(columns) => {
             if (columns !== level.columns) setPendingColumns(columns);
           }}
@@ -798,10 +845,14 @@ export function LevelBuilder() {
           progressPct={progressPct}
           totalDepth={totalDepth}
           scrollZ={scrollZ}
+          terrainRenderRowsBack={level.preview.terrainRenderRowsBack}
+          terrainRenderRowsForward={level.preview.terrainRenderRowsForward}
           onPausedChange={setPaused}
           onScrubStart={startScrub}
           onScrub={scrubTo}
           onScrubEnd={endScrub}
+          onTerrainRenderRowsBackChange={setTerrainRenderRowsBack}
+          onTerrainRenderRowsForwardChange={setTerrainRenderRowsForward}
         />
         <GridPanel
           mode={mode}

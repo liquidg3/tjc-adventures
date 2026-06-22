@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { assetValueToUrl } from "./asset-normalization";
 import { MAX_HEIGHT, type TerrainFeatureFamily } from "./level-builder-state";
 import { type PaintMode } from "./level-builder-types";
+import { getModelThumbnail, peekModelThumbnail } from "./model-thumbnails";
 
 /** Strip the leading category prefix and split camelCase into title-cased words.
  *  ground_riverStraight → "River Straight"
@@ -21,6 +23,45 @@ const FAMILY_LABELS: Record<TerrainFeatureFamily, string> = {
   path: "Path",
   road: "Road",
 };
+
+// ─── ModelThumb ───────────────────────────────────────────────────────────────
+
+/** 3D thumbnail for a palette tile. Lazily renders via the shared offscreen
+ *  thumbnailer when the tile scrolls into view; the slot color stays on as a
+ *  border so the grid-color ↔ model mapping survives. Falls back to the plain
+ *  color swatch until (or unless) the thumb arrives. */
+function ModelThumb({ id, color }: { id: string; color?: string }) {
+  const url = assetValueToUrl(id);
+  const [src, setSrc] = useState<string | null>(() => (url ? peekModelThumbnail(url) : null));
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!url || src) return;
+    const el = ref.current;
+    if (!el) return;
+    let cancelled = false;
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      getModelThumbnail(url)
+        .then((dataUrl) => {
+          if (!cancelled) setSrc(dataUrl);
+        })
+        .catch(() => {});
+    });
+    io.observe(el);
+    return () => {
+      cancelled = true;
+      io.disconnect();
+    };
+  }, [url, src]);
+
+  return (
+    <span ref={ref} className="lb-thumb" style={{ borderColor: color }}>
+      {src ? <img src={src} alt="" draggable={false} /> : <span className="lb-thumb-fill" style={{ background: color }} />}
+    </span>
+  );
+}
 
 // ─── PalettePanel ─────────────────────────────────────────────────────────────
 
@@ -175,7 +216,7 @@ export function PalettePanel({
         <button
           className={`lb-palette-item lb-eraser-item ${eraseActive ? "on" : ""}`}
           onClick={() => onEraseActiveChange(!eraseActive)}
-          title="Erase this layer's paint. Right-click any cell to rotate it."
+          title="Erase this layer's paint. Right-click (or right-drag) cells to quick-erase; click a placed model again to rotate it."
         >
           <span className="lb-swatch lb-swatch-eraser" />
           Eraser
@@ -229,10 +270,10 @@ export function PalettePanel({
                       onObjectSelect(id);
                     }
                   }}
-                  title={id}
+                  title={`${catalogLabelMap[id] ?? id}\n${id}`}
+                  aria-label={catalogLabelMap[id] ?? id}
                 >
-                  <span className="lb-swatch" style={{ background: slotColor[id] }} />
-                  {catalogLabelMap[id] ?? id}
+                  <ModelThumb id={id} color={slotColor[id]} />
                 </button>
               );
             })}

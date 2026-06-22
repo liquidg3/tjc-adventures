@@ -1,5 +1,5 @@
 import { useRef, type PointerEvent } from "react";
-import { SCROLL } from "@tjc/scenes";
+import { SCROLL, type PerfMetricSnapshot } from "@tjc/scenes";
 import { COLUMN_OPTIONS, type Level } from "./level-builder-state";
 import { PAINT_MODES, type PaintMode } from "./level-builder-types";
 
@@ -9,13 +9,16 @@ export function LevelPanel({
   level,
   saved,
   fps,
+  perfMetrics,
   onColumnsChange,
 }: {
   level: Level;
   saved: boolean;
   fps: number;
+  perfMetrics: PerfMetricSnapshot;
   onColumnsChange: (columns: number) => void;
 }) {
+  const perfRows = topPerfRows(perfMetrics);
   return (
     <section className="lb-section lb-level-panel">
       <div className="lb-level-meta">
@@ -32,6 +35,16 @@ export function LevelPanel({
         </label>
         <Readout label="Cell" value={`${level.cellSize.toFixed(0)}wu`} />
       </div>
+      {perfRows.length > 0 && (
+        <div className="lb-perf-readout" title={perfTitle(perfMetrics)}>
+          {perfRows.map((row) => (
+            <span key={row.name}>
+              <b>{row.label}</b>
+              {row.value}
+            </span>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -122,19 +135,27 @@ export function PreviewPanel({
   progressPct,
   totalDepth,
   scrollZ,
+  terrainRenderRowsBack,
+  terrainRenderRowsForward,
   onPausedChange,
   onScrubStart,
   onScrub,
   onScrubEnd,
+  onTerrainRenderRowsBackChange,
+  onTerrainRenderRowsForwardChange,
 }: {
   paused: boolean;
   progressPct: number;
   totalDepth: number;
   scrollZ: number;
+  terrainRenderRowsBack: number;
+  terrainRenderRowsForward: number;
   onPausedChange: (paused: boolean) => void;
   onScrubStart: () => void;
   onScrub: (z: number) => void;
   onScrubEnd: () => void;
+  onTerrainRenderRowsBackChange: (rows: number) => void;
+  onTerrainRenderRowsForwardChange: (rows: number) => void;
 }) {
   const elapsedSeconds = scrollZ / SCROLL;
   const levelSeconds = totalDepth / SCROLL;
@@ -170,6 +191,12 @@ export function PreviewPanel({
     onScrubEnd();
   }
 
+  function readRows(value: string) {
+    const rows = Number(value);
+    if (!Number.isFinite(rows)) return 0;
+    return Math.max(0, Math.min(96, Math.round(rows)));
+  }
+
   return (
     <section className="lb-section lb-preview-section">
       <div className="lb-preview-bar">
@@ -199,6 +226,42 @@ export function PreviewPanel({
       <div className="lb-preview-readout">
         <span><b>Time</b> {elapsedSeconds.toFixed(1)}/{levelSeconds.toFixed(1)}s</span>
       </div>
+      <div className="lb-terrain-window">
+        <label>
+          <span>Back Rows</span>
+          <input
+            type="range"
+            min="0"
+            max="96"
+            value={terrainRenderRowsBack}
+            onChange={(e) => onTerrainRenderRowsBackChange(readRows(e.target.value))}
+          />
+          <input
+            type="number"
+            min="0"
+            max="96"
+            value={terrainRenderRowsBack}
+            onChange={(e) => onTerrainRenderRowsBackChange(readRows(e.target.value))}
+          />
+        </label>
+        <label>
+          <span>Forward Rows</span>
+          <input
+            type="range"
+            min="0"
+            max="96"
+            value={terrainRenderRowsForward}
+            onChange={(e) => onTerrainRenderRowsForwardChange(readRows(e.target.value))}
+          />
+          <input
+            type="number"
+            min="0"
+            max="96"
+            value={terrainRenderRowsForward}
+            onChange={(e) => onTerrainRenderRowsForwardChange(readRows(e.target.value))}
+          />
+        </label>
+      </div>
     </section>
   );
 }
@@ -212,4 +275,37 @@ function Readout({ label, value }: { label: string; value: string }) {
       <span>{value}</span>
     </div>
   );
+}
+
+function topPerfRows(metrics: PerfMetricSnapshot): Array<{ name: string; label: string; value: string }> {
+  return Object.entries(metrics)
+    .filter(([name, bucket]) =>
+      !name.startsWith("stats.") &&
+      !name.endsWith("changedCells") &&
+      bucket.count > 0 &&
+      bucket.max >= 0.05,
+    )
+    .sort((a, b) => b[1].max - a[1].max)
+    .slice(0, 4)
+    .map(([name, bucket]) => ({
+      name,
+      label: shortMetricName(name),
+      value: `${bucket.avg.toFixed(1)} / ${bucket.max.toFixed(1)}ms`,
+    }));
+}
+
+function perfTitle(metrics: PerfMetricSnapshot): string {
+  return Object.entries(metrics)
+    .sort((a, b) => b[1].max - a[1].max)
+    .map(([name, b]) => `${name}: avg ${b.avg.toFixed(2)}ms, max ${b.max.toFixed(2)}ms, n=${b.count}`)
+    .join("\n");
+}
+
+function shortMetricName(name: string): string {
+  return name
+    .replace(/^frame\./, "")
+    .replace(/^terrain\./, "terr.")
+    .replace(/^props\./, "prop.")
+    .replace(/^api\./, "")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
 }

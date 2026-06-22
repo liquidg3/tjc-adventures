@@ -1,25 +1,21 @@
-import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import {
   createShipScene,
+  type LevelGridCell,
+  type LevelTerrainCell,
   type SceneHandle,
 } from "@tjc/scenes";
 import {
   CAMERA_ROTATIONS,
-  GROUND_STYLES,
-  GROUND_TILES,
   LIGHTING_PRESETS,
   PIPELINE_MODES,
   PIXEL_LEVELS,
   RT_HEIGHTS,
-  SCENERY_PRESETS,
   buildDefaultsFromState,
   createInitialState,
-  findScenery,
-  findTile,
   mergeDefaults,
   readHashParams,
   serializeVerticalHash,
-  toLevelPlan,
   verticalScrollerReducer,
   type VerticalDefaults,
 } from "./vertical-scroller-state";
@@ -29,8 +25,23 @@ import {
   getNormalizationPreset,
   resolveAssetNormalization,
   mergeNormalizationPresets,
-  parseAssetAssignment,
+  parseAssetAssignments,
 } from "./asset-normalization";
+import {
+  emptyLevel,
+  mergeLevel,
+  projectObjectsToLegacyCells,
+} from "./level-builder-state";
+import { loadStagedModels, type ModelEntry } from "./models";
+import {
+  buildModelCatalog,
+  EMPTY_MODEL_CATALOG_OVERRIDES,
+  parseModelCatalogOverrides,
+  type ModelCatalogOverrides,
+} from "./model-catalog";
+import { usePersistedJson } from "./use-persisted-json";
+
+const tjcLog = (...args: unknown[]) => console.log("%c[TJC]", "color:#6affd0;font-weight:bold", ...args);
 
 const VERTICAL_DEFAULTS_URL = "/__vertical-defaults";
 const HASH_WRITE_DEBOUNCE_MS = 150;
@@ -38,6 +49,8 @@ const HASH_WRITE_DEBOUNCE_MS = 150;
 const ASSET_MAP_URL = "/__asset-map";
 const ASSET_NORMALIZATION_PRESETS_URL = "/__asset-normalization-presets";
 const ASSET_NORMALIZATION_OVERRIDES_URL = "/__asset-normalization-overrides";
+const LEVEL_URL = "/__level-builder";
+const MODEL_CATALOG_OVERRIDES_URL = "/__model-catalog-overrides";
 
 
 /** Collapsible control panel — click the header to fold it away and fit more. */
@@ -113,6 +126,16 @@ function LightSlider({
 export function VerticalScroller() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<SceneHandle | null>(null);
+  const { value: level, loaded: levelLoaded } = usePersistedJson(
+    LEVEL_URL,
+    emptyLevel(),
+    mergeLevel,
+  );
+  const catalogOverrides = usePersistedJson<ModelCatalogOverrides>(
+    MODEL_CATALOG_OVERRIDES_URL,
+    EMPTY_MODEL_CATALOG_OVERRIDES,
+    parseModelCatalogOverrides,
+  );
   const initialHashParamsRef = useRef<URLSearchParams>(readHashParams());
   const [state, dispatch] = useReducer(
     verticalScrollerReducer,
@@ -120,7 +143,22 @@ export function VerticalScroller() {
     createInitialState
   );
   const [pos, setPos] = useState<{ x: number; y: number; z: number } | null>(null);
-  const [zoneStatus, setZoneStatus] = useState<{ index: number; name: string; progress: number } | null>(null);
+  const [levelPaused, setLevelPaused] = useState(false);
+  const [levelScrollZ, setLevelScrollZ] = useState(0);
+  const [levelTotalDepth, setLevelTotalDepth] = useState(0);
+  const [sceneReady, setSceneReady] = useState(false);
+  const [assignedAssetUrlMap, setAssignedAssetUrlMap] = useState<Record<string, string>>({});
+  const [modelEntries, setModelEntries] = useState<ModelEntry[]>([]);
+
+  const catalog = useMemo(
+    () => buildModelCatalog(modelEntries, catalogOverrides.value),
+    [modelEntries, catalogOverrides.value],
+  );
+  const levelAssetUrlMap = useMemo(() => {
+    const urls: Record<string, string> = { ...assignedAssetUrlMap };
+    for (const model of catalog) urls[model.modelValue] = model.url;
+    return urls;
+  }, [assignedAssetUrlMap, catalog]);
 
   useEffect(() => {
     fetch(VERTICAL_DEFAULTS_URL)
@@ -143,7 +181,20 @@ export function VerticalScroller() {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    const handle = createShipScene(canvasRef.current);
+    tjcLog("VerticalScroller mount", {
+      hash: location.hash,
+      canvas: {
+        clientWidth: canvasRef.current.clientWidth,
+        clientHeight: canvasRef.current.clientHeight,
+      },
+    });
+    const handle = createShipScene(canvasRef.current, {
+      baseGroundVisible: false,
+      loadProceduralScenery: false,
+      stopAtLevelEndHold: true,
+    });
+    handle.setPlayerShipVisible(true);
+    handle.setScenery({});
     Promise.all([
       fetch(ASSET_MAP_URL).then((r) => r.json()),
       fetch(ASSET_NORMALIZATION_PRESETS_URL)
@@ -154,84 +205,161 @@ export function VerticalScroller() {
         .catch(() => ({})),
     ])
       .then(([assetMapData, presetData, overrideData]: [Record<string, unknown>, unknown, unknown]) => {
-        const assignment = parseAssetAssignment(assetMapData?.["ship-player"]);
+        tjcLog("VerticalScroller asset payloads loaded", {
+          assetKeys: Object.keys(assetMapData ?? {}),
+          presetKeys: presetData && typeof presetData === "object" ? Object.keys(presetData as Record<string, unknown>) : [],
+          overrideKeys: overrideData && typeof overrideData === "object" ? Object.keys(overrideData as Record<string, unknown>) : [],
+        });
+        const assignments = parseAssetAssignments(assetMapData);
+        const assignment = assignments["ship-player"] ?? { model: "", preset: "none" as const };
         const playerShip = assetValueToUrl(assignment.model);
         const presets = mergeNormalizationPresets(presetData);
         const overrides = mergeNormalizationOverrides(overrideData);
+        const urls: Record<string, string> = {};
+        for (const [id, entry] of Object.entries(assignments)) {
+          if (id.startsWith("ship-")) continue;
+          const url = assetValueToUrl(entry.model);
+          if (url) urls[id] = url;
+        }
+        setAssignedAssetUrlMap(urls);
         if (playerShip) {
+          const normalization = resolveAssetNormalization(
+            getNormalizationPreset(presets, assignment.preset),
+            overrides[assignment.model],
+          );
+          tjcLog("VerticalScroller set player ship", {
+            assignment,
+            playerShip,
+            normalization,
+            respectHashShipSize: initialHashParamsRef.current.has("shipSize"),
+          });
           dispatch({
             type: "set-player-ship-url",
             url: playerShip,
             respectHashShipSize: initialHashParamsRef.current.has("shipSize"),
           });
-          handle.setPlayerShipModel(
-            playerShip,
-            resolveAssetNormalization(
-              getNormalizationPreset(presets, assignment.preset),
-              overrides[assignment.model],
-            ),
-          );
+          handle.setPlayerShipModel(playerShip, normalization);
+        } else {
+          tjcLog("VerticalScroller no player ship assignment", { assignment });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        tjcLog("VerticalScroller asset payload load failed", err);
         /* keep the default runtime ship if the asset map can't be read */
       });
     sceneRef.current = handle;
-    return () => handle.dispose();
+    setSceneReady(true);
+    return () => {
+      sceneRef.current = null;
+      handle.dispose();
+    };
+  }, []);
+
+  useEffect(() => {
+    loadStagedModels().then(setModelEntries).catch(() => {});
   }, []);
 
   useEffect(() => {
     const handle = sceneRef.current;
+    if (!sceneReady || !levelLoaded || !handle) return;
+    handle.setLevelCells(
+      projectObjectsToLegacyCells(level) as LevelGridCell[],
+      level.columns,
+      level.rows,
+      level.cellSize,
+      levelAssetUrlMap,
+    );
+  }, [
+    sceneReady,
+    levelLoaded,
+    level.layers.objects,
+    level.layers.height,
+    level.columns,
+    level.rows,
+    level.cellSize,
+    levelAssetUrlMap,
+  ]);
+
+  useEffect(() => {
+    const handle = sceneRef.current;
+    if (!sceneReady || !levelLoaded || !handle) return;
+    handle.setLevelTerrainRenderWindowRows(
+      level.preview.terrainRenderRowsBack,
+      level.preview.terrainRenderRowsForward,
+    );
+  }, [
+    sceneReady,
+    levelLoaded,
+    level.preview.terrainRenderRowsBack,
+    level.preview.terrainRenderRowsForward,
+  ]);
+
+  useEffect(() => {
+    const handle = sceneRef.current;
+    if (!sceneReady || !levelLoaded || !handle) return;
+    const terrainCells = level.layers.terrain.map((cell) => ({
+      terrain: cell.terrain,
+      rotation: cell.feature?.rotation ?? cell.rotation,
+    }));
+    handle.setLevelTerrainCells(
+      terrainCells as LevelTerrainCell[],
+      level.columns,
+      level.rows,
+      level.cellSize,
+      levelAssetUrlMap,
+    );
+  }, [
+    sceneReady,
+    levelLoaded,
+    level.layers.terrain,
+    level.columns,
+    level.rows,
+    level.cellSize,
+    levelAssetUrlMap,
+  ]);
+
+  useEffect(() => {
+    const handle = sceneRef.current;
     if (!handle) return;
+    tjcLog("VerticalScroller apply scene values", {
+      cameraMode: state.values.cameraMode,
+      altitude: state.values.altitude,
+      shipSize: state.values.shipSize,
+      pixelLevel: state.values.pixelLevel,
+      pipelineMode: state.values.pipelineMode,
+      rtHeight: state.values.rtHeight,
+      lighting: state.values.lighting,
+      sunI: state.values.sunI,
+      skyI: state.values.skyI,
+      azimuth: state.values.azimuth,
+      elevation: state.values.elevation,
+    });
     handle.setCameraRotationMode(state.values.cameraMode);
     handle.setShipHeight(state.values.altitude);
     handle.setShipSize(state.values.shipSize);
     handle.setPixelScale(state.values.pixelLevel);
     handle.setRtHeight(state.values.rtHeight);
     handle.setPipelineMode(state.values.pipelineMode);
-    // While a level is playing, the zone sequencer owns ground + lighting (sun
-    // and ship); the manual look only drives the scene when stopped.
-    if (!state.playing) {
-      if (state.values.groundTile == null) {
-        handle.setGroundStyle(state.values.ground);
-        handle.setGroundTile(null, state.values.tileRepeat, "nearest");
-      } else {
-        const tile = findTile(state.values.groundTile);
-        handle.setGroundTile(
-          state.values.groundTile,
-          state.values.tileRepeat,
-          tile?.sampling ?? "nearest",
-        );
-      }
-      // preset sets the colors; the sun sliders then override intensity/angle
-      handle.setLightingPreset(state.values.lighting);
-      handle.setSunIntensity(state.values.sunI);
-      handle.setSkyIntensity(state.values.skyI);
-      handle.setSunAzimuth(state.values.azimuth);
-      handle.setSunElevation(state.values.elevation);
-      handle.setShipLightDirectIntensity(state.values.shipLight.directIntensity);
-      handle.setShipLightEnvironmentIntensity(state.values.shipLight.environmentIntensity);
-      handle.setShipLightRoughness(state.values.shipLight.roughness);
-      handle.setShipLightSpecularIntensity(state.values.shipLight.specularIntensity);
-      handle.setShipLightExposure(state.values.shipLight.exposure);
-      handle.setShipLightContrast(state.values.shipLight.contrast);
-      handle.setShipLightAlbedoBoost(state.values.shipLight.albedoBoost);
-      handle.setShipLightAmbientStrength(state.values.shipLight.ambientStrength);
-    }
-  }, [state.values, state.playing]);
+    handle.setLevelPlan(null);
+    handle.setScenery({});
+    handle.setLightingPreset(state.values.lighting);
+    handle.setSunIntensity(state.values.sunI);
+    handle.setSkyIntensity(state.values.skyI);
+    handle.setSunAzimuth(state.values.azimuth);
+    handle.setSunElevation(state.values.elevation);
+    handle.setShipLightDirectIntensity(state.values.shipLight.directIntensity);
+    handle.setShipLightEnvironmentIntensity(state.values.shipLight.environmentIntensity);
+    handle.setShipLightRoughness(state.values.shipLight.roughness);
+    handle.setShipLightSpecularIntensity(state.values.shipLight.specularIntensity);
+    handle.setShipLightExposure(state.values.shipLight.exposure);
+    handle.setShipLightContrast(state.values.shipLight.contrast);
+    handle.setShipLightAlbedoBoost(state.values.shipLight.albedoBoost);
+    handle.setShipLightAmbientStrength(state.values.shipLight.ambientStrength);
+  }, [state.values]);
 
-  // Drive (or release) the zone sequencer when Play Level toggles or zones change.
   useEffect(() => {
-    const h = sceneRef.current;
-    if (!h) return;
-    h.setLevelPlan(state.playing ? toLevelPlan(state.zones, state.blendSec) : null);
-  }, [state.playing, state.zones, state.blendSec]);
-
-  // manual scenery (when not playing) follows the selected zone
-  useEffect(() => {
-    if (state.playing) return;
-    sceneRef.current?.setScenery(findScenery(state.zones[state.selectedZone]?.scenery ?? "").densities);
-  }, [state.playing, state.zones, state.selectedZone]);
+    sceneRef.current?.setLevelScrollPaused(levelPaused);
+  }, [levelPaused]);
 
   useEffect(() => {
     if (!state.hydrated) return;
@@ -244,11 +372,13 @@ export function VerticalScroller() {
     return () => window.clearTimeout(id);
   }, [state.hydrated, state.values]);
 
-  // live ship coordinates + current zone (while a level is playing)
+  // live ship coordinates + authored level progress
   useEffect(() => {
     const id = setInterval(() => {
-      setPos(sceneRef.current?.getShipPosition() ?? null);
-      setZoneStatus(sceneRef.current?.getZoneStatus() ?? null);
+      const handle = sceneRef.current;
+      setPos(handle?.getShipPosition() ?? null);
+      setLevelScrollZ(handle?.getLevelScrollZ() ?? 0);
+      setLevelTotalDepth(handle?.getLevelTotalDepth() ?? 0);
     }, 150);
     return () => clearInterval(id);
   }, []);
@@ -273,6 +403,7 @@ export function VerticalScroller() {
 
   const toggleLeft = (id: string) => dispatch({ type: "toggle-left", id });
   const toggleRight = (id: string) => dispatch({ type: "toggle-right", id });
+  const levelProgressPct = levelTotalDepth > 0 ? (levelScrollZ / levelTotalDepth) * 100 : 0;
 
   return (
     <>
@@ -355,9 +486,6 @@ export function VerticalScroller() {
         </Panel>
 
         <Panel id="ship-lighting" title="Ship Lighting" className="lighting-panel" open={state.openLeft === "ship-lighting"} onToggle={toggleLeft}>
-          <p className="zone-editing">
-            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
-          </p>
           <div className="light-sliders">
             <LightSlider label="Direct" title="How strongly the sun hits the ship" value={state.values.shipLight.directIntensity} min={0} max={6} step={0.05} onChange={(v) => dispatch({ type: "set-ship-light", patch: { directIntensity: v } })} />
             <LightSlider label="Env" title="Environment / ambient contribution on the ship" value={state.values.shipLight.environmentIntensity} min={0} max={1} step={0.01} onChange={(v) => dispatch({ type: "set-ship-light", patch: { environmentIntensity: v } })} />
@@ -394,152 +522,29 @@ export function VerticalScroller() {
 
       {/* right-side controls */}
       <div className="control-stack">
-        <Panel id="zone-plan" title="Zone Plan" className="zone-panel" open={state.openRight === "zone-plan"} onToggle={toggleRight}>
+        <Panel id="level-run" title="Level Run" className="zone-panel" open={state.openRight === "level-run"} onToggle={toggleRight}>
           <button
-            className={`zone-play ${state.playing ? "on" : ""}`}
-            onClick={() => dispatch({ type: "set-playing", playing: !state.playing })}
+            className={`zone-play ${!levelPaused ? "on" : ""}`}
+            onClick={() => setLevelPaused((current) => !current)}
           >
-            {state.playing ? "■ Stop Level" : "▶ Play Level"}
+            {levelPaused ? "▶ Resume Level" : "■ Pause Level"}
           </button>
-          {state.playing && zoneStatus && (
-            <div className="zone-status">
-              Zone {zoneStatus.index + 1}/{state.zones.length} · {zoneStatus.name} ·{" "}
-              {Math.round(zoneStatus.progress * 100)}%
-            </div>
-          )}
-          <p className="pos-hint" style={{ margin: "8px 0 6px" }}>
-            Select a zone, then tune it with the Ground &amp; Lighting panels.
-          </p>
-          <div className="zone-list">
-            {state.zones.map((z, i) => (
-              <div key={z.id} className={`zone-row ${i === state.selectedZone ? "selected" : ""}`}>
-                <button
-                  className="zone-pick"
-                  title="Edit this zone"
-                  onClick={() => dispatch({ type: "select-zone", index: i })}
-                >
-                  {i + 1}
-                </button>
-                <input
-                  className="zone-name"
-                  value={z.name}
-                  onChange={(e) => dispatch({ type: "rename-zone", index: i, name: e.target.value })}
-                />
-                <input
-                  className="zone-len"
-                  type="number"
-                  min={5}
-                  max={300}
-                  step={5}
-                  value={z.lengthSec}
-                  title="Seconds this zone holds before blending into the next"
-                  onChange={(e) =>
-                    dispatch({ type: "set-zone-length", index: i, lengthSec: parseFloat(e.target.value) || 0 })
-                  }
-                />
-                <span className="zone-unit">s</span>
-                <button
-                  className="zone-del"
-                  disabled={state.zones.length <= 1}
-                  title="Remove this zone"
-                  onClick={() => dispatch({ type: "remove-zone", index: i })}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+          <div className="zone-status">
+            {Math.round(levelProgressPct)}% · {levelScrollZ.toFixed(0)}/{levelTotalDepth.toFixed(0)}wu
           </div>
-          <button className="zone-add" onClick={() => dispatch({ type: "add-zone" })}>
-            + Add zone (duplicates selected)
-          </button>
-          <p className="pos-hint" style={{ margin: "8px 0 0" }}>
-            Climate boundaries scroll past at flight speed — longer zones = more
-            time in each climate before the next sweeps in.
-          </p>
           <button
-            className="panel-save"
-            onClick={() => saveDefaults((prev) => ({ ...prev, zones: state.zones, blendSec: state.blendSec }))}
+            className="zone-add"
+            onClick={() => {
+              sceneRef.current?.setLevelScrollZ(0);
+              sceneRef.current?.resetShip();
+              setLevelScrollZ(0);
+            }}
           >
-            Save Defaults
-          </button>
-        </Panel>
-
-        <Panel id="ground" title="Ground" className="ground-panel" open={state.openRight === "ground"} onToggle={toggleRight}>
-          <p className="zone-editing">
-            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
-          </p>
-          <p className="pos-hint" style={{ margin: "0 0 6px" }}>Procedural styles</p>
-          <div className="camera-test-buttons">
-            {GROUND_STYLES.map((g) => (
-              <button
-                key={g.id}
-                type="button"
-                className={
-                  g.id === state.values.ground && state.values.groundTile == null ? "active" : ""
-                }
-                onClick={() => dispatch({ type: "set-ground", ground: g.id })}
-              >
-                {g.label}
-              </button>
-            ))}
-          </div>
-          <p className="pos-hint" style={{ margin: "10px 0 6px" }}>Pixel tiles (nearest sampling)</p>
-          <div className="camera-test-buttons">
-            {GROUND_TILES.filter((t) => t.sampling === "nearest").map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                title={t.attribution}
-                className={t.url === state.values.groundTile ? "active" : ""}
-                onClick={() => dispatch({ type: "set-ground-tile", tile: t.url })}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <p className="pos-hint" style={{ margin: "10px 0 6px" }}>Real textures (bilinear + mips)</p>
-          <div className="camera-test-buttons">
-            {GROUND_TILES.filter((t) => t.sampling === "trilinear").map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                title={t.attribution}
-                className={t.url === state.values.groundTile ? "active" : ""}
-                onClick={() => dispatch({ type: "set-ground-tile", tile: t.url })}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <LightSlider
-            label="Repeat"
-            title="How many times the tile repeats across the ground each side. Larger = smaller-looking tiles. Pixel tiles want ~32; real textures want ~6."
-            value={state.values.tileRepeat}
-            min={1}
-            max={96}
-            step={1}
-            digits={0}
-            onChange={(v) => dispatch({ type: "set-tile-repeat", repeat: v })}
-          />
-          <button
-            className="panel-save"
-            onClick={() =>
-              saveDefaults((prev) => ({
-                ...prev,
-                ground: state.values.ground,
-                groundTile: state.values.groundTile,
-                tileRepeat: state.values.tileRepeat,
-              }))
-            }
-          >
-            Save Defaults
+            Restart run
           </button>
         </Panel>
 
         <Panel id="lighting" title="Lighting" className="lighting-panel" open={state.openRight === "lighting"} onToggle={toggleRight}>
-          <p className="zone-editing">
-            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
-          </p>
           <div className="camera-test-buttons">
             {LIGHTING_PRESETS.map((l) => (
               <button
@@ -570,30 +575,6 @@ export function VerticalScroller() {
                 elevation: state.values.elevation,
               }))
             }
-          >
-            Save Defaults
-          </button>
-        </Panel>
-
-        <Panel id="scenery" title="Scenery" className="ground-panel" open={state.openRight === "scenery"} onToggle={toggleRight}>
-          <p className="zone-editing">
-            Editing: <b>{state.zones[state.selectedZone]?.name ?? "—"}</b>
-          </p>
-          <div className="camera-test-buttons">
-            {SCENERY_PRESETS.map((sc) => (
-              <button
-                key={sc.id}
-                type="button"
-                className={sc.id === state.zones[state.selectedZone]?.scenery ? "active" : ""}
-                onClick={() => dispatch({ type: "set-scenery", scenery: sc.id })}
-              >
-                {sc.label}
-              </button>
-            ))}
-          </div>
-          <button
-            className="panel-save"
-            onClick={() => saveDefaults((prev) => ({ ...prev, zones: state.zones }))}
           >
             Save Defaults
           </button>

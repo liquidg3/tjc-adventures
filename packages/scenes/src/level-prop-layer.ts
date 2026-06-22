@@ -1,8 +1,10 @@
 import { type AbstractMesh, type Scene, type TransformNode } from "@babylonjs/core";
+import type { PerfRecorder } from "./perf-metrics";
 import { fitScale, loadModel } from "./ship-materials";
-import { SCROLL } from "./scene-config";
+import { SCROLL, SHIP_START_Z } from "./scene-config";
 
 const HEIGHT_STEP_WU = 1.25;
+const END_HOLD_AHEAD_Z = SHIP_START_Z + 220;
 const DEFAULT_PLACEMENT_SCALE = { min: 4, cell: 0.75 };
 const SLOT_PLACEMENT_SCALE: Record<string, { min: number; cell: number }> = {
   "env-trees": { min: 22, cell: 2.4 },
@@ -33,16 +35,26 @@ export interface LevelPropLayerController {
   step(dt: number): void;
   getScrollZ(): number;
   getTotalDepth(): number;
+  getStats(): { placedCells: number; placedMeshes: number };
   setPaused(paused: boolean): void;
   dispose(): void;
+}
+
+export interface LevelPropLayerOptions {
+  stopAtEndHold?: boolean;
 }
 
 interface PlacedProp {
   node: TransformNode;
   baseZ: number;
+  meshCount: number;
 }
 
-export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
+export function createLevelPropLayer(
+  scene: Scene,
+  perf?: PerfRecorder,
+  options: LevelPropLayerOptions = {},
+): LevelPropLayerController {
   const modelCache = new Map<string, AbstractMesh | null>();
   const loadingPromises = new Map<string, Promise<void>>();
   const placed = new Map<number, PlacedProp>();
@@ -57,6 +69,12 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
   // Incremented on every setLevelCells call so stale async completions self-abort.
   let generation = 0;
 
+  function maxScrollZ() {
+    return options.stopAtEndHold
+      ? Math.max(0, totalDepth - END_HOLD_AHEAD_Z)
+      : totalDepth;
+  }
+
   function clearPlaced() {
     for (const p of placed.values()) p.node.dispose();
     placed.clear();
@@ -65,8 +83,10 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
   function syncPositions() {
     for (const p of placed.values()) {
       const z = p.baseZ - scrollZ;
+      unfreezeNode(p.node);
       p.node.position.z = z;
       p.node.setEnabled(z > -60 && z < 900);
+      freezeNode(p.node);
     }
   }
 
@@ -136,7 +156,8 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
     // Direct assignment to rotation.y is silently ignored when rotationQuaternion is active.
     if (cell.rotation) node.addRotation(0, -cell.rotation * Math.PI / 180, 0);
     node.position.set(baseX, (cell.height ?? 0) * HEIGHT_STEP_WU, baseZ - scrollZ);
-    placed.set(index, { node, baseZ });
+    freezeNode(node);
+    placed.set(index, { node, baseZ, meshCount: meshes.length });
   }
 
   async function rebuildAll(
@@ -152,15 +173,19 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
 
     // Load any URL not yet cached, deduplicated via in-flight promise map so
     // concurrent calls for the same URL never trigger duplicate SceneLoader loads.
+    const loadT0 = performance.now();
     await ensureModelsLoaded(cells, assetUrlMap);
+    perf?.sample("props.loadModels", performance.now() - loadT0);
 
     // Bail if a newer setLevelCells call has already taken over.
     if (gen !== generation) return;
 
+    const placeT0 = performance.now();
     for (let i = 0; i < cells.length; i++) {
       if (gen !== generation) break;
       placeCell(i, cells[i], width, depth, cellSize, assetUrlMap);
     }
+    perf?.sample("props.place.rebuild", performance.now() - placeT0);
   }
 
   async function updateChanged(
@@ -173,14 +198,19 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
     gen: number,
   ) {
     totalDepth = depth * cellSize;
+    perf?.count("props.changedCells", changed.length);
+    const loadT0 = performance.now();
     await ensureModelsLoaded(changed.map((i) => cells[i]), assetUrlMap);
+    perf?.sample("props.loadModels", performance.now() - loadT0);
     if (gen !== generation) return;
 
+    const placeT0 = performance.now();
     for (const i of changed) {
       if (gen !== generation) break;
       disposePlacedAt(i);
       placeCell(i, cells[i], width, depth, cellSize, assetUrlMap);
     }
+    perf?.sample("props.place.update", performance.now() - placeT0);
   }
 
   return {
@@ -213,16 +243,24 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       void updateChanged(cells, width, depth, cellSize, assetUrlMap, changed, gen);
     },
     setScrollZ(z) {
-      scrollZ = Math.max(0, Math.min(z, totalDepth || z));
-      syncPositions();
+      const maxZ = totalDepth > 0 ? maxScrollZ() : z;
+      const nextZ = Math.max(0, Math.min(z, maxZ));
+      if (Math.abs(nextZ - scrollZ) < 0.001) return;
+      scrollZ = nextZ;
+      perf?.measure("props.syncPositions", syncPositions);
     },
     step(dt) {
       if (paused || totalDepth === 0) return;
-      scrollZ = Math.min(scrollZ + dt * SCROLL, totalDepth);
-      syncPositions();
+      scrollZ = Math.min(scrollZ + dt * SCROLL, maxScrollZ());
+      perf?.measure("props.syncPositions", syncPositions);
     },
     getScrollZ: () => scrollZ,
-    getTotalDepth: () => totalDepth,
+    getTotalDepth: () => maxScrollZ(),
+    getStats() {
+      let placedMeshes = 0;
+      for (const p of placed.values()) placedMeshes += p.meshCount;
+      return { placedCells: placed.size, placedMeshes };
+    },
     setPaused(p) {
       paused = p;
     },
@@ -235,6 +273,16 @@ export function createLevelPropLayer(scene: Scene): LevelPropLayerController {
       currentAssetUrlMap = null;
     },
   };
+}
+
+function freezeNode(node: TransformNode) {
+  node.freezeWorldMatrix();
+  for (const mesh of node.getChildMeshes()) mesh.freezeWorldMatrix();
+}
+
+function unfreezeNode(node: TransformNode) {
+  node.unfreezeWorldMatrix();
+  for (const mesh of node.getChildMeshes()) mesh.unfreezeWorldMatrix();
 }
 
 function targetHeightForSlot(slot: string, cellSize: number): number {

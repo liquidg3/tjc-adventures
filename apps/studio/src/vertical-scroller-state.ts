@@ -273,6 +273,16 @@ function readNumber(params: URLSearchParams, key: string, fallback: number) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function readClampedNumber(
+  params: URLSearchParams,
+  key: string,
+  fallback: number,
+  min: number,
+  max: number,
+) {
+  return clamp(readNumber(params, key, fallback), min, max);
+}
+
 function readEnum<T extends string>(params: URLSearchParams, key: string, allowed: readonly T[], fallback: T): T {
   const raw = params.get(key);
   return raw && (allowed as readonly string[]).includes(raw) ? (raw as T) : fallback;
@@ -408,8 +418,8 @@ export function toLevelPlan(zones: ZoneLook[], blendSec: number): LevelPlan {
 function readValuesFromHash(params: URLSearchParams): VerticalValues {
   return {
     cameraMode: readEnum(params, "camera", CAMERA_ROTATIONS.map((v) => v.mode), DEFAULT_VERTICAL_DEFAULTS.cameraMode),
-    altitude: readNumber(params, "altitude", DEFAULT_VERTICAL_DEFAULTS.altitude),
-    shipSize: readNumber(params, "shipSize", DEFAULT_VERTICAL_DEFAULTS.shipSize),
+    altitude: readClampedNumber(params, "altitude", DEFAULT_VERTICAL_DEFAULTS.altitude, 1, 100),
+    shipSize: readClampedNumber(params, "shipSize", DEFAULT_VERTICAL_DEFAULTS.shipSize, 0.5, 12),
     ground: readEnum(params, "ground", GROUND_STYLES.map((v) => v.id), DEFAULT_VERTICAL_DEFAULTS.ground),
     groundTile: params.get("tile") ?? DEFAULT_VERTICAL_DEFAULTS.groundTile,
     tileRepeat: readNumber(params, "tileRepeat", DEFAULT_VERTICAL_DEFAULTS.tileRepeat),
@@ -432,6 +442,10 @@ function readValuesFromHash(params: URLSearchParams): VerticalValues {
       ambientStrength: readNumber(params, "shipAmbient", DEFAULT_VERTICAL_DEFAULTS.shipLight.ambientStrength),
     },
   };
+}
+
+function clamp(v: number, lo: number, hi: number) {
+  return Math.max(lo, Math.min(hi, v));
 }
 
 function hasShipLightHash(params: URLSearchParams) {
@@ -726,9 +740,6 @@ export function serializeVerticalHash(values: VerticalValues) {
   params.set("camera", values.cameraMode);
   params.set("altitude", values.altitude.toFixed(2));
   params.set("shipSize", values.shipSize.toFixed(2));
-  params.set("ground", values.ground);
-  if (values.groundTile != null) params.set("tile", values.groundTile);
-  params.set("tileRepeat", String(values.tileRepeat));
   params.set("pixel", String(values.pixelLevel));
   params.set("pipe", values.pipelineMode);
   params.set("rth", String(values.rtHeight));

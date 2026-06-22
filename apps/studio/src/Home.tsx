@@ -67,13 +67,13 @@ const GROUPS: SectionGroup[] = [
       {
         id: "vertical",
         title: "Test Play",
-        desc: "Live scene with camera / ship / lighting tuning panels.",
+        desc: "Fly the authored Level Builder run with tuning panels.",
         status: "ready",
       },
       {
         id: "level",
         title: "Level Builder",
-        desc: "Paint scenery + altitude onto a top-down grid (v1: authoring only).",
+        desc: "Paint terrain, objects, and height onto a top-down grid.",
         status: "ready",
       },
     ],

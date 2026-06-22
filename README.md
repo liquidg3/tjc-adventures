@@ -15,7 +15,7 @@ and the vessel only succeeds when they work together.
 | Track | State |
 |---|---|
 | **M0 — cross-device spine** | ✅ Done & verified (host QR → phone joins a Colyseus room, input round-trips). **Parked** at `/host` + `/join` while we focus on graphics. |
-| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Current Studio focus: **UI Builder** for assigning imported UI images to chrome roles; after that, wire the **Level Builder** grid into the scene, then enemies. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + Kenney UI packs for Studio chrome. |
+| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Current Studio focus: **Level Builder** for painting the five-minute authored run with terrain, height, and objects in the live 3D preview. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + Kenney UI packs for Studio chrome. |
 
 ---
 
@@ -68,7 +68,7 @@ apps/
                    /host  laptop "table" lobby (M0 spine, parked)
                    /join  phone controller (M0 spine, parked)
   game-server/   Colyseus authoritative server (:2567)
-  studio/        Studio (:5174) — tuner + Kenney asset tools (Library/Test/Models board)  ← primary work surface
+  studio/        Studio (:5174) — tuner + Kenney asset tools (Library/Preview/Models board)  ← primary work surface
   marketing/     marketing site (stub)
 packages/
   scenes/        ★ the live Babylon scene (@tjc/scenes)
@@ -111,7 +111,7 @@ scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 ## Studio — the tuner + asset tools (`apps/studio`, :5174)
 
 Opens to a **launcher** grouped by Universal Tools (3D Models, Asset Library,
-Asset Test, UI Builder) and per-mode tools — currently the **Vertical Shooter**
+Asset Preview, UI Builder) and per-mode tools — currently the **Vertical Shooter**
 group with **Test Play** + **Level Builder** (Side Scroller and Death Race
 coming soon, each will mirror the same two cards).
 
@@ -129,7 +129,7 @@ its GLBs straight into committed `public/models/kenney-<slug>/` (one click). Car
 show "✓ imported" for packs already staged. *Manual alternative:* `node
 scripts/stage-pack.mjs <localDir> <name>` for a pack folder on disk.
 
-**Asset Test** — preview any staged model in **one shared 3D viewer** (a single WebGL
+**Asset Preview** — preview any staged model in **one shared 3D viewer** (a single WebGL
 context, so it scales to any pack size) as a simple rotating isometric browse view.
 All kits start collapsed. The viewer auto-applies the matching normalization preset
 based on the selected pack.
@@ -182,10 +182,11 @@ Current known issue:
   presets + overrides, but the final runtime forward convention still disagrees with
   the preview reference somewhere. That is the next bug to solve.
 
-**Vertical Scroller** — the live scene plus collapsible tuning panels (all collapsed
-by default): Zone Plan, Ship Size, Ship Position (live x/y/z readout + reset), Camera
-Rotation, Ship Altitude, Ground, Lighting (presets + sun sliders), Ship Lighting,
-Scenery, Pixelate. Each panel drives a `SceneHandle` method.
+**Vertical Scroller / Test Play** — fly the saved Level Builder run with the
+player ship active. Level graphics come from `apps/studio/level-builder.json`,
+not the old procedural ground/scenery path. Panels cover Level Run, Ship Size,
+Ship Position, Camera Rotation, Ship Altitude, Lighting, Ship Lighting, Pixelate,
+and Render Pipeline.
 
 ## Troubleshooting & gotchas (don't repeat these)
 
@@ -194,7 +195,7 @@ Scenery, Pixelate. Each panel drives a `SceneHandle` method.
   on the page ("Unable to create texture / vertex buffer / uniform buffer", blank
   screen). The 3D Models board hit this (one engine per card), so previews now
   lazy-mount only when on screen and lease from a hard cap of 6
-  (`apps/studio/src/viewer-budget.ts`); the Asset Test screen uses a single shared
+  (`apps/studio/src/viewer-budget.ts`); the Asset Preview screen uses a single shared
   viewer instead. **Never create unbounded engines.**
 - **Ship forward-yaw convention (player only).** Kenney space-kit ships are
   modeled nose-toward −Z; gameplay-forward is +Z. The runtime applies

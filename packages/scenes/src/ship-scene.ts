@@ -8,9 +8,12 @@ import {
   Color4,
   Texture,
   TransformNode,
+  type AbstractMesh,
 } from "@babylonjs/core";
+import { SceneInstrumentation } from "@babylonjs/core/Instrumentation/sceneInstrumentation";
 import "@babylonjs/loaders/glTF"; // registers the .glb loader
 import { dbg } from "./debug";
+import { createPerfMetrics } from "./perf-metrics";
 import { createFlightController } from "./flight-controller";
 import { createGroundLayer } from "./ground-layer";
 import { createInputController } from "./input-controller";
@@ -67,9 +70,22 @@ export {
  * Models are served from /models/**.
  */
 
-export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
+export interface ShipSceneOptions {
+  baseGroundVisible?: boolean;
+  loadProceduralScenery?: boolean;
+  stopAtLevelEndHold?: boolean;
+}
+
+export function createShipScene(
+  canvas: HTMLCanvasElement,
+  options: ShipSceneOptions = {},
+): SceneHandle {
+  const perf = createPerfMetrics();
   const engine = new Engine(canvas, true, { preserveDrawingBuffer: false });
   const scene = new Scene(engine);
+  const sceneInstrumentation = new SceneInstrumentation(scene);
+  sceneInstrumentation.captureActiveMeshesEvaluationTime = true;
+  sceneInstrumentation.captureRenderTime = true;
 
   // --- sky + atmosphere ---
   const sky = new Color3(0.46, 0.62, 0.85);
@@ -100,6 +116,7 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
 
   const lighting = createLightingController(scene);
   lighting.applyPreset("dramatic");
+  const shadowCasters = new Set<AbstractMesh>();
 
   // --- meadow ground: two stacked scrolling layers so the zone sequencer can
   //     wipe a new biome in across the field (layerB sweeps over layerA) ---
@@ -132,6 +149,11 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   let aKey = "";
   let bKey = "";
   let bShown = false;
+  let baseGroundVisible = options.baseGroundVisible ?? true;
+  function syncBaseGroundVisibility() {
+    groundA.setVisible(baseGroundVisible);
+    groundB.setVisible(baseGroundVisible && bShown);
+  }
   function ensureA(z: ZonePlanEntry) {
     const k = lookKey(z);
     if (k === aKey) return;
@@ -148,32 +170,33 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     ensureA(z);
     if (bShown) {
       groundA.setVOffset(groundB.getVOffset()); // keep scroll phase across the handoff
-      groundB.setVisible(false);
       groundB.setClip(null);
       bShown = false;
       bKey = "";
     }
+    syncBaseGroundVisibility();
   }
   function transitionGround(near: ZonePlanEntry, far: ZonePlanEntry, seamZ: number) {
     ensureA(near);
     ensureB(far);
     if (!bShown) {
-      groundB.setVisible(true);
       bShown = true;
     }
+    syncBaseGroundVisibility();
     groundB.setClip(seamZ); // far climate fills z > seamZ; the seam drifts at scroll speed
   }
   function hideTransition() {
     if (!bShown) return;
-    groundB.setVisible(false);
     groundB.setClip(null);
     bShown = false;
     bKey = "";
+    syncBaseGroundVisibility();
   }
   function setGroundSampling(mode: number) {
     groundA.setProceduralSampling(mode);
     groundB.setProceduralSampling(mode);
   }
+  syncBaseGroundVisibility();
 
   // Auto-scrolling level plan (zones). When a plan is loaded it owns the ground
   // and lighting; until then the scene stays under manual (Studio slider) control.
@@ -202,10 +225,18 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   let shipHeight = SHIP_HEIGHT; // runtime-adjustable via the Ship Altitude slider
   const shipController = createShipController(scene, {
     addCaster(mesh) {
-      lighting.shadowGen.addShadowCaster(mesh, true);
+      for (const caster of [mesh, ...mesh.getChildMeshes(false)]) {
+        if (shadowCasters.has(caster)) continue;
+        lighting.shadowGen.addShadowCaster(caster, false);
+        shadowCasters.add(caster);
+      }
     },
     removeCaster(mesh) {
-      lighting.shadowGen.removeShadowCaster(mesh, true);
+      for (const caster of [mesh, ...mesh.getChildMeshes(false)]) {
+        if (!shadowCasters.has(caster)) continue;
+        lighting.shadowGen.removeShadowCaster(caster, false);
+        shadowCasters.delete(caster);
+      }
     },
   });
   const propField = createPropFieldController(scene);
@@ -222,10 +253,12 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   });
 
   shipController.loadInitialShip();
-  void propField.loadScenery(24);
+  if (options.loadProceduralScenery !== false) void propField.loadScenery(24);
 
-  const levelLayer = createLevelPropLayer(scene);
-  const terrainLayer = createLevelTerrainLayer(scene);
+  const levelLayer = createLevelPropLayer(scene, perf, {
+    stopAtEndHold: options.stopAtLevelEndHold,
+  });
+  const terrainLayer = createLevelTerrainLayer(scene, perf);
 
   // ── render pipeline (pixel-art spike) ────────────────────────────────────
   // Two knobs decide the look:
@@ -269,8 +302,11 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   }
   const input = createInputController(togglePixel);
 
-  function syncLevelPreviewScroll() {
+  let lastSyncedLevelScrollZ = Number.NaN;
+  function syncLevelPreviewScroll(force = false) {
     const z = levelLayer.getScrollZ();
+    if (!force && Math.abs(z - lastSyncedLevelScrollZ) < 0.001) return;
+    lastSyncedLevelScrollZ = z;
     groundA.setScrollDistance(z);
     if (bShown) groundB.setScrollDistance(z);
     terrainLayer.setScrollZ(z);
@@ -283,12 +319,45 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
   window.addEventListener("resize", onResize);
 
   // --- loop ---
+  let lastShipDebugAt = 0;
   engine.runRenderLoop(() => {
+    const frameT0 = performance.now();
     const dt = Math.min(engine.getDeltaTime() / 1000, 0.05);
     const ship = shipController.getShip();
     const shipPivot = shipController.getShipPivot();
+    const now = performance.now();
+    if (now - lastShipDebugAt > 1000) {
+      lastShipDebugAt = now;
+      dbg("scene ship tick", {
+        hasShip: Boolean(ship),
+        hasPivot: Boolean(shipPivot),
+        ship: ship
+          ? {
+              name: ship.name,
+              uniqueId: ship.uniqueId,
+              enabled: ship.isEnabled(),
+              disposed: ship.isDisposed(),
+              position: {
+                x: roundDebug(ship.position.x),
+                y: roundDebug(ship.position.y),
+                z: roundDebug(ship.position.z),
+              },
+              scaling: {
+                x: roundDebug(ship.scaling.x),
+                y: roundDebug(ship.scaling.y),
+                z: roundDebug(ship.scaling.z),
+              },
+              childMeshes: ship.getChildMeshes(false).length,
+            }
+          : null,
+        shipHeight,
+        fps: roundDebug(engine.getFps()),
+        levelScrollZ: roundDebug(levelLayer.getScrollZ()),
+        levelTotalDepth: roundDebug(levelLayer.getTotalDepth()),
+      });
+    }
     if (ship) {
-      flight.step({
+      perf.measure("frame.flight", () => flight.step({
         dt,
         canvas,
         scene,
@@ -299,26 +368,41 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
         shipHeight,
         input: input.getState(),
         pointOnFlightPlane,
-      });
+      }));
     }
 
     // a level plan (when playing) drives ground + lighting by scrolled time
-    sequencer.update(dt);
+    perf.measure("frame.sequencer", () => sequencer.update(dt));
 
     // Advance the prop layer, then sync ground + terrain to the new scroll position.
     // The ground scrolls freely when no level is loaded; when a level is loaded the
     // prop layer owns the scroll position and ground/terrain follow it.
     const levelTotalDepth = levelLayer.getTotalDepth();
-    propField.update(dt);
-    levelLayer.step(dt);
+    perf.measure("frame.scenery", () => propField.update(dt));
+    perf.measure("frame.levelStep", () => levelLayer.step(dt));
     if (levelTotalDepth > 0) {
-      syncLevelPreviewScroll();
+      perf.measure("frame.syncLevelScroll", syncLevelPreviewScroll);
     } else {
       groundA.scroll(dt * SCROLL);
       if (bShown) groundB.scroll(dt * SCROLL);
     }
 
-    scene.render();
+    perf.measure("frame.render", () => scene.render());
+    perf.sample("babylon.render", sceneInstrumentation.renderTimeCounter.current);
+    perf.sample("babylon.activeMeshesEval", sceneInstrumentation.activeMeshesEvaluationTimeCounter.current);
+    perf.sample("stats.drawCalls", sceneInstrumentation.drawCallsCounter.current);
+    perf.sample("stats.meshes", scene.meshes.length);
+    perf.sample("stats.materials", scene.materials.length);
+    perf.sample("stats.activeMeshes", scene.getActiveMeshes().length);
+    perf.sample("stats.activeIndices", scene.getActiveIndices());
+    perf.sample("stats.totalVertices", scene.getTotalVertices());
+    const terrainStats = terrainLayer.getStats();
+    const propStats = levelLayer.getStats();
+    perf.sample("stats.terrainCells", terrainStats.placedCells);
+    perf.sample("stats.terrainMeshes", terrainStats.placedMeshes);
+    perf.sample("stats.propCells", propStats.placedCells);
+    perf.sample("stats.propMeshes", propStats.placedMeshes);
+    perf.sample("frame.total", performance.now() - frameT0);
   });
 
   dbg("scene ready (3D meadow)");
@@ -352,6 +436,10 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     setGroundTile(url, repeatPerSide, sampling = "nearest") {
       groundA.setTile(url, repeatPerSide, sampling);
       aKey = "";
+    },
+    setBaseGroundVisible(visible) {
+      baseGroundVisible = visible;
+      syncBaseGroundVisibility();
     },
     setScenery(densities) {
       manualScenery = densities;
@@ -438,14 +526,25 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     },
     setLevelCells(cells: LevelGridCell[], width, depth, cellSize, assetUrlMap) {
       propField.setVisible(cells.length === 0);
-      levelLayer.setLevelCells(cells, width, depth, cellSize, assetUrlMap);
+      perf.measure("api.setLevelCells", () => {
+        levelLayer.setLevelCells(cells, width, depth, cellSize, assetUrlMap);
+      });
     },
     setLevelTerrainCells(cells: LevelTerrainCell[], width, depth, cellSize, colorMap) {
-      terrainLayer.setTerrainCells(cells, width, depth, cellSize, colorMap);
+      perf.measure("api.setLevelTerrainCells", () => {
+        terrainLayer.setTerrainCells(cells, width, depth, cellSize, colorMap);
+      });
+    },
+    setLevelTerrainRenderWindowRows(backRows, forwardRows) {
+      perf.measure("api.setLevelTerrainRenderWindowRows", () => {
+        terrainLayer.setRenderWindowRows(backRows, forwardRows);
+      });
     },
     setLevelScrollZ(z) {
-      levelLayer.setScrollZ(z);
-      syncLevelPreviewScroll();
+      perf.measure("api.setLevelScrollZ", () => {
+        levelLayer.setScrollZ(z);
+        syncLevelPreviewScroll(true);
+      });
     },
     setLevelScrollPaused(paused) {
       levelLayer.setPaused(paused);
@@ -459,8 +558,12 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
     getFps() {
       return engine.getFps();
     },
+    getPerfMetrics() {
+      return perf.flush();
+    },
     dispose() {
       input.dispose();
+      sceneInstrumentation.dispose();
       levelLayer.dispose();
       terrainLayer.dispose();
       window.removeEventListener("resize", onResize);
@@ -477,4 +580,8 @@ export function createShipScene(canvas: HTMLCanvasElement): SceneHandle {
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
+}
+
+function roundDebug(v: number) {
+  return Math.round(v * 1000) / 1000;
 }

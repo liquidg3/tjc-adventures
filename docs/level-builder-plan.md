@@ -34,6 +34,7 @@ Current files:
 - `apps/studio/src/terrain-connectivity.ts`
 - `apps/studio/src/terrain-feature-resolver.ts`
 - `apps/studio/src/model-catalog.ts`
+- `apps/studio/src/model-thumbnails.ts`
 - `apps/studio/level-builder.json`
 - `packages/scenes/src/level-prop-layer.ts`
 - `packages/scenes/src/level-terrain-layer.ts`
@@ -72,9 +73,13 @@ Completed:
 - Asset Library has inferred theme and import-state filters over the full live
   Kenney pack list.
 - Rotation: left-clicking the same terrain/object model on initial press cycles
-  0→90→180→270. Right-click rotation is mode-scoped for performance: Terrain mode
-  rotates terrain cells; Object mode rotates placed objects. Saved as
-  `TerrainCell.rotation` / `PlacedObject.rotation`.
+  0→90→180→270. Right-click and right-drag quick-erase the active mode's layer,
+  bypassing the eraser toggle. Saved rotations use `TerrainCell.rotation` /
+  `PlacedObject.rotation`. In Connected terrain mode, left-clicking an already
+  connected same-family cell rotates that cell and marks it manual.
+- Palette model tiles show lazy 3D thumbnails rendered through one shared offscreen
+  Babylon engine, with the slot color retained as the tile border. Terrain/object
+  palettes render as two-column square visual cards; labels are hover/ARIA only.
 - Object rotation in scene: `node.addRotation(0, -deg*PI/180, 0)` (avoids
   `rotationQuaternion` conflict with direct `.rotation.y` assignment).
 - Performance: `GridCell` wrapped in `React.memo` + per-cell primitives as props +
@@ -82,13 +87,31 @@ Completed:
 - Performance: object/height scene sync is separate from terrain sync, and
   `level-prop-layer.ts` diffs object cells so painting/erasing one object only
   re-instantiates that changed cell unless dimensions or asset mappings changed.
+- Performance: `level-terrain-layer.ts` also diffs model-backed terrain cells, with
+  generation counters and an in-flight promise map so rapid edits do not leak meshes
+  or duplicate model loads.
+- Performance telemetry: `SceneHandle.getPerfMetrics()` flushes recent timing
+  buckets, the Level Builder panel displays the slowest buckets every 750ms, and
+  `window.__tjcSceneMetrics?.()` returns the latest sampled buckets in the browser console.
+- Paused/idle scroll sync has no-op guards in `ship-scene.ts`,
+  `level-terrain-layer.ts`, and `level-prop-layer.ts` so unchanged `scrollZ` does
+  not repaint terrain or resync every placed model every frame.
+- Terrain GLB placement is scene-virtualized to the visible runway
+  (`MODEL_NEAR_Z = PLANE_NEAR_Z - 80`, `MODEL_FAR_Z = PLANE_FAR_Z + 80`)
+  plus row overscan. This avoids keeping the
+  entire five-minute painted terrain layer as Babylon meshes at once; the
+  pre-virtualization 32-column level measured ~15k meshes, ~7.5k active meshes,
+  and ~11.8M vertices.
+- Placed terrain/object roots and child meshes freeze world matrices after
+  placement or scroll updates. Metrics include `stats.terrainCells`,
+  `stats.terrainMeshes`, `stats.propCells`, and `stats.propMeshes` to separate
+  authored-layer render load from cached/offscreen template meshes.
 - `stage-pack.mjs` texture import fix: GLB relative-path `Textures/colormap.png`
   is now preserved.
 - Smart connected terrain painting (Phase 6) fully implemented — see Phase 6 below.
 
 Open:
 
-- Terrain full-rebuild on terrain edits (no terrain diff-based update yet).
 - Height does not displace terrain in the 3D view.
 - Asset-normalization presets/overrides in `level-prop-layer.ts`.
 - Confirmation/resampling workflow for changing columns without rebuilding.
@@ -104,12 +127,12 @@ Open:
 | 1. Plan + Schema | Done | v2 layer schema, migration, helpers. |
 | 2. Editor Modes + Palettes | Done | Terrain/Objects/Height modes, per-mode eraser, search + kit dropdown, rect brush, catalog-only visible palette. |
 | 3. Five-Minute Grid Settings | Done | 300s/4800wu level target, column settings, rebuild confirmation. |
-| 4. Runtime Terrain Layer | Partial | Terrain renders in preview with rotation; efficient diff-based updates and height displacement remain. |
+| 4. Runtime Terrain Layer | Partial | Terrain renders in preview with rotation and diff-based model updates; height displacement remains. |
 | 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette, model classification fixes. |
 | 6. Smart Terrain Painting | Done | Connected Feature brush, 16-mask resolver, catalog lookup, renderer rotation, Rebuild Connections, fallback badge, eraser re-resolves neighbors. Rotation visual verification for the SHAPE_TABLE is still recommended. |
 | 7. Height Runtime | Later | Terrain displacement and better elevation preview. |
 | 8. Object Placement Quality | Partial | Diffed prop updates done; normalization in runtime placement and transform controls remain. |
-| 9. Long-Level Editing Performance | Partial | DOM virtualization and diffed object scene updates done; minimap/jump/terrain scene diffing remain. |
+| 9. Long-Level Editing Performance | Partial | DOM virtualization plus diffed object and terrain scene updates are done; minimap/jump remain. |
 
 Current behavior:
 
@@ -120,8 +143,19 @@ Current behavior:
 - Current level duration is `4800 / 16 = 300s`.
 - Five minutes requires `300s * 16wu/s = 4800wu`.
 - Level Builder preview hides the player ship and random scenery.
+- Vertical Shooter Test Play consumes the saved Level Builder JSON and passes the
+  authored terrain/object layers into the shared scene while keeping the player
+  ship and tuning panels active. It hides the procedural/tiled base ground behind
+  the authored runway so old terrain does not show through at the edges. The old
+  Zone Plan / Ground / Scenery Test Play panels have been removed; level graphics
+  now come from the Level Builder artifact.
+- Test Play uses the real Babylon shadow map over authored terrain and clamps
+  scroll at the end of the authored run so the final Level Builder rows stay on
+  screen for the later boss-fight hold.
 - Slider scrubs painted props and ground texture phase.
 - Grid display is inverted: start at bottom, far end at top, marker moves upward.
+- Right-click/right-drag quick-erases the active mode's layer; rotation is
+  left-click-same-model only.
 
 ## Core Decisions
 
@@ -516,8 +550,8 @@ Current prototype pieces:
 - Terrain cells are exclusive. Painting terrain B over terrain A replaces that
   cell's terrain value, and model-backed tiles are scaled to the exact cell
   footprint so unlike terrain types do not overlap or z-fight at boundaries.
-- Current implementation is full-rebuild on terrain edits; diffing remains a
-  later performance task.
+- Terrain model placement is diff-based: unchanged model-backed cells keep their
+  instances across edits, while changed cells are disposed and recreated.
 
 **2D grid virtualization** (`LevelBuilder.tsx:GridPanel`):
 - At 32 columns the current 384wu-wide five-minute level has 400 rows = 12,800
@@ -534,6 +568,9 @@ Current prototype pieces:
 
 **Performance fixes already applied**:
 - `level-prop-layer.ts` received the same generation counter + in-flight promise map fixes.
+- `level-terrain-layer.ts` now uses generation counters, an in-flight promise map,
+  and diff-based terrain placement. If an edit arrives before the initial full build
+  finishes, the terrain layer escalates back to a full rebuild to avoid holes.
 - `syncLevelPreviewScroll` was previously called twice per frame (once before, once after
   `levelLayer.step(dt)`). The first call was redundant — its results were always overwritten.
   Removed the first call; only the post-step sync remains.
@@ -544,7 +581,6 @@ Current prototype pieces:
 
 Remaining gaps before Phase 4 can be called done:
 
-- Terrain placement should become diff-based instead of full-rebuild on every edit.
 - Terrain model scale/origin assumptions need more coverage across terrain assets.
 - Painted terrain should support height displacement.
 - Terrain should eventually support smoother joins/blends where assets permit it.
@@ -659,11 +695,10 @@ Exit criteria:
 
 ### Phase 8: Object Placement Quality — Later
 
-- Make `level-prop-layer.ts` diff-based.
+- `level-prop-layer.ts` is already diff-based for object/height edits.
 - Apply asset normalization and placement defaults.
-- Replace one-size-fits-all `cellSize * 0.75` scaling.
-- Add enough per-category/family defaults that trees, bushes, rocks, and crates read
-  correctly.
+- Continue improving per-category/family defaults so trees, bushes, rocks, crates,
+  and unknown catalog models read correctly.
 
 Exit criteria:
 
@@ -674,9 +709,9 @@ Exit criteria:
 ### Phase 9: Long-Level Editing Performance — Partial
 
 - Row virtualization shipped as part of Phase 4 — DOM grid is now `O(visible rows)`.
+- Object and terrain scene placement are both diff-based.
 - Remaining: minimap / current-position indicator for long levels.
 - Remaining: jump-to-current-row control.
-- Remaining: diff-based prop + terrain placement (currently full rebuild on every paint).
 
 Exit criteria:
 

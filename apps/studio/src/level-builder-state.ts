@@ -58,6 +58,11 @@ export interface LevelLayers {
   objects: ObjectCell[];
 }
 
+export interface LevelPreviewSettings {
+  terrainRenderRowsBack: number;
+  terrainRenderRowsForward: number;
+}
+
 export interface Level {
   version: 2;
   durationSec: number;
@@ -66,6 +71,7 @@ export interface Level {
   columns: number;
   rows: number;
   cellSize: number;
+  preview: LevelPreviewSettings;
   layers: LevelLayers;
 }
 
@@ -88,6 +94,9 @@ export const DEFAULT_LEVEL_DURATION_SEC = 300;
 export const DEFAULT_LEVEL_SCROLL_SPEED = 16;
 export const DEFAULT_FIELD_WIDTH = 384;
 export const DEFAULT_LEVEL_COLUMNS = 12;
+export const DEFAULT_TERRAIN_RENDER_ROWS_BACK = 6;
+export const DEFAULT_TERRAIN_RENDER_ROWS_FORWARD = 14;
+export const MAX_TERRAIN_RENDER_ROWS = 96;
 export const MAX_HEIGHT = 8;
 
 export const COLUMN_OPTIONS = [10, 12, 16, 24, 32] as const;
@@ -115,6 +124,7 @@ export function emptyLevel(opts: Partial<Pick<Level, "columns" | "durationSec" |
     columns,
     rows,
     cellSize,
+    preview: defaultPreviewSettings(),
     layers: emptyLayers(columns * rows),
   };
 }
@@ -181,6 +191,7 @@ function mergeV2(obj: Record<string, unknown>): Level {
     columns,
     rows,
     cellSize,
+    preview: mergePreviewSettings(obj.preview),
     layers: {
       terrain: mergeTerrainLayer(rawLayers.terrain, expected),
       height: mergeHeightLayer(rawLayers.height, expected),
@@ -224,6 +235,30 @@ function migrateV1(raw: Partial<LevelV1>): Level {
   }
 
   return base;
+}
+
+export function normalizeTerrainRenderRows(rows: number): number {
+  return clamp(Math.round(saneNumber(rows, 0)), 0, MAX_TERRAIN_RENDER_ROWS);
+}
+
+function defaultPreviewSettings(): LevelPreviewSettings {
+  return {
+    terrainRenderRowsBack: DEFAULT_TERRAIN_RENDER_ROWS_BACK,
+    terrainRenderRowsForward: DEFAULT_TERRAIN_RENDER_ROWS_FORWARD,
+  };
+}
+
+function mergePreviewSettings(raw: unknown): LevelPreviewSettings {
+  if (!raw || typeof raw !== "object") return defaultPreviewSettings();
+  const obj = raw as Partial<LevelPreviewSettings>;
+  return {
+    terrainRenderRowsBack: normalizeTerrainRenderRows(
+      saneNumber(obj.terrainRenderRowsBack, DEFAULT_TERRAIN_RENDER_ROWS_BACK),
+    ),
+    terrainRenderRowsForward: normalizeTerrainRenderRows(
+      saneNumber(obj.terrainRenderRowsForward, DEFAULT_TERRAIN_RENDER_ROWS_FORWARD),
+    ),
+  };
 }
 
 function emptyLayers(count: number): LevelLayers {

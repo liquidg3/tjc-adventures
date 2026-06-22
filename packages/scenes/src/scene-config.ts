@@ -39,6 +39,15 @@ export interface ShipLightingState {
   ambientStrength: number;
 }
 
+export interface PerfMetricBucket {
+  count: number;
+  avg: number;
+  max: number;
+  last: number;
+}
+
+export type PerfMetricSnapshot = Record<string, PerfMetricBucket>;
+
 export type ShipNormalizationAnchor = "none" | "center" | "bottom-center";
 
 export interface ShipModelNormalization {
@@ -76,6 +85,8 @@ export interface SceneHandle {
     repeatPerSide: number,
     sampling?: TileSampling,
   ) => void;
+  /** Show/hide the procedural/tiled base ground under authored level terrain. */
+  setBaseGroundVisible: (visible: boolean) => void;
   /** Manual-mode scenery densities (used when no level plan is playing). */
   setScenery: (densities: SceneryDensities) => void;
   setPixelScale: (level: number) => void;
@@ -120,11 +131,13 @@ export interface SceneHandle {
     cellSize: number,
     assetUrlMap: Record<string, string>,
   ) => void;
+  setLevelTerrainRenderWindowRows: (backRows: number, forwardRows: number) => void;
   setLevelScrollZ: (z: number) => void;
   setLevelScrollPaused: (paused: boolean) => void;
   getLevelScrollZ: () => number;
   getLevelTotalDepth: () => number;
   getFps: () => number;
+  getPerfMetrics: () => PerfMetricSnapshot;
   /** Current zone while a plan is playing, or null when not sequencing. */
   getZoneStatus: () => { index: number; name: string; progress: number } | null;
 }
