@@ -28,11 +28,18 @@ export function Host() {
   useEffect(() => {
     if (!canvasRef.current) return;
     let cancelled = false;
-    const scene = createShipScene(canvasRef.current, {
-      baseGroundVisible: false,
-      loadProceduralScenery: false,
-      stopAtLevelEndHold: true,
-    });
+    let scene: SceneHandle;
+    try {
+      scene = createShipScene(canvasRef.current, {
+        baseGroundVisible: false,
+        loadProceduralScenery: false,
+        stopAtLevelEndHold: true,
+      });
+    } catch (e) {
+      setSceneStatus("3D unavailable on this device");
+      setError(e instanceof Error ? e.message : String(e));
+      return;
+    }
     sceneRef.current = scene;
     scene.setPlayerShipVisible(true);
     scene.setScenery({});

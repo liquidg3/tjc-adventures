@@ -191,6 +191,20 @@ and Render Pipeline.
 
 ## Troubleshooting & gotchas (don't repeat these)
 
+- **GPU-blocklisted devices (e.g. Jetson Orin) need a native browser.** The
+  client renders via Babylon/WebGL. On a Jetson the *snap* Chromium can't reach
+  the Tegra GL driver, so it either disables WebGL (`--use-gl=disabled`, blank
+  screen + `Error: WebGL not supported`) or, if forced with
+  `--enable-unsafe-swiftshader`, falls back to **CPU SwiftShader** — which is
+  unplayably slow (the GPU sits idle). Fix: use a **native (deb) Chromium-family
+  browser** — **Brave** works — launched with **`--ignore-gpu-blocklist`** to get
+  hardware WebGL (`ANGLE … NVIDIA Tegra Orin (nvgpu) … OpenGL 4.5`). Verify at
+  `brave://gpu` / `chrome://gpu`: WebGL/WebGL2 = *Hardware accelerated*. The GPU +
+  driver are fine (`nvidia-smi` works); the only blocker is the browser reaching
+  them. `WebGLGate` (`apps/game-client/src/WebGLGate.tsx`) shows a friendly
+  "3D might not run" notice + "Continue anyway" instead of a blank crash when no
+  WebGL context is available; `/host` and `/game` also try/catch scene creation
+  so a failed init shows an inline message rather than white-screening.
 - **WebGL context cap (~16 per page).** Every Babylon `Engine` holds one WebGL
   context; past the cap the browser drops the oldest, which corrupts *every* engine
   on the page ("Unable to create texture / vertex buffer / uniform buffer", blank

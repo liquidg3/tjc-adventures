@@ -12,11 +12,18 @@ export function GameSandbox() {
   useEffect(() => {
     if (!canvasRef.current) return;
     let cancelled = false;
-    const handle = createShipScene(canvasRef.current, {
-      baseGroundVisible: false,
-      loadProceduralScenery: false,
-      stopAtLevelEndHold: true,
-    });
+    let handle: SceneHandle;
+    try {
+      handle = createShipScene(canvasRef.current, {
+        baseGroundVisible: false,
+        loadProceduralScenery: false,
+        stopAtLevelEndHold: true,
+      });
+    } catch (e) {
+      setStatus("3D unavailable on this device");
+      setError(e instanceof Error ? e.message : String(e));
+      return;
+    }
     sceneRef.current = handle;
     handle.setPlayerShipVisible(true);
     handle.setScenery({});

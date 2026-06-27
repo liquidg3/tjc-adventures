@@ -4,6 +4,7 @@ import { GameSandbox } from "./GameSandbox";
 import { Host } from "./Host";
 import { Controller } from "./Controller";
 import { StartScreen } from "./StartScreen";
+import { WebGLGate } from "./WebGLGate";
 import "./styles.css";
 
 // No StrictMode: its double-invoked effects would spin up the Babylon engine
@@ -16,11 +17,13 @@ import "./styles.css";
 //   /join   phone pilot controller
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<StartScreen />} />
-      <Route path="/game" element={<GameSandbox />} />
-      <Route path="/host" element={<Host />} />
-      <Route path="/join" element={<Controller />} />
-    </Routes>
+    <WebGLGate>
+      <Routes>
+        <Route path="/" element={<StartScreen />} />
+        <Route path="/game" element={<GameSandbox />} />
+        <Route path="/host" element={<Host />} />
+        <Route path="/join" element={<Controller />} />
+      </Routes>
+    </WebGLGate>
   </BrowserRouter>
 );
