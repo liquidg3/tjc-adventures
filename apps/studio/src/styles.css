@@ -1,6 +1,7 @@
 :root {
   color-scheme: dark;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --vertical-playfield-max-aspect: 1.1;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: #0b1020; color: #e6ecff; }
@@ -237,9 +238,12 @@ section h2 {
 /* ---- vertical scroller scene + tuning panels ---- */
 .game-canvas {
   position: fixed;
-  inset: 0;
-  width: 100vw;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: min(100vw, calc(100vh * var(--vertical-playfield-max-aspect)));
   height: 100vh;
+  transform: translateX(-50%);
   display: block;
   outline: none;
   touch-action: none;

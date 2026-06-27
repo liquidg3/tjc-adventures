@@ -212,6 +212,11 @@ Open implementation detail:
 
 - Current authored field width is `384wu` so 32 selected columns fit across the
   visible far/top edge of the Level Builder preview.
+- The vertical-scroller render canvas is capped to a centered `1.1` max aspect
+  ratio in the game client and Studio (`--vertical-playfield-max-aspect`). This
+  keeps wide monitors from exposing space beyond the authored `384wu` terrain
+  field and keeps Babylon's CSS-pixel flight clamps aligned with the visible
+  playfield.
 
 ### Separate Layers
 
@@ -536,6 +541,9 @@ Current prototype pieces:
   swatch color so missing assets are still visible.
 - The plane width is `columns * cellSize`, which is `384wu` by default. This is
   tuned so 32 selected columns fit across the wider far/top edge of the preview.
+- Wide screens do not expand the runtime playfield indefinitely: `.game-canvas`
+  is centered and capped to `--vertical-playfield-max-aspect: 1.1`, so authored
+  terrain remains the visual boundary instead of revealing empty side space.
 - Rows are mapped with the same row-major convention as objects: row 0 = far end,
   last row = start. `setScrollZ` repaints the visible window so scrubbing/playback
   moves over authored terrain.

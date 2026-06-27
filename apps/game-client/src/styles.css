@@ -1,6 +1,7 @@
 :root {
   color-scheme: dark;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --vertical-playfield-max-aspect: 1.1;
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
@@ -187,9 +188,12 @@ h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
 /* Graphics sandbox: fullscreen canvas + a small control hint. */
 .game-canvas {
   position: fixed;
-  inset: 0;
-  width: 100vw;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: min(100vw, calc(100vh * var(--vertical-playfield-max-aspect)));
   height: 100vh;
+  transform: translateX(-50%);
   display: block;
   outline: none;
   touch-action: none;

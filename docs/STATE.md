@@ -130,6 +130,10 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
   play area (`stopAtLevelEndHold: true`), leaving the end of the Level Builder
   artifact on screen for the later boss-fight hold instead of exposing fallback
   terrain past the authored run.
+- The vertical-scroller canvas is centered and capped to a `1.1` max aspect ratio
+  in both the game client and Studio via `--vertical-playfield-max-aspect`. This
+  keeps wide monitors from showing beyond the authored `384wu` terrain field and
+  keeps the existing CSS-pixel flight clamps aligned with the visible playfield.
 - Terrain cell `rotation` is applied in the scene via `LevelTerrainCell.rotation`;
   `level-terrain-layer.ts` applies `−rotation×π/180` on the Y axis via `addRotation`
   so GLB roots with `rotationQuaternion` actually rotate.
