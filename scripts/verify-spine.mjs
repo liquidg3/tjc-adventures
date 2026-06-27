@@ -39,8 +39,15 @@ console.log(`firstClaim=${firstClaimResult.ok} ${firstClaimResult.message ?? ""}
 console.log(`duplicateClaim=${duplicateClaimResult.ok} ${duplicateClaimResult.message ?? ""}`);
 
 let gotPong = false;
+let gotGunnerInput = false;
 phone.onMessage("pong", () => (gotPong = true));
+phone.onMessage("gunner-input", () => {});
+secondPhone.onMessage("gunner-input", () => {});
+host.onMessage("gunner-input", (input) => {
+  gotGunnerInput = input?.firing === true && input?.x >= 0 && input?.x <= 1 && input?.y >= 0 && input?.y <= 1;
+});
 phone.send("ping");
+phone.send("gunner-input", { x: 0.52, y: 0.34, firing: true });
 await sleep(300);
 
 await secondPhone.leave();
@@ -50,6 +57,7 @@ await host.leave();
 const ok =
   count >= 3 &&
   gotPong &&
+  gotGunnerInput &&
   firstClaimResult.ok === true &&
   duplicateClaimResult.ok === false &&
   roles.includes("pilot") &&

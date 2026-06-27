@@ -5,6 +5,8 @@ import {
   isPlayableRole,
   type ClaimRoleRequest,
   type ClaimRoleResult,
+  type GunnerInput,
+  type HostState,
   type JoinOptions,
   type PilotInput,
   type PlayableRole,
@@ -36,6 +38,32 @@ export class GameRoom extends colyseus.Room<GameState> {
         boosting: input?.boosting === true,
         dodge: clamp(input?.dodge ?? 0, -1, 1),
       });
+    });
+    this.onMessage("gunner-input", (client, input: GunnerInput) => {
+      const player = this.state.players.get(client.sessionId);
+      if (player?.role !== "gunner") return;
+      this.broadcast("gunner-input", {
+        clientId: client.sessionId,
+        x: clamp(input?.x, 0, 1),
+        y: clamp(input?.y, 0, 1),
+        firing: input?.firing === true,
+      });
+    });
+    // The laptop host renders the authoritative scene and pushes its ship +
+    // scroll state so replica views (Gunner phones) mirror the table screen.
+    this.onMessage("host-state", (client, input: HostState) => {
+      const player = this.state.players.get(client.sessionId);
+      if (player?.device !== "laptop") return;
+      this.broadcast(
+        "host-state",
+        {
+          shipX: num(input?.shipX),
+          shipY: num(input?.shipY),
+          shipZ: num(input?.shipZ),
+          scrollZ: num(input?.scrollZ),
+        },
+        { except: client },
+      );
     });
     this.onMessage("claim-role", (client, request: ClaimRoleRequest = {}) => {
       const player = this.state.players.get(client.sessionId);
@@ -117,6 +145,10 @@ function clamp(v: unknown, lo: number, hi: number) {
   return typeof v === "number" && Number.isFinite(v)
     ? Math.max(lo, Math.min(hi, v))
     : 0;
+}
+
+function num(v: unknown) {
+  return typeof v === "number" && Number.isFinite(v) ? v : 0;
 }
 
 function cleanName(name: unknown, fallback: string) {

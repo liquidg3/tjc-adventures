@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import type { Room } from "colyseus.js";
 import { createShipScene, type SceneHandle } from "@tjc/scenes";
-import { PLAYABLE_ROLES, ROOM_NAME, type LanInfo, type PilotInput, type PlayableRole } from "@tjc/core";
+import {
+  PLAYABLE_ROLES,
+  ROOM_NAME,
+  type GunnerInput,
+  type LanInfo,
+  type PilotInput,
+  type PlayableRole,
+} from "@tjc/core";
 import { makeClient, serverHttpBase } from "./colyseus";
 import { applySavedScene } from "./saved-level-scene";
 import { AvatarSprite } from "./player-avatars";
@@ -24,10 +31,12 @@ export function Host() {
   const [error, setError] = useState("");
   const [sceneStatus, setSceneStatus] = useState("Loading saved level…");
   const [activePilot, setActivePilot] = useState(false);
+  const [activeGunner, setActiveGunner] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<SceneHandle | null>(null);
   const roomRef = useRef<Room | null>(null);
   const lastInputAtRef = useRef(0);
+  const lastGunnerInputAtRef = useRef(0);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -66,11 +75,17 @@ export function Host() {
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      if (lastInputAtRef.current === 0) return;
-      if (performance.now() - lastInputAtRef.current < 450) return;
-      lastInputAtRef.current = 0;
-      setActivePilot(false);
-      sceneRef.current?.setExternalInput(null);
+      const now = performance.now();
+      if (lastInputAtRef.current > 0 && now - lastInputAtRef.current >= 450) {
+        lastInputAtRef.current = 0;
+        setActivePilot(false);
+        sceneRef.current?.setExternalInput(null);
+      }
+      if (lastGunnerInputAtRef.current > 0 && now - lastGunnerInputAtRef.current >= 250) {
+        lastGunnerInputAtRef.current = 0;
+        setActiveGunner(false);
+        sceneRef.current?.setGunnerInput(null);
+      }
     }, 100);
     return () => window.clearInterval(timer);
   }, []);
@@ -100,6 +115,11 @@ export function Host() {
           setActivePilot(Math.abs(input.vx) > 0 || Math.abs(input.vz) > 0 || input.boosting);
           sceneRef.current?.setExternalInput(input);
         });
+        room.onMessage("gunner-input", (input: GunnerInput & { clientId?: string }) => {
+          lastGunnerInputAtRef.current = performance.now();
+          setActiveGunner(input.firing === true);
+          sceneRef.current?.setGunnerInput(input);
+        });
 
         room.onStateChange((state: any) => {
           const list: PlayerView[] = [];
@@ -126,6 +146,25 @@ export function Host() {
     };
   }, []);
 
+  // Broadcast the authoritative ship + scroll state at ~20Hz so replica views
+  // (Gunner phones) render exactly what this shared table screen shows.
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const scene = sceneRef.current;
+      const room = roomRef.current;
+      if (!scene || !room) return;
+      const pos = scene.getShipPosition();
+      if (!pos) return;
+      room.send("host-state", {
+        shipX: pos.x,
+        shipY: pos.y,
+        shipZ: pos.z,
+        scrollZ: scene.getLevelScrollZ(),
+      });
+    }, 50);
+    return () => window.clearInterval(timer);
+  }, []);
+
   const seats = PLAYABLE_ROLES.map((role) => ({
     role,
     player: players.find((player) => player.role === role),
@@ -148,6 +187,9 @@ export function Host() {
           <p className="hint">{joinUrl}</p>
           <p className={activePilot ? "ok" : "dim"}>
             {activePilot ? "Remote Pilot active" : "Host is Pilot"}
+          </p>
+          <p className={activeGunner ? "ok" : "dim"}>
+            {activeGunner ? "Gunner targeting" : "Gunner standing by"}
           </p>
           <p className="hint">{sceneStatus}</p>
           <div className="seat-board">

@@ -94,15 +94,17 @@ scripts/         free-ports, clean, doctor, verify-spine, stage-pack
   **Tune it in the Studio** (`npm run dev:studio`).
 - **Controls:** Arrows / WASD to fly, `Shift` to boost, `P` to toggle pixel mode.
   The ship reaches the full visible viewport in both axes; the field scrolls with
-  3D scenery depth.
+  3D scenery depth. In LAN host mode, a claimed Gunner phone station shows a
+  lightweight matching playfield view; holding/dragging on it targets the reticle
+  on the shared screen and fires visible projectiles from the ship.
 - **Visual state:** real GLB models from `public/models/**` + a procedural meadow
   ground (4 styles). A **real blurred, projected `ShadowGenerator` shadow** (the
   old blob disc is gone). Lighting via 5 presets plus **live sun position +
   intensity** controls. Bank default is **`Camera Z`** (subtle).
 - **Runtime contract:** `createShipScene(canvas)` returns a `SceneHandle` with
-  setters for camera mode, ship height/size, ground style, pixel scale, lighting
-  preset, and sun intensity/sky/azimuth/elevation (plus `getShipPosition`,
-  `resetShip`, `getLightingState`). Studio Vertical Test Play also reads
+  setters for camera mode, ship height/size, ground style, pixel scale, Gunner
+  aim/fire input, lighting preset, and sun intensity/sky/azimuth/elevation (plus
+  `getShipPosition`, `resetShip`, `getLightingState`). Studio Vertical Test Play also reads
   the selected `ship-player` assignment plus its saved normalization preset, so
   the live ship matches the 3D Models board. Tunable constants are at the top
   of the file.

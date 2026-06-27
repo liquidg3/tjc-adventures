@@ -20,9 +20,11 @@ _Last updated: 2026-06-27._
   real shared scene at `/host`; the host claims Pilot, and phones join via QR at
   `/join` to enter a name, choose one of four pixel-avatar archetypes, and claim
   an open Pilot/Gunner/Spotter role. The server validates one connected player per
-  playable role. The host reads the saved Studio Level Builder artifact and
-  Vertical Test Play settings. `npm run verify:spine` exercises the room path
-  headlessly.
+  playable role. The claimed Gunner station shows a lightweight matching playfield
+  and sends normalized hold/drag aim-fire input; the host scene renders a reticle
+  and visible projectiles from the ship. The host reads the saved Studio Level
+  Builder artifact and Vertical Test Play settings. `npm run verify:spine`
+  exercises the room path headlessly, including role claim and Gunner input.
 - **ACTIVE WORK → the Level Builder.** We are building out the five-minute authored
   level for the vertical scroller through the Studio. The Level Builder is now a
   substantial authoring surface: v2 layered schema (terrain/height/objects), live 3D
@@ -227,9 +229,10 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
    assumes Kenney river models are authored N-S-straight at rotation=0, N+E-corner
    at rotation=0. See `VISUAL INSPECTION REQUIRED` comment in that file. Load the
    five base river models in Asset Preview and update the table if wrong.
-8. **M0 multiplayer host path is basic but live.** `/host` mounts the shared scene
-   and `/join` sends pilot input. `npm run verify:spine` checks room sync, but
-   visual/phone play still needs manual browser testing.
+8. **M0 multiplayer host path is basic but live.** `/host` mounts the shared scene,
+   starts as Pilot, and `/join` provides name/avatar seat claim plus Pilot/Gunner
+   phone stations. `npm run verify:spine` checks room sync, role claim, and Gunner
+   input routing, but visual/phone play still needs manual browser testing.
 
 ---
 
@@ -521,10 +524,11 @@ these belongs with cleanup of the legacy procedural scene path.
    disables procedural scenery loading; cleanup can either delete the old path or
    repoint it to Kenney replacements.
 
-**Gameplay (not started — pilot-flight plus role-seat lobby only):**
-9. No shooting / enemies / pickups / rescue / cages yet. `asset-map.json` has
-   `ship-enemy = craft_miner` but nothing spawns. Roles (Gunner, Spotter) are
-   designed in `docs/` and the **M0 spine exists but is parked**.
+**Gameplay (early — pilot flight + first Gunner loop only):**
+9. Gunner phone aim/fire now sends normalized target input and the host scene
+   renders a reticle plus visible projectiles. There are still no enemies,
+   hit detection, pickups, rescue, or cages. `asset-map.json` has
+   `ship-enemy = craft_miner` but nothing spawns.
 10. **Raiden pickup mechanics** (weapon medals → upgrades, bombs) — adapt later per
     `prototype-meadow-run.md`.
 
@@ -541,16 +545,17 @@ these belongs with cleanup of the legacy procedural scene path.
    scenery path or repoint `scene-config.SCENERY_MODELS` to Kenney replacements.
 7. **Enemies — start the gameplay layer.** `asset-map.json` already has
    `ship-enemy = kenney-space-kit/craft_miner` but nothing spawns. First pass:
-   simple straight-line enemies streaming down-screen, no shooting yet. Per
+   simple straight-line enemies streaming down-screen, then let current Gunner
+   projectiles hit them. Per
    `prototype-meadow-run.md`. (When spawning enemies, do **NOT** apply
    `SHIP_MODEL_FORWARD_YAW` — enemies need the opposite facing.)
-8. **Shooting** — wire projectiles from the player ship's nose (the Gunner role);
-   enemies become real targets.
+8. **Shooting follow-up** — current projectiles are visual-only; add collision,
+   damage, hit FX, and basic scoring once enemies exist.
 9. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
 10. **Build out role stations** — the QR lobby can claim Pilot/Gunner/Spotter with
-    name + pixel avatar, but Gunner and Spotter controls are placeholders until
-    shooting/tagging/assist mechanics exist.
+    name + pixel avatar. Gunner has first-pass targeting; Spotter is still a
+    placeholder until tagging/assist mechanics exist.
 
 ---
 

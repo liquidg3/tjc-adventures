@@ -14,6 +14,6 @@ export const ROLE_BLURBS: Record<PlayableRole, string> = {
 
 export const ROLE_STATION_COPY: Record<PlayableRole, string> = {
   pilot: "Hold buttons to fly the ship on the big screen.",
-  gunner: "Weapons controls are next. For now, this seat is claimed.",
+  gunner: "Hold the shared view to aim and fire.",
   spotter: "Tag and assist controls are next. For now, this seat is claimed.",
 };

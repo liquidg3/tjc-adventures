@@ -54,6 +54,22 @@ export interface PilotInput {
   dodge?: number;
 }
 
+/** Phone Gunner aim packet. x/y are normalized against the shared playfield. */
+export interface GunnerInput {
+  x: number;
+  y: number;
+  firing: boolean;
+}
+
+/** Authoritative world snapshot the laptop host broadcasts so replica views
+ *  (the Gunner station) render exactly what the shared table screen shows. */
+export interface HostState {
+  shipX: number;
+  shipY: number;
+  shipZ: number;
+  scrollZ: number;
+}
+
 /** Host-discovery info served at GET /lan-info so the table screen can build a
  *  join QR that phones on the LAN can reach. */
 export interface LanInfo {

@@ -70,10 +70,19 @@ export interface LevelTerrainCell {
   rotation?: number;  // degrees CW from above; renderer applies −rotation×π/180 on Y axis
 }
 
+/** Authoritative snapshot a replica scene renders instead of simulating. */
+export interface ReplicaState {
+  shipX: number;
+  shipY: number;
+  shipZ: number;
+  scrollZ: number;
+}
+
 export interface SceneHandle {
   dispose: () => void;
   setCameraRotationMode: (mode: CameraRotationMode) => void;
   setExternalInput: (input: { vx: number; vz: number; boosting: boolean; dodge?: number } | null) => void;
+  setGunnerInput: (input: { x: number; y: number; firing: boolean } | null) => void;
   setPlayerShipModel: (url: string, normalization?: ShipModelNormalization) => void;
   setPlayerShipVisible: (visible: boolean) => void;
   setShipHeight: (height: number) => void;
@@ -136,6 +145,11 @@ export interface SceneHandle {
   setLevelScrollZ: (z: number) => void;
   setLevelScrollPaused: (paused: boolean) => void;
   getLevelScrollZ: () => number;
+  /** Replica mode: stop simulating ship + scroll locally and instead render the
+   *  authoritative state pushed via applyReplicaState (mirrored views like the
+   *  Gunner station). */
+  setReplicaMode: (enabled: boolean) => void;
+  applyReplicaState: (state: ReplicaState) => void;
   getLevelTotalDepth: () => number;
   getFps: () => number;
   getPerfMetrics: () => PerfMetricSnapshot;

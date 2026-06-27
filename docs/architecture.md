@@ -14,9 +14,10 @@
 2. **Heavy rendering on the host only.** The laptop renders the rich shared
    screen; phones are lightweight HTML control stations. We can go visually lush
    without caring about phone GPUs.
-3. **Twitchy inputs are local; tolerant inputs are remote.** Pilot (keyboard) and
-   Gunner (mouse) live on the laptop; only the latency-tolerant Spotter is on a
-   phone. The hardest real-time problem mostly evaporates.
+3. **Twitchy inputs stay simple over LAN.** Pilot keyboard input is local to the
+   host. Phone stations send compact intents only: Gunner normalized aim/fire and
+   Spotter tag/assist taps. The shared screen renders the heavy scene; phones do
+   not stream video.
 4. **Game logic is decoupled from the renderer.** The simulation is pure
    TypeScript that knows nothing about Babylon — so it's testable, and the
    role/world abstraction (`brief.md` §3) is real in code, not just art.
@@ -74,6 +75,9 @@ Revisit only if Babylon's complexity stalls the core-loop proof.
   effectively zero latency for Pilot/Gunner inputs.
 - **Phones** join over the LAN and exchange small messages (intents up, light
   state down). We **never stream the game video** to phones.
+- The current Gunner phone station is a lightweight matching playfield surface,
+  not a second Babylon renderer: touch coordinates are normalized and interpreted
+  against the host canvas.
 
 ---
 
@@ -194,7 +198,9 @@ the full scene. Big touch targets, assist buttons appear contextually.
 Current M0 implementation note: profiles are not built yet, so `/join` uses a
 temporary same-room identity card: typed name + one of four pixel-avatar
 archetypes, then a server-validated claim for an open Pilot/Gunner/Spotter seat.
-The host starts as Pilot.
+The host starts as Pilot. Gunner has a first-pass phone station: hold/drag on the
+matching playfield to send normalized aim/fire input; the host scene renders the
+reticle and visual projectiles.
 
 ---
 

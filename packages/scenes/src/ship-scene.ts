@@ -16,6 +16,7 @@ import { dbg } from "./debug";
 import { createPerfMetrics } from "./perf-metrics";
 import { createFlightController } from "./flight-controller";
 import { createGroundLayer } from "./ground-layer";
+import { createGunnerController } from "./gunner-controller";
 import { createInputController } from "./input-controller";
 import { createLightingController } from "./lighting-controller";
 import { createPropFieldController } from "./prop-field";
@@ -107,10 +108,11 @@ export function createShipScene(
   camera.rotation.set(CAMERA_BASE_LOCAL_X, 0, 0);
   const cameraBaseRot = camera.rotation.clone();
   const flight = createFlightController(camera, cameraRig, cameraBaseRot, cameraRigBaseRot);
+  let shipHeight = SHIP_HEIGHT; // runtime-adjustable via the Ship Altitude slider
 
   const pointOnFlightPlane = (screenX: number, screenY: number) => {
     const ray = scene.createPickingRay(screenX, screenY, Matrix.Identity(), camera);
-    const t = (SHIP_HEIGHT - ray.origin.y) / ray.direction.y;
+    const t = (shipHeight - ray.origin.y) / ray.direction.y;
     return ray.origin.add(ray.direction.scale(t));
   };
 
@@ -222,7 +224,6 @@ export function createShipScene(
     { scrollSpeed: SCROLL, shipZ: SHIP_START_Z, seamFar: SEAM_FAR, seamNear: SEAM_NEAR },
   );
 
-  let shipHeight = SHIP_HEIGHT; // runtime-adjustable via the Ship Altitude slider
   const shipController = createShipController(scene, {
     addCaster(mesh) {
       for (const caster of [mesh, ...mesh.getChildMeshes(false)]) {
@@ -259,6 +260,7 @@ export function createShipScene(
     stopAtEndHold: options.stopAtLevelEndHold,
   });
   const terrainLayer = createLevelTerrainLayer(scene, perf);
+  const gunner = createGunnerController(scene);
 
   // ── render pipeline (pixel-art spike) ────────────────────────────────────
   // Two knobs decide the look:
@@ -302,6 +304,12 @@ export function createShipScene(
   }
   const input = createInputController(togglePixel);
   let externalInput: { vx: number; vz: number; boosting: boolean; dodge?: number } | null = null;
+  let gunnerInput: { x: number; y: number; firing: boolean } | null = null;
+
+  // Replica mode (mirrored views, e.g. the Gunner phone): instead of simulating
+  // the ship/scroll locally, render the authoritative state the host pushes.
+  let replica = false;
+  let replicaState: { shipX: number; shipY: number; shipZ: number; scrollZ: number } | null = null;
 
   let lastSyncedLevelScrollZ = Number.NaN;
   function syncLevelPreviewScroll(force = false) {
@@ -380,6 +388,26 @@ export function createShipScene(
         pointOnFlightPlane,
       }));
     }
+    // Replica view: ease the ship toward the host's authoritative position
+    // (the local flight sim above ran with no input, so it just held still).
+    if (replica && ship && replicaState) {
+      const mix = Math.min(1, dt * 16);
+      ship.position.x += (replicaState.shipX - ship.position.x) * mix;
+      ship.position.y += (replicaState.shipY - ship.position.y) * mix;
+      ship.position.z += (replicaState.shipZ - ship.position.z) * mix;
+    }
+    perf.measure("frame.gunner", () => {
+      const target = gunnerInput
+        ? pointOnFlightPlane(
+            clamp(gunnerInput.x, 0, 1) * (canvas.clientWidth || scene.getEngine().getRenderWidth()),
+            clamp(gunnerInput.y, 0, 1) * (canvas.clientHeight || scene.getEngine().getRenderHeight()),
+          )
+        : null;
+      gunner.step(dt, ship, {
+        firing: gunnerInput?.firing === true,
+        target: target && isFinite(target.x + target.y + target.z) ? target : null,
+      });
+    });
 
     // a level plan (when playing) drives ground + lighting by scrolled time
     perf.measure("frame.sequencer", () => sequencer.update(dt));
@@ -389,12 +417,22 @@ export function createShipScene(
     // prop layer owns the scroll position and ground/terrain follow it.
     const levelTotalDepth = levelLayer.getTotalDepth();
     perf.measure("frame.scenery", () => propField.update(dt));
-    perf.measure("frame.levelStep", () => levelLayer.step(dt));
-    if (levelTotalDepth > 0) {
-      perf.measure("frame.syncLevelScroll", syncLevelPreviewScroll);
+    if (replica) {
+      // Don't advance scroll locally — ease toward the host's scroll position.
+      if (replicaState) {
+        const cur = levelLayer.getScrollZ();
+        const mix = Math.min(1, dt * 16);
+        levelLayer.setScrollZ(cur + (replicaState.scrollZ - cur) * mix);
+        syncLevelPreviewScroll(true);
+      }
     } else {
-      groundA.scroll(dt * SCROLL);
-      if (bShown) groundB.scroll(dt * SCROLL);
+      perf.measure("frame.levelStep", () => levelLayer.step(dt));
+      if (levelTotalDepth > 0) {
+        perf.measure("frame.syncLevelScroll", syncLevelPreviewScroll);
+      } else {
+        groundA.scroll(dt * SCROLL);
+        if (bShown) groundB.scroll(dt * SCROLL);
+      }
     }
 
     perf.measure("frame.render", () => scene.render());
@@ -428,6 +466,15 @@ export function createShipScene(
             vz: clamp(nextInput.vz, -1, 1),
             boosting: nextInput.boosting,
             dodge: clamp(nextInput.dodge ?? 0, -1, 1),
+          }
+        : null;
+    },
+    setGunnerInput(nextInput) {
+      gunnerInput = nextInput
+        ? {
+            x: clamp(nextInput.x, 0, 1),
+            y: clamp(nextInput.y, 0, 1),
+            firing: nextInput.firing === true,
           }
         : null;
     },
@@ -572,6 +619,14 @@ export function createShipScene(
     getLevelScrollZ() {
       return levelLayer.getScrollZ();
     },
+    setReplicaMode(enabled) {
+      replica = enabled;
+      levelLayer.setPaused(enabled);
+      if (!enabled) replicaState = null;
+    },
+    applyReplicaState(state) {
+      replicaState = state;
+    },
     getLevelTotalDepth() {
       return levelLayer.getTotalDepth();
     },
@@ -584,6 +639,7 @@ export function createShipScene(
     dispose() {
       input.dispose();
       sceneInstrumentation.dispose();
+      gunner.dispose();
       levelLayer.dispose();
       terrainLayer.dispose();
       window.removeEventListener("resize", onResize);
