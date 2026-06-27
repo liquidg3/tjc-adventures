@@ -31,5 +31,12 @@
     "gltf-pipeline": "^4.3.1",
     "lerna": "^8.1.9",
     "typescript": "^5.5.4"
+  },
+  "allowScripts": {
+    "esbuild@0.28.0": true,
+    "esbuild@0.21.5": true,
+    "msgpackr-extract@3.0.4": true,
+    "nx@20.8.4": true,
+    "protobufjs@8.4.2": true
   }
 }
