@@ -3,19 +3,22 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GameSandbox } from "./GameSandbox";
 import { Host } from "./Host";
 import { Controller } from "./Controller";
+import { StartScreen } from "./StartScreen";
 import "./styles.css";
 
 // No StrictMode: its double-invoked effects would spin up the Babylon engine
 // (and, on /host, rooms) twice. Revisit once setup is idempotent.
 //
 // Routes:
-//   /       graphics sandbox (the ship) — current focus
-//   /host   the laptop "table" lobby (M0 spine, parked)
-//   /join   phone controller (M0 spine, parked)
+//   /       start screen for picking host / join / solo play
+//   /game   single-player saved Studio level
+//   /host   laptop shared scene; loads saved Studio level/settings
+//   /join   phone pilot controller
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<GameSandbox />} />
+      <Route path="/" element={<StartScreen />} />
+      <Route path="/game" element={<GameSandbox />} />
       <Route path="/host" element={<Host />} />
       <Route path="/join" element={<Controller />} />
     </Routes>

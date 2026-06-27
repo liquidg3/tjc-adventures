@@ -1,4 +1,4 @@
-import type { ModelEntry } from "./models";
+import type { ModelEntry } from "./3d-models-data";
 
 export type KenneyKind = "3d" | "ui";
 

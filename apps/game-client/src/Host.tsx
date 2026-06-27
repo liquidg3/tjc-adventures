@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import type { Room } from "colyseus.js";
-import { ROOM_NAME, type LanInfo } from "@tjc/core";
+import { createShipScene, type SceneHandle } from "@tjc/scenes";
+import { ROOM_NAME, type LanInfo, type PilotInput } from "@tjc/core";
 import { makeClient, serverHttpBase } from "./colyseus";
+import { applySavedScene } from "./saved-level-scene";
 
 interface PlayerView {
   id: string;
@@ -16,7 +18,51 @@ export function Host() {
   const [joinUrl, setJoinUrl] = useState("");
   const [players, setPlayers] = useState<PlayerView[]>([]);
   const [error, setError] = useState("");
+  const [sceneStatus, setSceneStatus] = useState("Loading saved level…");
+  const [activePilot, setActivePilot] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<SceneHandle | null>(null);
   const roomRef = useRef<Room | null>(null);
+  const lastInputAtRef = useRef(0);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    let cancelled = false;
+    const scene = createShipScene(canvasRef.current, {
+      baseGroundVisible: false,
+      loadProceduralScenery: false,
+      stopAtLevelEndHold: true,
+    });
+    sceneRef.current = scene;
+    scene.setPlayerShipVisible(true);
+    scene.setScenery({});
+    applySavedScene(scene)
+      .then(() => {
+        if (!cancelled) setSceneStatus("Saved level loaded");
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setSceneStatus("Saved level failed to load");
+          setError(e?.message ?? String(e));
+        }
+      });
+    return () => {
+      cancelled = true;
+      scene.dispose();
+      sceneRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (lastInputAtRef.current === 0) return;
+      if (performance.now() - lastInputAtRef.current < 450) return;
+      lastInputAtRef.current = 0;
+      setActivePilot(false);
+      sceneRef.current?.setExternalInput(null);
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,6 +82,11 @@ export function Host() {
         roomRef.current = room;
         setCode(room.roomId);
         setJoinUrl(`http://${info.lanIp}:${info.clientPort}/join?room=${room.roomId}`);
+        room.onMessage("pilot-input", (input: PilotInput & { clientId?: string }) => {
+          lastInputAtRef.current = performance.now();
+          setActivePilot(Math.abs(input.vx) > 0 || Math.abs(input.vz) > 0 || input.boosting);
+          sceneRef.current?.setExternalInput(input);
+        });
 
         room.onStateChange((state: any) => {
           const list: PlayerView[] = [];
@@ -58,8 +109,10 @@ export function Host() {
   const crew = players.filter((p) => p.role !== "host");
 
   return (
-    <div className="screen host">
-      <h1>TJC: Family Adventures</h1>
+    <div className="host-play">
+      <canvas ref={canvasRef} className="game-canvas" />
+      <div className="screen host host-overlay">
+        <h1>TJC: Family Adventures</h1>
       {error && <p className="error">⚠ {error}</p>}
       {!code && !error && <p>Starting room…</p>}
       {code && (
@@ -70,6 +123,10 @@ export function Host() {
             ROOM <b>{code}</b>
           </p>
           <p className="hint">{joinUrl}</p>
+          <p className={activePilot ? "ok" : "dim"}>
+            {activePilot ? "Phone pilot active" : "Scan to steer the ship"}
+          </p>
+          <p className="hint">{sceneStatus}</p>
           <div className="players">
             <h2>Crew ({crew.length})</h2>
             {crew.length === 0 ? (
@@ -86,6 +143,7 @@ export function Host() {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 }

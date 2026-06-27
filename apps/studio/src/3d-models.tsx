@@ -9,8 +9,8 @@ import {
   type NormalizationPresetId,
 } from "./asset-normalization";
 import type { AssetOption } from "./slots";
-import { loadStagedModels } from "./models";
-import type { ModelEntry } from "./models";
+import { loadStagedModels } from "./3d-models-data";
+import type { ModelEntry } from "./3d-models-data";
 import {
   buildModelCatalog,
   EMPTY_MODEL_CATALOG_OVERRIDES,
@@ -40,7 +40,7 @@ const ASSET_NORMALIZATION_OVERRIDES_URL = "/__asset-normalization-overrides";
 const MODEL_CATALOG_OVERRIDES_URL = "/__model-catalog-overrides";
 
 /** The 3D Models section: curate imported models and tune normalization. */
-export function ModelsBoard() {
+export function ThreeDModels() {
   const [options, setOptions] = useState<AssetOption[]>(BUILTINS);
   const [modelEntries, setModelEntries] = useState<ModelEntry[]>([]);
   const [catalogQuery, setCatalogQuery] = useState("");

@@ -35512,128 +35512,14 @@
       {},
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "277:8:model:kenney-nature-kit/cactus_short",
+            "slot": "model:kenney-nature-kit/cactus_short"
+          }
+        ]
+      },
       {},
       {},
       {},
@@ -35856,9 +35742,312 @@
       {
         "objects": [
           {
-            "id": "291:13:model:kenney-nature-kit/cliff_stepsCorner_rock",
-            "slot": "model:kenney-nature-kit/cliff_stepsCorner_rock",
-            "rotation": 90
+            "id": "286:12:model:kenney-nature-kit/tree_cone",
+            "slot": "model:kenney-nature-kit/tree_cone"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "286:13:model:kenney-nature-kit/tree_cone",
+            "slot": "model:kenney-nature-kit/tree_cone"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "287:10:model:kenney-nature-kit/stone_smallF",
+            "slot": "model:kenney-nature-kit/stone_smallF"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "287:11:model:kenney-nature-kit/plant_flatShort",
+            "slot": "model:kenney-nature-kit/plant_flatShort",
+            "rotation": 0
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "287:12:model:kenney-nature-kit/rock_tallG",
+            "slot": "model:kenney-nature-kit/rock_tallG"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "287:13:model:kenney-nature-kit/tree_cone",
+            "slot": "model:kenney-nature-kit/tree_cone"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "287:14:model:kenney-nature-kit/tree_default_dark",
+            "slot": "model:kenney-nature-kit/tree_default_dark"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "288:6:model:kenney-nature-kit/stone_smallF",
+            "slot": "model:kenney-nature-kit/stone_smallF"
+          }
+        ]
+      },
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "288:9:model:kenney-nature-kit/stone_smallF",
+            "slot": "model:kenney-nature-kit/stone_smallF"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "288:13:model:kenney-nature-kit/rock_tallG",
+            "slot": "model:kenney-nature-kit/rock_tallG"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "288:14:model:kenney-nature-kit/rock_tallG",
+            "slot": "model:kenney-nature-kit/rock_tallG"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "288:15:model:kenney-nature-kit/tree_detailed",
+            "slot": "model:kenney-nature-kit/tree_detailed"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "289:2:model:kenney-nature-kit/cactus_short",
+            "slot": "model:kenney-nature-kit/cactus_short"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "289:6:model:kenney-nature-kit/stone_smallF",
+            "slot": "model:kenney-nature-kit/stone_smallF"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:7:model:kenney-nature-kit/cactus_short",
+            "slot": "model:kenney-nature-kit/cactus_short"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:8:model:kenney-nature-kit/tree_pineDefaultA",
+            "slot": "model:kenney-nature-kit/tree_pineDefaultA"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:9:model:kenney-nature-kit/plant_flatShort",
+            "slot": "model:kenney-nature-kit/plant_flatShort"
+          }
+        ]
+      },
+      {},
+      {
+        "objects": [
+          {
+            "id": "289:11:model:kenney-nature-kit/cactus_short",
+            "slot": "model:kenney-nature-kit/cactus_short"
+          }
+        ]
+      },
+      {},
+      {
+        "objects": [
+          {
+            "id": "289:13:model:kenney-nature-kit/rock_largeB",
+            "slot": "model:kenney-nature-kit/rock_largeB"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:14:model:kenney-nature-kit/rock_tallG",
+            "slot": "model:kenney-nature-kit/rock_tallG"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:15:model:kenney-nature-kit/tree_default_dark",
+            "slot": "model:kenney-nature-kit/tree_default_dark"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "289:16:model:kenney-nature-kit/tree_default_dark",
+            "slot": "model:kenney-nature-kit/tree_default_dark"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "290:7:model:kenney-nature-kit/tree_pineDefaultA",
+            "slot": "model:kenney-nature-kit/tree_pineDefaultA"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "290:8:model:kenney-nature-kit/tree_pineDefaultA",
+            "slot": "model:kenney-nature-kit/tree_pineDefaultA"
+          }
+        ]
+      },
+      {
+        "objects": [
+          {
+            "id": "290:9:model:kenney-nature-kit/tree_pineDefaultA",
+            "slot": "model:kenney-nature-kit/tree_pineDefaultA"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "290:14:model:kenney-nature-kit/tree_detailed",
+            "slot": "model:kenney-nature-kit/tree_detailed"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "objects": [
+          {
+            "id": "291:13:model:kenney-nature-kit/cactus_short",
+            "slot": "model:kenney-nature-kit/cactus_short"
           }
         ]
       },
@@ -35914,7 +36103,14 @@
       {},
       {},
       {},
-      {},
+      {
+        "objects": [
+          {
+            "id": "293:10:model:kenney-nature-kit/tree_pineDefaultA",
+            "slot": "model:kenney-nature-kit/tree_pineDefaultA"
+          }
+        ]
+      },
       {},
       {},
       {},

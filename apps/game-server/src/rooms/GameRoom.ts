@@ -1,5 +1,5 @@
 import colyseus from "colyseus";
-import type { JoinOptions } from "@tjc/core";
+import type { JoinOptions, PilotInput } from "@tjc/core";
 import { GameState, Player } from "../state/GameState";
 
 // `colyseus` is CommonJS; default-import the namespace so Node's ESM loader
@@ -16,6 +16,15 @@ export class GameRoom extends colyseus.Room<GameState> {
 
     // Simple latency probe for the controller to sanity-check the connection.
     this.onMessage("ping", (client) => client.send("pong", { t: Date.now() }));
+    this.onMessage("pilot-input", (client, input: PilotInput) => {
+      this.broadcast("pilot-input", {
+        clientId: client.sessionId,
+        vx: clamp(input?.vx, -1, 1),
+        vz: clamp(input?.vz, -1, 1),
+        boosting: input?.boosting === true,
+        dodge: clamp(input?.dodge ?? 0, -1, 1),
+      });
+    });
   }
 
   onJoin(client: Client, options: JoinOptions = {}) {
@@ -40,4 +49,10 @@ export class GameRoom extends colyseus.Room<GameState> {
         `(${this.state.players.size} present)`
     );
   }
+}
+
+function clamp(v: unknown, lo: number, hi: number) {
+  return typeof v === "number" && Number.isFinite(v)
+    ? Math.max(lo, Math.min(hi, v))
+    : 0;
 }

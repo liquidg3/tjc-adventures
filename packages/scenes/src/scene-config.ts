@@ -73,6 +73,7 @@ export interface LevelTerrainCell {
 export interface SceneHandle {
   dispose: () => void;
   setCameraRotationMode: (mode: CameraRotationMode) => void;
+  setExternalInput: (input: { vx: number; vz: number; boosting: boolean; dodge?: number } | null) => void;
   setPlayerShipModel: (url: string, normalization?: ShipModelNormalization) => void;
   setPlayerShipVisible: (visible: boolean) => void;
   setShipHeight: (height: number) => void;

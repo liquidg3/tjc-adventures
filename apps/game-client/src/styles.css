@@ -36,26 +36,153 @@ h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
 .players ul { list-style: none; padding: 0; }
 .players li { padding: 4px 0; }
 
-/* Controller: a big, kid-friendly touch target. */
-.controller .bigtap {
-  width: 70vw;
-  max-width: 320px;
-  height: 70vw;
-  max-height: 320px;
-  border-radius: 50%;
-  border: none;
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #08121f;
-  background: radial-gradient(circle at 50% 40%, #ffe08a, #ff9f43);
-  box-shadow: 0 10px 30px rgba(255, 159, 67, 0.4);
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
+.start-screen {
+  min-height: 100%;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(7, 13, 26, 0.38), rgba(7, 13, 26, 0.94)),
+    url("/textures/ground/aerial-grass-rock.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.start-panel {
+  width: min(680px, 100%);
+  padding: 28px;
+  text-align: center;
+  background: rgba(8, 14, 24, 0.9);
+  border: 1px solid rgba(154, 208, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+}
+.eyebrow {
+  margin: 0 0 8px;
+  color: #ffd76a;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.start-panel h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+.start-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
   margin: 24px 0;
 }
-.controller .bigtap:active { transform: scale(0.96); }
+.start-button {
+  min-height: 58px;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border: 1px solid rgba(154, 208, 255, 0.28);
+  border-radius: 10px;
+  color: #e6ecff;
+  background: rgba(17, 26, 42, 0.92);
+  text-decoration: none;
+  font-weight: 700;
+}
+.start-button.primary {
+  color: #08121f;
+  background: linear-gradient(180deg, #9ad0ff, #3d70b3);
+  border-color: rgba(154, 208, 255, 0.68);
+}
+.start-button.quiet {
+  color: #c8d4ff;
+  background: rgba(8, 14, 24, 0.7);
+}
+.start-button:hover {
+  transform: translateY(-1px);
+}
+.start-notes {
+  display: grid;
+  gap: 6px;
+  color: #9fb5d3;
+  font-size: 0.86rem;
+}
+.start-notes p {
+  margin: 0;
+}
+
+.host-play {
+  position: fixed;
+  inset: 0;
+}
+.host-overlay {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 18px;
+  text-align: center;
+  background: rgba(8, 14, 24, 0.86);
+  border: 1px solid rgba(154, 208, 255, 0.28);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.34);
+}
+.host-overlay h1 {
+  margin-top: 0;
+}
+.host-overlay .qr {
+  padding: 10px;
+}
+
+/* Controller: a big, kid-friendly touch target. */
+.controller {
+  max-width: 520px;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.pilot-pad {
+  width: min(86vw, 360px);
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 22px auto 14px;
+}
+.pilot-pad button,
+.boost-button {
+  border: none;
+  border-radius: 18px;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: #08121f;
+  background: linear-gradient(180deg, #9ad0ff, #3d70b3);
+  box-shadow: 0 8px 22px rgba(61, 112, 179, 0.38);
+  cursor: pointer;
+  touch-action: none;
+}
+.pilot-pad button:active,
+.boost-button:active {
+  transform: scale(0.96);
+}
+.pilot-pad button:disabled,
+.boost-button:disabled {
+  opacity: 0.45;
+}
+.pad-up { grid-column: 2; grid-row: 1; }
+.pad-left { grid-column: 1; grid-row: 2; }
+.pad-right { grid-column: 3; grid-row: 2; }
+.pad-down { grid-column: 2; grid-row: 3; }
+.boost-button {
+  width: min(86vw, 360px);
+  min-height: 76px;
+  margin: 0 auto 12px;
+  display: block;
+  background: linear-gradient(180deg, #ffe08a, #ff9f43);
+  box-shadow: 0 8px 22px rgba(255, 159, 67, 0.38);
+}
 
 /* Graphics sandbox: fullscreen canvas + a small control hint. */
 .game-canvas {
@@ -77,6 +204,16 @@ h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
   text-shadow: 0 1px 2px #000;
   pointer-events: none;
   opacity: 0.8;
+}
+.game-status {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  max-width: min(520px, calc(100vw - 24px));
+  font-size: 0.8rem;
+  text-align: right;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
 }
 .camera-test-panel {
   width: 170px;
@@ -182,4 +319,13 @@ h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
   height: 200px;
   accent-color: #3d70b3;
   cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .start-actions {
+    grid-template-columns: 1fr;
+  }
+  .start-panel {
+    padding: 22px;
+  }
 }

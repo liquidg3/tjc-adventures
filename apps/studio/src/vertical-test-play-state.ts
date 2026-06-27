@@ -73,7 +73,7 @@ export interface VerticalDefaults extends VerticalValues {
   blendSec: number;
 }
 
-export interface VerticalScrollerState {
+export interface VerticalTestPlayState {
   hydrated: boolean;
   savedDefaults: VerticalDefaults;
   shipSizeByModel: Record<string, number>;
@@ -383,9 +383,9 @@ const newZoneId = () => `zone-${Date.now().toString(36)}-${zoneIdSeq++}`;
  * Ground/Lighting panels always edit the zone they're showing.
  */
 function patchLook(
-  state: VerticalScrollerState,
+  state: VerticalTestPlayState,
   patch: Partial<ZoneLookFields>,
-): VerticalScrollerState {
+): VerticalTestPlayState {
   const values = { ...state.values, ...patch };
   const zones = state.zones.map((z, i) =>
     i === state.selectedZone ? { ...z, ...lookFields(values) } : z,
@@ -461,7 +461,7 @@ function hasShipLightHash(params: URLSearchParams) {
   );
 }
 
-export function createInitialState(params: URLSearchParams): VerticalScrollerState {
+export function createInitialState(params: URLSearchParams): VerticalTestPlayState {
   return {
     hydrated: false,
     savedDefaults: DEFAULT_VERTICAL_DEFAULTS,
@@ -513,7 +513,7 @@ function getDefaultShipSize(
 export type VerticalAction =
   | { type: "hydrate-defaults"; defaults: VerticalDefaults; hashParams: URLSearchParams }
   | { type: "set-player-ship-url"; url: string; respectHashShipSize: boolean }
-  | { type: "set-save-stamp"; stamp: VerticalScrollerState["saveStamp"] }
+  | { type: "set-save-stamp"; stamp: VerticalTestPlayState["saveStamp"] }
   | { type: "toggle-left"; id: string }
   | { type: "toggle-right"; id: string }
   | { type: "set-camera-mode"; mode: CameraRotationMode }
@@ -539,10 +539,10 @@ export type VerticalAction =
   | { type: "reset-to-defaults" }
   | { type: "save-defaults-locally"; defaults: VerticalDefaults };
 
-export function verticalScrollerReducer(
-  state: VerticalScrollerState,
+export function verticalTestPlayReducer(
+  state: VerticalTestPlayState,
   action: VerticalAction
-): VerticalScrollerState {
+): VerticalTestPlayState {
   switch (action.type) {
     case "hydrate-defaults": {
       const { defaults, hashParams } = action;
@@ -756,10 +756,10 @@ export function serializeVerticalHash(values: VerticalValues) {
   params.set("shipContrast", values.shipLight.contrast.toFixed(2));
   params.set("shipAlbedo", values.shipLight.albedoBoost.toFixed(2));
   params.set("shipAmbient", values.shipLight.ambientStrength.toFixed(2));
-  return `#vertical?${params.toString()}`;
+  return `#vertical-test-play?${params.toString()}`;
 }
 
-export function buildDefaultsFromState(state: VerticalScrollerState): VerticalDefaults {
+export function buildDefaultsFromState(state: VerticalTestPlayState): VerticalDefaults {
   return {
     ...state.values,
     shipLight: { ...state.values.shipLight },

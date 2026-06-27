@@ -1,12 +1,12 @@
 export type SectionId =
-  | "models"
-  | "assets"
-  | "asset-test"
-  | "ui"
-  | "vertical"
-  | "level"
-  | "side"
-  | "race";
+  | "3d-models"
+  | "asset-library"
+  | "asset-preview"
+  | "ui-builder"
+  | "vertical-test-play"
+  | "level-builder"
+  | "side-scroller"
+  | "death-race";
 
 type Status = "ready" | "wip" | "soon";
 
@@ -38,21 +38,21 @@ const GROUPS: SectionGroup[] = [
     label: "Universal Tools",
     desc: "Work across every game mode — assets, models, theme.",
     sections: [
-      { id: "models", title: "3D Models", desc: "Assign a model to every game asset slot.", status: "ready" },
+      { id: "3d-models", title: "3D Models", desc: "Assign a model to every game asset slot.", status: "ready" },
       {
-        id: "assets",
+        id: "asset-library",
         title: "Asset Library",
         desc: "Browse CC0 packs to source scenery, ruins & props from.",
         status: "ready",
       },
       {
-        id: "asset-test",
+        id: "asset-preview",
         title: "Asset Preview",
         desc: "Preview imported Kenney packs in one shared 3D viewer.",
         status: "ready",
       },
       {
-        id: "ui",
+        id: "ui-builder",
         title: "UI Builder",
         desc: "Map imported UI images to buttons, panels, inputs and cursors.",
         status: "ready",
@@ -65,13 +65,13 @@ const GROUPS: SectionGroup[] = [
     desc: "Raiden-style top-down scroller. The first mode being built out.",
     sections: [
       {
-        id: "vertical",
+        id: "vertical-test-play",
         title: "Test Play",
         desc: "Fly the authored Level Builder run with tuning panels.",
         status: "ready",
       },
       {
-        id: "level",
+        id: "level-builder",
         title: "Level Builder",
         desc: "Paint terrain, objects, and height onto a top-down grid.",
         status: "ready",

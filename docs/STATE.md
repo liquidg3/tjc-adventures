@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-13 (session 6)._
+_Last updated: 2026-06-22._
 
 ---
 
@@ -16,9 +16,10 @@ _Last updated: 2026-06-13 (session 6)._
   `docs/prototype-meadow-run.md` (the "Meadow Run" level, inspired by _Raiden_).
 - **Monorepo:** built and working (Lerna + npm workspaces). See `README.md` and
   `docs/architecture.md`.
-- **M0 multiplayer spine:** done & verified, **PARKED**. Laptop hosts a Colyseus
-  room; phones join via QR (`/host` + `/join` in `apps/game-client`). Not wired to
-  the 3D game. `npm run verify:spine` exercises it headlessly.
+- **M0 multiplayer spine:** done & verified. Laptop hosts a Colyseus room and the
+  real shared scene at `/host`; phones join via QR at `/join` as pilot
+  controllers. The host reads the saved Studio Level Builder artifact and Vertical
+  Test Play settings. `npm run verify:spine` exercises the room path headlessly.
 - **ACTIVE WORK → the Level Builder.** We are building out the five-minute authored
   level for the vertical scroller through the Studio. The Level Builder is now a
   substantial authoring surface: v2 layered schema (terrain/height/objects), live 3D
@@ -33,7 +34,7 @@ _Last updated: 2026-06-13 (session 6)._
   models), `kenney-space-kit` (153).
 - **Player ship is Kenney** (`craft_racer` from kenney-space-kit, via
   `asset-map.json`). `scene-config.DEFAULT_SHIP_MODEL_URL` still points at the
-  legacy `ship_classic.glb` as the cold-start default, but `VerticalScroller`
+  legacy `ship_classic.glb` as the cold-start default, but Vertical Test Play
   fetches `asset-map.json` and immediately swaps in the Kenney ship — the legacy
   one only appears for the ~50 ms before that fetch resolves. Legacy scenery
   constants still exist for older/procedural scene paths, but Studio Test Play
@@ -44,7 +45,7 @@ _Last updated: 2026-06-13 (session 6)._
   has **Test Play** and **Level Builder** cards.
 - **Studio chrome:** skinned with Kenney UI Pack Sci-Fi via CSS `border-image`
   9-slice. `apps/studio/src/styles.css` (end-of-file block "KENNEY UI PACK SCI-FI")
-  drives all cards, buttons, inputs. The **UI Builder** (`#ui`) maps images to
+  drives all cards, buttons, inputs. The **UI Builder** (`#ui-builder`) maps images to
   semantic chrome roles + system color tokens, persisting to `apps/studio/ui-theme.json`.
 
 ---
@@ -58,7 +59,7 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 - `level-panels.tsx` — `LevelPanel`, `PaintPanel`, `PreviewPanel`, `ColumnChangeConfirm`
 - `level-palette.tsx` — `PalettePanel`, `formatModelLabel`
 - `level-grid.tsx` — `GridPanel` + memoized `GridCell` (virtualized)
-- `LevelBuilder.tsx` — ~795 lines of core state, paint/erase/rotate logic, scene wiring
+- `level-builder.tsx` — ~795 lines of core state, paint/erase/rotate logic, scene wiring
 
 ### What is working
 
@@ -122,8 +123,9 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
 - Refresh hardening: `ship-controller.ts` creates a visible fallback ship immediately
   and keeps it until the assigned Kenney player ship successfully replaces it, so
   the default-ship load and asset-map ship swap cannot leave Test Play with no
-  visible player. `vertical-scroller-state.ts` also clamps `shipSize` and
-  `altitude` read from `#vertical?...` hash params.
+  visible player. `vertical-test-play-state.ts` also clamps `shipSize` and
+  `altitude` read from `#vertical-test-play?...` hash params (`#vertical?...`
+  redirects forward for compatibility).
 - Studio Test Play clamps level scrolling before the last authored rows leave the
   play area (`stopAtLevelEndHold: true`), leaving the end of the Level Builder
   artifact on screen for the later boss-fight hold instead of exposing fallback
@@ -144,7 +146,7 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
   Zone Plan / Ground / Scenery Test Play panels are gone — the Level Builder
   artifact is the level-graphics source of truth. Test Play keeps player,
   camera, lighting, and render controls plus an authored-run pause/restart panel.
-- Object preview updates are diff-based: `LevelBuilder.tsx` syncs object/height
+- Object preview updates are diff-based: `level-builder.tsx` syncs object/height
   changes separately from terrain changes, and `level-prop-layer.ts` only disposes
   and re-instantiates changed object cells unless level dimensions or asset mappings
   change.
@@ -184,7 +186,7 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
   so drag painting coalesces JSON serialization/POST work instead of blocking on
   one full-level save per cell.
 
-**UI and panels (all in LevelBuilder.tsx)**
+**UI and panels (all in level-builder.tsx)**
 - `LevelPanel` — title + FPS readout + autosave indicator + top perf buckets
   (`avg / max ms`; hover for full bucket names and sample counts).
 - `PaintPanel` — mode dropdown + brush shape dropdown (free/rect) + Clear button.
@@ -198,7 +200,7 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
   panel = paint/palette tools; right panel = preview controls + grid.
 
 **Asset Preview**
-- `AssetTest.tsx` renamed to `AssetPreview` (export name + H1 heading).
+- `asset-preview.tsx` renamed to `AssetPreview` (export name + H1 heading).
 - Home card updated to "Asset Preview".
 
 ### What is still open (punch list for next agent)
@@ -218,8 +220,9 @@ The Level Builder was refactored into focused modules in session 4. It is the pr
    assumes Kenney river models are authored N-S-straight at rotation=0, N+E-corner
    at rotation=0. See `VISUAL INSPECTION REQUIRED` comment in that file. Load the
    five base river models in Asset Preview and update the table if wrong.
-8. **M0 multiplayer spine is parked.** No active work needed; it still runs via
-   `npm run verify:spine`.
+8. **M0 multiplayer host path is basic but live.** `/host` mounts the shared scene
+   and `/join` sends pilot input. `npm run verify:spine` checks room sync, but
+   visual/phone play still needs manual browser testing.
 
 ---
 
@@ -233,10 +236,12 @@ shared package and is imported by both apps:
 - `packages/scenes/src/{scene-config,lighting-controller,flight-controller,ship-controller,prop-field,ground-texture,ship-materials}.ts`
   — the runtime controllers and helpers the scene is now built from.
 - Exported as **`@tjc/scenes`** (`packages/scenes/src/index.ts`).
-- Consumed by **`apps/studio/src/VerticalScroller.tsx`** (the tuner — primary
-  surface) and **`apps/game-client/src/GameSandbox.tsx`** (route `/`).
+- Consumed by **`apps/studio/src/vertical-test-play.tsx`** (the tuner — primary
+  surface) and **`apps/game-client/src/GameSandbox.tsx`** (route `/game`).
 
-The Studio is where you tune; the game-client just mounts the same scene.
+The Studio is where you tune; the game-client start screen at `/` points people
+to Host, Join, or Solo Play. `/game` and `/host` both load the saved Studio
+Level Builder artifact and Vertical Test Play settings.
 
 ## Run it
 
@@ -244,8 +249,8 @@ The Studio is where you tune; the game-client just mounts the same scene.
 npm install
 npm run doctor          # pre-flight (node, deps, ports)
 npm run dev:studio      # STUDIO  → http://localhost:5174  ← tune the scene here (primary)
-npm run dev:client      # GAME    → http://localhost:5173  (same scene at /, no panels)
-npm run dev             # full multiplayer (server :2567 + client; /host + /join) — parked
+npm run dev:client      # GAME    → http://localhost:5173  (start screen; /game is solo play)
+npm run dev             # server :2567 + client :5173; /host scene + /join pilot controls
 ```
 
 Dev servers auto-open the browser. `npm run free-ports` if a port is stuck.
@@ -274,14 +279,14 @@ packages/scenes/
   src/index.ts               re-exports ship-scene
 
 apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary surface
-  src/Home.tsx               launcher cards → models | assets | asset-preview | ui | vertical | level (+ side/race soon)
+  src/Home.tsx               launcher cards → 3d-models | asset-library | asset-preview | ui-builder | vertical-test-play | level-builder
   src/App.tsx                section router (Home ↔ a section)
-  src/AssetLibrary.tsx       ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
-  src/AssetPreview.tsx       single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
-  src/ModelsBoard.tsx        3D Models catalog: curate imported models, usage tags, and normalization
+  src/asset-library.tsx      ★ Kenney pack browser (3D + UI): filter chips, live thumbnails, one-click Import
+  src/asset-preview.tsx      single shared 3D viewer — rotating isometric browse view; auto-applies kit preset
+  src/3d-models.tsx          3D Models catalog: curate imported models, usage tags, and normalization
   src/SlotCard.tsx           selected-model normalization editor reused by the catalog detail panel
   src/ModelPreview.tsx       budgeted orbit preview (grid card = beauty view, expanded modal = 2x2 alignment grid)
-  src/LevelBuilder.tsx       ★ ~795-line core: state, paint/erase/rotate logic, scene wiring
+  src/level-builder.tsx      ★ ~795-line core: state, paint/erase/rotate logic, scene wiring
   src/level-builder-types.ts PaintMode type + PAINT_MODES constant (shared across Level Builder modules)
   src/level-panels.tsx       LevelPanel, PaintPanel, PreviewPanel, ColumnChangeConfirm
   src/level-palette.tsx      PalettePanel (search, kit filter, eraser, terrain/object/height tiles)
@@ -290,17 +295,17 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   src/terrain-connectivity.ts 4-bit neighbor mask, terrainMaskForCell, terrainShapeForMask, SHAPE_TABLE
   src/terrain-feature-resolver.ts buildTerrainFeatureLookup, resolveTerrainFeatureFallback, availableFeatureFamilies
   src/model-catalog.ts       inferModel, inferTerrainFamily, SLOT_PLACEMENT_SCALE; path_stone/path_wood=objects; space=terrain_*; dungeon=floor
-  src/UiBuilder.tsx          ★ assign imported UI images to semantic chrome roles → ui-theme.json
+  src/ui-builder.tsx         ★ assign imported UI images to semantic chrome roles → ui-theme.json
   src/ui-theme-state.ts      UI theme schema, defaults, asset loader, CSS variable applier
   src/use-persisted-json.ts  ★ canonical autosave hook with functional updater support via valueRef.current
   src/asset-normalization.ts preset registry + asset-map parsing/serialization helpers + model overrides
   src/viewer-scene.ts        createViewer(): orbit-preview engine (GLB load + optional shared-atlas + setOrient)
   src/viewer-budget.ts       caps live WebGL contexts at 6 — leased by ModelPreview (Asset Preview uses ONE shared viewer)
-  src/models.ts              loadStagedModels(): reads imported packs from public/models (index.json + manifests)
+  src/3d-models-data.ts      loadStagedModels(): reads imported packs from public/models (index.json + manifests)
   src/slots.ts               legacy game asset slots, still read for compatibility/runtime holdouts
-  src/VerticalScroller.tsx   the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
+  src/vertical-test-play.tsx  the scene + tuning panels (zone / camera / ship / ground / lighting / scenery / pixel);
                              now reads asset-map + normalization presets so the live ship matches the 3D Models board
-  src/vertical-scroller-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
+  src/vertical-test-play-state.ts reducer + persisted defaults + deep-link hash; the zone list lives here
   src/styles.css             full Studio CSS — ends with a Kenney UI Pack Sci-Fi block that skins controls
                                via ui-theme CSS variables + border-image 9-slice; anatomy diagram inline
   public/models/             PRODUCTION 3D (committed CC0): kenney-<pack>/*.glb + manifest.json, index.json;
@@ -318,12 +323,14 @@ apps/studio/               ★ THE TUNER + ASSET TOOLS (port 5174) — primary s
   ui-theme.json              committed Studio chrome theme — image role mapping + slices/padding/text
 
 apps/game-client/          Vite + React (port 5173)
-  src/GameSandbox.tsx        mounts @tjc/scenes on a canvas (route /)
-  src/main.tsx               routes: / = sandbox, /host = Host lobby, /join = Controller (phone)
-  src/Host.tsx / Controller.tsx / colyseus.ts   M0 multiplayer spine (parked)
+  src/StartScreen.tsx        route /; Host / Join / Solo Play entry screen
+  src/GameSandbox.tsx        route /game; single-player saved Studio level
+  src/saved-level-scene.ts   shared loader for saved Level Builder + Vertical Test Play settings
+  src/main.tsx               routes: / = start, /game = solo, /host = shared scene, /join = phone pilot
+  src/Host.tsx / Controller.tsx / colyseus.ts   LAN host scene + phone pilot controller
   public/models/{ships,environment}/  the scene's runtime models for this app
 
-apps/game-server/          Colyseus authoritative server (parked); GameRoom + GameState
+apps/game-server/          Colyseus authoritative server; GameRoom + GameState
 apps/marketing/            stub
 packages/core/             shared TS types (Role, JoinOptions, ROOM_NAME, ports)
 packages/ui|assets|config/ stubs (assets = intended future home for game art)
@@ -391,7 +398,7 @@ terrain and object visuals through `setLevelTerrainCells` and `setLevelCells`.
 
 ---
 
-## The Studio tuner — `apps/studio/src/VerticalScroller.tsx`
+## The Studio tuner — `apps/studio/src/vertical-test-play.tsx`
 
 Live panels around the canvas (all **collapsed by default**; click a header to open):
 
@@ -404,7 +411,7 @@ Live panels around the canvas (all **collapsed by default**; click a header to o
 Each panel maps to a `SceneHandle` method. The Ship-Position readout is how QE
 reports good coordinates back; that's why `getShipPosition`/`resetShip` exist.
 
-## The 3D Models board — `apps/studio/src/ModelsBoard.tsx`
+## The 3D Models board — `apps/studio/src/3d-models.tsx`
 
 Curate every imported model from `public/models/*/manifest.json`. The old
 slot-assignment UI is gone from this page; fixed game slots in `asset-map.json`
@@ -455,17 +462,17 @@ if we want more variety or a complementary style):
 - Also on the radar: **Poly Pizza** (ex-Google Poly), **Sketchfab** (filter to CC0/CC-BY).
 
 **The pipeline (all in the Studio):**
-1. **Asset Library** (`/assets`) — live browser of every Kenney 3D pack. The dev server
+1. **Asset Library** (`#asset-library`) — live browser of every Kenney 3D pack. The dev server
    scrapes kenney.nl (`/__kenney/list` paginates `category:3D`; `/__kenney/meta?slug=`
    finds each pack's preview + zip). Each card's one-click **Import** →
    `POST /__kenney/import?slug=` downloads the zip, `unzip`s it, copies the GLBs (and
    only textures a GLB actually references — including relative-path `Textures/colormap.png`
    now preserved by `stage-pack.mjs`) into `public/models/kenney-<slug>/`, writes
    `manifest.json`, and appends the pack to `public/models/index.json`.
-2. **Asset Preview** (`/asset-preview`) — one shared 3D viewer (single WebGL context) to
+2. **Asset Preview** (`#asset-preview`) — one shared 3D viewer (single WebGL context) to
    preview any staged model as a rotating isometric browse view. Kits start
    collapsed. The viewer auto-applies the matching preset by kit.
-3. **3D Models board** (`/models`) — catalog-only imported-model management:
+3. **3D Models board** (`#3d-models`) — catalog-only imported-model management:
    kit/theme/category filters, usage checkboxes, and one selected-model
    normalization preview. Legacy slot assignment is intentionally not shown.
    Catalog overrides persist to `apps/studio/model-catalog-overrides.json`.
@@ -609,7 +616,7 @@ these belongs with cleanup of the legacy procedural scene path.
   texture tiling for the grid because minified tiled dynamic textures tanked FPS
   in earlier passes. See `level-terrain-layer.ts`.
 - **Level edits must replace ONLY the layer arrays they touch.** The scene-sync
-  effects in `LevelBuilder.tsx` key on layer-array identity (`level.layers.terrain`
+  effects in `level-builder.tsx` key on layer-array identity (`level.layers.terrain`
   vs `.objects`/`.height`). An updater that clones all three arrays re-fires every
   sync effect — erasing one object used to trigger a full terrain GLB rebuild this
   way. Both scene layers (`level-prop-layer.ts`, `level-terrain-layer.ts`) now diff

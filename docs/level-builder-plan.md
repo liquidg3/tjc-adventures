@@ -25,7 +25,7 @@ preview camera, not a controllable player ship.
 
 Current files:
 
-- `apps/studio/src/LevelBuilder.tsx` (~795 lines — core state, paint/erase/rotate logic, scene wiring)
+- `apps/studio/src/level-builder.tsx` (~795 lines — core state, paint/erase/rotate logic, scene wiring)
 - `apps/studio/src/level-grid.tsx`
 - `apps/studio/src/level-palette.tsx`
 - `apps/studio/src/level-panels.tsx`
@@ -128,7 +128,7 @@ Open:
 | 2. Editor Modes + Palettes | Done | Terrain/Objects/Height modes, per-mode eraser, search + kit dropdown, rect brush, catalog-only visible palette. |
 | 3. Five-Minute Grid Settings | Done | 300s/4800wu level target, column settings, rebuild confirmation. |
 | 4. Runtime Terrain Layer | Partial | Terrain renders in preview with rotation and diff-based model updates; height displacement remains. |
-| 5. Model Catalog | Done | `#assets`, `#models`, curation overrides, Level Builder catalog palette, model classification fixes. |
+| 5. Model Catalog | Done | `#asset-library`, `#3d-models`, curation overrides, Level Builder catalog palette, model classification fixes. |
 | 6. Smart Terrain Painting | Done | Connected Feature brush, 16-mask resolver, catalog lookup, renderer rotation, Rebuild Connections, fallback badge, eraser re-resolves neighbors. Rotation visual verification for the SHAPE_TABLE is still recommended. |
 | 7. Height Runtime | Later | Terrain displacement and better elevation preview. |
 | 8. Object Placement Quality | Partial | Diffed prop updates done; normalization in runtime placement and transform controls remain. |
@@ -553,7 +553,7 @@ Current prototype pieces:
 - Terrain model placement is diff-based: unchanged model-backed cells keep their
   instances across edits, while changed cells are disposed and recreated.
 
-**2D grid virtualization** (`LevelBuilder.tsx:GridPanel`):
+**2D grid virtualization** (`level-builder.tsx:GridPanel`):
 - At 32 columns the current 384wu-wide five-minute level has 400 rows = 12,800
   DOM cells. Without virtualization, React reconciles the whole grid on every
   RAF tick; with virtualization it only renders visible rows.
@@ -608,18 +608,18 @@ Completed:
   - terrain shape (`straight`, `corner`, `end`, `split`, `cross`, `tile`).
   - default usage flags (`terrain`, `object`, `rescueAnimal`, etc.).
 - `apps/studio/model-catalog-overrides.json` persists only designer overrides.
-- `#assets` shows one Kenney Pack Catalog section:
+- `#asset-library` shows one Kenney Pack Catalog section:
   - real Kenney pack names.
   - inferred theme filter.
   - kind filter.
   - imported/not-imported filter.
   - one summary bar.
-- `#models` is catalog-only:
+- `#3d-models` is catalog-only:
   - no legacy fixed-slot assignment UI.
   - kit/theme/category/search filters.
   - usage checkboxes.
   - one selected-model normalization preview/editor.
-- `#level` visible palette reads curated catalog items only.
+- `#level-builder` visible palette reads curated catalog items only.
 - Legacy slot IDs and `asset-map.json` are still read internally only for
   existing saved levels and runtime holdouts.
 
@@ -652,7 +652,7 @@ Completed:
   `resolveTerrainFeatureModel` (camelCase-tokenized tiebreaker picks base model
   names correctly), `resolveTerrainFeatureFallback` (plan fallback chains),
   `availableFeatureFamilies`.
-- Connected Feature brush in `LevelBuilder.tsx`: Manual/Connected segmented
+- Connected Feature brush in `level-builder.tsx`: Manual/Connected segmented
   control, family selector (shows only curated families), `paintConnectedFeature`
   with functional-updater pattern for correct rapid-drag behavior, `eraseCell`
   recomputes same-family neighbors.

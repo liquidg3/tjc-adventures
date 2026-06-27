@@ -301,6 +301,7 @@ export function createShipScene(
     applyPipeline();
   }
   const input = createInputController(togglePixel);
+  let externalInput: { vx: number; vz: number; boosting: boolean; dodge?: number } | null = null;
 
   let lastSyncedLevelScrollZ = Number.NaN;
   function syncLevelPreviewScroll(force = false) {
@@ -325,6 +326,15 @@ export function createShipScene(
     const dt = Math.min(engine.getDeltaTime() / 1000, 0.05);
     const ship = shipController.getShip();
     const shipPivot = shipController.getShipPivot();
+    const keyboardInput = input.getState();
+    const mergedInput = externalInput
+      ? {
+          vx: clamp(keyboardInput.vx + externalInput.vx, -1, 1),
+          vz: clamp(keyboardInput.vz + externalInput.vz, -1, 1),
+          boosting: keyboardInput.boosting || externalInput.boosting,
+          dodge: keyboardInput.dodge || externalInput.dodge || 0,
+        }
+      : keyboardInput;
     const now = performance.now();
     if (now - lastShipDebugAt > 1000) {
       lastShipDebugAt = now;
@@ -366,7 +376,7 @@ export function createShipScene(
         ship,
         shipPivot,
         shipHeight,
-        input: input.getState(),
+        input: mergedInput,
         pointOnFlightPlane,
       }));
     }
@@ -410,6 +420,16 @@ export function createShipScene(
   return {
     setCameraRotationMode(mode) {
       flight.setCameraRotationMode(mode);
+    },
+    setExternalInput(nextInput) {
+      externalInput = nextInput
+        ? {
+            vx: clamp(nextInput.vx, -1, 1),
+            vz: clamp(nextInput.vz, -1, 1),
+            boosting: nextInput.boosting,
+            dodge: clamp(nextInput.dodge ?? 0, -1, 1),
+          }
+        : null;
     },
     setPlayerShipModel(url, normalization) {
       shipController.setModelUrl(url, normalization);

@@ -18,8 +18,8 @@ while still allowing manual art-directed overrides.
 
 Already built:
 
-- `#assets` browses the live Kenney catalog and imports packs.
-- `#models` is catalog-only:
+- `#asset-library` browses the live Kenney catalog and imports packs.
+- `#3d-models` is catalog-only:
   - imported model browser.
   - kit/theme/category filters.
   - usage flags.
@@ -29,7 +29,7 @@ Already built:
   - model category.
   - terrain family, e.g. `river`, `path`, `road`.
   - terrain shape, e.g. `straight`, `corner`, `end`, `split`, `cross`, `tile`.
-- `#level` visible palette reads curated catalog models only.
+- `#level-builder` visible palette reads curated catalog models only.
 - Terrain rendering can instantiate model-backed terrain cells in the 3D preview.
 
 Known limits:
@@ -179,7 +179,7 @@ Required renderer support:
   `rotation?: number` in degrees.
 - `loadAndPlaceTerrain` must apply `node.rotation.y = rotation * Math.PI / 180`
   to instantiated terrain nodes.
-- `LevelBuilder.tsx` must pass `cell.feature?.rotation` through to
+- `level-builder.tsx` must pass `cell.feature?.rotation` through to
   `setLevelTerrainCells`.
 
 Without this, connected corners/splits can resolve correctly in data but still
@@ -362,7 +362,7 @@ Done when:
 
 Files:
 
-- `apps/studio/src/LevelBuilder.tsx`
+- `apps/studio/src/level-builder.tsx`
 - maybe new `apps/studio/src/level-terrain-actions.ts`
 
 Tasks:
@@ -390,7 +390,7 @@ Done when:
 
 Files:
 
-- `apps/studio/src/LevelBuilder.tsx`
+- `apps/studio/src/level-builder.tsx`
 - `apps/studio/src/styles.css`
 
 Tasks:
@@ -570,7 +570,7 @@ Done when:
 
 Files:
 
-- `apps/studio/src/LevelBuilder.tsx`
+- `apps/studio/src/level-builder.tsx`
 - optionally new `apps/studio/src/level-terrain-actions.ts`
 
 Tasks:
@@ -589,7 +589,7 @@ Done when:
 
 Files:
 
-- `apps/studio/src/LevelBuilder.tsx`
+- `apps/studio/src/level-builder.tsx`
 - `apps/studio/src/styles.css`
 
 Tasks:

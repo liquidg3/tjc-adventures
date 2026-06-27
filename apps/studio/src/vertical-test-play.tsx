@@ -16,9 +16,9 @@ import {
   mergeDefaults,
   readHashParams,
   serializeVerticalHash,
-  verticalScrollerReducer,
+  verticalTestPlayReducer,
   type VerticalDefaults,
-} from "./vertical-scroller-state";
+} from "./vertical-test-play-state";
 import {
   mergeNormalizationOverrides,
   assetValueToUrl,
@@ -32,7 +32,7 @@ import {
   mergeLevel,
   projectObjectsToLegacyCells,
 } from "./level-builder-state";
-import { loadStagedModels, type ModelEntry } from "./models";
+import { loadStagedModels, type ModelEntry } from "./3d-models-data";
 import {
   buildModelCatalog,
   EMPTY_MODEL_CATALOG_OVERRIDES,
@@ -122,8 +122,8 @@ function LightSlider({
   );
 }
 
-/** Vertical Scroller settings: the live scene + collapsible tuning panels. */
-export function VerticalScroller() {
+/** Vertical Test Play settings: the live scene + collapsible tuning panels. */
+export function VerticalTestPlay() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<SceneHandle | null>(null);
   const { value: level, loaded: levelLoaded } = usePersistedJson(
@@ -138,7 +138,7 @@ export function VerticalScroller() {
   );
   const initialHashParamsRef = useRef<URLSearchParams>(readHashParams());
   const [state, dispatch] = useReducer(
-    verticalScrollerReducer,
+    verticalTestPlayReducer,
     initialHashParamsRef.current,
     createInitialState
   );
@@ -181,7 +181,7 @@ export function VerticalScroller() {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    tjcLog("VerticalScroller mount", {
+    tjcLog("VerticalTestPlay mount", {
       hash: location.hash,
       canvas: {
         clientWidth: canvasRef.current.clientWidth,
@@ -205,7 +205,7 @@ export function VerticalScroller() {
         .catch(() => ({})),
     ])
       .then(([assetMapData, presetData, overrideData]: [Record<string, unknown>, unknown, unknown]) => {
-        tjcLog("VerticalScroller asset payloads loaded", {
+        tjcLog("VerticalTestPlay asset payloads loaded", {
           assetKeys: Object.keys(assetMapData ?? {}),
           presetKeys: presetData && typeof presetData === "object" ? Object.keys(presetData as Record<string, unknown>) : [],
           overrideKeys: overrideData && typeof overrideData === "object" ? Object.keys(overrideData as Record<string, unknown>) : [],
@@ -227,7 +227,7 @@ export function VerticalScroller() {
             getNormalizationPreset(presets, assignment.preset),
             overrides[assignment.model],
           );
-          tjcLog("VerticalScroller set player ship", {
+          tjcLog("VerticalTestPlay set player ship", {
             assignment,
             playerShip,
             normalization,
@@ -240,11 +240,11 @@ export function VerticalScroller() {
           });
           handle.setPlayerShipModel(playerShip, normalization);
         } else {
-          tjcLog("VerticalScroller no player ship assignment", { assignment });
+          tjcLog("VerticalTestPlay no player ship assignment", { assignment });
         }
       })
       .catch((err) => {
-        tjcLog("VerticalScroller asset payload load failed", err);
+        tjcLog("VerticalTestPlay asset payload load failed", err);
         /* keep the default runtime ship if the asset map can't be read */
       });
     sceneRef.current = handle;
@@ -321,7 +321,7 @@ export function VerticalScroller() {
   useEffect(() => {
     const handle = sceneRef.current;
     if (!handle) return;
-    tjcLog("VerticalScroller apply scene values", {
+    tjcLog("VerticalTestPlay apply scene values", {
       cameraMode: state.values.cameraMode,
       altitude: state.values.altitude,
       shipSize: state.values.shipSize,

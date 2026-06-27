@@ -18,6 +18,14 @@ export interface JoinOptions {
   name?: string;
 }
 
+/** Lightweight phone-control packet for the LAN playtest path. */
+export interface PilotInput {
+  vx: number;
+  vz: number;
+  boosting: boolean;
+  dodge?: number;
+}
+
 /** Host-discovery info served at GET /lan-info so the table screen can build a
  *  join QR that phones on the LAN can reach. */
 export interface LanInfo {

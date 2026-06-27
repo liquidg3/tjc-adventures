@@ -41,7 +41,7 @@ import {
   terrainShapeForMask,
 } from "./terrain-connectivity";
 import { SLOTS } from "./slots";
-import { loadStagedModels, type ModelEntry } from "./models";
+import { loadStagedModels, type ModelEntry } from "./3d-models-data";
 import {
   buildModelCatalog,
   EMPTY_MODEL_CATALOG_OVERRIDES,

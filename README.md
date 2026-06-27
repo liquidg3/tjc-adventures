@@ -14,8 +14,8 @@ and the vessel only succeeds when they work together.
 
 | Track | State |
 |---|---|
-| **M0 — cross-device spine** | ✅ Done & verified (host QR → phone joins a Colyseus room, input round-trips). **Parked** at `/host` + `/join` while we focus on graphics. |
-| **Vertical-scroller scene** | 🚧 In progress — a vertically-scrolling ship you fly locally (no server). Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Current Studio focus: **Level Builder** for painting the five-minute authored run with terrain, height, and objects in the live 3D preview. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + Kenney UI packs for Studio chrome. |
+| **M0 — cross-device spine** | ✅ Done & verified. `/host` mounts the real shared scene and loads the saved Studio Level Builder + Vertical Test Play settings; phones join `/join` as pilot controllers. |
+| **Vertical Test Play scene** | 🚧 In progress — a vertically-scrolling ship you fly locally or through the LAN host. Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Current Studio focus: **Level Builder** for painting the five-minute authored run with terrain, height, and objects in the live 3D preview. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + Kenney UI packs for Studio chrome. |
 
 ---
 
@@ -29,15 +29,15 @@ and the vessel only succeeds when they work together.
 ```bash
 npm install          # install all workspaces
 npm run doctor       # pre-flight: Node version, deps, ports free
-npm run dev:client   # graphics sandbox → open http://localhost:5173 and fly
+npm run dev:client   # start screen → open http://localhost:5173
 ```
 
-For the full two-screen setup (parked multiplayer spine):
+For the full two-screen setup:
 
 ```bash
 npm run dev          # boots server (:2567) + client (:5173) together
-# laptop: http://localhost:5173/host   → shows a room code + QR
-# phone:  scan the QR on the same WiFi → joins as a controller
+# laptop: http://localhost:5173/host   → playable shared scene + QR
+# phone:  scan the QR on the same WiFi → joins as pilot controls
 ```
 
 ## Scripts (run from repo root)
@@ -45,7 +45,7 @@ npm run dev          # boots server (:2567) + client (:5173) together
 | Script | Does |
 |---|---|
 | `npm run dev` | Frees ports, then boots **server + client** together (prefixed output, clean shutdown). |
-| `npm run dev:client` | Just the client (Vite, :5173). Enough for the graphics sandbox. |
+| `npm run dev:client` | Just the client (Vite, :5173). Opens the start screen; `/game` runs the saved authored level. |
 | `npm run dev:server` | Just the Colyseus server (:2567). |
 | `npm run dev:studio` | Studio — tuner + Kenney asset tools (Vite, :5174). |
 | `npm run stage-pack` | Stage a local GLB/OBJ/FBX pack folder into `public/models` (manual alternative to the Asset Library's one-click Import). |
@@ -64,9 +64,10 @@ npm run dev          # boots server (:2567) + client (:5173) together
 ```
 apps/
   game-client/   Vite + React. Routes:
-                   /      mounts the @tjc/scenes vertical-scroller (no panels)
-                   /host  laptop "table" lobby (M0 spine, parked)
-                   /join  phone controller (M0 spine, parked)
+                   /      start screen for Host / Join / Solo Play
+                   /game  single-player saved Studio level
+                   /host  laptop shared scene; loads saved Studio level/settings
+                   /join  phone pilot controller
   game-server/   Colyseus authoritative server (:2567)
   studio/        Studio (:5174) — tuner + Kenney asset tools (Library/Preview/Models board)  ← primary work surface
   marketing/     marketing site (stub)
@@ -82,14 +83,14 @@ packages/
 scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 ```
 
-## The vertical-scroller scene
+## The Vertical Test Play scene
 
 - Code: **`packages/scenes/src/ship-scene.ts`** (the Babylon scene composition
   root, shared as `@tjc/scenes`). It now composes:
   `scene-config.ts`, `flight-controller.ts`, `ship-controller.ts`,
   `lighting-controller.ts`, `prop-field.ts`, `ground-texture.ts`, and
-  `ship-materials.ts`. Mounted by `apps/game-client/src/GameSandbox.tsx` (route `/`,
-  no panels) and by `apps/studio/src/VerticalScroller.tsx` (the tuner, with panels).
+  `ship-materials.ts`. Mounted by `apps/game-client/src/GameSandbox.tsx` (route `/game`,
+  no panels, saved authored level) and by `apps/studio/src/vertical-test-play.tsx` (the tuner, with panels).
   **Tune it in the Studio** (`npm run dev:studio`).
 - **Controls:** Arrows / WASD to fly, `Shift` to boost, `P` to toggle pixel mode.
   The ship reaches the full visible viewport in both axes; the field scrolls with
@@ -101,7 +102,7 @@ scripts/         free-ports, clean, doctor, verify-spine, stage-pack
 - **Runtime contract:** `createShipScene(canvas)` returns a `SceneHandle` with
   setters for camera mode, ship height/size, ground style, pixel scale, lighting
   preset, and sun intensity/sky/azimuth/elevation (plus `getShipPosition`,
-  `resetShip`, `getLightingState`). The Studio vertical scroller now also reads
+  `resetShip`, `getLightingState`). Studio Vertical Test Play also reads
   the selected `ship-player` assignment plus its saved normalization preset, so
   the live ship matches the 3D Models board. Tunable constants are at the top
   of the file.
@@ -182,7 +183,7 @@ Current known issue:
   presets + overrides, but the final runtime forward convention still disagrees with
   the preview reference somewhere. That is the next bug to solve.
 
-**Vertical Scroller / Test Play** — fly the saved Level Builder run with the
+**Vertical Test Play** — fly the saved Level Builder run with the
 player ship active. Level graphics come from `apps/studio/level-builder.json`,
 not the old procedural ground/scenery path. Panels cover Level Run, Ship Size,
 Ship Position, Camera Rotation, Ship Altitude, Lighting, Ship Lighting, Pixelate,
