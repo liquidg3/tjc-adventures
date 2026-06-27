@@ -5,12 +5,13 @@
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
+#root { width: 100%; }
 body {
   background: #0b1020;
   color: #e6ecff;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 .screen {
   width: 100%;
@@ -134,13 +135,217 @@ h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
 .host-overlay .qr {
   padding: 10px;
 }
+.seat-board {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  text-align: left;
+}
+.seat-board h2 {
+  margin: 0 0 2px;
+  color: #d7e9ff;
+  font-size: 0.9rem;
+}
+.seat-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid rgba(154, 208, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(8, 14, 24, 0.54);
+}
+.seat-card.filled {
+  border-color: rgba(106, 255, 176, 0.36);
+}
+.seat-card b,
+.seat-card span,
+.seat-card small {
+  display: block;
+}
+.seat-card span,
+.seat-card small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.seat-card b {
+  color: #9ad0ff;
+}
+.seat-card small {
+  color: #6b78a8;
+  font-size: 0.72rem;
+}
+.seat-empty-mark {
+  width: 36px;
+  height: 36px;
+  border: 2px dashed rgba(154, 208, 255, 0.32);
+  border-radius: 6px;
+}
 
 /* Controller: a big, kid-friendly touch target. */
 .controller {
+  width: min(100%, 520px);
   max-width: 520px;
-  touch-action: none;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 16px 16px 28px;
+  touch-action: pan-y;
   -webkit-user-select: none;
   user-select: none;
+}
+.join-lobby h1,
+.station-screen h1 {
+  margin-bottom: 8px;
+}
+.join-name {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+  text-align: left;
+}
+.join-name span {
+  color: #9fb5d3;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.join-name input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: #e6ecff;
+  background: rgba(8, 14, 24, 0.88);
+  border: 1px solid rgba(154, 208, 255, 0.32);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 1rem;
+}
+.avatar-picker,
+.role-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.avatar-card,
+.role-card,
+.change-seat {
+  border: 1px solid rgba(154, 208, 255, 0.24);
+  border-radius: 12px;
+  color: #e6ecff;
+  background: rgba(8, 14, 24, 0.78);
+  font: inherit;
+  cursor: pointer;
+}
+.avatar-card {
+  min-height: 150px;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  padding: 12px 8px 10px;
+}
+.avatar-card span {
+  color: #d7e9ff;
+  font-weight: bold;
+}
+.avatar-card small {
+  max-width: 18ch;
+  color: #9fb5d3;
+  font-size: 0.7rem;
+  line-height: 1.25;
+}
+.avatar-card.selected,
+.role-card.selected {
+  border-color: #6affb0;
+  box-shadow: 0 0 0 2px rgba(106, 255, 176, 0.18);
+}
+.role-card {
+  min-height: 132px;
+  padding: 12px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  text-align: left;
+}
+.role-card:disabled {
+  opacity: 0.54;
+  cursor: not-allowed;
+}
+.role-title {
+  color: #9ad0ff;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.role-copy {
+  color: #c8d4ff;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+.role-occupant {
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6affb0;
+  font-size: 0.72rem;
+  margin-top: auto;
+}
+.role-card.taken .role-occupant {
+  color: #ffcf8a;
+}
+.avatar-sprite {
+  --avatar-px: 7px;
+  display: grid;
+  width: max-content;
+  padding: 4px;
+  background: rgba(6, 10, 20, 0.82);
+  border: 1px solid rgba(154, 208, 255, 0.22);
+  border-radius: 4px;
+  image-rendering: pixelated;
+}
+.avatar-pixel {
+  width: var(--avatar-px);
+  height: var(--avatar-px);
+}
+.station-id {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: left;
+}
+.station-id h1 {
+  margin: 0 0 2px;
+}
+.station-id p {
+  margin: 0;
+}
+.station-placeholder {
+  min-height: 160px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  margin: 22px 0 14px;
+  padding: 22px;
+  border: 1px solid rgba(154, 208, 255, 0.28);
+  border-radius: 14px;
+  background: rgba(8, 14, 24, 0.78);
+}
+.station-placeholder b {
+  color: #9ad0ff;
+  font-size: 1.1rem;
+}
+.station-placeholder span {
+  color: #c8d4ff;
+  line-height: 1.35;
+}
+.change-seat {
+  width: min(86vw, 360px);
+  min-height: 46px;
+  margin-top: 8px;
 }
 .pilot-pad {
   width: min(86vw, 360px);
@@ -183,6 +388,12 @@ h1 { font-size: 1.6rem; letter-spacing: 1px; color: #9ad0ff; }
   display: block;
   background: linear-gradient(180deg, #ffe08a, #ff9f43);
   box-shadow: 0 8px 22px rgba(255, 159, 67, 0.38);
+}
+@media (max-width: 420px) {
+  .avatar-picker,
+  .role-picker {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Graphics sandbox: fullscreen canvas + a small control hint. */

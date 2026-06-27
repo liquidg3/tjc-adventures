@@ -2,14 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import type { Room } from "colyseus.js";
 import { createShipScene, type SceneHandle } from "@tjc/scenes";
-import { ROOM_NAME, type LanInfo, type PilotInput } from "@tjc/core";
+import { PLAYABLE_ROLES, ROOM_NAME, type LanInfo, type PilotInput, type PlayableRole } from "@tjc/core";
 import { makeClient, serverHttpBase } from "./colyseus";
 import { applySavedScene } from "./saved-level-scene";
+import { AvatarSprite } from "./player-avatars";
+import { ROLE_BLURBS, ROLE_LABELS } from "./role-ui";
 
 interface PlayerView {
   id: string;
   role: string;
   device: string;
+  name: string;
+  avatar: string;
 }
 
 /** The laptop "table" screen: creates a room, shows a join QR, lists the crew. */
@@ -79,8 +83,10 @@ export function Host() {
         const info: LanInfo = await fetch(`${serverHttpBase()}/lan-info`).then((r) => r.json());
 
         const room = await makeClient().create(ROOM_NAME, {
-          role: "host",
+          role: "pilot",
           device: "laptop",
+          name: "Host",
+          avatar: "comet-cadet",
         });
         if (cancelled) {
           room.leave();
@@ -98,10 +104,17 @@ export function Host() {
         room.onStateChange((state: any) => {
           const list: PlayerView[] = [];
           state.players.forEach((p: any) =>
-            list.push({ id: p.id, role: p.role, device: p.device })
+            list.push({
+              id: p.id,
+              role: p.role,
+              device: p.device,
+              name: p.name,
+              avatar: p.avatar,
+            })
           );
           setPlayers(list);
         });
+        setPlayers(mapPlayers(room.state));
       } catch (e: any) {
         setError(e?.message ?? String(e));
       }
@@ -113,7 +126,10 @@ export function Host() {
     };
   }, []);
 
-  const crew = players.filter((p) => p.role !== "host");
+  const seats = PLAYABLE_ROLES.map((role) => ({
+    role,
+    player: players.find((player) => player.role === role),
+  }));
 
   return (
     <div className="host-play">
@@ -131,26 +147,53 @@ export function Host() {
           </p>
           <p className="hint">{joinUrl}</p>
           <p className={activePilot ? "ok" : "dim"}>
-            {activePilot ? "Phone pilot active" : "Scan to steer the ship"}
+            {activePilot ? "Remote Pilot active" : "Host is Pilot"}
           </p>
           <p className="hint">{sceneStatus}</p>
-          <div className="players">
-            <h2>Crew ({crew.length})</h2>
-            {crew.length === 0 ? (
-              <p className="dim">Waiting for players…</p>
-            ) : (
-              <ul>
-                {crew.map((p) => (
-                  <li key={p.id}>
-                    🎮 {p.role} <span className="dim">({p.device})</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className="seat-board">
+            <h2>Crew Seats</h2>
+            {seats.map(({ role, player }) => (
+              <SeatCard key={role} role={role} player={player} />
+            ))}
           </div>
         </>
       )}
       </div>
     </div>
   );
+}
+
+function SeatCard({ role, player }: { role: PlayableRole; player?: PlayerView }) {
+  return (
+    <div className={`seat-card ${player ? "filled" : "empty"}`}>
+      {player ? (
+        <AvatarSprite id={player.avatar} size={3} />
+      ) : (
+        <div className="seat-empty-mark" aria-hidden="true" />
+      )}
+      <div>
+        <b>{ROLE_LABELS[role]}</b>
+        <span>{player ? displayName(player) : "Open seat"}</span>
+        <small>{player ? player.device : ROLE_BLURBS[role]}</small>
+      </div>
+    </div>
+  );
+}
+
+function mapPlayers(state: any): PlayerView[] {
+  const list: PlayerView[] = [];
+  state.players.forEach((p: any) =>
+    list.push({
+      id: p.id,
+      role: p.role,
+      device: p.device,
+      name: p.name,
+      avatar: p.avatar,
+    })
+  );
+  return list;
+}
+
+function displayName(player: PlayerView) {
+  return player.name || (player.device === "laptop" ? "Host" : "Crewmate");
 }

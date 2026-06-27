@@ -191,6 +191,11 @@ the full scene. Big touch targets, assist buttons appear contextually.
 4. **Lobby/seat-claim + role rotation** (`brief.md` §11) run as room state before
    the run starts.
 
+Current M0 implementation note: profiles are not built yet, so `/join` uses a
+temporary same-room identity card: typed name + one of four pixel-avatar
+archetypes, then a server-validated claim for an open Pilot/Gunner/Spotter seat.
+The host starts as Pilot.
+
 ---
 
 ## 9. Project Structure & Build Milestones

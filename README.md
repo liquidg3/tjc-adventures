@@ -14,7 +14,7 @@ and the vessel only succeeds when they work together.
 
 | Track | State |
 |---|---|
-| **M0 — cross-device spine** | ✅ Done & verified. `/host` mounts the real shared scene and loads the saved Studio Level Builder + Vertical Test Play settings; phones join `/join` as pilot controllers. |
+| **M0 — cross-device spine** | ✅ Done & verified. `/host` mounts the real shared scene and loads the saved Studio Level Builder + Vertical Test Play settings; the host claims Pilot, and phones join `/join` to enter a name, choose a pixel avatar, and claim an open Gunner/Spotter/Pilot seat. |
 | **Vertical Test Play scene** | 🚧 In progress — a vertically-scrolling ship you fly locally or through the LAN host. Tuned through the **Studio** (:5174). Player ship is dialed (Kenney `craft_racer`, banks, dodge jumps). Current Studio focus: **Level Builder** for painting the five-minute authored run with terrain, height, and objects in the live 3D preview. **Art direction = Kenney CC0 low-poly** for game art (imported via Asset Library) + Kenney UI packs for Studio chrome. |
 
 ---
@@ -37,7 +37,7 @@ For the full two-screen setup:
 ```bash
 npm run dev          # boots server (:2567) + client (:5173) together
 # laptop: http://localhost:5173/host   → playable shared scene + QR
-# phone:  scan the QR on the same WiFi → joins as pilot controls
+# phone:  scan the QR on the same WiFi → name/avatar + open role claim
 ```
 
 ## Scripts (run from repo root)
@@ -67,7 +67,7 @@ apps/
                    /      start screen for Host / Join / Solo Play
                    /game  single-player saved Studio level
                    /host  laptop shared scene; loads saved Studio level/settings
-                   /join  phone pilot controller
+                   /join  phone role station lobby/controller
   game-server/   Colyseus authoritative server (:2567)
   studio/        Studio (:5174) — tuner + Kenney asset tools (Library/Preview/Models board)  ← primary work surface
   marketing/     marketing site (stub)

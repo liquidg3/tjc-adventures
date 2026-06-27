@@ -6,6 +6,7 @@ export class Player extends Schema {
   @type("string") role = "unassigned";
   @type("string") device = "";
   @type("string") name = "";
+  @type("string") avatar = "";
 }
 
 /** Authoritative room state, synced to all clients. M0 only tracks who's here. */

@@ -6,7 +6,7 @@
 > `architecture.md`); how-to + gotchas in `README.md`; agent rules in `AGENTS.md`.
 > **All knowledge lives in the repo — do not use private/agent memory.**
 
-_Last updated: 2026-06-22._
+_Last updated: 2026-06-27._
 
 ---
 
@@ -17,9 +17,12 @@ _Last updated: 2026-06-22._
 - **Monorepo:** built and working (Lerna + npm workspaces). See `README.md` and
   `docs/architecture.md`.
 - **M0 multiplayer spine:** done & verified. Laptop hosts a Colyseus room and the
-  real shared scene at `/host`; phones join via QR at `/join` as pilot
-  controllers. The host reads the saved Studio Level Builder artifact and Vertical
-  Test Play settings. `npm run verify:spine` exercises the room path headlessly.
+  real shared scene at `/host`; the host claims Pilot, and phones join via QR at
+  `/join` to enter a name, choose one of four pixel-avatar archetypes, and claim
+  an open Pilot/Gunner/Spotter role. The server validates one connected player per
+  playable role. The host reads the saved Studio Level Builder artifact and
+  Vertical Test Play settings. `npm run verify:spine` exercises the room path
+  headlessly.
 - **ACTIVE WORK → the Level Builder.** We are building out the five-minute authored
   level for the vertical scroller through the Studio. The Level Builder is now a
   substantial authoring surface: v2 layered schema (terrain/height/objects), live 3D
@@ -254,7 +257,7 @@ npm install
 npm run doctor          # pre-flight (node, deps, ports)
 npm run dev:studio      # STUDIO  → http://localhost:5174  ← tune the scene here (primary)
 npm run dev:client      # GAME    → http://localhost:5173  (start screen; /game is solo play)
-npm run dev             # server :2567 + client :5173; /host scene + /join pilot controls
+npm run dev             # server :2567 + client :5173; /host scene + /join role stations
 ```
 
 Dev servers auto-open the browser. `npm run free-ports` if a port is stuck.
@@ -330,8 +333,8 @@ apps/game-client/          Vite + React (port 5173)
   src/StartScreen.tsx        route /; Host / Join / Solo Play entry screen
   src/GameSandbox.tsx        route /game; single-player saved Studio level
   src/saved-level-scene.ts   shared loader for saved Level Builder + Vertical Test Play settings
-  src/main.tsx               routes: / = start, /game = solo, /host = shared scene, /join = phone pilot
-  src/Host.tsx / Controller.tsx / colyseus.ts   LAN host scene + phone pilot controller
+  src/main.tsx               routes: / = start, /game = solo, /host = shared scene, /join = phone role station
+  src/Host.tsx / Controller.tsx / colyseus.ts   LAN host scene + phone role lobby/controller
   public/models/{ships,environment}/  the scene's runtime models for this app
 
 apps/game-server/          Colyseus authoritative server; GameRoom + GameState
@@ -518,7 +521,7 @@ these belongs with cleanup of the legacy procedural scene path.
    disables procedural scenery loading; cleanup can either delete the old path or
    repoint it to Kenney replacements.
 
-**Gameplay (not started — pilot-flight only):**
+**Gameplay (not started — pilot-flight plus role-seat lobby only):**
 9. No shooting / enemies / pickups / rescue / cages yet. `asset-map.json` has
    `ship-enemy = craft_miner` but nothing spawns. Roles (Gunner, Spotter) are
    designed in `docs/` and the **M0 spine exists but is parked**.
@@ -545,7 +548,9 @@ these belongs with cleanup of the legacy procedural scene path.
    enemies become real targets.
 9. Continue **gameplay** — pickups, **rescue cages**, the **Warden** boss — per
    `docs/prototype-meadow-run.md`.
-10. **Reconnect multiplayer** (roles across devices) per `docs/architecture.md`.
+10. **Build out role stations** — the QR lobby can claim Pilot/Gunner/Spotter with
+    name + pixel avatar, but Gunner and Spotter controls are placeholders until
+    shooting/tagging/assist mechanics exist.
 
 ---
 

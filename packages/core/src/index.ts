@@ -9,13 +9,41 @@ export const SERVER_PORT = 2567;
 export const CLIENT_PORT = 5173;
 
 /** The roles a player can occupy on the shared vessel (brief.md §5). */
-export type Role = "host" | "pilot" | "gunner" | "spotter" | "unassigned";
+export const PLAYABLE_ROLES = ["pilot", "gunner", "spotter"] as const;
+export type PlayableRole = (typeof PLAYABLE_ROLES)[number];
+export type Role = "host" | PlayableRole | "unassigned";
+
+/** Lightweight v1 profile portraits for the same-room lobby. */
+export const AVATAR_IDS = [
+  "comet-cadet",
+  "circuit-champ",
+  "nova-knight",
+  "signal-sprite",
+] as const;
+export type AvatarId = (typeof AVATAR_IDS)[number];
 
 /** Options a client sends when joining a room. */
 export interface JoinOptions {
   role?: Role;
   device?: string;
   name?: string;
+  avatar?: AvatarId | string;
+}
+
+/** Request a role seat after joining a room as unassigned. */
+export interface ClaimRoleRequest {
+  role?: Role;
+  name?: string;
+  avatar?: AvatarId | string;
+}
+
+/** Server acknowledgement for an attempted role claim. */
+export interface ClaimRoleResult {
+  ok: boolean;
+  role?: Role;
+  name?: string;
+  avatar?: AvatarId | string;
+  message?: string;
 }
 
 /** Lightweight phone-control packet for the LAN playtest path. */
@@ -32,4 +60,12 @@ export interface LanInfo {
   lanIp: string;
   serverPort: number;
   clientPort: number;
+}
+
+export function isPlayableRole(role: unknown): role is PlayableRole {
+  return typeof role === "string" && (PLAYABLE_ROLES as readonly string[]).includes(role);
+}
+
+export function isAvatarId(avatar: unknown): avatar is AvatarId {
+  return typeof avatar === "string" && (AVATAR_IDS as readonly string[]).includes(avatar);
 }

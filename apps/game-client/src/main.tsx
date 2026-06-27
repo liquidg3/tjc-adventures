@@ -14,7 +14,7 @@ import "./styles.css";
 //   /       start screen for picking host / join / solo play
 //   /game   single-player saved Studio level
 //   /host   laptop shared scene; loads saved Studio level/settings
-//   /join   phone pilot controller
+//   /join   phone role lobby + controller station
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <WebGLGate>
